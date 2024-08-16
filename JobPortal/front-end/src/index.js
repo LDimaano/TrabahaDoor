@@ -8,7 +8,7 @@ import Homepage from './components/homepage';
 import SignupJobseeker from './components/signup_jobseeker'; 
 import SignupJobseeker2 from './components/signup_jobseeker2'; 
 import SignupJobseeker3 from './components/signup_jobseeker3'; 
-import SignupEmployer from './components/signup_employer';   
+// import SignupEmployer from './components/signup_employer';   
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
