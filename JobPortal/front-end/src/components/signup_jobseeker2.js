@@ -34,7 +34,7 @@ const JobSeekerRegistration = () => {
       
       <form className="form">
         <div className="inputGroup">
-          <label htmlFor="firstName" className="label">Location*</label>
+          <label htmlFor="location" className="label">Location*</label>
           <input 
             type="text" 
             id="firstName" 
