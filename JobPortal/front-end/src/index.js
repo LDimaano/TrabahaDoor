@@ -9,6 +9,7 @@ import SignupJobseeker from './components/signup_jobseeker';
 import SignupJobseeker2 from './components/signup_jobseeker2'; 
 import SignupJobseeker3 from './components/signup_jobseeker3'; 
 import SignupJstudent from './components/signup_jstudent'; 
+import SignupJobseeker4 from './components/signup_jobseeker4'; 
 // import SignupEmployer from './components/signup_employer';   
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -25,6 +26,7 @@ root.render(
         <Route path="/signup_jobseeker2" element={<SignupJobseeker2 />} />
         <Route path="/signup_jobseeker3" element={<SignupJobseeker3 />} />
         <Route path="/signup_jstudent" element={<SignupJstudent />} />
+        <Route path="/signup_jobseeker4" element={<SignupJobseeker4 />} />
         {/* <Route path="/signup_employer" element={<SignupEmployer />} />  */}
       </Routes>
     </Router>

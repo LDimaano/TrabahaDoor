@@ -1,0 +1,171 @@
+.jobProfileForm {
+    background: var(--Color-White, #fff);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    align-items: center;
+    font-family: Epilogue, sans-serif;
+    line-height: 1.6;
+    padding: 30px 67px 105px;
+  }
+  
+  @media (max-width: 991px) {
+    .jobProfileForm {
+      padding: 0 20px 100px;
+    }
+  }
+  
+  .formTitle {
+    margin-top: 98px;
+    width: 733px;
+    max-width: 100%;
+    color: var(--Color-Black, #202430);
+    text-align: center;
+    font: 600 32px/38px Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
+  }
+  
+  @media (max-width: 991px) {
+    .formTitle {
+      max-width: 100%;
+      margin-top: 40px;
+    }
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 408px;
+  }
+  
+  .formRow {
+    display: flex;
+    width: 100%;
+    gap: 12px;
+    margin-top: 22px;
+  }
+  
+  @media (max-width: 991px) {
+    .formRow {
+      flex-direction: column;
+    }
+  }
+  .header {
+    align-self: start;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: rgba(37, 50, 75, 1);
+    white-space: nowrap;
+    letter-spacing: -0.24px;
+    justify-content: start;
+    font: 700 24px/1 Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
+  }
+  
+  @media (max-width: 991px) {
+    .header {
+      white-space: initial;
+    }
+  }
+  
+  .logo {
+    aspect-ratio: 1.55;
+    object-fit: contain;
+    object-position: center;
+    width: 45px;
+    align-self: stretch;
+    margin: auto 0;
+  }
+  
+  .brandName {
+    align-self: stretch;
+    width: 143px;
+    margin: auto 0;
+  }
+  .textField {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    font-size: 16px;
+    margin-top: 22px;
+  }
+  
+  .label {
+    color: var(--Neutrals-80, #515b6f);
+    font-weight: 600;
+  }
+  
+  .input {
+    border: 1px solid var(--Neutrals-20, #d6ddeb);
+    background: var(--Neutrals-0, #fff);
+    margin-top: 4px;
+    width: 100%;
+    color: var(--Neutrals-40, #a8adb7);
+    font-weight: 400;
+    padding: 12px 16px;
+  }
+  .selectField {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    margin-top: 22px;
+  }
+  
+  .label {
+    color: var(--Neutrals-80, #515b6f);
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .selectWrapper {
+    position: relative;
+    margin-top: 4px;
+  }
+  
+  .select {
+    appearance: none;
+    border: 1px solid var(--Neutrals-20, #d6ddeb);
+    background: var(--Neutrals-0, #fff);
+    width: 100%;
+    font-size: 14px;
+    color: var(--Neutrals-40, #a8adb7);
+    font-weight: 400;
+    padding: 12px 16px;
+  }
+  
+  .arrow {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    pointer-events: none;
+  }
+  .button {
+    width: 100%;
+    max-width: 408px;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    padding: 12px 24px;
+    margin-top: 24px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .primary {
+    background: var(--Brands-Primary, #4640de);
+    color: var(--Neutrals-0, #fff);
+  }
+  
+  .secondary {
+    background-color: rgba(255, 255, 255, 1);
+    color: #25324b;
+  }
+  
+  @media (max-width: 991px) {
+    .button {
+      padding: 12px 20px;
+    }
+  }
