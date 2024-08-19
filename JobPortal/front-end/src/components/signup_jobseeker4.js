@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/jobprofile.css';  
+import '../css/signup_jobseeker.css';   
 import { useNavigate } from 'react-router-dom'; 
 
 const JobSeekerRegistration = () => {
@@ -15,20 +15,25 @@ const JobSeekerRegistration = () => {
   };
 
   return (
-    <main className="jobProfileForm">
+    <main className="container">
       <Header />
-      <h1 className="formTitle">
+      <h1 className="title">
         Help us to know you better by building your job profile
-        <br />
+      
         to discover job opportunities
       </h1>
       <form className="form">
-        <TextField
-          label="Current job title *"
-          placeholder="Staff Nurse"
-          id="jobTitle"
-        />
-        <div className="formRow">
+        <div className="inputGroup">
+          <label htmlFor="jobtitle" className="label">Current job title*</label>
+          <input 
+            type="text" 
+            id="jtitle" 
+            className="input" 
+            placeholder="Staff Nurse" 
+            required 
+          />
+        </div>
+        <div className="inputGroup">
           <SelectField
             label="Type of Work *"
             options={['Choose 1']}
@@ -50,10 +55,10 @@ const JobSeekerRegistration = () => {
           placeholder=""
           id="recentCompany"
         />
-        <Button variant="secondary" type="button" onClick={handleStudentClick}>
+        <Button variant="secondary" type="button" onClick={handleStudentClick} className="secondaryButton">
           I am a student
         </Button>
-        <Button variant="primary" type="submit" onClick={handleClick}>
+        <Button variant="primary" type="submit" onClick={handleClick} className="submitButton">
           Next
         </Button>
       </form>
@@ -66,7 +71,7 @@ const Header = () => {
   return (
     <header className="header">
       <img
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/9a041a0749592ac4adcd0d49d215ec305d8ef2b8bfa04e2e12bc81be88b68fe4?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
+        src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} 
         alt="TrabahaDoor logo"
         className="logo"
       />
@@ -117,9 +122,10 @@ const SelectField = ({ label, options, id }) => {
   );
 };
 
-const Button = ({ children, variant, type }) => {
+
+const Button = ({ children, variant, type, className }) => {
   return (
-    <button className={`button ${variant}`} type={type}>
+    <button className={`button ${variant} ${className}`} type={type}>
       {children}
     </button>
   );

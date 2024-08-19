@@ -43,7 +43,7 @@ const JobSeekerRegistration = () => {
         />
       </div>
       <span 
-        className="studentLink" 
+        className="secondaryButton" 
         onClick={handleStudentClick}
       >
         I am a student

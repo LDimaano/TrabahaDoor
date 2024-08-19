@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/student_reg.css';  
+import '../css/signup_jobseeker.css';     
 import { useNavigate } from 'react-router-dom'; 
 
 const JobSeekerRegistration = () => {
@@ -16,19 +16,19 @@ const JobSeekerRegistration = () => {
   // Header Component
   const Header = () => (
     <header className="header">
-      <img
-        loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/9a041a0749592ac4adcd0d49d215ec305d8ef2b8bfa04e2e12bc81be88b68fe4?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
-        alt="TrabahaDoor logo"
-        className="logo-image"
-      />
-      <div className="tagline">TrabahaDoor</div>
-    </header>
+    <img 
+      loading="lazy" 
+      src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} 
+      className="logo" 
+      alt="TrabahaDoor logo" 
+    />
+    <h1 className="brandName">TrabahaDoor</h1>
+  </header>
   );
 
   // TextField Component
   const TextField = ({ label, inputValue }) => (
-    <div className="textfield">
+    <div className="textField">
       <label className="label" htmlFor={label}>
         {label}
       </label>
@@ -45,27 +45,27 @@ const JobSeekerRegistration = () => {
 
   // PrimaryButton Component
   const PrimaryButton = ({ text, onClick }) => (
-    <button type="button" className="button-primary" onClick={onClick}>
+    <button type="button" className="submitButton" onClick={onClick}>
       {text}
     </button>
   );
 
   // SecondaryButton Component
   const SecondaryButton = ({ text, onClick }) => (
-    <button type="button" className="button-secondary" onClick={onClick}>
+    <button type="button" className="secondaryButton" onClick={onClick}>
       {text}
     </button>
   );
 
   return (
-    <section className="student-registration">
+    <section className="container">
       <Header />
-      <p className="description">
+      <p className="title">
         Help us to know you better by building your job profile
-        <br />
+  
         to discover job opportunities
       </p>
-      <form className="form-container">
+      <form className="form">
         <TextField label="School/University *" inputValue="Staff Nurse" />
         <TextField label="Year Level *" inputValue="Staff Nurse" />
         <TextField label="Specialization *" inputValue="Staff Nurse" />

@@ -10,9 +10,12 @@ import SignupJobseeker2 from './components/signup_jobseeker2';
 import SignupJobseeker3 from './components/signup_jobseeker3'; 
 import SignupJstudent from './components/signup_jstudent'; 
 import SignupJobseeker4 from './components/signup_jobseeker4'; 
+import SignupJobseeker5 from './components/signup_jobseeker5'; 
+
 import SignupEmployer from './components/signup_employer';   
 import SignupEmployer2 from './components/signup_employer2';  
 import SignupEmployer3 from './components/signup_employer3'; 
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -29,6 +32,8 @@ root.render(
         <Route path="/signup_jobseeker3" element={<SignupJobseeker3 />} />
         <Route path="/signup_jstudent" element={<SignupJstudent />} />
         <Route path="/signup_jobseeker4" element={<SignupJobseeker4 />} />
+        <Route path="/signup_jobseeker5" element={<SignupJobseeker5 />} />
+
         <Route path="/signup_employer" element={<SignupEmployer />} />
         <Route path="/signup_employer2" element={<SignupEmployer2 />} />
         <Route path="/signup_employer3" element={<SignupEmployer3 />} />
