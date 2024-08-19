@@ -1,12 +1,12 @@
 import React from "react";
-import '../css/signup_jobseeker.css'; // Import the CSS file for styling
-import { useNavigate } from 'react-router-dom'; // Import useNavigate hook for navigation
+import '../css/signup_jobseeker.css'; 
+import { useNavigate } from 'react-router-dom'; 
 
 const JobSeekerRegistration = () => {
-  const navigate = useNavigate(); // Initialize the useNavigate hook
+  const navigate = useNavigate(); 
 
   const handleClick = () => {
-    navigate('/home'); // Navigate to the '/home' route on button click
+    navigate('/'); 
   };
 
   return (

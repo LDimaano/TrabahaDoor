@@ -12,7 +12,7 @@ const JobSeekerRegistration = () => {
 
   const handleClick = () => {
     navigate('/signup_jobseeker5'); 
-  };
+    };
 
   return (
     <main className="container">
@@ -30,7 +30,7 @@ const JobSeekerRegistration = () => {
             id="jtitle" 
             className="input" 
             placeholder="Staff Nurse" 
-            required 
+            // required 
           />
         </div>
         <div className="inputGroup">
@@ -55,18 +55,17 @@ const JobSeekerRegistration = () => {
           placeholder=""
           id="recentCompany"
         />
-        <Button variant="secondary" type="button" onClick={handleStudentClick} className="secondaryButton">
+        <button type="button" className="secondaryButton" onClick={handleStudentClick}>
           I am a student
-        </Button>
-        <Button variant="primary" type="submit" onClick={handleClick} className="submitButton">
-          Next
-        </Button>
+        </button>
+        <button type="button" className="submitButton" onClick={handleClick}>
+              Next
+        </button>
       </form>
     </main>
   );
 };
 
-// Header component
 const Header = () => {
   return (
     <header className="header">
@@ -80,7 +79,6 @@ const Header = () => {
   );
 };
 
-// TextField component
 const TextField = ({ label, placeholder, id }) => {
   return (
     <div className="textField">
@@ -97,7 +95,6 @@ const TextField = ({ label, placeholder, id }) => {
   );
 };
 
-// SelectField component
 const SelectField = ({ label, options, id }) => {
   return (
     <div className="selectField">
@@ -122,13 +119,5 @@ const SelectField = ({ label, options, id }) => {
   );
 };
 
-
-const Button = ({ children, variant, type, className }) => {
-  return (
-    <button className={`button ${variant} ${className}`} type={type}>
-      {children}
-    </button>
-  );
-};
 
 export default JobSeekerRegistration;
