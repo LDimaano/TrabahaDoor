@@ -173,6 +173,39 @@ const OurServices = () => {
   );
 };
 
+const AboutUs = () => {
+  return (
+    <section className="aboutContainer">
+      <div className="image-column">
+        <img 
+          loading="lazy" 
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/bc8ceb35ea27108f4f8c5a04de801c84eeec28ac0633cc84f8307834cd82482c?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
+          className="aboutImage" 
+          alt="PESO San Jose office or team members"
+        />
+      </div>
+      <div className="content-column">
+        <div className="content-wrapper">
+          <div className="text-content">
+            <h2 className="aboutTitle">
+              About Us <br />
+              <span style={{ fontWeight: 500 }}>PESO San Jose</span>
+            </h2>
+            <p className="aboutDescription">
+              The Public Employment Service Office (PESO) of San Jose, Batangas, is a vital government agency dedicated to assisting job seekers, including students, indigents, and persons with disabilities (PWDs), in finding employment opportunities.
+            </p>
+            <p className="aboutServices">
+              PESO San Jose Batangas provides various services such as job fairs, skills training, and career counseling, aiming to enhance the employability of the local workforce and support economic development in the community.
+            </p>
+          </div>
+          <button className="exploreButton">Explore More</button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+
 const LandingPage = () => {
   return (
     <main className="landingPage">
@@ -180,6 +213,7 @@ const LandingPage = () => {
       <HeroSection />
       <Announcements />
       <OurServices/>
+      <AboutUs/>
     </main>
   );
 };
