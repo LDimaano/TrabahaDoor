@@ -324,3 +324,94 @@
   from {opacity: .4}
   to {opacity: 1}
 }
+.serviceCard {
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 0 9px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 18px 22px 52px;
+}
+
+.iconWrapper {
+  border-radius: 10px;
+  background-color: #26a4ff;
+  display: flex;
+  width: 52px;
+  justify-content: center;
+  padding: 9px 10px;
+}
+
+.icon {
+  aspect-ratio: 1;
+  object-fit: contain;
+  object-position: center;
+  width: 100%;
+}
+
+.services-title {
+  color: #25324b;
+  letter-spacing: 0.88px;
+  text-transform: uppercase;
+  margin-top: 13px;
+  font: 700 16px/1 'Hind Vadodara', -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+.services-description {
+  color: rgba(51, 27, 59, 0.66);
+  letter-spacing: 0.3px;
+  align-self: stretch;
+  margin-top: 6px;
+  font: 300 15px/22px 'Hind Vadodara', -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+@media (max-width: 991px) {
+  .serviceCard {
+    margin-top: 38px;
+    padding: 18px 20px 52px;
+  }
+}
+.ourServices {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heading {
+  color: #25324b;
+  letter-spacing: -0.48px;
+  text-align: center;
+  margin-left: 57px;
+  font: 700 48px/1 'Hind Vadodara', -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+.decorativeImage {
+  aspect-ratio: 15.87;
+  object-fit: contain;
+  object-position: center;
+  width: 159px;
+  max-width: 100%;
+  margin: 27px 0 0 88px;
+}
+
+.serviceGrid {
+  display: flex;
+  gap: 20px;
+  margin-top: 98px;
+  width: 100%;
+}
+
+@media (max-width: 991px) {
+  .heading {
+    font-size: 40px;
+  }
+
+  .serviceGrid {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    max-width: 100%;
+    margin-top: 40px;
+  }
+}
