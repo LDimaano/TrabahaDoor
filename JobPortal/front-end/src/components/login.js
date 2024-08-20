@@ -1,7 +1,15 @@
 import React from 'react';
 import '../css/login_signup.css';   
+import { useNavigate } from 'react-router-dom';
 
-function login() {
+const Login = () => {
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/home_jobseeker'); 
+    };
+
   
   return (
     <section className="loginContainer">
@@ -45,7 +53,7 @@ function login() {
               <span className="checkboxLabel">Remember me</span>
                 </label>
               </div>
-              <button className="submitButton" type="submit">Login</button>
+              <button className="submitButton" type="submit" onClick={handleClick}>Login</button>
             </div>
               <div className="alreadyAccount">
                 <span>Don’t have an account?</span>
@@ -71,6 +79,5 @@ function LoginContainer() {
         <p className="subHeaderText">See the opportunities awaiting for you</p>
       </div>
   );
-}
-
-export default login;
+};
+export default Login;
