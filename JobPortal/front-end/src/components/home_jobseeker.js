@@ -33,40 +33,60 @@ function Header() {
   );
 }
 
-// Combined SearchBar Component
-function SearchBar() {
-  return (
-    <form className="searchForm">
-      <div className="inputGroup">
-        <img 
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/e7f5ae91f74a0bbff814182823ec89164ff92f1d17811cfd85ad807eb891d404?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-          alt="" 
-          className="inputIcon" 
-        />
-        <input
-          type="text"
-          placeholder="Job title or keyword"
-          className="searchInput"
-          aria-label="Job title or keyword"
-        />
-      </div>
-      <div className="inputDivider" />
-      <div className="inputGroup">
-        <select className="industrySelect" aria-label="Select industry">
-          <option value="">Industry</option>
-          {/* Add industry options here */}
-        </select>
-        <img 
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/aeaf5f7a0113305c2b96348646333315a6f8a5e11604a0ae33cec883664af294?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-          alt="" 
-          className="selectArrow" 
-        />
-      </div>
-      <button type="submit" className="searchButton">Search</button>
-    </form>
-  );
-}
+function SearchForm() {
+    return (
+      <section className="searchForm">
+        <form className="searchBar">
 
+
+          <div className="s-inputContainer">
+            <img 
+              loading="lazy" 
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/e7f5ae91f74a0bbff814182823ec89164ff92f1d17811cfd85ad807eb891d404?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
+              alt="" 
+              className="s-inputImage" 
+            />
+            <div className="s-inputGroup">
+              <label htmlFor="jobTitleInput" className="visually-hidden">Job title or keyword</label>
+              <input
+                type="text"
+                id="jobTitleInput"
+                placeholder="Job title or keyword"
+                aria-label="Job title or keyword"
+                className="s-inputGroup"
+              />
+              <div className="s-divider"></div>
+            </div>
+          </div>
+          
+          <div className="s-inputContainer">
+            <div className="s-inputGroup">
+                <label htmlFor="industrySelect" className="visually-hidden">Industry</label>
+                <select
+                id="industrySelect"
+                aria-label="Industry"
+                className="s-select"
+                >
+                <option value="">Select Industry</option>
+                <option value="agriculture">Agriculture</option>
+                <option value="tourism">Tourism</option>
+                <option value="marketing">Marketing</option>
+                <option value="business">Business</option>
+                <option value="hr">Human Resource</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="engineering">Engineering</option>
+                <option value="technology">Technology</option>
+                </select>
+            </div>
+            </div>
+
+  
+          <button type="submit" className="searchButton">Search</button>
+        </form>
+        <p className="popularSearches">Popular: Teacher, Nurse, Carpenter, IT Support</p>
+      </section>
+    );
+  }
 // Combined FilterSection Component
 function FilterSection() {
   const employmentTypes = ['Full-time', 'Part-Time', 'Remote', 'Internship', 'Contract'];
@@ -248,7 +268,7 @@ function JobSearch() {
   return (
     <div className="jobSearchContainer">
       <header className="headerBackground">
-        <img 
+        <img  
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/96fc7570910ade49247aece2df9e06c01a34db5bd75a38c670596c57c995fb99?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
           alt="" 
           className="backgroundImage" 
@@ -270,7 +290,7 @@ function JobSearch() {
               </h1>
               <p className="heroSubtitle">Find your next possible workplace!</p>
             </section>
-            <SearchBar />
+            <SearchForm />
           </main>
         </div>
       </header>

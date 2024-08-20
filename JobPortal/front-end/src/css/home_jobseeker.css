@@ -212,80 +212,135 @@
       justify-content: center;
     }
   }
-  .searchForm {
+
+
+/* General styles for the search form section */
+.searchForm {
     display: flex;
-    width: 100%;
-    max-width: 1192px;
-    background: #fff;
-    box-shadow: 0 79px 128px 0 rgba(192, 192, 192, 0.09),
-                0 28.836px 46.722px 0 rgba(192, 192, 192, 0.06),
-                0 13.999px 22.683px 0 rgba(192, 192, 192, 0.05),
-                0 6.863px 11.119px 0 rgba(192, 192, 192, 0.04),
-                0 2.714px 4.397px 0 rgba(192, 192, 192, 0.03);
-    padding: 24px;
-    margin-top: 40px;
+    flex-direction: column;
+    font: 400 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
   }
   
-  .inputGroup {
+  /* Styles for the search bar */
+  .searchBar {
+    background: var(--Color-White, #fff);
+    box-shadow: 0px 79px 128px 0px rgba(192, 192, 192, 0.09),
+                0px 28.836px 46.722px 0px rgba(192, 192, 192, 0.06),
+                0px 13.999px 22.683px 0px rgba(192, 192, 192, 0.05),
+                0px 6.863px 11.119px 0px rgba(192, 192, 192, 0.04),
+                0px 2.714px 4.397px 0px rgba(192, 192, 192, 0.03);
     display: flex;
+    width: 1000px;
+    height:100px;
+    gap: 20px;
+    justify-content: start;
+    flex-wrap: wrap;
+    padding: 24px;
+  }
+  
+  @media (max-width: 991px) {
+    .searchBar {
+      max-width: 100%;
+      padding: 0 20px;
+    }
+  }
+  
+  /* Styles for the search button */
+  .searchButton {
+    align-self: start;
+    background: var(--Brands-Primary, #4640de);
+    color: var(--Neutrals-0, #fff);
+    font-weight: 700;
+    white-space: nowrap;
+    text-align: center;
+    width: 113px;
+    padding: 12px 24px;
+  }
+  
+  @media (max-width: 991px) {
+    .searchButton {
+      padding: 0 20px;
+    }
+  }
+  
+  /* Styles for the popular searches text */
+  .popularSearches {
+    color: var(--Neutrals-80, #515b6f);
+    opacity: 0.7;
+    margin-top: 16px;
+  }
+  
+  /* Container for input fields and images */
+.s-inputContainer {
+    display: flex;
+    min-width: 240px;
     align-items: center;
+    gap: 16px;
     flex: 1;
     padding: 0 16px;
   }
   
-  .inputIcon {
+  @media (max-width: 991px) {
+.s-inputContainer {
+      max-width: 100%;
+      padding-right: 20px;
+    }
+  }
+  
+  /* Styles for images */
+.s-inputImage {
+    aspect-ratio: 1;
+    object-fit: contain;
     width: 24px;
-    height: 24px;
-    margin-right: 16px;
-  }
-  
-  .searchInput,
-  .industrySelect {
-    border: none;
-    background: transparent;
-    font: 400 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
-    color: #7c8493;
-    width: 100%;
-  }
-  
-  .inputDivider {
-    width: 1px;
-    height: 56px;
-    background-color: rgba(32, 36, 48, 0.1);
-    margin: 0 8px;
-  }
-  
-  .selectArrow {
-    width: 16px;
-    height: 16px;
-    margin-left: 8px;
-  }
-  
-  .searchButton {
-    background: #4640de;
-    color: #fff;
-    font: 700 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
   }
   
   @media (max-width: 991px) {
-    .searchForm {
-      flex-wrap: wrap;
-      padding: 20px;
+    .s-inputImage {
+      width: 16px;
     }
+  }
   
-    .inputGroup,
-    .searchButton {
-      width: 100%;
-      margin-top: 10px;
-    }
+  /* Input group styles */
+  .s-inputGroup {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border-width: 0;
+  }
   
-    .inputDivider {
-      display: none;
+  /* Styles for the divider elements */
+  .s-divider {
+    background: var(--Lights-Border, #d6ddeb);
+    min-height: 1px;
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  /* Styles for label and image container */
+  .s-labelGroup {
+    display: flex;
+    align-items: center;
+    gap: 40px 100px;
+    justify-content: space-between;
+  }
+  
+  @media (max-width: 991px) {
+    .s-labelGroup {
+      max-width: 100%;
     }
+  }
+  
+  /* Styles for labels */
+  .s-label {
+    opacity: 0.9;
+  }
+  .s-select {
+    font-size: 16px;
+    padding: 8px;
+    border: 1px solid var(--Lights-Border, #d6ddeb);
+    border-radius: 4px;
+    background: #fff;
+    width: 100%;
   }
   .filterContainer {
     display: flex;
