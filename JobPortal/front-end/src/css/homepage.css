@@ -212,9 +212,8 @@
 .landingPage {
   display: flex;
   flex-direction: column;
-  max-width: 1298px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 20px;
 }
 
 @media (max-width: 991px) {
@@ -555,6 +554,289 @@
 @media (max-width: 991px) {
   .exploreButton {
     padding: 22px 20px;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.contactSection {
+  border-radius: 0 158px 0 0;
+  background-color: #f8f8fd;
+  display: flex;
+  gap: 40px 100px;
+  flex-wrap: wrap;
+  padding: 75px 66px 45px;
+  width:100%;
+}
+
+@media (max-width: 991px) {
+  .contactSection {
+    padding: 0 20px;
+  }
+}
+
+.contactInfo {
+  align-self: start;
+  display: flex;
+  margin-top: 12px;
+  flex-direction: column;
+  align-items: start;
+  font-family: Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
+  color: #25324b;
+  line-height: 1;
+}
+
+.contactSubtitle {
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+}
+
+.contactTitle {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -0.48px;
+  margin-top: 4px;
+}
+
+@media (max-width: 991px) {
+  .contactTitle {
+    font-size: 40px;
+  }
+}
+
+.contactDescription {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 25px;
+  letter-spacing: 0.32px;
+  align-self: stretch;
+  margin-top: 22px;
+}
+
+.mapContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 991px) {
+  .mapContainer {
+    max-width: 100%;
+  }
+}
+
+.mapLink {
+  color: #51a0dc;
+  align-self: end;
+  margin-right: 34px;
+  font: 400 14px/2 Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+@media (max-width: 991px) {
+  .mapLink {
+    margin-right: 10px;
+  }
+}
+
+.mapWrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 300px;
+  margin-top: 11px;
+  width: 100%;
+  align-items: start;
+  color: #414141;
+  padding: 26px 32px 190px;
+  font: 700 16px/22px Roboto, -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+@media (max-width: 991px) {
+  .mapWrapper {
+    max-width: 100%;
+    padding: 0 20px 100px;
+  }
+}
+
+.mapImage {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.locationLabel {
+  position: relative;
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  margin-bottom: -38px;
+  width: 197px;
+  max-width: 100%;
+  padding: 7px 10px 41px;
+}
+
+@media (max-width: 991px) {
+  .locationLabel {
+    margin-bottom: 10px;
+    padding-right: 20px;
+  }
+}
+
+.locationCity {
+  font-family: Hind Vadodara, sans-serif;
+}
+
+.locationState {
+  font-family: Hind Vadodara, sans-serif;
+  font-weight: 500;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.footer {
+  background: var(--Color-Black, #202430);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 54px 80px;
+ 
+}
+
+@media (max-width: 991px) {
+  .footer {
+    padding: 0 20px;
+  }
+}
+
+.footerContent {
+  display: flex;
+  width: 756px;
+  max-width: 100%;
+  align-items: flex-start;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.f-logoSection {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+}
+
+.f-logoWrapper {
+  align-self: flex-start;
+  display: flex;
+  gap: 12px;
+  color: var(--Color-White, #fff);
+  white-space: nowrap;
+  letter-spacing: -0.24px;
+  font: 700 24px Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+@media (max-width: 991px) {
+  .logoWrapper {
+    white-space: initial;
+  }
+}
+
+.logo {
+  aspect-ratio: 1.55;
+  object-fit: contain;
+  object-position: center;
+  width: 45px;
+  margin: auto 0;
+}
+
+.brandName {
+  font-feature-settings: "cv11" on;
+  flex-basis: auto;
+}
+
+.f-description {
+  color: var(--Neutrals-20, #d6ddeb);
+  margin: 32px 0 0 17px;
+  font: 400 16px/26px Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+@media (max-width: 991px) {
+  .description {
+    margin-left: 10px;
+  }
+}
+
+.footerColumn {
+  display: flex;
+  flex-direction: column;
+  font-family: Epilogue, sans-serif;
+}
+
+.columnTitle {
+  color: var(--Neutrals-0, #fff);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.6;
+  align-self: flex-start;
+}
+
+.columnList {
+  color: var(--Neutrals-20, #d6ddeb);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 26px;
+  margin-top: 22px;
+  list-style-type: none;
+  padding: 0;
+}
+
+.columnItem {
+  margin-bottom: 10px;
+}
+
+.divider {
+  object-fit: contain;
+  object-position: center;
+  width: 100%;
+  border-radius: 0;
+  align-self: flex-end;
+  margin-top: 175px;
+  max-width: 1192px;
+}
+
+@media (max-width: 991px) {
+  .divider {
+    max-width: 100%;
+    margin-top: 40px;
+  }
+}
+
+.copyright {
+  color: var(--Color-White, #fff);
+  margin: 42px 0 0 17px;
+  font: 500 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+@media (max-width: 991px) {
+  .copyright {
+    margin: 40px 0 0 10px;
   }
 }
 

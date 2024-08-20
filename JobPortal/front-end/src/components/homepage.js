@@ -205,6 +205,83 @@ const AboutUs = () => {
   );
 };
 
+const ContactSection = () => {
+  return (
+    <section className="contactSection">
+      <div className="contactInfo">
+        <h2 className="contactSubtitle">Wanna hear more?</h2>
+        <h1 className="contactTitle">CONTACT US</h1>
+        <p className="contactDescription">
+          For more inquiries, visit us in our office. We would love to hear from you!
+        </p>
+      </div>
+      <div className="mapContainer">
+        <a href="#" className="mapLink">View Larger Map</a>
+        <div className="mapWrapper">
+          <img 
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/aa50eba43461c1c3d54804e644900566e5261a9d90ac8429ea790ba0a11abb10?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
+            alt="Map showing the location of our office" 
+            className="mapImage" 
+          />
+          <div className="locationLabel">
+            <span className="locationCity">San Jose</span>
+            <br />
+            <span className="locationState">Batangas</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+const Footer = () => {
+  const aboutItems = ['Services', 'About Us', 'Contact'];
+  const resourceItems = ['Facebook'];
+
+  const FooterColumn = ({ title, items }) => {
+    return (
+      <div className="footerColumn">
+        <h2 className="columnTitle">{title}</h2>
+        <ul className="columnList">
+          {items.map((item, index) => (
+            <li key={index} className="columnItem">{item}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
+  return (
+    <footer className="footer">
+      <div className="footerContent">
+        <div className="f-logoSection">
+          <div className="f-logoWrapper">
+            <img 
+              loading="lazy" 
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/9a041a0749592ac4adcd0d49d215ec305d8ef2b8bfa04e2e12bc81be88b68fe4?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
+              className="logo" 
+              alt="TrabahaDoor logo" 
+            />
+            <div className="brandName">TrabahaDoor</div>
+          </div>
+          <p className="f-description">
+            Great platform for the job seeker that passionate about startups. Find your dream job easier.
+          </p>
+        </div>
+        <FooterColumn title="About" items={aboutItems} />
+        <FooterColumn title="Resources" items={resourceItems} />
+      </div>
+      <img 
+        loading="lazy" 
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/952d6d8de5a60a59be33590795d23544dcb9a79cdebfef402ce60593d73463c2?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
+        className="divider" 
+        alt="" 
+      />
+      <p className="copyright">
+        2021 @ Trabahadoor. All rights reserved.
+      </p>
+    </footer>
+  );
+};
 
 const LandingPage = () => {
   return (
@@ -214,6 +291,8 @@ const LandingPage = () => {
       <Announcements />
       <OurServices/>
       <AboutUs/>
+      <ContactSection/>
+      <Footer/>
     </main>
   );
 };
