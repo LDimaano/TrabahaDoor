@@ -1,6 +1,6 @@
 import React from 'react';
 import '../css/home_jobseeker.css'; // Assuming the CSS file is in the same directory
-
+import { useNavigate } from 'react-router-dom';
 // Combined Header Component
 function Header() {
   return (
@@ -192,6 +192,11 @@ function JobList() {
 }
 
 function JobListItem({ job }) {
+  const navigate = useNavigate();
+
+  const handleApplyClick = () => {
+    navigate('/Jobdescription');
+  };
   return (
     <li className="jobItem">
       <div className="jobInfo">
@@ -213,7 +218,9 @@ function JobListItem({ job }) {
         </div>
       </div>
       <div className="jobActions">
-        <button className="applyButton">Apply</button>
+      <button className="applyButton" onClick={handleApplyClick}>
+        Apply
+      </button>
         <div className="applicantInfo">
           <img 
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/72e7343ed99c28ba12924f01c759d5bbc8e236f5cff0aa10de8e23c4dbc49799?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 

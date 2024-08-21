@@ -108,7 +108,7 @@
 .heroSection {
   display: flex;
   gap: 20px;
-  margin: 28px auto; /* Center horizontally with auto margins */
+  margin: 28px auto; /*Center horizontally with auto margins*/
   width: 100%;
   max-width: 1298px; /* Centered within its container */
   justify-content: center; /* Center content horizontally */

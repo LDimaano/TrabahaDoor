@@ -1,625 +1,625 @@
 .jobSearchContainer {
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  
-  .headerBackground {
-    position: relative;
-    min-height: 514px;
-    width: 100%;
-  }
-  
-  .backgroundImage {
-    position: absolute;
-    inset: 0;
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
-  
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.headerBackground {
+  position: relative;
+  min-height: 514px;
+  width: 100%;
+}
+
+.backgroundImage {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.headerContent {
+  position: relative;
+  background: #f8f8fd;
+  width: 100%;
+  padding-bottom: 65px;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 65px;
+  width: 100%;
+  max-width: 1192px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heroSection {
+  display: flex;
+  width: 566px;
+  max-width: 100%;
+  flex-direction: column;
+  text-align: center;
+}
+
+.heroTitle {
+  font: 600 48px/1.1 Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
+  color: #25324b;
+}
+
+.highlightText {
+  color: #26a4ff;
+  position: relative;
+  display: inline-block;
+}
+
+.underlineImage {
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+}
+
+.heroSubtitle {
+  color: #515b6f;
+  margin-top: 24px;
+  font: 400 18px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+.jobListingSection {
+  display: flex;
+  padding: 72px 124px;
+  gap: 40px;
+}
+
+.filterSidebar {
+  width: 234px;
+}
+
+.jobListingMain {
+  flex-grow: 1;
+  max-width: 919px;
+}
+
+@media (max-width: 991px) {
+  .headerBackground,
   .headerContent {
-    position: relative;
-    background: #f8f8fd;
-    width: 100%;
-    padding-bottom: 65px;
-  }
-  
-  .mainContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 65px;
-    width: 100%;
-    max-width: 1192px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .heroSection {
-    display: flex;
-    width: 566px;
     max-width: 100%;
-    flex-direction: column;
-    text-align: center;
   }
-  
+
+  .mainContent {
+    margin-top: 40px;
+  }
+
   .heroTitle {
-    font: 600 48px/1.1 Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
-    color: #25324b;
+    font-size: 40px;
   }
-  
-  .highlightText {
-    color: #26a4ff;
-    position: relative;
-    display: inline-block;
-  }
-  
-  .underlineImage {
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 100%;
-  }
-  
-  .heroSubtitle {
-    color: #515b6f;
-    margin-top: 24px;
-    font: 400 18px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
-  }
-  
+
   .jobListingSection {
-    display: flex;
-    padding: 72px 124px;
-    gap: 40px;
+    flex-direction: column;
+    padding: 40px 20px;
   }
-  
-  .filterSidebar {
-    width: 234px;
-  }
-  
+
+  .filterSidebar,
   .jobListingMain {
-    flex-grow: 1;
-    max-width: 919px;
-  }
-  
-  @media (max-width: 991px) {
-    .headerBackground,
-    .headerContent {
-      max-width: 100%;
-    }
-  
-    .mainContent {
-      margin-top: 40px;
-    }
-  
-    .heroTitle {
-      font-size: 40px;
-    }
-  
-    .jobListingSection {
-      flex-direction: column;
-      padding: 40px 20px;
-    }
-  
-    .filterSidebar,
-    .jobListingMain {
-      width: 100%;
-      max-width: 100%;
-    }
-  }
-  .navbar {
-    background: #fff;
-    padding: 0 70px;
-  }
-  
-  .navbarContent {
-    display: flex;
-    max-width: 1192px;
-    margin: 0 auto;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .logo {
-    display: flex;
-    align-items: center;
-  }
-  
-  .logoImage {
-    width: 100px;
-    height: 50px;
-  }
-  
-  .logoText {
-    color: #25324b;
-    font: 700 24px Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
-    margin-left: 10px;
-  }
-  
-  .navMenu {
-    display: flex;
-    list-style-type: none;
-    gap: 16px;
-  }
-  
-  .navItem {
-    position: relative;
-  }
-  
-  .navLink {
-    color: #25324b;
-    text-decoration: none;
-    font: 500 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
-    padding: 28px 0;
-    display: block;
-  }
-  
-  .activeIndicator {
-    position: absolute;
-    bottom: 0;
-    left: 0;
     width: 100%;
-    height: 4px;
-    background-color: #4640de;
+    max-width: 100%;
   }
-  
+}
+.navbar {
+  background: #fff;
+  padding: 0 70px;
+}
+
+.navbarContent {
+  display: flex;
+  max-width: 1192px;
+  margin: 0 auto;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logoImage {
+  width: 100px;
+  height: 50px;
+}
+
+.logoText {
+  color: #25324b;
+  font: 700 24px Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
+  margin-left: 10px;
+}
+
+.navMenu {
+  display: flex;
+  list-style-type: none;
+  gap: 16px;
+}
+
+.navItem {
+  position: relative;
+}
+
+.navLink {
+  color: #25324b;
+  text-decoration: none;
+  font: 500 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
+  padding: 28px 0;
+  display: block;
+}
+
+.activeIndicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: #4640de;
+}
+
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.loginButton,
+.signupButton {
+  font: 700 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.loginButton {
+  color: #4640de;
+  background: transparent;
+}
+
+.signupButton {
+  color: #fff;
+  background: #4640de;
+}
+
+.buttonDivider {
+  width: 1px;
+  height: 48px;
+  background-color: #d6ddeb;
+}
+
+@media (max-width: 991px) {
+  .navbar {
+    padding: 0 20px;
+  }
+
+  .navbarContent {
+    flex-wrap: wrap;
+  }
+  .navMenu,
   .authButtons {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    margin-top: 20px;
+    width: 100%;
+    justify-content: center;
   }
-  
-  .loginButton,
-  .signupButton {
-    font: 700 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .loginButton {
-    color: #4640de;
-    background: transparent;
-  }
-  
-  .signupButton {
-    color: #fff;
-    background: #4640de;
-  }
-  
-  .buttonDivider {
-    width: 1px;
-    height: 48px;
-    background-color: #d6ddeb;
-  }
-  
-  @media (max-width: 991px) {
-    .navbar {
-      padding: 0 20px;
-    }
-  
-    .navbarContent {
-      flex-wrap: wrap;
-    }
-    .navMenu,
-    .authButtons {
-      margin-top: 20px;
-      width: 100%;
-      justify-content: center;
-    }
-  }
+}
 
 
 /* General styles for the search form section */
 .searchForm {
-    display: flex;
-    flex-direction: column;
-    font: 400 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
-  }
-  
-  /* Styles for the search bar */
+  display: flex;
+  flex-direction: column;
+  font: 400 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+/* Styles for the search bar */
+.searchBar {
+  background: var(--Color-White, #fff);
+  box-shadow: 0px 79px 128px 0px rgba(192, 192, 192, 0.09),
+              0px 28.836px 46.722px 0px rgba(192, 192, 192, 0.06),
+              0px 13.999px 22.683px 0px rgba(192, 192, 192, 0.05),
+              0px 6.863px 11.119px 0px rgba(192, 192, 192, 0.04),
+              0px 2.714px 4.397px 0px rgba(192, 192, 192, 0.03);
+  display: flex;
+  width: 1000px;
+  height:100px;
+  gap: 20px;
+  justify-content: start;
+  flex-wrap: wrap;
+  padding: 24px;
+}
+
+@media (max-width: 991px) {
   .searchBar {
-    background: var(--Color-White, #fff);
-    box-shadow: 0px 79px 128px 0px rgba(192, 192, 192, 0.09),
-                0px 28.836px 46.722px 0px rgba(192, 192, 192, 0.06),
-                0px 13.999px 22.683px 0px rgba(192, 192, 192, 0.05),
-                0px 6.863px 11.119px 0px rgba(192, 192, 192, 0.04),
-                0px 2.714px 4.397px 0px rgba(192, 192, 192, 0.03);
-    display: flex;
-    width: 1000px;
-    height:100px;
-    gap: 20px;
-    justify-content: start;
-    flex-wrap: wrap;
-    padding: 24px;
+    max-width: 100%;
+    padding: 0 20px;
   }
-  
-  @media (max-width: 991px) {
-    .searchBar {
-      max-width: 100%;
-      padding: 0 20px;
-    }
-  }
-  
-  /* Styles for the search button */
+}
+
+/* Styles for the search button */
+.searchButton {
+  align-self: start;
+  background: var(--Brands-Primary, #4640de);
+  color: var(--Neutrals-0, #fff);
+  font-weight: 700;
+  white-space: nowrap;
+  text-align: center;
+  width: 113px;
+  padding: 12px 24px;
+}
+
+@media (max-width: 991px) {
   .searchButton {
-    align-self: start;
-    background: var(--Brands-Primary, #4640de);
-    color: var(--Neutrals-0, #fff);
-    font-weight: 700;
-    white-space: nowrap;
-    text-align: center;
-    width: 113px;
-    padding: 12px 24px;
+    padding: 0 20px;
   }
-  
-  @media (max-width: 991px) {
-    .searchButton {
-      padding: 0 20px;
-    }
-  }
-  
-  /* Styles for the popular searches text */
-  .popularSearches {
-    color: var(--Neutrals-80, #515b6f);
-    opacity: 0.7;
-    margin-top: 16px;
-  }
-  
-  /* Container for input fields and images */
+}
+
+/* Styles for the popular searches text */
+.popularSearches {
+  color: var(--Neutrals-80, #515b6f);
+  opacity: 0.7;
+  margin-top: 16px;
+}
+
+/* Container for input fields and images */
 .s-inputContainer {
-    display: flex;
-    min-width: 240px;
-    align-items: center;
-    gap: 16px;
-    flex: 1;
-    padding: 0 16px;
-  }
-  
-  @media (max-width: 991px) {
+  display: flex;
+  min-width: 240px;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  padding: 0 16px;
+}
+
+@media (max-width: 991px) {
 .s-inputContainer {
-      max-width: 100%;
-      padding-right: 20px;
-    }
+    max-width: 100%;
+    padding-right: 20px;
   }
-  
-  /* Styles for images */
+}
+
+/* Styles for images */
 .s-inputImage {
-    aspect-ratio: 1;
-    object-fit: contain;
-    width: 24px;
+  aspect-ratio: 1;
+  object-fit: contain;
+  width: 24px;
+}
+
+@media (max-width: 991px) {
+  .s-inputImage {
+    width: 16px;
   }
-  
-  @media (max-width: 991px) {
-    .s-inputImage {
-      width: 16px;
-    }
-  }
-  
-  /* Input group styles */
-  .s-inputGroup {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    border-width: 0;
-  }
-  
-  /* Styles for the divider elements */
-  .s-divider {
-    background: var(--Lights-Border, #d6ddeb);
-    min-height: 1px;
-    margin-top: 10px;
-    width: 100%;
-  }
-  
-  /* Styles for label and image container */
+}
+
+/* Input group styles */
+.s-inputGroup {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-width: 0;
+}
+
+/* Styles for the divider elements */
+.s-divider {
+  background: var(--Lights-Border, #d6ddeb);
+  min-height: 1px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* Styles for label and image container */
+.s-labelGroup {
+  display: flex;
+  align-items: center;
+  gap: 40px 100px;
+  justify-content: space-between;
+}
+
+@media (max-width: 991px) {
   .s-labelGroup {
-    display: flex;
-    align-items: center;
-    gap: 40px 100px;
-    justify-content: space-between;
+    max-width: 100%;
   }
-  
-  @media (max-width: 991px) {
-    .s-labelGroup {
-      max-width: 100%;
-    }
-  }
-  
-  /* Styles for labels */
-  .s-label {
-    opacity: 0.9;
-  }
-  .s-select {
-    font-size: 16px;
-    padding: 8px;
-    border: 1px solid var(--Lights-Border, #d6ddeb);
-    border-radius: 4px;
-    background: #fff;
-    width: 100%;
-  }
+}
+
+/* Styles for labels */
+.s-label {
+  opacity: 0.9;
+}
+.s-select {
+  font-size: 16px;
+  padding: 8px;
+  border: 1px solid var(--Lights-Border, #d6ddeb);
+  border-radius: 4px;
+  background: #fff;
+  width: 100%;
+}
+.filterContainer {
+  display: flex;
+  flex-direction: column;
+  color: #515b6f;
+  font: 400 16px Epilogue, sans-serif;
+}
+
+.filterGroup {
+  margin-bottom: 40px;
+}
+
+.filterTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #25324b;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.filterToggle {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.filterOption {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.filterCheckbox {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #d6ddeb;
+  border-radius: 4px;
+  margin-right: 16px;
+  cursor: pointer;
+}
+
+.filterCheckbox:checked {
+  background-color: #4640de;
+  border-color: #4640de;
+}
+
+.filterLabel {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+@media (max-width: 991px) {
   .filterContainer {
-    display: flex;
+    margin-bottom: 30px;
+  }
+}
+.jobListContainer {
+  width: 100%;
+}
+
+.jobListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.jobListTitle {
+  color: #25324b;
+  font: 600 32px/1.2 Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+.jobListSubtitle {
+  color: #7c8493;
+  font: 400 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
+  margin-top: 4px;
+}
+
+.jobListControls {
+  display: flex;
+  align-items: center;
+}
+
+.sortControl {
+  display: flex;
+  align-items: center;
+  margin-right: 22px;
+}
+
+.sortLabel {
+  color: #7c8493;
+  margin-right: 12px;
+}
+
+.sortSelector {
+  display: flex;
+  align-items: center;
+  color: #25324b;
+  font-weight: 500;
+}
+
+.sortArrow {
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+}
+
+.viewControls {
+  display: flex;
+  gap: 16px;
+}
+
+.viewIcon {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.jobList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.jobItem {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #d6ddeb;
+  background: #fff;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.jobInfo {
+  display: flex;
+  align-items: flex-start;
+}
+
+.companyLogo {
+  width: 64px;
+  height: 64px;
+  margin-right: 24px;
+}
+
+.jobDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.jobTitle {
+  color: #25324b;
+  font: 600 20px/1.2 Epilogue, sans-serif;
+  margin-bottom: 8px;
+}
+
+.companyInfo,
+.jobLocation {
+  color: #7c8493;
+  font: 400 16px/1.6 Epilogue, sans-serif;
+  margin-bottom: 4px;
+}
+
+.jobTags {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.jobType,
+.jobCategory {
+  padding: 6px 10px;
+  border-radius: 80px;
+  font-size: 14px;
+}
+
+.jobType {
+  background-color: rgba(86, 205, 173, 0.1);
+  color: #56cdad;
+}
+
+.jobCategory {
+  border: 1px solid #4640de;
+  color: #4640de;
+}
+
+.jobActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.applyButton {
+  background: #4640de;
+  color: #fff;
+  font: 700 16px/1.6 Epilogue, sans-serif;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.applicantInfo {
+  text-align: right;
+}
+
+.applicantBar {
+  width: 100%;
+  height: 6px;
+  margin-bottom: 8px;
+}
+
+.applicantCount {
+  font: 400 14px/1.6 Epilogue, sans-serif;
+  color: #7c8493;
+}
+
+@media (max-width: 991px) {
+  .jobListHeader,
+  .jobItem {
     flex-direction: column;
-    color: #515b6f;
-    font: 400 16px Epilogue, sans-serif;
   }
-  
-  .filterGroup {
-    margin-bottom: 40px;
+
+  .jobListControls,
+  .jobActions {
+    margin-top: 20px;
   }
-  
-  .filterTitle {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #25324b;
-    font-weight: 700;
+
+  .jobInfo {
     margin-bottom: 20px;
   }
-  
-  .filterToggle {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-  }
-  
-  .filterOption {
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
-    cursor: pointer;
-  }
-  
-  .filterCheckbox {
-    appearance: none;
-    width: 24px;
-    height: 24px;
-    border: 2px solid #d6ddeb;
-    border-radius: 4px;
-    margin-right: 16px;
-    cursor: pointer;
-  }
-  
-  .filterCheckbox:checked {
-    background-color: #4640de;
-    border-color: #4640de;
-  }
-  
-  .filterLabel {
-    font-size: 16px;
-    line-height: 1.6;
-  }
-  
-  @media (max-width: 991px) {
-    .filterContainer {
-      margin-bottom: 30px;
-    }
-  }
-  .jobListContainer {
-    width: 100%;
-  }
-  
-  .jobListHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 32px;
-  }
-  
-  .jobListTitle {
-    color: #25324b;
-    font: 600 32px/1.2 Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
-  }
-  
-  .jobListSubtitle {
-    color: #7c8493;
-    font: 400 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
-    margin-top: 4px;
-  }
-  
-  .jobListControls {
-    display: flex;
-    align-items: center;
-  }
-  
-  .sortControl {
-    display: flex;
-    align-items: center;
-    margin-right: 22px;
-  }
-  
-  .sortLabel {
-    color: #7c8493;
-    margin-right: 12px;
-  }
-  
-  .sortSelector {
-    display: flex;
-    align-items: center;
-    color: #25324b;
-    font-weight: 500;
-  }
-  
-  .sortArrow {
-    width: 16px;
-    height: 16px;
-    margin-left: 8px;
-  }
-  
-  .viewControls {
-    display: flex;
-    gap: 16px;
-  }
-  
-  .viewIcon {
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-  }
-  
-  .jobList {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .jobItem {
-    display: flex;
-    justify-content: space-between;
-    border: 1px solid #d6ddeb;
-    background: #fff;
-    padding: 24px;
-    margin-bottom: 16px;
-  }
-  
-  .jobInfo {
-    display: flex;
-    align-items: flex-start;
-  }
-  
-  .companyLogo {
-    width: 64px;
-    height: 64px;
-    margin-right: 24px;
-  }
-  
-  .jobDetails {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .jobTitle {
-    color: #25324b;
-    font: 600 20px/1.2 Epilogue, sans-serif;
-    margin-bottom: 8px;
-  }
-  
-  .companyInfo,
-  .jobLocation {
-    color: #7c8493;
-    font: 400 16px/1.6 Epilogue, sans-serif;
-    margin-bottom: 4px;
-  }
-  
-  .jobTags {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-  }
-  
-  .jobType,
-  .jobCategory {
-    padding: 6px 10px;
-    border-radius: 80px;
-    font-size: 14px;
-  }
-  
-  .jobType {
-    background-color: rgba(86, 205, 173, 0.1);
-    color: #56cdad;
-  }
-  
-  .jobCategory {
-    border: 1px solid #4640de;
-    color: #4640de;
-  }
-  
-  .jobActions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-  
-  .applyButton {
-    background: #4640de;
-    color: #fff;
-    font: 700 16px/1.6 Epilogue, sans-serif;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 15px;
-  }
-  
-  .applicantInfo {
-    text-align: right;
-  }
-  
-  .applicantBar {
-    width: 100%;
-    height: 6px;
-    margin-bottom: 8px;
-  }
-  
-  .applicantCount {
-    font: 400 14px/1.6 Epilogue, sans-serif;
-    color: #7c8493;
-  }
-  
-  @media (max-width: 991px) {
-    .jobListHeader,
-    .jobItem {
-      flex-direction: column;
-    }
-  
-    .jobListControls,
-    .jobActions {
-      margin-top: 20px;
-    }
-  
-    .jobInfo {
-      margin-bottom: 20px;
-    }
-  }
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 32px;
+  font: 600 16px/1.6 Inter, sans-serif;
+}
+
+.paginationList {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0 8px;
+}
+
+.paginationButton {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: #515b6f;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.paginationButton.active {
+  background: #4640de;
+  color: #fff;
+}
+
+.paginationArrow {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 991px) {
   .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 32px;
-    font: 600 16px/1.6 Inter, sans-serif;
+    flex-wrap: wrap;
   }
-  
+
   .paginationList {
-    display: flex;
-    list-style-type: none;
-    padding: 0;
-    margin: 0 8px;
+    margin: 10px 0;
   }
-  
-  .paginationButton {
-    width: 46px;
-    height: 46px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    background: transparent;
-    color: #515b6f;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 8px;
-  }
-  
-  .paginationButton.active {
-    background: #4640de;
-    color: #fff;
-  }
-  
-  .paginationArrow {
-    width: 24px;
-    height: 24px;
-  }
-  
-  @media (max-width: 991px) {
-    .pagination {
-      flex-wrap: wrap;
-    }
-  
-    .paginationList {
-      margin: 10px 0;
-    }
-  }
+}
