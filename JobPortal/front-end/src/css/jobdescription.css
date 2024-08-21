@@ -326,10 +326,6 @@
     flex-wrap: wrap;
   }
 
-  .breadcrumb {
-    padding: 20px 20px 0;
-  }
-
   .jobDetails {
     flex-direction: column;
     align-items: flex-start;
@@ -350,3 +346,5 @@
     flex-direction: column;
   }
 }
+
+/*Modal*/

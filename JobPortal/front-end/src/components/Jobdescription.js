@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../css/jobdescription.css';
+import SubmitApplication from './jobseeker_submit';
 
 const JobDescription = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
   return (
     <><nav className="navbar">
       <div className="navbarContent">
@@ -46,7 +48,7 @@ const JobDescription = () => {
               <button className="saveButton" aria-label="Save Job">
                 <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/50b2ad72e3d1b912bbd6767bf31d8301f31d87db27713920a2691bf98853d6b4?placeholderIfAbsent=true&apiKey=1081a2635faf4c6ab261e216f55348ae" alt="" className="saveIcon" />
               </button>
-              <button className="applyButton">Apply</button>
+              <SubmitApplication isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
             </div>
           </section>
           <div className="jobContent">
@@ -69,7 +71,7 @@ const JobDescription = () => {
                       "Communicate regularly with parents to update them on their child's progress"
                     ].map((item, index) => (
                       <li key={index} className="requirementItem">
-                        <img src={`/bullet.png`} alt="bullet" className="bulletIcon" />
+                        <img src={`${process.env.PUBLIC_URL}/assets/bullet.png`} alt="bullet" className="bulletIcon" />
                         {item}
                       </li>
                     ))}
@@ -84,7 +86,7 @@ const JobDescription = () => {
                       "Previous teaching experience preferred"
                     ].map((item, index) => (
                       <li key={index} className="requirementItem">
-                        <img src={`http://b.io/ext_${index + 9}-`} alt="" className="bulletIcon" />
+                        <img src={`${process.env.PUBLIC_URL}/assets/bullet.png`} alt="bullet" className="bulletIcon" />
                         {item}
                       </li>
                     ))}
