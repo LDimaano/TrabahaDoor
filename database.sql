@@ -9,11 +9,16 @@ CREATE TABLE users (
   usertype usertype_enum NOT NULL
 );
 
-
 CREATE TABLE job_seekers (
   id SERIAL PRIMARY KEY,
-  first_name VARCHAR(255) NOT NULL,
-  last_name VARCHAR(255) NOT NULL
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  location VARCHAR(100),
+  job_title VARCHAR(100),
+  work_type VARCHAR(50),
+  salary VARCHAR(50),
+  industry VARCHAR(100),
+  company VARCHAR(100)
 );
 
 

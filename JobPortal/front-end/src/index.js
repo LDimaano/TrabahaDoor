@@ -5,6 +5,7 @@ import './css/index.css';
 import Login from './components/login';
 import Signup from './components/signup';
 import Homepage from './components/homepage';
+import JobSeekerRegistration from './components/j_registration';
 import SignupJobseeker from './components/signup_jobseeker'; 
 import SignupJobseeker2 from './components/signup_jobseeker2'; 
 import SignupJobseeker3 from './components/signup_jobseeker3'; 
@@ -18,6 +19,7 @@ import HomeJobseeker from './components/home_jobseeker';
 import Jobdescription from './components/Jobdescription';
 
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
@@ -28,6 +30,7 @@ root.render(
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/homepage" element={<Homepage />} />
+        <Route path="/j_registration" element={<JobSeekerRegistration />} />
         <Route path="/signup_jobseeker" element={<SignupJobseeker />} /> 
         <Route path="/signup_jobseeker2" element={<SignupJobseeker2 />} />
         <Route path="/signup_jobseeker3" element={<SignupJobseeker3 />} />

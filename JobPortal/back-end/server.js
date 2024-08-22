@@ -36,18 +36,18 @@ app.post('/submit-form', async (req, res) => {
   }
 });
 
-app.post('/register-jobseeker', async (req, res) => {
-  const { firstName, lastName } = req.body;
-
+app.post('register-jobseeker', async (req, res) => {
+  const { firstName, lastName, location, jobTitle, workType, salary, industry, company } = req.body;
+  
   try {
-    const result = await pool.query(
-      'INSERT INTO job_seekers (first_name, last_name) VALUES ($1, $2) RETURNING id',
-      [firstName, lastName]
+    await pool.query(
+      'INSERT INTO job_seekers (first_name, last_name, location, job_title, work_type, salary, industry, company) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+      [firstName, lastName, location, jobTitle, workType, salary, industry, company]
     );
-    res.status(200).json({ success: true, id: result.rows[0].id });
+    res.status(201).send('User registered');
   } catch (error) {
-    console.error('Error inserting into database:', error);
-    res.status(500).json({ success: false, error: 'Database error' });
+    console.error('Error inserting data:', error);
+    res.status(500).send('Server error');
   }
 });
 
