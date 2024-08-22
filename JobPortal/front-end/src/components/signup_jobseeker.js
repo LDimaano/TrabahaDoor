@@ -1,15 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../css/signup_jobseeker.css';   
 import { useNavigate } from 'react-router-dom';
 
 const JobSeekerRegistration = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const navigate = useNavigate();
 
-  const handleClick = () => {
-    navigate('/signup_jobseeker2'); 
-    };
-  
-    return (
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch('http://localhost:5000/register-jobseeker', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ firstName, lastName }),
+      });
+
+      if (response.ok) {
+        navigate('/signup_jobseeker2');
+      } else {
+        console.error('Error registering job seeker');
+      }
+    } catch (error) {
+      console.error('Network or server error:', error);
+    }
+  };
+
+  return (
     <main className="container">
       <header className="header">
         <img 
@@ -29,7 +49,7 @@ const JobSeekerRegistration = () => {
         Search for people, and job opportunities in your area
       </p>
       
-      <form className="form">
+      <form className="form" onSubmit={handleSubmit}>
         <div className="inputGroup">
           <label htmlFor="firstName" className="label">First name*</label>
           <input 
@@ -37,6 +57,8 @@ const JobSeekerRegistration = () => {
             id="firstName" 
             className="input" 
             placeholder="Juan" 
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             required 
           />
         </div>
@@ -48,12 +70,14 @@ const JobSeekerRegistration = () => {
             id="lastName" 
             className="input" 
             placeholder="Dela Cruz" 
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             required 
           />
         </div>
         
-        <button type="button" className="submitButton" onClick={handleClick}>
-        Next
+        <button type="submit" className="submitButton">
+          Next
         </button>
       </form>
     </main>

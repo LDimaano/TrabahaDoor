@@ -1,4 +1,4 @@
-CREATE DATABASE TrabahaDoor;
+CREATE DATABASE trabahadoor;
 
 -- CREATE TABLE users (
 --     UserID SERIAL PRIMARY KEY,
@@ -10,23 +10,17 @@ CREATE DATABASE TrabahaDoor;
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  userType VARCHAR(255) NOT NULL,
-  password VARCHAR(255) NOT NULL
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  usertype VARCHAR(50) NOT NULL -- Ensure this column is defined and set as NOT NULL
 );
 
-
-CREATE TABLE JobSeeker (
-    SeekerID SERIAL PRIMARY KEY,
-    ResumeID INT,
-    FullName VARCHAR(255) NOT NULL,
-    PhoneNumber VARCHAR(20),
-    Email VARCHAR(255) NOT NULL,
-    DOB DATE,
-    Gender VARCHAR(10),
-    Address TEXT,
-    UserID INT REFERENCES User(UserID)
+CREATE TABLE job_seekers (
+  id SERIAL PRIMARY KEY,
+  first_name VARCHAR(255) NOT NULL,
+  last_name VARCHAR(255) NOT NULL
 );
+
 
 CREATE TABLE Employer (
     EmployerID SERIAL PRIMARY KEY,
