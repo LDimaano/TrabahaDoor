@@ -1,19 +1,14 @@
 CREATE DATABASE trabahadoor;
 
--- CREATE TABLE users (
---     UserID SERIAL PRIMARY KEY,
---     Username VARCHAR(255) NOT NULL,
---     Password VARCHAR(255) NOT NULL,
---     Email VARCHAR(255) NOT NULL,
---     UserType VARCHAR(50) NOT NULL
--- );
+CREATE TYPE usertype_enum AS ENUM ('jobseeker', 'employer', 'admin');
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  email VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
-  usertype VARCHAR(50) NOT NULL -- Ensure this column is defined and set as NOT NULL
+  usertype usertype_enum NOT NULL
 );
+
 
 CREATE TABLE job_seekers (
   id SERIAL PRIMARY KEY,
