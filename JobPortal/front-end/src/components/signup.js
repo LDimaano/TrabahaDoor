@@ -3,19 +3,41 @@ import '../css/login_signup.css';
 import { useNavigate } from 'react-router-dom';
 import Modal from './modal'; 
 
-
-
 function Signup() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [userType, setUserType] = useState('jobseeker');
   const [isTermsModalOpen, setTermsModalOpen] = useState(false);
   const [isPrivacyModalOpen, setPrivacyModalOpen] = useState(false);
-  const [userType, setUserType] = useState('jobseeker');
+
   const navigate = useNavigate();
 
-  const handleClick = () => {
-    if (userType === 'jobseeker') {
-      navigate('/signup_jobseeker');
-    } else {
-      navigate('/signup_employer');
+  const handleClick = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch('http://localhost:5000/submit-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, userType }),
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        console.log('Form submitted successfully:', result);
+        if (userType === 'jobseeker') {
+          navigate('/signup_jobseeker');
+        } else {
+          navigate('/signup_employer');
+        }
+      } else {
+        console.error('Error submitting form:', result.error);
+      }
+    } catch (error) {
+      console.error('Network or server error:', error);
     }
   };
 
@@ -35,8 +57,8 @@ function Signup() {
   return (
     <section className="loginContainer">
       <div className="flexContainer">
-        <LoginContainer/>
-        <form className="formContainer">
+        <LoginContainer />
+        <form className="formContainer" onSubmit={handleClick}>
           <div className="loginForm">
             <h2 className="welcomeText">Sign up Now</h2>
             <div className="dividerSection">
@@ -51,7 +73,9 @@ function Signup() {
                   type="email" 
                   className="textFieldInput" 
                   placeholder="Enter your Email Address" 
-                  id="emailinput" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  id="emailInput" 
                   aria-label="Enter your Email Address"
                 />
               </label>
@@ -61,6 +85,8 @@ function Signup() {
                   type="password" 
                   className="textFieldInput" 
                   placeholder="Enter password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   id="passwordInput" 
                   aria-label="Enter your password"
                 />
@@ -87,7 +113,7 @@ function Signup() {
                   <span>Employer</span>
                 </label>
               </div>
-              <button className="submitButton" type="button" onClick={handleClick}>Continue</button>
+              <button className="submitButton" type="submit">Continue</button>
             </div>
             <div className="alreadyAccount">
               <span>Already have an account?</span>
@@ -145,7 +171,6 @@ function Signup() {
           </div>
         }
       />
-
       <Modal 
         isOpen={isPrivacyModalOpen} 
         onClose={closePrivacyModal} 
@@ -187,16 +212,16 @@ function Signup() {
 
 function LoginContainer() {
   return (
-      <div className="infoContainer">
-        <img 
-          src={`${process.env.PUBLIC_URL}/assets/jobfair.jpg`} 
-          alt="Illustration of opportunities" 
-          className="imageResponsive" 
-          loading="lazy" 
-        />
-        <h1 className="headerText">Welcome to Trabahadoor!</h1>
-        <p className="subHeaderText">See the opportunities awaiting for you</p>
-      </div>
+    <div className="infoContainer">
+      <img 
+        src={`${process.env.PUBLIC_URL}/assets/jobfair.jpg`} 
+        alt="Illustration of opportunities" 
+        className="imageResponsive" 
+        loading="lazy" 
+      />
+      <h1 className="headerText">Welcome to Trabahadoor!</h1>
+      <p className="subHeaderText">See the opportunities awaiting for you</p>
+    </div>
   );
 }
 

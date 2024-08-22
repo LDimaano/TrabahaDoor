@@ -1,12 +1,20 @@
 CREATE DATABASE TrabahaDoor;
 
+-- CREATE TABLE users (
+--     UserID SERIAL PRIMARY KEY,
+--     Username VARCHAR(255) NOT NULL,
+--     Password VARCHAR(255) NOT NULL,
+--     Email VARCHAR(255) NOT NULL,
+--     UserType VARCHAR(50) NOT NULL
+-- );
+
 CREATE TABLE users (
-    UserID SERIAL PRIMARY KEY,
-    Username VARCHAR(255) NOT NULL,
-    Password VARCHAR(255) NOT NULL,
-    Email VARCHAR(255) NOT NULL,
-    UserType VARCHAR(50) NOT NULL
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  userType VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL
 );
+
 
 CREATE TABLE JobSeeker (
     SeekerID SERIAL PRIMARY KEY,

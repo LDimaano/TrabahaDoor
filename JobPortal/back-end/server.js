@@ -15,6 +15,17 @@ const employerRoutes = require('./routes/employers');
 const jobRoutes = require('./routes/jobs');
 const applicationRoutes = require('./routes/applications');
 
+app.post('/submit-form', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const result = await pool.query('INSERT INTO users(email, password, userType) VALUES($1, $2) RETURNING *', [email, password, userType]);
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error inserting data:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/jobseekers', jobSeekerRoutes);
