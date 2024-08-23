@@ -21,6 +21,16 @@ CREATE TABLE job_seekers (
   company VARCHAR(100)
 );
 
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    school VARCHAR(255),
+    year_level VARCHAR(255),
+    specialization VARCHAR(255)
+);
+
 
 CREATE TABLE Employer (
     EmployerID SERIAL PRIMARY KEY,

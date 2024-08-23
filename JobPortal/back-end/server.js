@@ -35,8 +35,7 @@ app.post('/submit-form', async (req, res) => {
     res.status(500).json({ error: 'Error inserting data' });
   }
 });
-
-app.post('register-jobseeker', async (req, res) => {
+app.post('/register-jobseeker', async (req, res) => {
   const { firstName, lastName, location, jobTitle, workType, salary, industry, company } = req.body;
   
   try {
@@ -44,13 +43,26 @@ app.post('register-jobseeker', async (req, res) => {
       'INSERT INTO job_seekers (first_name, last_name, location, job_title, work_type, salary, industry, company) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
       [firstName, lastName, location, jobTitle, workType, salary, industry, company]
     );
-    res.status(201).send('User registered');
+    res.status(201).json({ message: 'Jobseeker registered successfully' });
   } catch (error) {
     console.error('Error inserting data:', error);
-    res.status(500).send('Server error');
+    res.status(500).json({ error: 'Server error' });
   }
 });
+app.post('/register-student', async (req, res) => {
+  const { firstName, lastName, location, school, yearLevel, specialization } = req.body;
 
+  try {
+    await pool.query(
+      'INSERT INTO students (first_name, last_name, location, school, year_level, specialization) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [firstName, lastName, location, school, yearLevel, specialization]
+    );
+    res.status(201).json({ message: 'Jobseeker registered successfully' });
+  } catch (error) {
+    console.error('Error inserting data:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/jobseekers', jobSeekerRoutes);

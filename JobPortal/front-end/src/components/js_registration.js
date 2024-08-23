@@ -35,10 +35,10 @@ function StudentRegistration() {
     const [specialization, setSpecialization] = useState('');
 
     const navigate = useNavigate();
-
+  
     const handleSubmit = async (event) => {
       event.preventDefault();
-
+    
       const formData = {
         firstName,
         lastName,
@@ -47,7 +47,7 @@ function StudentRegistration() {
         yearLevel,
         specialization,
       };
-
+    
       try {
         const response = await fetch('http://localhost:5000/register-student', {
           method: 'POST',
@@ -56,12 +56,12 @@ function StudentRegistration() {
           },
           body: JSON.stringify(formData),
         });
-
+    
         const result = await response.json();
         
         if (response.ok) {
           console.log('Form submitted successfully:', result);
-          navigate('/js_registration'); // Or wherever you want to navigate
+          navigate('/j_registration'); // Or wherever you want to navigate
         } else {
           console.error('Error submitting form:', result.error);
         }
@@ -69,7 +69,6 @@ function StudentRegistration() {
         console.error('Network or server error:', error);
       }
     };
-
     const handleNotStudentClick = () => {
       navigate('/j_registration');
     };
