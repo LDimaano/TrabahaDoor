@@ -41,7 +41,6 @@ function JobSeekerRegistration() {
     const handleSubmit = async (event) => {
       event.preventDefault();
   
-      // Ensure all form fields are included in the request
       const formData = {
         firstName,
         lastName,
@@ -73,6 +72,10 @@ function JobSeekerRegistration() {
       } catch (error) {
         console.error('Network or server error:', error);
       }
+    };
+
+    const handleStudentClick = () => {
+      navigate('/js_registration');
     };
 
   return (
@@ -183,7 +186,7 @@ function JobSeekerRegistration() {
             />
           </div>
         </FormRow>
-        <button type="button" className="secondaryButton">I am a student</button>
+        <button type="button" className="secondaryButton" onClick={handleStudentClick}>I am a student</button>
         <button type="submit" className="submitButton">Next</button>
       </form>
     </main>

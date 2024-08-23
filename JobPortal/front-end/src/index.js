@@ -6,6 +6,7 @@ import Login from './components/login';
 import Signup from './components/signup';
 import Homepage from './components/homepage';
 import JobSeekerRegistration from './components/j_registration';
+import StudentRegistration from './components/js_registration';
 import SignupJobseeker from './components/signup_jobseeker'; 
 import SignupJobseeker2 from './components/signup_jobseeker2'; 
 import SignupJobseeker3 from './components/signup_jobseeker3'; 
@@ -31,6 +32,7 @@ root.render(
         <Route path="/signup" element={<Signup />} />
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/j_registration" element={<JobSeekerRegistration />} />
+        <Route path="/js_registration" element={<StudentRegistration />} />
         <Route path="/signup_jobseeker" element={<SignupJobseeker />} /> 
         <Route path="/signup_jobseeker2" element={<SignupJobseeker2 />} />
         <Route path="/signup_jobseeker3" element={<SignupJobseeker3 />} />
