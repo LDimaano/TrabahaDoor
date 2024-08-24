@@ -39,6 +39,7 @@ CREATE TABLE Employer (
     Industry VARCHAR(255) NOT NULL,
     DateFounded DATE NOT NULL,
     Description TEXT NOT NULL,
+    jobtitle VARCHAR(255) NOT NULL;
 );
 
 CREATE TABLE WorkExp (

@@ -63,6 +63,36 @@ app.post('/register-student', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+app.post('/register-student', async (req, res) => {
+  const { firstName, lastName, location, school, yearLevel, specialization } = req.body;
+
+  try {
+    await pool.query(
+      'INSERT INTO students (first_name, last_name, location, school, year_level, specialization) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [firstName, lastName, location, school, yearLevel, specialization]
+    );
+    res.status(201).json({ message: 'Jobseeker registered successfully' });
+  } catch (error) {
+    console.error('Error inserting data:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+//employer
+app.post('/employer_registration', async (req, res) => {
+  const { companyName, industry, location, dateFounded, description, jobTitle } = req.body;
+  try {
+    await pool.query(
+      'INSERT INTO employer (companyname, location, industry, datefounded, description, jobtitle) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [companyName, industry, location, dateFounded, description, jobTitle]
+    );
+    res.status(201).json({ message: 'employer registered successfully' });
+  } catch (error) {
+    console.error('Error inserting data:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/jobseekers', jobSeekerRoutes);
