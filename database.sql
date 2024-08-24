@@ -33,13 +33,12 @@ CREATE TABLE students (
 
 
 CREATE TABLE Employer (
-    EmployerID SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     CompanyName VARCHAR(255) NOT NULL,
-    Location VARCHAR(255),
-    Industry VARCHAR(255),
-    DateFounded DATE,
-    Description TEXT,
-    UserID INT REFERENCES User(UserID)
+    Location VARCHAR(255) NOT NULL,
+    Industry VARCHAR(255) NOT NULL,
+    DateFounded DATE NOT NULL,
+    Description TEXT NOT NULL,
 );
 
 CREATE TABLE WorkExp (

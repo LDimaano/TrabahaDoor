@@ -31,7 +31,7 @@ function Signup() {
       
       if (response.ok) {
         console.log('Form submitted successfully:', result);
-        navigate(usertype === 'jobseeker' ? '/j_registration' : '/signup_employer');
+        navigate(usertype === 'jobseeker' ? '/j_registration' : '/employer_registration');
       } else {
         console.error('Error submitting form:', result.error);
       }
