@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/homepage.css'; 
+
+
 const Header = () => {
   const navigate = useNavigate();
 
@@ -17,12 +19,12 @@ const Header = () => {
   return (
     <header className="header">
       <div className="logoContainer">
-        <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}  alt="TrabahaDoor logo" className="logoImage" />
+        <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" className="logoImage" />
         <span className="logoText">TrabahaDoor</span>
       </div>
       <nav className="navigation">
         {navItems.map((item, index) => (
-          <a key={index} href="" className="navItem"> 
+          <a key={index} href={`#${item.toLowerCase().replace(' ', '-')}`} className="navItem"> 
             {item}
           </a>
         ))}
@@ -35,9 +37,10 @@ const Header = () => {
   );
 };
 
+
 const HeroSection = () => {
   return (
-    <section className="heroSection">
+    <section>
       <div className="contentColumn">
         <h1 className="heroTitle">
           OPENING <br />

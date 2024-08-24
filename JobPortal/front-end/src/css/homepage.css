@@ -1,24 +1,23 @@
 .header {
+  padding: 10px; /* Adjust these values as needed */
   display: flex;
-  width: 100%;
-  gap: 20px;
-  flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center; /* Align items vertically center */
-  padding: 0 20px; /* Optional: Add some horizontal padding if needed */
+  align-items: center;
 }
 
-@media (max-width: 991px) {
-  .header {
-    padding: 0 10px; /* Adjust padding for smaller screens if needed */
-    flex-direction: column; /* Stack items vertically on smaller screens */
-    align-items: flex-start; /* Align items to the start */
-  }
+.header a {
+  padding: 20px;
+  text-decoration: none;
+  color: #333; /* Text color */
+}
+
+.header a:hover {
+  background-color: #e0e0e0; /* Background on hover */
+  border-radius: 5px; /* Optional: to give some rounded edges on hover */
 }
 
 .logoContainer {
   display: flex;
-  gap: 6px;
   color: #25324b;
   white-space: nowrap;
   letter-spacing: -0.24px;
@@ -27,7 +26,7 @@
 }
 
 .logoImage {
-  aspect-ratio: 1.55;
+  aspect-ratio: 1.;
   object-fit: contain;
   object-position: center;
   width: 45px;
@@ -45,7 +44,7 @@
 
 .navigation {
   display: flex;
-  gap: 40px 100px;
+  gap: 40px 60px;
   font-size: 16px;
   flex-wrap: wrap;
 }
@@ -72,7 +71,7 @@
 
 .authContainer {
   display: flex;
-  gap: 9px;
+  gap: 20px;
   font-family: Epilogue, sans-serif;
   font-weight: 700;
   text-align: center;
