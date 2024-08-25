@@ -37,30 +37,27 @@ const Header = () => {
   );
 };
 
-
-const HeroSection = () => {
+const Hero = () => {
   return (
-    <section>
-      <div className="contentColumn">
-        <h1 className="heroTitle">
+    <section className="h-hero">
+      <div className="h-heroContent">
+        <h1 className="h-heroTitle">
           OPENING <br />
-          <span className="highlight">Opportunities</span> <br />
-          <span className="lightText">for all</span>
+          <span className="h-highlight">Opportunities</span> <br />
+          <span className="h-subHighlight">for all</span>
         </h1>
-        <div className="blueRectangle"> </div>
-        <p className="heroDescription">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/9aa155f8154ba833233c310a426ef23b298797c234d8417a95dcdfff3e62116e?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" alt="" className="h-decorativeImage" />
+        <p className="h-heroDescription">
           Your Gateway to Career Opportunities! Opening doors to a brighter future with the Public Employment Service Office of San Jose, Batangas. Explore, Apply, Succeed!
         </p>
-        <button className="ctaButton">GET STARTED</button>
+        <button className="h-ctaButton">Get Started</button>
       </div>
-      <div className="imageColumn">
-        <img src={`${process.env.PUBLIC_URL}/assets/jobfair.jpg`}  alt="homepage" className="homepageimage" />
+      <div className="h-heroImageWrapper">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/dd4529adb83c64e54d505e5c50c741ae2faae77894b272c18394f2ee1c7392ee?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" alt="People working together" className="h-heroImage" />
       </div>
     </section>
   );
-};
-
-
+}
 const Announcements = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
   
@@ -290,7 +287,7 @@ const LandingPage = () => {
   return (
     <main className="landingPage">
       <Header />
-      <HeroSection />
+      <Hero/>
       <Announcements />
       <OurServices/>
       <AboutUs/>
