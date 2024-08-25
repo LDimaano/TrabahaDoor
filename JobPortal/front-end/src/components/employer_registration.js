@@ -59,7 +59,7 @@ const FormRow = ({ children }) => {
         
         if (response.ok) {
           console.log('Form submitted successfully:', result);
-          navigate('/'); // Or wherever you want to navigate
+          navigate('/jobposting'); // Or wherever you want to navigate
         } else {
           console.error('Error submitting form:', result.error);
         }

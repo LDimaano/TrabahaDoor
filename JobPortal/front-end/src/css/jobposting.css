@@ -1,98 +1,94 @@
-.jobPostingContainer {
+.j-jobPostingContainer {
     align-items: start;
     background-color: #fff;
     display: flex;
     gap: 1px;
     overflow: hidden;
     justify-content: start;
-  }
-  
-  .mainContent {
+}
+
+.j-mainContent {
+    margin-top: 60px; /* Adjust this value to match the height of the navbar */
     display: flex;
-    width: 1168px;
+    width: 100%;
     flex-direction: column;
     align-items: center;
     justify-content: start;
-  }
-  
-  @media (max-width: 991px) {
-    .mainContent {
-      max-width: 100%;
-    }
-  }
-  
-  .jobPostingForm {
+}
+
+
+.j-jobPostingForm {
     background-color: #fff;
     display: flex;
     width: 100%;
     flex-direction: column;
     justify-content: start;
     padding: 32px;
-  }
-  
-  @media (max-width: 991px) {
-    .jobPostingForm {
-      max-width: 100%;
-      padding: 0 20px;
+}
+
+@media (max-width: 991px) {
+    .j-jobPostingForm {
+        max-width: 100%;
+        padding: 0 20px;
     }
-  }
-  
-  .divider {
+}
+
+.j-divider {
     background-color: #d6ddeb;
     min-height: 0;
     margin-top: 24px;
     max-width: 100%;
     width: 1104px;
     border: 1px solid rgba(214, 221, 235, 1);
-  }
-  .topNav {
+}
+
+.j-topNav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px; /* Adjust the height as needed */
+    background-color: #fff;
+    box-shadow: 0px 1px 0px 0px #d6ddeb inset;
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #fff;
-    box-shadow: 0px -1px 0px 0px #d6ddeb inset;
-    display: flex;
-    width: 100%;
-    max-width: 1167px;
-    gap: 40px 100px;
-    overflow: hidden;
-    font-family: Epilogue, sans-serif;
-    flex-wrap: wrap;
-    padding: 16px 32px;
-  }
-  
-  @media (max-width: 991px) {
-    .topNav {
-      max-width: 100%;
-      padding: 0 20px;
+    padding: 0 32px; /* Add padding to space out the content */
+    z-index: 1000; /* Ensure it stays on top of other content */
+}
+
+@media (max-width: 991px) {
+    .j-topNav {
+        padding: 0 20px; /* Adjust padding for smaller screens */
     }
-  }
-  
-  .jobInfo {
+}
+
+.j-jobInfo {
     display: flex;
     align-items: center;
     gap: 16px;
-  }
-  
-  .companyLogo {
+}
+
+.j-companyLogo {
     width: 48px;
     height: 48px;
     object-fit: contain;
-  }
-  
-  .jobDetails {
+}
+
+.j-jobDetails {
     display: flex;
     flex-direction: column;
-  }
-  
-  .companyName {
+}
+
+.j-companyName {
     color: #515b6f;
     font-size: 16px;
     font-weight: 400;
     line-height: 1.6;
     margin: 0;
-  }
-  
-  .jobTitle {
+}
+
+.j-jobTitle {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -101,26 +97,26 @@
     font-weight: 600;
     line-height: 1.2;
     margin: 0;
-  }
-  
-  .verifiedIcon {
+}
+
+.j-verifiedIcon {
     width: 24px;
     height: 24px;
-  }
-  
-  .actionArea {
+}
+
+.j-actionArea {
     display: flex;
     align-items: center;
     gap: 32px;
-  }
-  
-  .userProfile {
+}
+
+.j-userProfile {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-  }
-  
-  .postJobButton {
+}
+
+.j-postJobButton {
     display: flex;
     align-items: center;
     background-color: #4640de;
@@ -131,34 +127,36 @@
     padding: 12px 24px;
     border: none;
     cursor: pointer;
-  }
-  
-  .postJobIcon {
+}
+
+.j-postJobIcon {
     width: 24px;
     height: 24px;
-  }
-  .titleSection {
+}
+
+.j-titleSection {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 32px;
     width: 100%;
     max-width: 1167px;
-  }
-  
-  .postJobIcon {
+    margin-top: 0; /* Remove top margin to align with the navbar */
+}
+.j-postJobIcon {
     width: 40px;
     height: 40px;
-  }
-  
-  .title {
+}
+
+.j-title {
     font-family: 'Hind Vadodara', -apple-system, Roboto, Helvetica, sans-serif;
     font-size: 32px;
     font-weight: 600;
     color: #25324b;
     margin: 0;
-  }
-  .stepsNav {
+}
+
+.j-stepsNav {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -169,112 +167,114 @@
     background-color: #fff;
     width: 100%;
     max-width: 1167px;
-  }
-  
-  .step {
+}
+
+.j-step {
     display: flex;
     align-items: center;
     gap: 16px;
-  }
-  
-  .stepIcon {
+}
+
+.j-stepIcon {
     width: 56px;
     height: 56px;
-  }
-  
-  .stepInfo {
+}
+
+.j-stepInfo {
     display: flex;
     flex-direction: column;
-  }
-  
-  .stepNumber {
+}
+
+.j-stepNumber {
     font-size: 16px;
     font-weight: 400;
     color: #a8adb7;
     margin: 0;
-  }
-  
-  .stepTitle {
+}
+
+.j-stepTitle {
     font-size: 18px;
     font-weight: 600;
     color: #7c8493;
     margin: 0;
-  }
-  
-  .activeStep .stepNumber {
+}
+
+.j-activeStep .j-stepNumber {
     color: #4640de;
-  }
-  
-  .activeStep .stepTitle {
+}
+
+.j-activeStep .j-stepTitle {
     color: #25324b;
-  }
-  
-  .divider {
+}
+
+.j-divider {
     width: 1px;
     height: 40px;
     background-color: #d6ddeb;
-  }
-  
-  .emptyStep {
+}
+
+.j-emptyStep {
     width: 56px;
-  }
-  .basicInfo {
+}
+
+.j-basicInfo {
     width: 100%;
-  }
-  
-  .sectionTitle {
+}
+
+.j-sectionTitle {
     font-family: Epilogue, sans-serif;
     font-size: 18px;
     font-weight: 600;
     color: #25324b;
     margin: 0 0 4px 0;
-  }
-  
-  .sectionDescription {
+}
+
+.j-sectionDescription {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 400;
     color: #7c8493;
     margin: 0;
-  }
-  
-  .divider {
+}
+
+.j-divider {
     margin: 24px 0;
     border: none;
     border-top: 1px solid #d6ddeb;
-  }
-  .jobTitleContainer {
+}
+
+.j-jobTitleContainer {
     display: flex;
     gap: 118px;
     margin-top: 24px;
-  }
-  
-  .labelContainer {
+}
+
+.j-labelContainer {
     width: 259px;
-  }
-  
-  .label {
+}
+
+.j-label {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 600;
     color: #25324b;
     display: block;
     margin-bottom: 4px;
-  }
-  
-  .description {
+}
+
+.j-description {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 400;
     color: #7c8493;
     margin: 0;
-  }
-  
-  .inputContainer {
+}
+
+.j-inputContainer {
     width: 430px;
-  }
-  
-  .input {
+}
+
+.j-input {
     width: 100%;
     padding: 12px 16px;
     border: 1px solid #d6ddeb;
@@ -282,157 +282,159 @@
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     color: #25324b;
-  }
-  
-  .input::placeholder {
+}
+
+.j-input::placeholder {
     color: #a8adb7;
-  }
-  
-  .helperText {
+}
+
+.j-helperText {
     font-family: Epilogue, sans-serif;
     font-size: 14px;
     color: #7c8493;
     margin: 4px 0 0 0;
-  }
-  .employmentTypeContainer {
+}
+
+.j-employmentTypeContainer {
     display: flex;
     gap: 118px;
     margin-top: 24px;
-  }
-  
-  .labelContainer {
+}
+
+.j-labelContainer {
     width: 259px;
-  }
-  
-  .title {
+}
+
+.j-title {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 600;
     color: #25324b;
     margin: 0 0 4px 0;
-  }
-  
-  .description {
+}
+
+.j-description {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 400;
     color: #7c8493;
     margin: 0;
-  }
-  
-  .optionsContainer {
+}
+
+.j-optionsContainer {
     display: flex;
     flex-direction: column;
     gap: 20px;
-  }
-  
-  .option {
+}
+
+.j-option {
     display: flex;
     align-items: center;
     gap: 16px;
-  }
-  
-  .checkbox {
+}
+
+.j-checkbox {
     width: 24px;
     height: 24px;
     border: 2px solid #d6ddeb;
     border-radius: 4px;
     appearance: none;
     cursor: pointer;
-  }
-  
-  .checkbox:checked {
+}
+
+.j-checkbox:checked {
     background-color: #4640de;
     border-color: #4640de;
-  }
-  
-  .label {
+}
+
+.j-label {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     color: #515b6f;
     cursor: pointer;
-  }
-  .salaryContainer {
+}
+
+.j-salaryContainer {
     display: flex;
     gap: 118px;
     margin-top: 24px;
-  }
-  
-  .labelContainer {
+}
+
+.j-labelContainer {
     width: 259px;
-  }
-  
-  .title {
+}
+
+.j-title {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 600;
     color: #25324b;
     margin: 0 0 4px 0;
-  }
-  
-  .description {
+}
+
+.j-description {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 400;
     color: #7c8493;
     margin: 0;
-  }
-  
-  .rangeContainer {
+}
+
+.j-rangeContainer {
     width: 446px;
-  }
-  
-  .inputGroup {
+}
+
+.j-inputGroup {
     display: flex;
     align-items: center;
     gap: 16px;
-  }
-  
-  .salaryInput {
+}
+
+.j-salaryInput {
     display: flex;
     align-items: center;
     border: 1px solid #d6ddeb;
     border-radius: 4px;
     padding: 12px 16px;
-  }
-  
-  .currencySymbol {
+}
+
+.j-currencySymbol {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 600;
     color: #25324b;
     margin-right: 8px;
-  }
-  
-  .inputDivider {
+}
+
+.j-inputDivider {
     width: 1px;
     height: 24px;
     background-color: #a8adb7;
     margin: 0 8px;
-  }
-  
-  .input {
+}
+
+.j-input {
     border: none;
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 600;
     color: #25324b;
     width: 80px;
-  }
-  
-  .toText {
+}
+
+.j-toText {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     color: #7c8493;
-  }
-  
-  .sliderContainer {
+}
+
+.j-sliderContainer {
     margin-top: 22px;
     position: relative;
     height: 6px;
-  }
-  
-  .sliderTrack {
+}
+
+.j-sliderTrack {
     position: absolute;
     top: 0;
     left: 0;
@@ -440,18 +442,18 @@
     height: 6px;
     background-color: #d6ddeb;
     border-radius: 3px;
-  }
-  
-  .sliderFill {
+}
+
+.j-sliderFill {
     position: absolute;
     top: 0;
     left: 0;
     height: 6px;
     background-color: #4640de;
     border-radius: 3px;
-  }
-  
-  .sliderHandle {
+}
+
+.j-sliderHandle {
     position: absolute;
     top: -9px;
     width: 24px;
@@ -459,51 +461,52 @@
     background-color: #4640de;
     border-radius: 50%;
     cursor: pointer;
-  }
-  .industryContainer {
+}
+
+.j-industryContainer {
     display: flex;
     gap: 118px;
     margin-top: 24px;
-  }
-  
-  .labelContainer {
+}
+
+.j-labelContainer {
     width: 259px;
-  }
-  
-  .title {
+}
+
+.j-title {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 600;
     color: #25324b;
     margin: 0 0 4px 0;
-  }
-  
-  .description {
+}
+
+.j-description {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 400;
     color: #7c8493;
     margin: 0;
-  }
-  
-  .selectContainer {
+}
+
+.j-selectContainer {
     width: 314px;
-  }
-  
-  .label {
+}
+
+.j-label {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 600;
     color: #515b6f;
     display: block;
     margin-bottom: 4px;
-  }
-  
-  .selectWrapper {
+}
+
+.j-selectWrapper {
     position: relative;
-  }
-  
-  .select {
+}
+
+.j-select {
     width: 100%;
     padding: 12px 16px;
     border: 1px solid #d6ddeb;
@@ -513,9 +516,9 @@
     color: #a8adb7;
     appearance: none;
     background-color: transparent;
-  }
-  
-  .dropdownIcon {
+}
+
+.j-dropdownIcon {
     position: absolute;
     top: 50%;
     right: 16px;
@@ -523,38 +526,39 @@
     width: 20px;
     height: 20px;
     pointer-events: none;
-  }
-  .skillsContainer {
+}
+
+.j-skillsContainer {
     display: flex;
     gap: 118px;
     margin-top: 24px;
-  }
-  
-  .labelContainer {
+}
+
+.j-labelContainer {
     width: 259px;
-  }
-  
-  .title {
+}
+
+.j-title {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 600;
     color: #25324b;
     margin: 0 0 4px 0;
-  }
-  
-  .description {
+}
+
+.j-description {
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     font-weight: 400;
     color: #7c8493;
     margin: 0;
-  }
-  
-  .skillsContent {
+}
+
+.j-skillsContent {
     width: 430px;
-  }
-  
-  .addSkillButton {
+}
+
+.j-addSkillButton {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -567,21 +571,21 @@
     font-weight: 700;
     color: #4640de;
     cursor: pointer;
-  }
-  
-  .addIcon {
+}
+
+.j-addIcon {
     width: 16px;
     height: 16px;
-  }
-  
-  .skillTags {
+}
+
+.j-skillTags {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
     margin-top: 16px;
-  }
-  
-  .skillTag {
+}
+
+.j-skillTag {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -591,14 +595,15 @@
     font-family: Epilogue, sans-serif;
     font-size: 16px;
     color: #515b6f;
-  }
-  
-  .removeIcon {
+}
+
+.j-removeIcon {
     width: 20px;
     height: 20px;
     cursor: pointer;
-  }
-  .nextStepButton {
+}
+
+.j-nextStepButton {
     width: 100%;
     padding: 14px 0;
     margin-top: 24px;
@@ -611,13 +616,13 @@
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  .nextStepButton:hover {
+}
+
+.j-nextStepButton:hover {
     background-color: #3530b3;
-  }
-  
-  .nextStepButton:focus {
+}
+
+.j-nextStepButton:focus {
     outline: none;
     box-shadow: 0 0 0 2px #ccccf5;
-  }
+}
