@@ -61,33 +61,26 @@ const JobPostingTitle = () => {
   );
 };
 
-// JobPostingSteps Component
-const Step = ({ number, title, isActive }) => (
-  <div className={`j-step ${isActive ? 'j-activeStep' : ''}`}>
-    <img
-      loading="lazy"
-      src={`http://b.io/ext_${5 + number}-`}
-      alt={`Step ${number} icon`}
-      className="j-stepIcon"
-    />
-    <div className="j-stepInfo">
-      <p className="j-stepNumber">Step {number}</p>
-      <h3 className="j-stepTitle">{title}</h3>
-    </div>
-  </div>
-);
+// const Step = ({ number, title, isActive }) => (
+//   <div className={`j-step ${isActive ? 'j-activeStep' : ''}`}>
+//     <div className="j-stepInfo">
+//       <p className="j-stepNumber">Step {number}</p>
+//       <h3 className="j-stepTitle">{title}</h3>
+//     </div>
+//   </div>
+// );
 
-const JobPostingSteps = () => {
-  return (
-    <nav className="j-stepsNav">
-      <Step number={1} title="Job Information" isActive={true} />
-      <div className="j-divider" />
-      <Step number={2} title="Job Description" isActive={false} />
-      <div className="j-divider" />
-      <div className="j-emptyStep" />
-    </nav>
-  );
-};
+// const JobPostingSteps = () => {
+//   return (
+//     <nav className="j-stepsNav">
+//       <Step number={1} title="Job Information" isActive={true} />
+//       <div className="j-divider" />
+//       <Step number={2} title="Job Description" isActive={false} />
+//       <div className="j-divider" />
+//       <div className="j-emptyStep" />
+//     </nav>
+//   );
+// };
 
 // BasicInformation Component
 const BasicInformation = () => {
@@ -305,7 +298,6 @@ const JobPostingForm = () => {
       <JobPostingHeader companyName="Company" jobTitle="Saint Anthony Montessori" />
       <main className="j-mainContent">
         <JobPostingTitle />
-        <JobPostingSteps />
         <form className="j-jobPostingForm">
           <BasicInformation />
           <JobTitleInput />
