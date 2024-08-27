@@ -38,6 +38,11 @@ const Header = () => {
 };
 
 const Hero = () => {
+  const navigate = useNavigate();
+
+  const handleButtonClick = () => {
+    navigate('/joblisting');
+  };
   return (
     <section className="h-hero">
       <div className="h-heroContent">
@@ -50,7 +55,9 @@ const Hero = () => {
         <p className="h-heroDescription">
           Your Gateway to Career Opportunities! Opening doors to a brighter future with the Public Employment Service Office of San Jose, Batangas. Explore, Apply, Succeed!
         </p>
-        <button className="h-ctaButton">Get Started</button>
+        <button className="h-ctaButton" onClick={handleButtonClick}>
+          Get Started
+        </button>
       </div>
       <div className="h-heroImageWrapper">
         <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/dd4529adb83c64e54d505e5c50c741ae2faae77894b272c18394f2ee1c7392ee?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" alt="People working together" className="h-heroImage" />

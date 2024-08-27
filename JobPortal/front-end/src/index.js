@@ -14,6 +14,7 @@ import SignupEmployer2 from './components/signup_employer2';
 import SignupEmployer3 from './components/signup_employer3'; 
 import HomeJobseeker from './components/home_jobseeker';
 import Jobdescription from './components/Jobdescription';
+import Joblisting from './components/joblisting';
 
 
 
@@ -36,6 +37,7 @@ root.render(
         <Route path="/signup_employer3" element={<SignupEmployer3 />} />
         <Route path="/home_jobseeker" element={<HomeJobseeker />} />
         <Route path="/Jobdescription" element={<Jobdescription />} />
+        <Route path="/joblisting" element={<Joblisting />} />
       </Routes>
     </Router>
   </React.StrictMode>
