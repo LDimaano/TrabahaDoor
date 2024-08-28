@@ -9,6 +9,7 @@ import JobSeekerRegistration from './components/j_registration';
 import StudentRegistration from './components/js_registration';
 import EmployerRegistration from './components/employer_registration';
 import JobPostingForm from './components/jobposting';
+import JobPostingDesc from './components/jobposting_desc';
 import SignupEmployer from './components/signup_employer';   
 import SignupEmployer2 from './components/signup_employer2';  
 import SignupEmployer3 from './components/signup_employer3'; 
@@ -36,6 +37,7 @@ root.render(
         <Route path="/signup_employer2" element={<SignupEmployer2 />} />
         <Route path="/signup_employer3" element={<SignupEmployer3 />} />
         <Route path="/home_jobseeker" element={<HomeJobseeker />} />
+        <Route path="/jobposting_desc" element={<JobPostingDesc/>} />
         <Route path="/Jobdescription" element={<Jobdescription />} />
         <Route path="/joblisting" element={<Joblisting />} />
       </Routes>

@@ -1,5 +1,7 @@
 import React from 'react';
-import styles from '../css/jobposting.module.css';; // Combine all CSS into one file or use inline styles if preferred
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import styles from '../css/jobposting.module.css';
+
 // JobPostingHeader Component
 const JobPostingHeader = ({ companyName, jobTitle }) => (
   <header className={styles.topNav}>
@@ -182,59 +184,67 @@ const SkillTags = () => {
   );
 };
 
-const JobInformationForm = () => (
-  <form className={styles.jobInformationForm}>
-    <FormSection
-      title="Basic Information"
-      description="This information will be displayed publicly"
-    >
-      <InputField
-        label="Job Title"
-        placeholder="e.g. Software Engineer"
-        helperText="At least 80 characters"
-      />
-    </FormSection>
+const JobInformationForm = () => {
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
-    <FormSection
-      title="Type of Employment"
-      description="You can select multiple type of employment"
-    >
-      <CheckboxGroup options={['Full-Time', 'Part-Time', 'Remote', 'Internship', 'Contract']} />
-    </FormSection>
+  const handleNextStep = () => {
+    navigate('/jobposting_desc'); // Navigate to the next page
+  };
 
-    <FormSection
-      title="Salary"
-      description="Please specify the estimated salary range for the role. *You can leave this blank"
-    >
-      <SalaryRange />
-    </FormSection>
-
-    <FormSection
-      title="Industry"
-      description="Select in what industry does this job listing belong"
-    >
-      <Dropdown label="Industry" placeholder="Select Industry" />
-    </FormSection>
-
-    <FormSection
-      title="Required Skills"
-      description="Add required skills for the job"
-    >
-      <button className={styles.addSkillButton}>
-        <img
-          loading="lazy"
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/7747504c877063d5f0936c264a85cd381246674d4c251469ac5416820dd68329?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
-          alt="Add skill icon"
-          className={styles.addSkillIcon}
+  return (
+    <form className={styles.jobInformationForm}>
+      <FormSection
+        title="Basic Information"
+        description="This information will be displayed publicly"
+      >
+        <InputField
+          label="Job Title"
+          placeholder="e.g. Software Engineer"
+          helperText="At least 80 characters"
         />
-        Add Skills
-      </button>
-      <SkillTags />
-    </FormSection>
+      </FormSection>
 
-    <button type="submit" className={styles.nextStepButton}>Next Step</button>
-  </form>
-);
+      <FormSection
+        title="Type of Employment"
+        description="You can select multiple type of employment"
+      >
+        <CheckboxGroup options={['Full-Time', 'Part-Time', 'Remote', 'Internship', 'Contract']} />
+      </FormSection>
+
+      <FormSection
+        title="Salary"
+        description="Please specify the estimated salary range for the role. *You can leave this blank"
+      >
+        <SalaryRange />
+      </FormSection>
+
+      <FormSection
+        title="Industry"
+        description="Select in what industry does this job listing belong"
+      >
+        <Dropdown label="Industry" placeholder="Select Industry" />
+      </FormSection>
+
+      <FormSection
+        title="Required Skills"
+        description="Add required skills for the job"
+      >
+        <button className={styles.addSkillButton}>
+          <img
+            loading="lazy"
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/7747504c877063d5f0936c264a85cd381246674d4c251469ac5416820dd68329?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
+            alt="Add skill icon"
+            className={styles.addSkillIcon}
+          />
+          Add Skills
+        </button>
+        <SkillTags />
+      </FormSection>
+
+      <button type="button" className={styles.nextStepButton} onClick={handleNextStep}>Next Step</button>
+    </form>
+  );
+};
 
 // JobPostingPage Component
 const JobPostingPage = () => (

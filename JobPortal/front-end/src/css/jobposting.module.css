@@ -416,9 +416,13 @@
     padding: 14px 27px;
     border: none;
     cursor: pointer;
+    width: 200px; /* Set a fixed width */
     margin-top: 24px;
-    width: 100%;
+    /* Align the button to the right */
+    display: block;
+    align-self: flex-end;
   }
+  
   
   @media (max-width: 991px) {
     .jobInformationForm {
