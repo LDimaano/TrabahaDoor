@@ -69,9 +69,11 @@ const Announcements = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
   
     const slides = [
-        { src: "/assets/jobfair.jpg", alt: "First slide", caption: "Caption Text" },
-        { src: "/assets/jobfair.jpg", alt: "Second slide", caption: "Caption Two" },
-        { src: "/assets/jobfair.jpg", alt: "Third slide", caption: "Caption Three" }
+        { src: "/assets/jobfair.jpg", alt: "First slide", caption: "PESO SAN JOSE" },
+        { src: "/assets/Peso1.jpg", alt: "Second slide", caption: "PESO SAN JOSE" },
+        { src: "/assets/Peso2.jpg", alt: "Third slide", caption: "PESO SAN JOSE" },
+        { src: "/assets/Peso3.jpg", alt: "Fifth slide", caption: "PESO SAN JOSE" },
+        { src: "/assets/Peso4.jpg", alt: "Sixth slide", caption: "PESO SAN JOSE" }
     ];
     const goToNextSlide = () => {
       setCurrentIndex((prevIndex) =>
