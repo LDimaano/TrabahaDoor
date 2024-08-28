@@ -8,31 +8,38 @@ function Login() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleClick = async (event) => {
+  //fetching,, comment ko muna habang wala pa
+  /*const handleClick = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/submit-form', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+        const response = await fetch('http://localhost:5000/submit-form', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
 
-      const result = await response.json();
-      
-      if (response.ok) {
-        console.log('Form submitted successfully:', result);
-        // Redirect to another page after successful login
-        navigate('/dashboard'); // Replace '/dashboard' with the desired route
-      } else {
-        console.error('Error submitting form:', result.error);
-      }
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log('Form submitted successfully:', result);
+            
+            navigate('/home_jobseeker'); 
+        } else {
+            console.error('Error submitting form:', result.error);
+        }
     } catch (error) {
-      console.error('Network or server error:', error);
+        console.error('Network or server error:', error);
     }
-  };
+};*/
+
+const handleClick = () => {
+  navigate('/home_jobseeker'); 
+};
+
+
   return (
     <section className="loginContainer">
       <div className="flexContainer">

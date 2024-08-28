@@ -11,6 +11,8 @@
   width: 100%;
   max-width: 1193px;
   padding: 72px 70px 75px;
+  margin: 0 auto; 
+    justify-content: center; 
 }
 
 .navbar {

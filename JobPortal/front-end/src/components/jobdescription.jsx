@@ -23,11 +23,6 @@ const JobDescription = () => {
             <a href="#" className="navLink">Browse Companies</a>
           </li>
         </ul>
-        <div className="authButtons">
-          <button className="loginButton">Login</button>
-          <div className="buttonDivider" />
-          <button className="signupButton">Sign Up</button>
-        </div>
       </div>
     </nav>
     <main className="jobDescription">

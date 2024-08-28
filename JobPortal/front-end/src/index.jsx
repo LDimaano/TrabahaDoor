@@ -11,7 +11,7 @@ import EmployerRegistration from './components/employer_registration';
 import JobPostingForm from './components/jobposting';
 import JobPostingDesc from './components/jobposting_desc';  
 import HomeJobseeker from './components/home_jobseeker';
-import Jobdescription from './components/Jobdescription';
+
 import Joblisting from './components/joblisting';
 
 
@@ -32,7 +32,7 @@ root.render(
         <Route path="/jobposting" element={<JobPostingForm/>} />
         <Route path="/home_jobseeker" element={<HomeJobseeker />} />
         <Route path="/jobposting_desc" element={<JobPostingDesc/>} />
-        <Route path="/Jobdescription" element={<Jobdescription />} />
+        <Route path="/jobdescription" element={<Jobdescription />} />
         <Route path="/joblisting" element={<Joblisting />} />
       </Routes>
     </Router>

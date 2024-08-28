@@ -195,7 +195,7 @@ function JobListItem({ job }) {
   const navigate = useNavigate();
 
   const handleApplyClick = () => {
-    navigate('/Jobdescription');
+    navigate('/jobdescription');
   };
   return (
     <li className="jobItem">
