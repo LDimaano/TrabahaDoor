@@ -242,7 +242,7 @@
 }
 
 .headerCell {
-  flex: 1;
+  flex: 1.5;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -278,7 +278,7 @@
 }
 
 .nameCell {
-  flex: 2;
+  flex: 1.5; /* Reduced from 2 to 1.5 */
   display: flex;
   align-items: center;
   gap: 16px;
@@ -297,13 +297,17 @@
 }
 
 .statusCell {
-  flex: 1;
-  padding: 6px 8px; 
+  flex: 0 0 120px; /* Fixed width remains the same */
+  width: 120px; 
+  padding: 6px 8px;
+  margin-right: 24px; /* Added margin to create space */
   border-radius: 80px;
   font-size: 14px;
   font-weight: 600;
   text-align: center;
 }
+
+
 
 .statusCell select {
   width: 100%;
@@ -359,6 +363,7 @@
   background-color: #e8fbf8;
   color: #56cdad;
   border: 1px solid #56cdad;
+ 
 }
 
 .declined {
@@ -368,15 +373,14 @@
 }
 
 .dateCell, .roleCell {
-  flex: 1;
+  flex: 1.2; /* Increased from 1 to 1.2 */
   color: #25324b;
+  gap: 10px;
 }
-
 .actionCell {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 16px;
 }
 
 .actionButton {
