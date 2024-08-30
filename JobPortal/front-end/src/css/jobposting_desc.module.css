@@ -9,6 +9,30 @@
     max-width: 1168px;
     margin: 0 auto;
   }
+
+  .backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent; /* Transparent background */
+    border: none; /* No border */
+    cursor: pointer; /* Pointer cursor */
+    padding: 8px; /* Padding for click area */
+    border-radius: 4px; /* Optional rounded corners */
+    transition: background-color 0.2s ease; /* Smooth hover transition */
+  }
+  
+  .backButton:hover {
+    background-color: rgba(0, 0, 0, 0.05); /* Optional light hover effect */
+  }
+  
+  .backIcon {
+    width: 24px; /* Icon size */
+    height: 24px;
+    color: #000; /* Black icon color */
+  }
+  
+  
   
   .nextStepButton {
     align-self: flex-end;
@@ -44,6 +68,23 @@
     width: 100%;
   }
   
+  .titleSection {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 32px;
+    width: 100%;
+    max-width: 1167px;
+    gap: 8px;
+    font-family: Hind Vadodara, -apple-system, Roboto, Helvetica, sans-serif;
+  }
+  
+  .postJobIcon {
+    width: 40px;
+    height: 40px;
+  }
+  
+
   .companyInfo {
     display: flex;
     align-items: center;
@@ -153,34 +194,19 @@
       padding: 32px 20px;
     }
   }
-  .stepperBar {
+  .stepper {
+    display: flex;
+    justify-content: center; /* Centers the items within the stepper */
     align-items: center;
-    background-color: #fff;
+    gap: 40px;
+    padding: 14px 24px;
     border: 1px solid #d6ddeb;
     border-radius: 4px;
-    display: flex;
+    background-color: #fff;
     font-family: Epilogue, sans-serif;
-    gap: 40px;
-    justify-content: center;
-    line-height: 1.6;
-    margin: 0 31px;
-    padding: 14px 24px;
+    margin: 0 auto; /* Centers the stepper within its parent container */
   }
   
-  .divider {
-    background-color: #d6ddeb;
-    height: 40px;
-    width: 1px;
-  }
-  
-  @media (max-width: 991px) {
-    .stepperBar {
-      flex-wrap: wrap;
-      gap: 20px;
-      margin: 0 10px;
-      padding: 14px 20px;
-    }
-  }
   .stepperItem {
     display: flex;
     align-items: center;
@@ -190,7 +216,6 @@
   .stepIcon {
     width: 56px;
     height: 56px;
-    object-fit: contain;
   }
   
   .stepInfo {
@@ -199,22 +224,39 @@
   }
   
   .stepNumber {
-    color: #4640de;
     font-size: 16px;
     font-weight: 400;
+    color: #a8adb7;
   }
   
   .stepTitle {
-    color: #25324b;
     font-size: 18px;
     font-weight: 600;
-    margin: 0;
+    color: #7c8493;
   }
   
-  .active .stepNumber,
-  .active .stepTitle {
-    font-weight: 600;
+  .active .stepNumber {
+    color: #4640de;
   }
+  
+  .active .stepTitle {
+    color: #25324b;
+  }
+  
+  .divider {
+    width: 1px;
+    height: 40px;
+    background-color: #d6ddeb;
+  }
+  
+  @media (max-width: 991px) {
+    .stepper {
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 14px 20px;
+    }
+  }
+
   .jobDetailsForm {
     background-color: #fff;
     display: flex;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from '../css/joblisting.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faFilter, faBuilding, faUserFriends, faClipboardList, faEllipsisH, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -25,6 +26,8 @@ const ApplicantDashboard = () => {
   const [editingIndex, setEditingIndex] = useState(null); 
   const [editingStatus, setEditingStatus] = useState('');
 
+  const navigate = useNavigate();
+
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1);
@@ -46,6 +49,14 @@ const ApplicantDashboard = () => {
     updatedApplicants[index].status = newStatus;
     setApplicants(updatedApplicants);
     setEditingIndex(null);
+  };
+
+  const handlePostJobClick = () => {
+    navigate('/jobposting');
+  };
+
+  const handleSeeApplication = (applicant) => {
+    navigate('/applicantdetail', { state: { applicant } });
   };
 
   return (
@@ -98,7 +109,7 @@ const ApplicantDashboard = () => {
           </div>
           <div className={styles.actions}>
             <FontAwesomeIcon icon={faBell} className={styles.notificationIcon} />
-            <button className={styles.postJobButton}>
+            <button className={styles.postJobButton} onClick={handlePostJobClick}>
               <FontAwesomeIcon icon={faPlus} className={styles.postJobIcon} />
               Post a job
             </button>
@@ -145,8 +156,8 @@ const ApplicantDashboard = () => {
               <div key={index} className={styles.applicantRow}>
                 <div className={styles.nameCell}>
                   <input type="checkbox" className={styles.checkbox} aria-label={`Select ${applicant.name}`} />
-                  <img src={applicant.avatar} alt="" className={styles.avatar} />
-                  <span className={styles.name}>{applicant.name}</span>
+                  <img src={applicant.avatar} alt={`${applicant.name}'s avatar`} className={styles.avatar} />
+                  <span className={styles.applicantName}>{applicant.name}</span>
                 </div>
                 <div
                   className={`${styles.statusCell} ${styles[applicant.status.toLowerCase()]}`}
@@ -169,43 +180,24 @@ const ApplicantDashboard = () => {
                 <div className={styles.dateCell}>{applicant.date}</div>
                 <div className={styles.roleCell}>{applicant.role}</div>
                 <div className={styles.actionCell}>
-                  <button className={styles.actionButton}>See Application</button>
+                  <button className={styles.actionButton} onClick={() => handleSeeApplication(applicant)}>
+                    See Application
+                  </button>
                   <FontAwesomeIcon icon={faEllipsisH} className={styles.moreIcon} />
                 </div>
               </div>
             ))}
           </div>
           <div className={styles.paginationContainer}>
-            <div className={styles.viewSelector}>
-              <label htmlFor="viewSelect" className={styles.viewLabel}>View</label>
-              <select
-                id="viewSelect"
-                className={styles.viewSelect}
-                value={applicantsPerPage}
-                onChange={(e) => setApplicantsPerPage(Number(e.target.value))}
-              >
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-              </select>
-              <span className={styles.viewText}>/ page</span>
-            </div>
-            <div className={styles.pagination}>
+            {Array.from({ length: Math.ceil(filteredApplicants.length / applicantsPerPage) }).map((_, index) => (
               <button
-                className={styles.prevButton}
-                onClick={() => paginate(currentPage - 1)}
-                disabled={currentPage === 1}
+                key={index}
+                className={`${styles.paginationButton} ${index + 1 === currentPage ? styles.active : ''}`}
+                onClick={() => paginate(index + 1)}
               >
-                Previous
+                {index + 1}
               </button>
-              <button
-                className={styles.nextButton}
-                onClick={() => paginate(currentPage + 1)}
-                disabled={currentApplicants.length < applicantsPerPage}
-              >
-                Next
-              </button>
-            </div>
+            ))}
           </div>
         </section>
       </main>

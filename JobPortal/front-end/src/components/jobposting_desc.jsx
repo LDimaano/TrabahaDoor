@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import styles from '../css/jobposting_desc.module.css';
 
 // TopNav Component
@@ -44,62 +47,65 @@ function TopNav() {
 
 // PostJobHeader Component
 function PostJobHeader() {
+  const navigate = useNavigate();
+
+  // Function to handle the back button click
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <section className={styles.postJobHeader}>
-      <img 
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/1155aa9d23c1939bc102e4ce5a75c6147b88f99265e79406441c16c37f6591d3?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-        alt="Post job icon" 
-        className={styles.postJobIcon} 
-      />
+      <button className={styles.backButton} onClick={handleBack} aria-label="Go back">
+      <FontAwesomeIcon icon={faArrowLeft} className={styles.backIcon} />
+    </button>
       <h2 className={styles.postJobTitle}>Post a Job</h2>
     </section>
   );
 }
+// JobPostingStepper Component
+const StepperItem = ({ imgSrc, stepNumber, title, isActive }) => (
+  <div className={`${styles.stepperItem} ${isActive ? styles.active : ''}`}>
+    <img loading="lazy" src={imgSrc} alt={`Step ${stepNumber} icon`} className={styles.stepIcon} />
+    <div className={styles.stepInfo}>
+      <div className={styles.stepNumber}>Step {stepNumber}</div>
+      <div className={styles.stepTitle}>{title}</div>
+    </div>
+  </div>
+);
 
-// StepperItem Component
-// StepperBar Component
-function StepperItem() {
-    const steps = [
-      { number: 1, title: "Job Information", icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/37b91402d8e8dde307fc03722985cc6e677360c9c681eab95a3fc48f00f1bcbb?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975", active: true },
-      { number: 2, title: "Job Description", icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/61115867073ca323e424379632faaf92b8156881755975ab487576ca98493573?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975", active: true },
-      // Step 3 and beyond are removed or not rendered
-    ];
-  
-    return (
-      <nav className={styles.stepperBar}>
-        {steps.map((step, index) => (
-          <React.Fragment key={step.number}>
-            {index > 0 && <div className={styles.divider} />}
-            <StepperItem {...step} />
-          </React.Fragment>
-        ))}
-      </nav>
-    );
-  }
-  
-
-// StepperBar Component
-function StepperBar() {
+const JobPostingStepper = () => {
   const steps = [
-    { number: 1, title: "Job Information", icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/37b91402d8e8dde307fc03722985cc6e677360c9c681eab95a3fc48f00f1bcbb?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975", active: true },
-    { number: 2, title: "Job Description", icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/61115867073ca323e424379632faaf92b8156881755975ab487576ca98493573?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975", active: true },
-    { number: 3, title: "", icon: "", active: false }
+    { imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/6a42fd1310401124f065989747c4a4f9f75a4e05167b241e82d076d6bb0a9963?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975", title: "Job Information", isActive: true },
+    { imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/46c54760f1a99081a79cc0bf9bcef9fc0e5a10546bbbac656e7081a2d3814873?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975", title: "Job Description", isActive: false },
   ];
 
   return (
-    <nav className={styles.stepperBar}>
+    <nav className={styles.stepper}>
       {steps.map((step, index) => (
-        <React.Fragment key={step.number}>
-          {index > 0 && <div className={styles.divider} />}
-          <StepperItem {...step} />
+        <React.Fragment key={index}>
+          <StepperItem
+            imgSrc={step.imgSrc}
+            stepNumber={index + 1}
+            title={step.title}
+            isActive={step.isActive}
+          />
+          {index < steps.length - 1 && <div className={styles.divider} />}
         </React.Fragment>
       ))}
     </nav>
   );
-}
+};
+
 
 // TextAreaField Component
 function TextAreaField({ label, description, placeholder }) {
+  const [value, setValue] = useState("");
+
+  const handleChange = (e) => {
+    setValue(e.target.value);
+  };
+
   return (
     <div className={styles.textAreaField}>
       <div className={styles.fieldInfo}>
@@ -112,17 +118,19 @@ function TextAreaField({ label, description, placeholder }) {
           className={styles.textArea}
           placeholder={placeholder}
           aria-label={label}
+          value={value}
+          onChange={handleChange}
         />
         <div className={styles.textAreaTools}>
           {['bold', 'italic', 'underline', 'list', 'link', 'image'].map((tool) => (
             <button key={tool} type="button" className={styles.toolButton} aria-label={`${tool} text`}>
-              <img src={`http://b.io/ext_${tool}-`} alt="" className={styles.toolIcon} />
+              <img src={`http://b.io/ext_${tool}-`} alt={`${tool} icon`} className={styles.toolIcon} />
             </button>
           ))}
         </div>
         <div className={styles.characterCount}>
           <span className={styles.maxCharacters}>Maximum 500 characters</span>
-          <span className={styles.currentCount}>0 / 500</span>
+          <span className={styles.currentCount}>{value.length} / 500</span>
         </div>
       </div>
     </div>
@@ -132,7 +140,7 @@ function TextAreaField({ label, description, placeholder }) {
 // JobDetailsForm Component
 function JobDetailsForm() {
   const formFields = [
-    { label: "Job Descriptions", description: "Job titles must be describe one position", placeholder: "Enter job description" },
+    { label: "Job Descriptions", description: "Job titles must describe one position", placeholder: "Enter job description" },
     { label: "Responsibilities", description: "Outline the core responsibilities of the position", placeholder: "Enter job responsibilities" },
     { label: "Qualifications", description: "Outline the qualifications of the position", placeholder: "Enter job qualifications" }
   ];
@@ -160,7 +168,7 @@ function JobPostingPage() {
     <main className={styles.jobPostingPage}>
       <TopNav />
       <PostJobHeader />
-      <StepperBar />
+      <JobPostingStepper />
       <JobDetailsForm />
       <button className={styles.nextStepButton}>Post Job</button>
     </main>

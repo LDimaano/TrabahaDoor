@@ -73,7 +73,7 @@
 .jobListingSection {
   display: flex;
   padding: 72px 124px;
-  gap: 40px;
+  gap: 250px;
 }
 
 .filterSidebar {
@@ -97,11 +97,6 @@
 
   .heroTitle {
     font-size: 40px;
-  }
-
-  .jobListingSection {
-    flex-direction: column;
-    padding: 40px 20px;
   }
 
   .filterSidebar,

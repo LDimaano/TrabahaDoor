@@ -1,0 +1,429 @@
+.dashboardContainer {
+    display: flex;
+    background-color: #fff;
+    min-height: 100vh;
+  }
+  
+  .sideBar {
+    width: 272px;
+    background-color: #f8f8fd;
+    box-shadow: 1px 0 0 0 #d3d6db;
+    padding: 29px 0 29px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .logoContainer {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-bottom: 20px;
+  }
+  
+  .logo {
+    width: 54px;
+    height: 30px;
+    object-fit: contain;
+  }
+  
+  .brandName {
+    color: #25324b;
+    font: 700 24px 'Hind Vadodara', sans-serif;
+    letter-spacing: -0.24px;
+  }
+  
+  .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .menuItem {
+    display: flex;
+    align-items: center;
+    padding: 12px 32px;
+    gap: 16px;
+    color: #7c8493;
+    font: 500 16px 'Inter', sans-serif;
+    position: relative;
+  }
+  
+  .activeMenuItem {
+    background-color: #e9ebfd;
+    color: #4640de;
+  }
+  
+  .menuIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .activeIndicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #4640de;
+  }
+  
+  .divider {
+    height: 1px;
+    background-color: #ccccf5;
+    margin: 32px 0;
+  }
+  
+  .profileSection {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: auto;
+    padding: 0 16px;
+  }
+  
+  .profileImage {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+  }
+  
+  .profileInfo {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .userName {
+    color: #25324b;
+    font: 600 18px 'Epilogue', sans-serif;
+  }
+  
+  .userEmail {
+    color: #515b6f;
+    font: 400 14px 'Epilogue', sans-serif;
+    opacity: 0.5;
+  }
+  
+  .mainContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .topNav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+    box-shadow: 0 -1px 0 0 #d6ddeb inset;
+  }
+  
+  .companyInfo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .companyLogo {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .companyDetails {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .companyLabel {
+    color: #515b6f;
+    font: 400 16px 'Epilogue', sans-serif;
+  }
+  
+  .companyName {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #25324b;
+    font: 600 20px 'Epilogue', sans-serif;
+  }
+  
+  .verifiedIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .actionButtons {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  
+  .notificationIcon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .postJobButton {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #4640de;
+    color: #fff;
+    font: 700 16px 'Epilogue', sans-serif;
+    padding: 12px 24px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .postJobIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .applicantDetails {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px;
+  }
+  
+  .applicantHeader {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  .applicantIcon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .applicantTitle {
+    color: #25324b;
+    font: 600 24px 'Hind Vadodara', sans-serif;
+  }
+  
+  .moreActionButton {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #ccccf5;
+    color: #4640de;
+    background-color: transparent;
+    font: 700 16px 'Epilogue', sans-serif;
+    padding: 12px 16px;
+    cursor: pointer;
+  }
+  
+  .moreActionIcon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .applicantSection {
+    display: flex;
+    gap: 32px;
+    padding: 0 32px;
+  }
+  
+  .applicantProfile {
+    flex: 1;
+    border: 1px solid #d6ddeb;
+    background-color: #fff;
+  }
+  
+  .profileTabs {
+    padding: 16px 24px 0;
+    border-bottom: 1px solid #d6ddeb;
+  }
+  
+  .tabButton {
+    background: none;
+    border: none;
+    color: #25324b;
+    font: 600 16px 'Epilogue', sans-serif;
+    padding-bottom: 7px;
+    cursor: pointer;
+  }
+  
+  .activeTab {
+    border-bottom: 4px solid #4640de;
+  }
+  
+  .profileContent {
+    padding: 24px;
+  }
+  
+  .sectionTitle {
+    color: #25324b;
+    font: 600 18px 'Epilogue', sans-serif;
+    margin-bottom: 16px;
+  }
+  
+  .infoGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .infoItem {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .infoLabel {
+    color: #7c8493;
+    font: 400 16px 'Epilogue', sans-serif;
+  }
+  
+  .infoValue {
+    color: #25324b;
+    font: 500 16px 'Epilogue', sans-serif;
+    margin-top: 4px;
+  }
+  
+  .sectionDivider {
+    border: none;
+    height: 1px;
+    background-color: #d6ddeb;
+    margin: 24px 0;
+  }
+  
+  .aboutMe {
+    margin-bottom: 16px;
+  }
+  
+  .subsectionTitle {
+    color: #7c8493;
+    font: 400 16px 'Epilogue', sans-serif;
+    margin-bottom: 8px;
+  }
+  
+  .aboutMeContent {
+    color: #25324b;
+    font: 500 16px/26px 'Epilogue', sans-serif;
+  }
+  
+  .skillSet {
+    grid-column: 1 / -1;
+  }
+  
+  .skillTags {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+  }
+  
+  .skillTag {
+    background-color: #f8f8fd;
+    color: #4640de;
+    font: 500 14px 'Epilogue', sans-serif;
+    padding: 4px 12px;
+  }
+  
+  .applicantCard {
+    width: 352px;
+    border: 1px solid #d6ddeb;
+    background-color: #fff;
+    padding: 24px;
+  }
+  
+  .cardHeader {
+    display: flex;
+    gap: 21px;
+    margin-bottom: 21px;
+  }
+  
+  .applicantImage {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+  }
+  
+  .applicantInfo {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .applicantName {
+    color: #25324b;
+    font: 600 24px/1.2 'Hind Vadodara', sans-serif;
+  }
+  
+  .applicantRole {
+    color: #7c8493;
+    font: 400 16px 'Epilogue', sans-serif;
+    margin-top: 8px;
+  }
+  
+  .cardDivider {
+    border: none;
+    height: 1px;
+    background-color: #d6ddeb;
+    margin-bottom: 21px;
+  }
+  
+  .contactInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .contactTitle {
+    color: #25324b;
+    font: 600 20px/1.2 'Epilogue', sans-serif;
+  }
+  
+  .contactItem {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .contactIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .contactDetails {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .contactLabel {
+    color: #7c8493;
+    font: 400 16px 'Epilogue', sans-serif;
+  }
+  
+  .contactValue {
+    color: #25324b;
+    font: 500 16px 'Epilogue', sans-serif;
+  }
+  
+  @media (max-width: 991px) {
+    .dashboardContainer {
+      flex-direction: column;
+    }
+  
+    .sideBar {
+      width: 100%;
+      padding: 20px;
+    }
+  
+    .mainContent {
+      width: 100%;
+    }
+  
+    .topNav,
+    .applicantDetails,
+    .applicantSection {
+      padding: 20px;
+    }
+  
+    .infoGrid {
+      grid-template-columns: 1fr;
+    }
+  
+    .applicantCard {
+      width: 100%;
+    }
+  }
