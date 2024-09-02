@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/homepage.css'; 
-
+import styles from '../css/landingpage.module.css'; 
 
 const Header = () => {
   const navigate = useNavigate();
@@ -17,21 +16,21 @@ const Header = () => {
   const navItems = ['Home', 'About Us', 'Services', 'Contact Us'];
 
   return (
-    <header className="header">
-      <div className="logoContainer">
-        <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" className="logoImage" />
-        <span className="logoText">TrabahaDoor</span>
+    <header className={styles.header}>
+      <div className={styles.logoContainer}>
+        <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" className={styles.logoImage} />
+        <span className={styles.logoText}>TrabahaDoor</span>
       </div>
-      <nav className="navigation">
+      <nav className={styles.navigation}>
         {navItems.map((item, index) => (
-          <a key={index} href={`#${item.toLowerCase().replace(' ', '-')}`} className="navItem"> 
+          <a key={index} href={`#${item.toLowerCase().replace(' ', '-')}`} className={styles.navItem}> 
             {item}
           </a>
         ))}
       </nav>
-      <div className="authContainer">
-        <button className="loginButton" onClick={handleLoginClick}>Login</button>
-        <button className="signupButton" onClick={handleSignupClick}>Sign Up</button>
+      <div className={styles.authContainer}>
+        <button className={styles.loginButton} onClick={handleLoginClick}>Login</button>
+        <button className={styles.signupButton} onClick={handleSignupClick}>Sign Up</button>
       </div>
     </header>
   );
@@ -43,95 +42,96 @@ const Hero = () => {
   const handleButtonClick = () => {
     navigate('/joblisting');
   };
+  
   return (
-    <section className="h-hero">
-      <div className="h-heroContent">
-        <h1 className="h-heroTitle">
+    <section className={styles.hero}>
+      <div className={styles.heroContent}>
+        <h1 className={styles.heroTitle}>
           OPENING <br />
-          <span className="h-highlight">Opportunities</span> <br />
-          <span className="h-subHighlight">for all</span>
+          <span className={styles.highlight}>Opportunities</span> <br />
+          <span className={styles.subHighlight}>for all</span>
         </h1>
-        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/9aa155f8154ba833233c310a426ef23b298797c234d8417a95dcdfff3e62116e?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" alt="" className="h-decorativeImage" />
-        <p className="h-heroDescription">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/9aa155f8154ba833233c310a426ef23b298797c234d8417a95dcdfff3e62116e?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" alt="" className={styles.decorativeImage} />
+        <p className={styles.heroDescription}>
           Your Gateway to Career Opportunities! Opening doors to a brighter future with the Public Employment Service Office of San Jose, Batangas. Explore, Apply, Succeed!
         </p>
-        <button className="h-ctaButton" onClick={handleButtonClick}>
+        <button className={styles.ctaButton} onClick={handleButtonClick}>
           Get Started
         </button>
       </div>
-      <div className="h-heroImageWrapper">
-        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/dd4529adb83c64e54d505e5c50c741ae2faae77894b272c18394f2ee1c7392ee?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" alt="People working together" className="h-heroImage" />
+      <div className={styles.heroImageWrapper}>
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/dd4529adb83c64e54d505e5c50c741ae2faae77894b272c18394f2ee1c7392ee?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" alt="People working together" className={styles.heroImage} />
       </div>
     </section>
   );
-}
+};
+
 const Announcements = () => {
-    const [currentIndex, setCurrentIndex] = useState(0);
-  
-    const slides = [
-        { src: "/assets/jobfair.jpg", alt: "First slide", caption: "PESO SAN JOSE" },
-        { src: "/assets/Peso1.jpg", alt: "Second slide", caption: "PESO SAN JOSE" },
-        { src: "/assets/Peso2.jpg", alt: "Third slide", caption: "PESO SAN JOSE" },
-        { src: "/assets/Peso3.jpg", alt: "Fifth slide", caption: "PESO SAN JOSE" },
-        { src: "/assets/Peso4.jpg", alt: "Sixth slide", caption: "PESO SAN JOSE" }
-    ];
-    const goToNextSlide = () => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === slides.length - 1 ? 0 : prevIndex + 1
-      );
-    };
-  
-    const goToPreviousSlide = () => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === 0 ? slides.length - 1 : prevIndex - 1
-      );
-    };
-  
-    const goToSlide = (index) => {
-      setCurrentIndex(index);
-    };
-  
-    return (
-      <section className="announcementsSection">
-        <h2 className="announcementsTitle">ANNOUNCEMENTS</h2>
-        <hr className="separator" /> 
-        <div className="slideshow-container">
-          {slides.map((slide, index) => (
-            <div
-              key={index}
-              className={`mySlides fade ${index === currentIndex ? 'active' : ''}`}
-            >
-              <div className="numbertext">{index + 1} / {slides.length}</div>
-              <img src={slide.src} alt={slide.alt} style={{ width: "100%" }} />
-              <div className="text">{slide.caption}</div>
-            </div>
-          ))}
-          <a className="prev" onClick={goToPreviousSlide}>&#10094;</a>
-          <a className="next" onClick={goToNextSlide}>&#10095;</a>
-        </div>
-        <br />
-        <div style={{ textAlign: "center" }}>
-          {slides.map((_, index) => (
-            <span
-              key={index}
-              className={`dot ${index === currentIndex ? 'active' : ''}`}
-              onClick={() => goToSlide(index)}
-            ></span>
-          ))}
-        </div>
-      </section>
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const slides = [
+    { src: "/assets/jobfair.jpg", alt: "First slide", caption: "PESO SAN JOSE" },
+    { src: "/assets/Peso1.jpg", alt: "Second slide", caption: "PESO SAN JOSE" },
+    { src: "/assets/Peso2.jpg", alt: "Third slide", caption: "PESO SAN JOSE" },
+    { src: "/assets/Peso3.jpg", alt: "Fifth slide", caption: "PESO SAN JOSE" },
+    { src: "/assets/Peso4.jpg", alt: "Sixth slide", caption: "PESO SAN JOSE" }
+  ];
+
+  const goToNextSlide = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === slides.length - 1 ? 0 : prevIndex + 1
     );
   };
 
+  const goToPreviousSlide = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? slides.length - 1 : prevIndex - 1
+    );
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
+
+  return (
+    <section className={styles.announcementsSection}>
+      <h2 className={styles.announcementsTitle}>ANNOUNCEMENTS</h2>
+      <hr className={styles.separator} /> 
+      <div className={styles.slideshowContainer}>
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className={`${styles.mySlides} ${styles.fade} ${index === currentIndex ? styles.active : ''}`}
+          >
+            <div className={styles.numberText}>{index + 1} / {slides.length}</div>
+            <img src={slide.src} alt={slide.alt} className={styles.slideImage} />
+            <div className={styles.text}>{slide.caption}</div>
+          </div>
+        ))}
+        <a className={styles.prev} onClick={goToPreviousSlide}>&#10094;</a>
+        <a className={styles.next} onClick={goToNextSlide}>&#10095;</a>
+      </div>
+      <div style={{ textAlign: "center" }}>
+        {slides.map((_, index) => (
+          <span
+            key={index}
+            className={`${styles.dot} ${index === currentIndex ? styles.active : ''}`}
+            onClick={() => goToSlide(index)}
+          ></span>
+        ))}
+      </div>
+    </section>
+  );
+};
 
 const ServiceCard = ({ icon, title, description }) => {
   return (
-    <article className="serviceCard">
-      <div className="iconWrapper">
-        <img src={icon} alt="" className="icon" />
+    <article className={styles.serviceCard}>
+      <div className={styles.iconWrapper}>
+        <img src={icon} alt="" className={styles.icon} />
       </div>
-      <h3 className="services-title">{title}</h3>
-      <p className="services-description">{description}</p>
+      <h3 className={styles.servicesTitle}>{title}</h3>
+      <p className={styles.servicesDescription}>{description}</p>
     </article>
   );
 };
@@ -161,14 +161,14 @@ const services = [
 
 const OurServices = () => {
   return (
-    <section className="ourServices">
-      <h2 className="heading">OUR SERVICES</h2>
+    <section className={styles.ourServices}>
+      <h2 className={styles.heading}>OUR SERVICES</h2>
       <img
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/c4eaa54b4d997d60d4d77402c2f9614ebecc4b31c19a9d99a735585aefb5c34d?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
         alt=""
-        className="decorativeImage"
+        className={styles.decorativeImage}
       />
-      <div className="serviceGrid">
+      <div className={styles.serviceGrid}>
         {services.map((service, index) => (
           <ServiceCard
             key={index}
@@ -184,30 +184,30 @@ const OurServices = () => {
 
 const AboutUs = () => {
   return (
-    <section className="aboutContainer">
-      <div className="image-column">
+    <section className={styles.aboutContainer}>
+      <div className={styles.imageColumn}>
         <img 
           loading="lazy" 
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/bc8ceb35ea27108f4f8c5a04de801c84eeec28ac0633cc84f8307834cd82482c?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-          className="aboutImage" 
+          className={styles.aboutImage} 
           alt="PESO San Jose office or team members"
         />
       </div>
-      <div className="content-column">
-        <div className="content-wrapper">
-          <div className="text-content">
-            <h2 className="aboutTitle">
+      <div className={styles.contentColumn}>
+        <div className={styles.contentWrapper}>
+          <div className={styles.textContent}>
+            <h2 className={styles.aboutTitle}>
               About Us <br />
               <span style={{ fontWeight: 500 }}>PESO San Jose</span>
             </h2>
-            <p className="aboutDescription">
+            <p className={styles.aboutDescription}>
               The Public Employment Service Office (PESO) of San Jose, Batangas, is a vital government agency dedicated to assisting job seekers, including students, indigents, and persons with disabilities (PWDs), in finding employment opportunities.
             </p>
-            <p className="aboutServices">
+            <p className={styles.aboutServices}>
               PESO San Jose Batangas provides various services such as job fairs, skills training, and career counseling, aiming to enhance the employability of the local workforce and support economic development in the community.
             </p>
           </div>
-          <button className="exploreButton">Explore More</button>
+          <button className={styles.exploreButton}>Explore More</button>
         </div>
       </div>
     </section>
@@ -216,43 +216,44 @@ const AboutUs = () => {
 
 const ContactSection = () => {
   return (
-    <section className="contactSection">
-      <div className="contactInfo">
-        <h2 className="contactSubtitle">Wanna hear more?</h2>
-        <h1 className="contactTitle">CONTACT US</h1>
-        <p className="contactDescription">
+    <section className={styles.contactSection}>
+      <div className={styles.contactInfo}>
+        <h2 className={styles.contactSubtitle}>Wanna hear more?</h2>
+        <h1 className={styles.contactTitle}>CONTACT US</h1>
+        <p className={styles.contactDescription}>
           For more inquiries, visit us in our office. We would love to hear from you!
         </p>
       </div>
-      <div className="mapContainer">
-        <a href="#" className="mapLink">View Larger Map</a>
-        <div className="mapWrapper">
+      <div className={styles.mapContainer}>
+        <a href="#" className={styles.mapLink}>View Larger Map</a>
+        <div className={styles.mapWrapper}>
           <img 
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/aa50eba43461c1c3d54804e644900566e5261a9d90ac8429ea790ba0a11abb10?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
             alt="Map showing the location of our office" 
-            className="mapImage" 
+            className={styles.mapImage} 
           />
-          <div className="locationLabel">
-            <span className="locationCity">San Jose</span>
+          <div className={styles.locationLabel}>
+            <span className={styles.locationCity}>San Jose</span>
             <br />
-            <span className="locationState">Batangas</span>
+            <span className={styles.locationState}>Batangas</span>
           </div>
         </div>
       </div>
     </section>
   );
 };
+
 const Footer = () => {
   const aboutItems = ['Services', 'About Us', 'Contact'];
   const resourceItems = ['Facebook'];
 
   const FooterColumn = ({ title, items }) => {
     return (
-      <div className="footerColumn">
-        <h2 className="columnTitle">{title}</h2>
-        <ul className="columnList">
+      <div className={styles.footerColumn}>
+        <h2 className={styles.columnTitle}>{title}</h2>
+        <ul className={styles.columnList}>
           {items.map((item, index) => (
-            <li key={index} className="columnItem">{item}</li>
+            <li key={index} className={styles.columnItem}>{item}</li>
           ))}
         </ul>
       </div>
@@ -260,19 +261,19 @@ const Footer = () => {
   };
 
   return (
-    <footer className="footer">
-      <div className="footerContent">
-        <div className="f-logoSection">
-          <div className="f-logoWrapper">
+    <footer className={styles.footer}>
+      <div className={styles.footerContent}>
+        <div className={styles.logoSection}>
+          <div className={styles.logoWrapper}>
             <img 
               loading="lazy" 
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/9a041a0749592ac4adcd0d49d215ec305d8ef2b8bfa04e2e12bc81be88b68fe4?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-              className="logo" 
+              className={styles.logo} 
               alt="TrabahaDoor logo" 
             />
-            <div className="brandName">TrabahaDoor</div>
+            <div className={styles.brandName}>TrabahaDoor</div>
           </div>
-          <p className="f-description">
+          <p className={styles.description}>
             Great platform for the job seeker that passionate about startups. Find your dream job easier.
           </p>
         </div>
@@ -282,10 +283,10 @@ const Footer = () => {
       <img 
         loading="lazy" 
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/952d6d8de5a60a59be33590795d23544dcb9a79cdebfef402ce60593d73463c2?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-        className="divider" 
+        className={styles.divider} 
         alt="" 
       />
-      <p className="copyright">
+      <p className={styles.copyright}>
         2021 @ Trabahadoor. All rights reserved.
       </p>
     </footer>
@@ -294,7 +295,7 @@ const Footer = () => {
 
 const LandingPage = () => {
   return (
-    <main className="landingPage">
+    <main className={styles.landingPage}>
       <Header />
       <Hero/>
       <Announcements />

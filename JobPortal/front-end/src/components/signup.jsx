@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import '../css/login_signup.css';   
+import styles from '../css/login_signup.module.css';
+import '../css/index.css';
 import { useNavigate } from 'react-router-dom';
 import Modal from './modal'; 
 
@@ -15,7 +16,6 @@ function Signup() {
   const handleClick = async (event) => {
     event.preventDefault();
 
-    // Debugging: Check userType value
     console.log('Current userType:', usertype);
 
     try {
@@ -54,23 +54,23 @@ function Signup() {
   const closePrivacyModal = () => setPrivacyModalOpen(false);
 
   return (
-    <section className="loginContainer">
-      <div className="flexContainer">
+    <section className={styles.loginContainer}>
+      <div className={styles.flexContainer}>
         <LoginContainer />
-        <form className="formContainer" onSubmit={handleClick}>
-          <div className="loginForm">
-            <h2 className="welcomeText">Sign up Now</h2>
-            <div className="dividerSection">
-              <div className="dividerLine" />
-              <p className="dividerText">Sign up with email</p>
-              <div className="dividerLine" />
+        <form className={styles.formContainer} onSubmit={handleClick}>
+          <div className={styles.loginForm}>
+            <h2 className={styles.welcomeText}>Sign up Now</h2>
+            <div className={styles.dividerSection}>
+              <div className={styles.dividerLine} />
+              <p className={styles.dividerText}>Sign up with email</p>
+              <div className={styles.dividerLine} />
             </div>
-            <div className="forms">
-              <label className="textFieldGroup">
-                <span className="textFieldLabel">Email Address</span>
+            <div className={styles.forms}>
+              <label className={styles.textFieldGroup}>
+                <span className={styles.textFieldLabel}>Email Address</span>
                 <input 
                   type="email" 
-                  className="textFieldInput" 
+                  className={styles.textFieldInput} 
                   placeholder="Enter your Email Address" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -78,11 +78,11 @@ function Signup() {
                   aria-label="Enter your Email Address"
                 />
               </label>
-              <label className="textFieldGroup">
-                <span className="textFieldLabel">Password</span>
+              <label className={styles.textFieldGroup}>
+                <span className={styles.textFieldLabel}>Password</span>
                 <input 
                   type="password" 
-                  className="textFieldInput" 
+                  className={styles.textFieldInput} 
                   placeholder="Enter password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -90,8 +90,8 @@ function Signup() {
                   aria-label="Enter your password"
                 />
               </label>
-              <div className="userTypeContainer">
-                <label className="radioGroup">
+              <div className={styles.userTypeContainer}>
+                <label className={styles.radioGroup}>
                   <input 
                     type="radio" 
                     name="usertype" 
@@ -101,7 +101,7 @@ function Signup() {
                   />
                   <span>Job Seeker</span>
                 </label>
-                <label className="radioGroup">
+                <label className={styles.radioGroup}>
                 <input 
                     type="radio" 
                     name="usertype" 
@@ -112,17 +112,17 @@ function Signup() {
                   <span>Employer</span>
                 </label>
               </div>
-              <button className="submitButton" type="submit">Continue</button>
+              <button className={styles.submitButton} type="submit">Continue</button>
             </div>
-            <div className="alreadyAccount">
+            <div className={styles.alreadyAccount}>
               <span>Already have an account?</span>
-              <a href="/login" className="signUpLink">Log in</a>
+              <a href="/login" className={styles.signUpLink}>Log in</a>
             </div>
-            <div className="alreadyAccount">
+            <div className={styles.alreadyAccount}>
               <p>
                 By clicking 'Continue', you acknowledge that you have read and accept the 
-                <a href="/terms-of-service" className="signUpLink" onClick={openTermsModal}> Terms of Service</a> and 
-                <a href="/privacy-policy" className="signUpLink" onClick={openPrivacyModal}> Privacy Policy</a>.
+                <a href="/terms-of-service" className={styles.signUpLink} onClick={openTermsModal}> Terms of Service</a> and 
+                <a href="/privacy-policy" className={styles.signUpLink} onClick={openPrivacyModal}> Privacy Policy</a>.
               </p>
             </div>
           </div>
@@ -159,15 +159,15 @@ function Signup() {
 
 function LoginContainer() {
   return (
-    <div className="infoContainer">
+    <div className={styles.infoContainer}>
       <img 
         src={`${process.env.PUBLIC_URL}/assets/jobfair.jpg`} 
         alt="Illustration of opportunities" 
-        className="imageResponsive" 
+        className={styles.imageResponsive} 
         loading="lazy" 
       />
-      <h1 className="headerText">Welcome to Trabahadoor!</h1>
-      <p className="subHeaderText">See the opportunities awaiting for you</p>
+      <h1 className={styles.headerText}>Welcome to Trabahadoor!</h1>
+      <p className={styles.subHeaderText}>See the opportunities awaiting for you</p>
     </div>
   );
 }

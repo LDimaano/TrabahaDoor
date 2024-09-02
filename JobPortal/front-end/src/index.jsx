@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/index.css';
 import Login from './components/login';
 import Signup from './components/signup';
-import Homepage from './components/homepage';
+import LandingPage from './components/landingpage';
 import JobSeekerRegistration from './components/j_registration';
 import StudentRegistration from './components/js_registration';
 import EmployerRegistration from './components/employer_registration';
@@ -23,10 +23,10 @@ root.render(
   <React.StrictMode>
     <Router>
       <Routes>
-        <Route path="/" element={<Homepage />} />
+        <Route path="/" element={<LandingPage/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/homepage" element={<Homepage />} />
+        <Route path="/landingpage" element={<LandingPage />} />
         <Route path="/j_registration" element={<JobSeekerRegistration />} />
         <Route path="/js_registration" element={<StudentRegistration />} />
         <Route path="/employer_registration" element={<EmployerRegistration />} />

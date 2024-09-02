@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import '../css/j_registration.css';   
+import styles from '../css/j_registration.module.css';   
 import { useNavigate } from 'react-router-dom';
 
 // FormInput Component
 const FormInput = ({ label, value, type = 'text', onChange, id, placeholder, ariaLabel }) => {
   return (
-    <div className="inputWrapper">
-      <label className="label" htmlFor={id}>{label}</label>
+    <div className={styles.inputWrapper}>
+      <label className={styles.label} htmlFor={id}>{label}</label>
       <input
-        className="input"
+        className={styles.input}
         type={type}
         value={value}
         onChange={onChange}
@@ -22,78 +22,78 @@ const FormInput = ({ label, value, type = 'text', onChange, id, placeholder, ari
 
 // FormRow Component
 const FormRow = ({ children }) => {
-  return <div className="formRow">{children}</div>;
+  return <div className={styles.formRow}>{children}</div>;
 };
 
 // Main Component
 function JobSeekerRegistration() {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [location, setLocation] = useState('');
-    const [jobTitle, setJobTitle] = useState('');
-    const [workType, setWorkType] = useState('Choose 1');
-    const [salary, setSalary] = useState('Salary Range');
-    const [industry, setIndustry] = useState('Healthcare and Medicine');
-    const [company, setCompany] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [location, setLocation] = useState('');
+  const [jobTitle, setJobTitle] = useState('');
+  const [workType, setWorkType] = useState('Choose 1');
+  const [salary, setSalary] = useState('Salary Range');
+  const [industry, setIndustry] = useState('Healthcare and Medicine');
+  const [company, setCompany] = useState('');
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   
-    const handleSubmit = async (event) => {
-      event.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
   
-      const formData = {
-        firstName,
-        lastName,
-        location,
-        jobTitle,
-        workType,
-        salary,
-        industry,
-        company,
-      };
+    const formData = {
+      firstName,
+      lastName,
+      location,
+      jobTitle,
+      workType,
+      salary,
+      industry,
+      company,
+    };
   
-      try {
-        const response = await fetch('http://localhost:5000/register-jobseeker', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-    
-        const result = await response.json();
-        
-        if (response.ok) {
-          console.log('Form submitted successfully:', result);
-          navigate('/j_registration'); // Or wherever you want to navigate
-        } else {
-          console.error('Error submitting form:', result.error);
-        }
-      } catch (error) {
-        console.error('Network or server error:', error);
+    try {
+      const response = await fetch('http://localhost:5000/register-jobseeker', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      const result = await response.json();
+      
+      if (response.ok) {
+        console.log('Form submitted successfully:', result);
+        navigate('/j_registration'); // Or wherever you want to navigate
+      } else {
+        console.error('Error submitting form:', result.error);
       }
-    };
+    } catch (error) {
+      console.error('Network or server error:', error);
+    }
+  };
 
-    const handleStudentClick = () => {
-      navigate('/js_registration');
-    };
+  const handleStudentClick = () => {
+    navigate('/js_registration');
+  };
 
   return (
-    <main className="r-container">
-      <header className="r-header">
+    <main className={styles.container}>
+      <header className={styles.header}>
         <img 
           loading="lazy"
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/9a041a0749592ac4adcd0d49d215ec305d8ef2b8bfa04e2e12bc81be88b68fe4?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
-          className="logo"
+          className={styles.logo}
           alt="TrabahaDoor logo"
         />
-        <div className="brandName">TrabahaDoor</div>
+        <div className={styles.brandName}>TrabahaDoor</div>
       </header>
-      <h1 className="title">Hello there! Looking for new job opportunities?</h1>
-      <p className="subtitle">Search for people, and job opportunities in your area</p>
+      <h1 className={styles.title}>Hello there! Looking for new job opportunities?</h1>
+      <p className={styles.subtitle}>Search for people, and job opportunities in your area</p>
       <form onSubmit={handleSubmit}>
         <FormRow>
-          <div className="formGroup">
+          <div className={styles.formGroup}>
             <FormInput 
               label="First name*" 
               value={firstName}
@@ -103,7 +103,7 @@ function JobSeekerRegistration() {
               ariaLabel="Enter your first name"
             />
           </div>
-          <div className="formGroup">
+          <div className={styles.formGroup}>
             <FormInput 
               label="Last name*" 
               value={lastName}
@@ -115,7 +115,7 @@ function JobSeekerRegistration() {
           </div>
         </FormRow>
         <FormRow>
-          <div className="formGroup">
+          <div className={styles.formGroup}>
             <FormInput 
               label="Location*" 
               value={location}
@@ -125,7 +125,7 @@ function JobSeekerRegistration() {
               ariaLabel="Enter your location"
             />
           </div>
-          <div className="formGroup">
+          <div className={styles.formGroup}>
             <FormInput 
               label="Current job title *" 
               value={jobTitle}
@@ -137,11 +137,11 @@ function JobSeekerRegistration() {
           </div>
         </FormRow>
         <FormRow>
-          <div className="formGroup">
-            <label className="label" htmlFor="workType">Type of Work *</label>
+          <div className={styles.formGroup}>
+            <label className={styles.label} htmlFor="workType">Type of Work *</label>
             <select 
               id="workType" 
-              className="select" 
+              className={styles.select} 
               value={workType} 
               onChange={(e) => setWorkType(e.target.value)}
             >
@@ -149,11 +149,11 @@ function JobSeekerRegistration() {
               {/* Add more options here if needed */}
             </select>
           </div>
-          <div className="formGroup">
-            <label className="label" htmlFor="salary">Previous Salary</label>
+          <div className={styles.formGroup}>
+            <label className={styles.label} htmlFor="salary">Previous Salary</label>
             <select 
               id="salary" 
-              className="select" 
+              className={styles.select} 
               value={salary} 
               onChange={(e) => setSalary(e.target.value)}
             >
@@ -163,11 +163,11 @@ function JobSeekerRegistration() {
           </div>
         </FormRow>
         <FormRow>
-          <div className="formGroup">
-            <label className="label" htmlFor="industry">Industry *</label>
+          <div className={styles.formGroup}>
+            <label className={styles.label} htmlFor="industry">Industry *</label>
             <select 
               id="industry" 
-              className="select" 
+              className={styles.select} 
               value={industry} 
               onChange={(e) => setIndustry(e.target.value)}
             >
@@ -175,7 +175,7 @@ function JobSeekerRegistration() {
               {/* Add more options here if needed */}
             </select>
           </div>
-          <div className="formGroup">
+          <div className={styles.formGroup}>
             <FormInput 
               label="Most recent company *" 
               value={company}
@@ -186,11 +186,11 @@ function JobSeekerRegistration() {
             />
           </div>
         </FormRow>
-        <button type="button" className="secondaryButton" onClick={handleStudentClick}>I am a student</button>
-        <button type="submit" className="submitButton">Next</button>
+        <button type="button" className={styles.secondaryButton} onClick={handleStudentClick}>I am a student</button>
+        <button type="submit" className={styles.submitButton}>Next</button>
       </form>
     </main>
   );
-};
+}
 
 export default JobSeekerRegistration;

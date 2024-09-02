@@ -122,7 +122,7 @@
     border-radius: 4px; 
   }
 
-.h-hero {
+.hero {
     display: flex;
     justify-content: space-between;
     margin: 135px auto 0;
@@ -130,28 +130,28 @@
     width: 100%;
   }
   
-  .h-heroContent {
+  .heroContent {
     display: flex;
     flex-direction: column;
     width: 44%;
   }
   
-  .h-heroTitle {
+  .heroTitle {
     color: #25324b;
     font: 700 87px/87px 'Hind Vadodara', sans-serif;
     letter-spacing: -0.87px;
     margin: 0;
   }
   
-  .h-highlight {
+  .highlight {
     font-weight: 600;
   }
   
-  .h-subHighlight {
+  .subHighlight {
     font-weight: 500;
   }
   
-  .h-decorativeImage {
+  .decorativeImage {
     aspect-ratio: 14.49;
     margin-top: 29px;
     max-width: 100%;
@@ -159,14 +159,14 @@
     width: 291px;
   }
   
-  .h-heroDescription {
+  .heroDescription {
     color: rgba(51, 27, 59, 0.66);
     font: 400 17px/25px 'Hind Vadodara', sans-serif;
     letter-spacing: 0.34px;
     margin: 29px 41px 0 0;
   }
   
-  .h-ctaButton {
+  .ctaButton {
     align-self: flex-start;
     background-color: #4640de;
     border: none;
@@ -179,42 +179,42 @@
     padding: 22px 49px;
     text-transform: uppercase;
   }
-  .h-heroImageWrapper {
+  .heroImageWrapper {
     width: 56%;
   }
   
-  .h-heroImage {
+  .heroImage {
     aspect-ratio: 1.31;
     object-fit: contain;
     width: 100%;
   }
   
   @media (max-width: 991px) {
-    .h-hero {
+    .hero {
       flex-direction: column;
       margin-top: 40px;
     }
   
-    .h-heroContent,
-    .h-heroImageWrapper {
+    .heroContent,
+    .heroImageWrapper {
       width: 100%;
     }
   
-    .h-heroTitle {
+    .heroTitle {
       font-size: 40px;
       line-height: 45px;
     }
   
-    .h-heroDescription {
+    .heroDescription {
       margin-right: 10px;
     }
   
-    .h-ctaButton {
+    .ctaButton {
       margin-top: 40px;
       padding: 20px 40px;
     }
   
-    .h-heroImage {
+    .heroImage {
       margin-top: 36px;
     }
   }
@@ -253,11 +253,20 @@
 }
 
 * {box-sizing:border-box}
-
-.slideshow-container {
-  max-width: 700px;
+.slideshowContainer {
+  width: 600px;
+  height: 400px;
   position: relative;
-  margin: auto;
+  margin: auto; /* Centers the container horizontally */
+  display: flex;
+  justify-content: center; /* Centers slides horizontally */
+  align-items: center; /* Centers slides vertically */
+}
+
+.slideImage {
+  width: 800px;
+  height: 400px;
+  object-fit: cover; /* Adjusts the image to cover the area without distortion */
 }
 
 .mySlides {
@@ -322,7 +331,7 @@
 }
 
 .active, .dot:hover {
-  background-color: #717171;
+  /* background-color: #717171; */
 }
 
 .fade {
@@ -747,13 +756,13 @@
   justify-content: space-between;
 }
 
-.f-logoSection {
+.logoSection {
   align-self: stretch;
   display: flex;
   flex-direction: column;
 }
 
-.f-logoWrapper {
+.logoWrapper {
   align-self: flex-start;
   display: flex;
   gap: 12px;
@@ -782,7 +791,7 @@
   flex-basis: auto;
 }
 
-.f-description {
+.description {
   color: var(--Neutrals-20, #d6ddeb);
   margin: 32px 0 0 17px;
   font: 400 16px/26px Epilogue, -apple-system, Roboto, Helvetica, sans-serif;

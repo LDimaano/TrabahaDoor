@@ -278,3 +278,14 @@
   justify-content: space-between;
   width: 100%;
 }
+
+.errorMessage {
+  color: #ff4d4f;
+  background-color: #fff2f0;
+  border: 1px solid #ff4d4f;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  text-align: left; 
+}
+

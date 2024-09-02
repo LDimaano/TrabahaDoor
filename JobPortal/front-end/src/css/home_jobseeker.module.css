@@ -1,3 +1,76 @@
+/* Header Styles */
+.header {
+  padding: 10px; /* Adjust these values as needed */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header a {
+  padding: 20px;
+  text-decoration: none;
+  color: #333; /* Text color */
+}
+
+.header a:hover {
+  background-color: #e0e0e0; /* Background on hover */
+  border-radius: 5px; /* Optional: to give some rounded edges on hover */
+}
+
+.logoContainer {
+  display: flex;
+  color: #25324b;
+  white-space: nowrap;
+  letter-spacing: -0.24px;
+  margin: auto 0;
+  font: 700 24px/1 'Hind Vadodara', -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+.logoImage {
+  aspect-ratio: 1;
+  object-fit: contain;
+  object-position: center;
+  width: 45px;
+}
+
+.logoText {
+  flex-basis: auto;
+}
+
+@media (max-width: 991px) {
+  .logoContainer {
+    white-space: initial;
+  }
+}
+
+.navigation {
+  display: flex;
+  gap: 40px 60px;
+  font-size: 16px;
+  flex-wrap: wrap;
+}
+
+.navItem {
+  color: #25324b;
+  font-family: 'Hind Vadodara', -apple-system, Roboto, Helvetica, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.16px;
+  flex-basis: auto;
+  margin: auto 0;
+  text-decoration: none;
+}
+
+.navItem:first-child {
+  font-weight: 600;
+}
+
+@media (max-width: 991px) {
+  .navigation {
+    max-width: 100%;
+  }
+}
+
+/* Job Search Styles */
 .jobSearchContainer {
   background: #fff;
   display: flex;
@@ -73,16 +146,16 @@
 .jobListingSection {
   display: flex;
   padding: 72px 124px;
-  gap: 250px;
+  gap: 40px; /* Adjust the gap between the filter and job list */
 }
 
-.filterSidebar {
-  width: 234px;
+.filterSection {
+  width: 234px; /* Adjust as needed */
 }
 
 .jobListingMain {
   flex-grow: 1;
-  max-width: 919px;
+  max-width: 919px; /* Adjust as needed */
 }
 
 @media (max-width: 991px) {
@@ -105,6 +178,8 @@
     max-width: 100%;
   }
 }
+
+/* Navbar Styles */
 .navbar {
   background: #fff;
   padding: 0 70px;
@@ -200,6 +275,7 @@
   .navbarContent {
     flex-wrap: wrap;
   }
+
   .navMenu,
   .authButtons {
     margin-top: 20px;
@@ -208,15 +284,15 @@
   }
 }
 
-
-/* General styles for the search form section */
+/* Search Form Styles */
 .searchForm {
   display: flex;
   flex-direction: column;
+  align-items: center; /* Center horizontally */
   font: 400 16px/1.6 Epilogue, -apple-system, Roboto, Helvetica, sans-serif;
+  margin: 0 auto; /* Center container horizontally */
 }
 
-/* Styles for the search bar */
 .searchBar {
   background: var(--Color-White, #fff);
   box-shadow: 0px 79px 128px 0px rgba(192, 192, 192, 0.09),
@@ -225,10 +301,10 @@
               0px 6.863px 11.119px 0px rgba(192, 192, 192, 0.04),
               0px 2.714px 4.397px 0px rgba(192, 192, 192, 0.03);
   display: flex;
-  width: 1000px;
-  height:100px;
+  max-width: 1000px; 
+  height: 100px;
   gap: 20px;
-  justify-content: start;
+  justify-content: center; /* Center contents horizontally */
   flex-wrap: wrap;
   padding: 24px;
 }
@@ -240,7 +316,6 @@
   }
 }
 
-/* Styles for the search button */
 .searchButton {
   align-self: start;
   background: var(--Brands-Primary, #4640de);
@@ -258,15 +333,13 @@
   }
 }
 
-/* Styles for the popular searches text */
 .popularSearches {
   color: var(--Neutrals-80, #515b6f);
   opacity: 0.7;
   margin-top: 16px;
 }
 
-/* Container for input fields and images */
-.s-inputContainer {
+.inputContainer {
   display: flex;
   min-width: 240px;
   align-items: center;
@@ -276,43 +349,39 @@
 }
 
 @media (max-width: 991px) {
-.s-inputContainer {
+  .inputContainer {
     max-width: 100%;
     padding-right: 20px;
   }
 }
 
-/* Styles for images */
-.s-inputImage {
+.inputImage {
   aspect-ratio: 1;
   object-fit: contain;
   width: 24px;
 }
 
 @media (max-width: 991px) {
-  .s-inputImage {
+  .inputImage {
     width: 16px;
   }
 }
 
-/* Input group styles */
-.s-inputGroup {
+.inputGroup {
   display: flex;
   flex-direction: column;
   flex: 1;
   border-width: 0;
 }
 
-/* Styles for the divider elements */
-.s-divider {
+.divider {
   background: var(--Lights-Border, #d6ddeb);
   min-height: 1px;
   margin-top: 10px;
   width: 100%;
 }
 
-/* Styles for label and image container */
-.s-labelGroup {
+.labelGroup {
   display: flex;
   align-items: center;
   gap: 40px 100px;
@@ -320,16 +389,16 @@
 }
 
 @media (max-width: 991px) {
-  .s-labelGroup {
+  .labelGroup {
     max-width: 100%;
   }
 }
 
-/* Styles for labels */
-.s-label {
+.label {
   opacity: 0.9;
 }
-.s-select {
+
+.select {
   font-size: 16px;
   padding: 8px;
   border: 1px solid var(--Lights-Border, #d6ddeb);
@@ -337,11 +406,21 @@
   background: #fff;
   width: 100%;
 }
-.filterContainer {
+
+.contentWrapper {
   display: flex;
-  flex-direction: column;
-  color: #515b6f;
-  font: 400 16px Epilogue, sans-serif;
+  flex-direction: row;
+  width: 100%;
+  max-width: 1192px; /* Optional: adjust as needed */
+  margin: 0 auto; /* Center the wrapper horizontally */
+}
+
+/* Filter Styles */
+.filterContainer {
+  width: 300px; /* Adjust width as needed */
+  background-color: #f4f4f4; /* Adjust background color as needed */
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Optional: shadow for side panel */
 }
 
 .filterGroup {
@@ -395,8 +474,12 @@
     margin-bottom: 30px;
   }
 }
+
+/* Job Listing Styles */
 .jobListContainer {
-  width: 100%;
+  flex: 1; /* Take up the remaining space */
+  max-width: 1000px; /* Optional: adjust as needed */
+  padding: 20px; /* Optional: add padding for better spacing */
 }
 
 .jobListHeader {
@@ -538,6 +621,11 @@
   border-radius: 4px;
   cursor: pointer;
   margin-bottom: 15px;
+  height: 40px;
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center text horizontally */
+  align-items: center; /* Center text vertically */
+  text-align: center; /* Ensure text alignment is centered */
 }
 
 .applicantInfo {
@@ -570,12 +658,14 @@
     margin-bottom: 20px;
   }
 }
+
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 32px;
   font: 600 16px/1.6 Inter, sans-serif;
+  
 }
 
 .paginationList {
@@ -593,7 +683,7 @@
   align-items: center;
   border: none;
   background: transparent;
-  color: #515b6f;
+  color: #3c5891;
   font-weight: 600;
   cursor: pointer;
   border-radius: 8px;
