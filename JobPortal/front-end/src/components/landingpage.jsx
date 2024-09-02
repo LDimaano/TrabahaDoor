@@ -40,7 +40,7 @@ const Hero = () => {
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate('/joblisting');
+    navigate('/j_profilecreation');
   };
   
   return (
@@ -189,7 +189,7 @@ const AboutUs = () => {
         <img 
           loading="lazy" 
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/bc8ceb35ea27108f4f8c5a04de801c84eeec28ac0633cc84f8307834cd82482c?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-          className={styles.aboutImage} 
+          className={styles.heroImage} 
           alt="PESO San Jose office or team members"
         />
       </div>

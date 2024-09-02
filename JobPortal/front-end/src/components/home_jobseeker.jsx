@@ -46,9 +46,9 @@ function SearchForm() {
               id="jobTitleInput"
               placeholder="Job title or keyword"
               aria-label="Job title or keyword"
-              className={styles.inputField}
+              className={styles.select}
             />
-            <div className={styles.divider}></div>
+            {/* <div className={styles.divider}></div> */}
           </div>
         </div>
         
@@ -75,7 +75,6 @@ function SearchForm() {
 
         <button type="submit" className={styles.searchButton}>Search</button>
       </form>
-      <p className={styles.popularSearches}>Popular: Teacher, Nurse, Carpenter, IT Support</p>
     </section>
   );
 }

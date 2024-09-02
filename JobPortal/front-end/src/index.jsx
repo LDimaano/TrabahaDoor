@@ -6,6 +6,7 @@ import Login from './components/login';
 import Signup from './components/signup';
 import LandingPage from './components/landingpage';
 import JobSeekerRegistration from './components/j_registration';
+import ProfileCreation from './components/j_profilecreation';
 import StudentRegistration from './components/js_registration';
 import EmployerRegistration from './components/employer_registration';
 import JobPostingForm from './components/jobposting';
@@ -30,6 +31,7 @@ root.render(
         <Route path="/j_registration" element={<JobSeekerRegistration />} />
         <Route path="/js_registration" element={<StudentRegistration />} />
         <Route path="/employer_registration" element={<EmployerRegistration />} />
+        <Route path="/j_profilecreation" element={<ProfileCreation/>} />
         <Route path="/jobposting" element={<JobPostingForm/>} />
         <Route path="/home_jobseeker" element={<HomeJobseeker />} />
         <Route path="/jobposting_desc" element={<JobPostingPage/>} />
