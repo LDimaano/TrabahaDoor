@@ -125,35 +125,18 @@ const CheckboxGroup = ({ options }) => (
   </div>
 );
 
-const SalaryRange = () => (
-  <div className={styles.salaryRange}>
-    <div className={styles.rangeInputs}>
-      <div className={styles.rangeInput}>
-        <span className={styles.currencySymbol}>₱</span>
-        <input type="number" className={styles.rangeValue} defaultValue="5000" />
-      </div>
-      <span className={styles.rangeSeparator}>to</span>
-      <div className={styles.rangeInput}>
-        <span className={styles.currencySymbol}>₱</span>
-        <input type="number" className={styles.rangeValue} defaultValue="22000" />
-      </div>
-    </div>
-    <div className={styles.rangeSlider}>
-      <div className={styles.sliderTrack}>
-        <div className={styles.sliderFill} />
-      </div>
-      <div className={styles.sliderHandle} />
-      <div className={styles.sliderHandle} />
-    </div>
-  </div>
-);
 
-const Dropdown = ({ label, placeholder }) => (
+const SalaryRange = ({ label }) => (
   <div className={styles.dropdown}>
-    <label htmlFor={label.toLowerCase()} className={styles.dropdownLabel}>{label}</label>
     <div className={styles.selectWrapper}>
-      <select id={label.toLowerCase()} className={styles.select}>
-        <option value="">{placeholder}</option>
+      <select id="Salary" className={styles.select}>
+      <option value="below-15000">Below ₱15,000</option>
+      <option value="15000-25000">₱15,000 - ₱25,000</option>
+      <option value="25001-35000">₱25,001 - ₱35,000</option>
+      <option value="35001-50000">₱35,001 - ₱50,000</option>
+      <option value="50001-75000">₱50,001 - ₱75,000</option>
+      <option value="75001-100000">₱75,001 - ₱100,000</option>
+      <option value="above-100000">Above ₱100,000</option>
       </select>
       <img
         loading="lazy"
@@ -165,24 +148,37 @@ const Dropdown = ({ label, placeholder }) => (
   </div>
 );
 
-const SkillTags = () => {
-  const skills = ['Teamwork', 'Communication', 'English'];
-  return (
-    <div className={styles.skillTags}>
-      {skills.map((skill, index) => (
-        <div key={index} className={styles.skillTag}>
-          <span>{skill}</span>
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/3eab8a557be1937a6a05fc2e47ee27972310b2030abddfec2ea9af1e8dcc4e72?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
-            alt="Remove skill"
-            className={styles.removeSkill}
-          />
-        </div>
-      ))}
+const Dropdown = ({ placeholder }) => (
+  <div className={styles.dropdown}>
+    <div className={styles.selectWrapper}>
+      <select id="industry" className={styles.select}>
+        <option value="Select">{placeholder}</option>
+      </select>
+      <img
+        loading="lazy"
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/42e47154ee484296a37ad9e22a695392014763876ec4f686befb2efd60116146?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
+        alt="Dropdown arrow"
+        className={styles.dropdownArrow}
+      />
     </div>
-  );
-};
+  </div>
+);
+
+const SkillTags = ({ label, placeholder }) => (
+  <div className={styles.dropdown}>
+    <div className={styles.selectWrapper}>
+      <select id="Skills" className={styles.select}>
+        <option value="">{placeholder}</option>
+      </select>
+      <img
+        loading="lazy"
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/42e47154ee484296a37ad9e22a695392014763876ec4f686befb2efd60116146?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
+        alt="Dropdown arrow"
+        className={styles.dropdownArrow}
+      />
+    </div>
+  </div>
+);
 
 const JobInformationForm = () => {
   const navigate = useNavigate(); // Initialize useNavigate hook
@@ -222,23 +218,14 @@ const JobInformationForm = () => {
         title="Industry"
         description="Select in what industry does this job listing belong"
       >
-        <Dropdown label="Industry" placeholder="Select Industry" />
+        <Dropdown  placeholder="Select Industry" />
       </FormSection>
 
       <FormSection
         title="Required Skills"
         description="Add required skills for the job"
       >
-        <button className={styles.addSkillButton}>
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/7747504c877063d5f0936c264a85cd381246674d4c251469ac5416820dd68329?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
-            alt="Add skill icon"
-            className={styles.addSkillIcon}
-          />
-          Add Skills
-        </button>
-        <SkillTags />
+        <SkillTags label="Skills" placeholder="Select Skills" />
       </FormSection>
 
       <button type="button" className={styles.nextStepButton} onClick={handleNextStep}>Next Step</button>

@@ -1,10 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const pool = require('./db');
+const jwt = require('jsonwebtoken'); 
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON
 app.use(cors()); // Enable CORS
+
+// Secret key for JWT
+const JWT_SECRET = '7f3e1d7c-7a1b-4c4b-8b2d-e8d2aef55f35';
 
 // Import routes
 const userRoutes = require('./routes/users');
@@ -49,20 +53,7 @@ app.post('/register-jobseeker', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-app.post('/register-student', async (req, res) => {
-  const { firstName, lastName, location, school, yearLevel, specialization } = req.body;
 
-  try {
-    await pool.query(
-      'INSERT INTO students (first_name, last_name, location, school, year_level, specialization) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [firstName, lastName, location, school, yearLevel, specialization]
-    );
-    res.status(201).json({ message: 'Jobseeker registered successfully' });
-  } catch (error) {
-    console.error('Error inserting data:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
 
 app.post('/register-student', async (req, res) => {
   const { firstName, lastName, location, school, yearLevel, specialization } = req.body;
@@ -93,6 +84,43 @@ app.post('/employer_registration', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+//Login
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Fetch user from the database by email
+    const userQuery = 'SELECT * FROM users WHERE email = $1';
+    const { rows } = await pool.query(userQuery, [email]);
+
+    // Check if user exists
+    if (rows.length === 0) {
+      console.log('User not found'); // Debugging log
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    const user = rows[0];
+
+    // Compare plain text passwords
+    if (password !== user.password) {
+      console.log('Password does not match'); // Debugging log
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Generate JWT and decide redirection based on usertype
+    const token = jwt.sign({ id: user.id, usertype: user.usertype }, JWT_SECRET, { expiresIn: '1h' });
+    const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/joblisting';
+
+    console.log('Login successful, redirecting to:', redirectUrl); // Debugging log
+    res.json({ token, redirectUrl });
+  } catch (err) {
+    console.error('Server error during login:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/jobseekers', jobSeekerRoutes);

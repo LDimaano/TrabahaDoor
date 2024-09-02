@@ -272,65 +272,6 @@
   cursor: pointer;
 }
 
-.salaryRange {
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-}
-
-.rangeInputs {
-  display: flex;
-  align-items: center;
-  gap: 40px;
-}
-
-.rangeInput {
-  display: flex;
-  align-items: center;
-  border: 1px solid #d6ddeb;
-  padding: 12px 16px;
-}
-
-.currencySymbol {
-  color: #202430;
-  opacity: 0.5;
-  margin-right: 8px;
-}
-
-.rangeValue {
-  border: none;
-  font-size: 16px;
-  color: #25324b;
-  width: 80px;
-}
-
-.rangeSeparator {
-  color: #7c8493;
-}
-
-.rangeSlider {
-  position: relative;
-  height: 6px;
-  background-color: rgba(70, 64, 222, 0.1);
-  border-radius: 3px;
-}
-
-.sliderTrack {
-  position: absolute;
-  height: 100%;
-  background-color: #4640de;
-  border-radius: 3px;
-}
-
-.sliderHandle {
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  background-color: #4640de;
-  border-radius: 50%;
-  top: -9px;
-  cursor: pointer;
-}
 
 .dropdown {
   display: flex;

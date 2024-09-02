@@ -1,50 +1,53 @@
-import React from 'react';
-import '../css/login_signup.css';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import '../css/login_signup.css';
+import Modal from './modal'; 
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  //fetching,, comment ko muna habang wala pa
-  /*const handleClick = async (event) => {
-    event.preventDefault();
+  const handleClick = async (e) => {
+    e.preventDefault();
 
     try {
-        const response = await fetch('http://localhost:5000/submit-form', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-        const result = await response.json();
+      const data = await response.json();
 
-        if (response.ok) {
-            console.log('Form submitted successfully:', result);
-            
-            navigate('/home_jobseeker'); 
-        } else {
-            console.error('Error submitting form:', result.error);
-        }
-    } catch (error) {
-        console.error('Network or server error:', error);
+      if (response.ok) {
+        // Redirect based on usertype
+        navigate(data.redirectUrl);
+      } else {
+        setError(data.message);
+        setIsModalOpen(true); // Open the modal on login failure
+      }
+    } catch (err) {
+      console.error('Error logging in:', err);
+      setError('Something went wrong. Please try again.');
+      setIsModalOpen(true); // Open the modal on error
     }
-};*/
+  };
 
-const handleClick = () => {
-  navigate('/home_jobseeker'); 
-};
-
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setError(''); // Clear the error message when closing the modal
+  };
 
   return (
     <section className="loginContainer">
       <div className="flexContainer">
-        <LoginContainer/>
-        <form className="formContainer">
+        <LoginContainer />
+        <form className="formContainer" onSubmit={handleClick}>
           <div className="loginForm">
             <h2 className="welcomeText">Log in</h2>
             <div className="dividerSection">
@@ -56,49 +59,58 @@ const handleClick = () => {
               <label className="textFieldGroup">
                 <span className="textFieldLabel">Email Address</span>
                 <input
-                type="email"
-                className="textFieldInput"
-                placeholder="Enter email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                id="emailInput"
-                aria-label="Enter your email address"
-              />
+                  type="email"
+                  className="textFieldInput"
+                  placeholder="Enter email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  id="emailInput"
+                  aria-label="Enter your email address"
+                />
               </label>
               <label className="textFieldGroup">
                 <span className="textFieldLabel">Password</span>
                 <input
-                type="password"
-                className="textFieldInput"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                id="passwordInput"
-                aria-label="Enter your password"
-              />
+                  type="password"
+                  className="textFieldInput"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  id="passwordInput"
+                  aria-label="Enter your password"
+                />
               </label>
               <div className="rememberMeContainer">
-               <label className="checkboxContainer">
-               <input 
-                 type="checkbox" 
-                 className="checkboxInput" 
-               />
-              <span className="checkboxLabel">Remember me</span>
+                <label className="checkboxContainer">
+                  <input
+                    type="checkbox"
+                    className="checkboxInput"
+                  />
+                  <span className="checkboxLabel">Remember me</span>
                 </label>
               </div>
-              <button className="submitButton" type="submit" onClick={handleClick}>Login</button>
+              <button className="submitButton" type="submit">Login</button>
             </div>
-              <div className="alreadyAccount">
-                <span>Don’t have an account?</span>
-                <a href="/signup" className="signUpLink">Sign Up</a>
-              </div>
+            <div className="alreadyAccount">
+              <span>Don’t have an account?</span>
+              <a href="/signup" className="signUpLink">Sign Up</a>
+            </div>
           </div>
         </form>
       </div>
+
+      {/* Login Failed Modal */}
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal} content={
+        <div>
+          <h2>Login Failed</h2>
+          <p>{error}</p>
+          <button className="modalButton" onClick={handleCloseModal}>Close</button>
+        </div>
+      } />
     </section>
   );
-  }
- 
+}
+
 function LoginContainer() {
   return (
     <div className="infoContainer">

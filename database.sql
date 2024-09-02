@@ -3,11 +3,12 @@ CREATE DATABASE trabahadoor;
 CREATE TYPE usertype_enum AS ENUM ('jobseeker', 'employer', 'admin');
 
 CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
+  id SERIAL PRIMARY KEY, 
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   usertype usertype_enum NOT NULL
 );
+--ALTER TABLE users RENAME COLUMN id TO userid;
 
 CREATE TABLE job_seekers (
   id SERIAL PRIMARY KEY,
@@ -20,6 +21,7 @@ CREATE TABLE job_seekers (
   industry VARCHAR(100),
   company VARCHAR(100)
 );
+
 
 CREATE TABLE students (
     id SERIAL PRIMARY KEY,
