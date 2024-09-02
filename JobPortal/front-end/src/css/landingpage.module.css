@@ -21,7 +21,7 @@
   color: #25324b;
   white-space: nowrap;
   letter-spacing: -0.24px;
-  margin: auto 0;
+  margin: auto 6px;
   font: 700 24px/1 'Hind Vadodara', -apple-system, Roboto, Helvetica, sans-serif;
 }
 
@@ -30,10 +30,12 @@
   object-fit: contain;
   object-position: center;
   width: 45px;
+  margin-right: 10px;
 }
 
 .logoText {
   flex-basis: auto;
+  margin-top: 8px;
 }
 
 @media (max-width: 991px) {
@@ -395,6 +397,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding:50px;
 }
 
 .heading {
@@ -452,7 +455,7 @@
   display: flex;
   flex-direction: column;
   line-height: normal;
-  width: 57%;
+  width:50%;
   margin-left: 0;
 }
 
@@ -466,7 +469,7 @@
   aspect-ratio: 1.07;
   object-fit: contain;
   object-position: center;
-  width: 100%;
+  width: 80%;
   flex-grow: 1;
 }
 

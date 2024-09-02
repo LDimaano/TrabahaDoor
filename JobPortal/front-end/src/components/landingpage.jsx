@@ -40,7 +40,7 @@ const Hero = () => {
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate('/j_profilecreation');
+    navigate('/jobposting');
   };
   
   return (
@@ -51,7 +51,6 @@ const Hero = () => {
           <span className={styles.highlight}>Opportunities</span> <br />
           <span className={styles.subHighlight}>for all</span>
         </h1>
-        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/9aa155f8154ba833233c310a426ef23b298797c234d8417a95dcdfff3e62116e?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" alt="" className={styles.decorativeImage} />
         <p className={styles.heroDescription}>
           Your Gateway to Career Opportunities! Opening doors to a brighter future with the Public Employment Service Office of San Jose, Batangas. Explore, Apply, Succeed!
         </p>
@@ -120,6 +119,7 @@ const Announcements = () => {
           ></span>
         ))}
       </div>
+      <hr className={styles.separator} />
     </section>
   );
 };
@@ -163,11 +163,6 @@ const OurServices = () => {
   return (
     <section className={styles.ourServices}>
       <h2 className={styles.heading}>OUR SERVICES</h2>
-      <img
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/c4eaa54b4d997d60d4d77402c2f9614ebecc4b31c19a9d99a735585aefb5c34d?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
-        alt=""
-        className={styles.decorativeImage}
-      />
       <div className={styles.serviceGrid}>
         {services.map((service, index) => (
           <ServiceCard
@@ -189,7 +184,7 @@ const AboutUs = () => {
         <img 
           loading="lazy" 
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/bc8ceb35ea27108f4f8c5a04de801c84eeec28ac0633cc84f8307834cd82482c?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-          className={styles.heroImage} 
+          className={styles.aboutImage} 
           alt="PESO San Jose office or team members"
         />
       </div>
@@ -197,7 +192,7 @@ const AboutUs = () => {
         <div className={styles.contentWrapper}>
           <div className={styles.textContent}>
             <h2 className={styles.aboutTitle}>
-              About Us <br />
+              About<br />
               <span style={{ fontWeight: 500 }}>PESO San Jose</span>
             </h2>
             <p className={styles.aboutDescription}>
