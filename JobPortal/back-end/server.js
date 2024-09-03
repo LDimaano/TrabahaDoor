@@ -39,6 +39,46 @@ app.post('/submit-form', async (req, res) => {
     res.status(500).json({ error: 'Error inserting data' });
   }
 });
+
+app.post('/api/profile', async (req, res) => {
+  const {
+    fullName,
+    phoneNumber,
+    email,
+    dateOfBirth,
+    gender,
+    address,
+    jobTitle,
+    salary,
+    company,
+    location,
+    startDate,
+    endDate,
+    description,
+    skills,
+  } = req.body;
+
+  try {
+    // Insert the data into the profiles table
+    const newProfile = await pool.query(
+      `INSERT INTO profiles (
+        full_name, phone_number, email, date_of_birth, gender, address, 
+        job_title, salary, company, location, start_date, end_date, description, skills
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) 
+      RETURNING *`,
+      [fullName, phoneNumber, email, dateOfBirth, gender, address, jobTitle, salary, company, location, startDate, endDate, description, skills]
+    );
+
+    // Send the newly created profile back as the response
+    res.json(newProfile.rows[0]);
+  } catch (err) {
+    console.error('Error inserting profile:', err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+
 app.post('/register-jobseeker', async (req, res) => {
   const { firstName, lastName, location, jobTitle, workType, salary, industry, company } = req.body;
   

@@ -1,21 +1,63 @@
 import React, { useState } from 'react';
 import styles from '../css/profilecreation.module.css';
 
+
 function ProfileCreation() {
   const [fullName, setFullName] = useState('Juan A. Dela Cruz');
   const [phoneNumber, setPhoneNumber] = useState('+44 1245 572 135');
   const [email, setEmail] = useState('juandelacruz@gmail.com');
-  const [dateOfBirth, setDateOfBirth] = useState('09/08/1997');
+  const [dateOfBirth, setDateOfBirth] = useState('1997-08-09');
   const [gender, setGender] = useState('Male');
   const [address, setAddress] = useState('Galamay-Amo, San Jose');
   const [jobTitle, setJobTitle] = useState('Elementary Teacher');
   const [salary, setSalary] = useState('₱22,000');
   const [company, setCompany] = useState('South College');
   const [location, setLocation] = useState('Abra, San Jose');
-  const [startDate, setStartDate] = useState('09/08/2020');
-  const [endDate, setEndDate] = useState('01/02/2024');
+  const [startDate, setStartDate] = useState('2020-08-09');
+  const [endDate, setEndDate] = useState('2024-02-01');
   const [description, setDescription] = useState('');
   const [skills, setSkills] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const profileData = {
+      fullName,
+      phoneNumber,
+      email,
+      dateOfBirth,
+      gender,
+      address,
+      jobTitle,
+      salary,
+      company,
+      location,
+      startDate,
+      endDate,
+      description,
+      skills,
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profileData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+    } catch (err) {
+      console.error('Submission failed:', err);
+      setError('Failed to submit the profile. Please try again.');
+    }
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -29,7 +71,7 @@ function ProfileCreation() {
           <h1 className={styles.pageTitle}>Create your Profile</h1>
           <div className={styles.action}>
             <button className={styles.backButton}>Back to homepage</button>
-            <img src="http://b.io/ext_8-" alt="" className={styles.icon} />
+            <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" className={styles.logoImage} />
           </div>
         </nav>
         <div className={styles.mainContent}>
@@ -57,7 +99,6 @@ function ProfileCreation() {
                 </p>
               </div>
               <div className={styles.photoUpload}>
-                <img src="http://b.io/ext_9-" alt="Current profile" className={styles.currentPhoto} />
                 <div className={styles.uploadArea}>
                   <label htmlFor="profilePhotoUpload" className={styles.uploadLabel}>
                     <img src="http://b.io/ext_10-" alt="" className={styles.uploadIcon} />
@@ -278,9 +319,10 @@ function ProfileCreation() {
               </form>
               <button className={styles.addExperience}>+ Add More Experience</button>
             </section>
+            <hr className={styles.divider} />
             <section className={styles.skills}>
               <div className={styles.inputField}>
-                <label htmlFor="skills" className={styles.label}>
+                <label htmlFor="skills" className={styles.sectionTitle}>
                   Skills <span className={styles.required}>*</span>
                 </label>
                 <input
@@ -297,8 +339,8 @@ function ProfileCreation() {
           </section>
         </div>
         <div className={styles.buttonContainer}>
-        <button type="button" className={styles.secondaryButton}>I am a student</button>
-        <button type="submit" className={styles.submitButton}>Register</button>
+          <button type="button" className={styles.secondaryButton}>I am a student</button>
+          <button type="submit" className={styles.submitButton} onClick={handleSubmit}>Register</button>
         </div>
       </div>
     </main>

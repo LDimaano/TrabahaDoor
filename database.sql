@@ -2,6 +2,8 @@ CREATE DATABASE trabahadoor;
 
 CREATE TYPE usertype_enum AS ENUM ('jobseeker', 'employer', 'admin');
 
+CREATE TYPE gender AS ENUM ('Male', 'Female', 'Others');
+
 CREATE TABLE users (
   id SERIAL PRIMARY KEY, 
   email VARCHAR(255) NOT NULL UNIQUE,
@@ -42,6 +44,24 @@ CREATE TABLE Employer (
     DateFounded DATE NOT NULL,
     Description TEXT NOT NULL,
     jobtitle VARCHAR(255) NOT NULL;
+);
+
+CREATE TABLE profiles (
+  id SERIAL PRIMARY KEY,
+  full_name VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(20) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  date_of_birth DATE,
+  gender gender NOT NULL,
+  address VARCHAR(255),
+  job_title VARCHAR(255) NOT NULL,
+  salary VARCHAR(50),
+  company VARCHAR(255) NOT NULL,
+  location VARCHAR(255) NOT NULL,
+  start_date DATE,
+  end_date DATE,
+  description TEXT,
+  skills TEXT
 );
 
 CREATE TABLE WorkExp (

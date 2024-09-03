@@ -40,7 +40,7 @@ const Hero = () => {
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate('/jobposting');
+    navigate('/j_profilecreation');
   };
   
   return (
