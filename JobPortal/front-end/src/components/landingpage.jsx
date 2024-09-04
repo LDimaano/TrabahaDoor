@@ -220,23 +220,27 @@ const ContactSection = () => {
         </p>
       </div>
       <div className={styles.mapContainer}>
-        <a href="#" className={styles.mapLink}>View Larger Map</a>
+        <a
+          href="https://www.google.com/maps/search/?api=1&query=13.8693544,121.1062008" // Updated coordinates
+          className={styles.mapLink}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+        </a>
         <div className={styles.mapWrapper}>
-          <img 
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/aa50eba43461c1c3d54804e644900566e5261a9d90ac8429ea790ba0a11abb10?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-            alt="Map showing the location of our office" 
-            className={styles.mapImage} 
-          />
-          <div className={styles.locationLabel}>
-            <span className={styles.locationCity}>San Jose</span>
-            <br />
-            <span className={styles.locationState}>Batangas</span>
-          </div>
+          <iframe
+            src="https://www.google.com/maps?q=13.8693544,121.1062008&z=15&output=embed" // Updated coordinates
+            allowFullScreen=""
+            loading="lazy"
+            className={styles.mapIframe}
+            title="Office Location"
+          ></iframe>
         </div>
       </div>
     </section>
   );
 };
+
 
 const Footer = () => {
   const aboutItems = ['Services', 'About Us', 'Contact'];

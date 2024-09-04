@@ -5,12 +5,9 @@ import './css/index.css';
 import Login from './components/login';
 import Signup from './components/signup';
 import LandingPage from './components/landingpage';
-import JobSeekerRegistration from './components/j_registration';
 import ProfileCreation from './components/j_profilecreation';
 import EmployerProfileCreation from './components/e_profilecreation';
 import StudentProfileCreation from './components/s_profilecreation';
-import StudentRegistration from './components/js_registration';
-import EmployerRegistration from './components/employer_registration';
 import JobPostingForm from './components/jobposting';
 import JobPostingPage from './components/jobposting_desc';  
 import HomeJobseeker from './components/home_jobseeker';
@@ -30,9 +27,6 @@ root.render(
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/landingpage" element={<LandingPage />} />
-        <Route path="/j_registration" element={<JobSeekerRegistration />} />
-        <Route path="/js_registration" element={<StudentRegistration />} />
-        <Route path="/employer_registration" element={<EmployerRegistration />} />
         <Route path="/j_profilecreation" element={<ProfileCreation/>} />
         <Route path="/e_profilecreation" element={<EmployerProfileCreation/>} />
         <Route path="/s_profilecreation" element={<StudentProfileCreation/>} />
