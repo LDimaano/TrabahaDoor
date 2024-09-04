@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../css/profilecreation.module.css';
 
-
-function ProfileCreation() {
+function StudentProfileCreation() {
   const navigate = useNavigate(); 
 
   const [fullName, setFullName] = useState('Juan A. Dela Cruz');
@@ -12,15 +11,16 @@ function ProfileCreation() {
   const [dateOfBirth, setDateOfBirth] = useState('1997-08-09');
   const [gender, setGender] = useState('Male');
   const [address, setAddress] = useState('Galamay-Amo, San Jose');
-  const [jobTitle, setJobTitle] = useState('Elementary Teacher');
-  const [salary, setSalary] = useState('₱22,000');
-  const [company, setCompany] = useState('South College');
-  const [location, setLocation] = useState('Abra, San Jose');
+  const [school, setSchool] = useState('South College');
+  const [degree, setDegree] = useState('Bachelor of Science in Information Technology');
+  const [industry, setIndustry] = useState('Technology');
+  const [internship, setInternship] = useState('Tech Innovations');
   const [startDate, setStartDate] = useState('2020-08-09');
   const [endDate, setEndDate] = useState('2024-02-01');
   const [description, setDescription] = useState('');
   const [skills, setSkills] = useState('');
   const [error, setError] = useState('');
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,10 +31,10 @@ function ProfileCreation() {
       dateOfBirth,
       gender,
       address,
-      jobTitle,
-      salary,
-      company,
-      location,
+      school,
+      degree,
+      industry,
+      internship,
       startDate,
       endDate,
       description,
@@ -42,7 +42,7 @@ function ProfileCreation() {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/profile', {
+      const response = await fetch('http://localhost:5000/api/student-profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,9 +66,9 @@ function ProfileCreation() {
     const file = event.target.files[0];
     // Handle file upload logic here
   };
-
+  
   const handleStudentClick = () => {
-    navigate('/s_profilecreation'); // Navigate to s_profilecreation.jsx
+    navigate('/j_profilecreation'); // Navigate to s_profilecreation.jsx
   };
 
   return (
@@ -102,7 +102,7 @@ function ProfileCreation() {
               <div className={styles.photoInfo}>
                 <h3 className={styles.photoTitle}>Profile Photo</h3>
                 <p className={styles.photoDescription}>
-                  This image will be shown publicly as your profile picture, it will help recruiters recognize you!
+                  This image will be shown publicly as your profile picture; it will help recruiters recognize you!
                 </p>
               </div>
               <div className={styles.photoUpload}>
@@ -112,7 +112,7 @@ function ProfileCreation() {
                     <p className={styles.uploadInstructions}>
                       <span className={styles.clickToReplace}>Click to replace</span> or drag and drop
                     </p>
-                    <p className={styles.fileRequirements}>PNG, or JPG (max. 400 x 400px)</p>
+                    <p className={styles.fileRequirements}>PNG or JPG (max. 400 x 400px)</p>
                   </label>
                   <input
                     type="file"
@@ -127,7 +127,7 @@ function ProfileCreation() {
             <hr className={styles.divider} />
             <section className={styles.personalDetails}>
               <h3 className={styles.sectionTitle}>Personal Details</h3>
-              <form className={styles.detailsForm}>
+              <form className={styles.detailsForm} onSubmit={handleSubmit}>
                 <div className={styles.inputField}>
                   <label htmlFor="fullName" className={styles.label}>
                     Full Name <span className={styles.required}>*</span>
@@ -221,61 +221,66 @@ function ProfileCreation() {
               </form>
             </section>
             <hr className={styles.divider} />
-            <section className={styles.workExperience}>
-              <h3 className={styles.sectionTitle}>Work Experience</h3>
-              <form className={styles.experienceForm}>
+            <section className={styles.educationDetails}>
+              <h3 className={styles.sectionTitle}>Education Details</h3>
+              <form className={styles.educationForm}>
                 <div className={styles.inputField}>
-                  <label htmlFor="jobTitle" className={styles.label}>
-                    Title <span className={styles.required}>*</span>
+                  <label htmlFor="school" className={styles.label}>
+                    School <span className={styles.required}>*</span>
                   </label>
                   <input
                     type="text"
-                    id="jobTitle"
+                    id="school"
                     className={styles.input}
-                    value={jobTitle}
-                    onChange={(e) => setJobTitle(e.target.value)}
+                    value={school}
+                    onChange={(e) => setSchool(e.target.value)}
                     required
                   />
                 </div>
                 <div className={styles.inputField}>
-                  <label htmlFor="salary" className={styles.label}>
-                    Salary
+                  <label htmlFor="degree" className={styles.label}>
+                    Degree <span className={styles.required}>*</span>
                   </label>
                   <input
                     type="text"
-                    id="salary"
+                    id="degree"
                     className={styles.input}
-                    value={salary}
-                    onChange={(e) => setSalary(e.target.value)}
+                    value={degree}
+                    onChange={(e) => setDegree(e.target.value)}
+                    required
                   />
                 </div>
-                <div className={styles.row}>
-                  <div className={styles.inputField}>
-                    <label htmlFor="company" className={styles.label}>
-                      Company <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="company"
-                      className={styles.input}
-                      value={company}
-                      onChange={(e) => setCompany(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputField}>
-                    <label htmlFor="location" className={styles.label}>
-                      Location <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="location"
-                      className={styles.input}
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      required
-                    />
-                  </div>
+                <div className={styles.inputField}>
+                  <label htmlFor="industry" className={styles.label}>
+                    Industry <span className={styles.required}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="industry"
+                    className={styles.input}
+                    value={industry}
+                    onChange={(e) => setIndustry(e.target.value)}
+                    required
+                  />
+                </div>
+              </form>
+            </section>
+            <hr className={styles.divider} />
+            <section className={styles.workExperience}>
+              <h3 className={styles.sectionTitle}>Work Experience</h3>
+              <form className={styles.experienceForm} onSubmit={handleSubmit}>
+                <div className={styles.inputField}>
+                  <label htmlFor="internship" className={styles.label}>
+                    Internship <span className={styles.required}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="internship"
+                    className={styles.input}
+                    value={internship}
+                    onChange={(e) => setInternship(e.target.value)}
+                    required
+                  />
                 </div>
                 <div className={styles.row}>
                   <div className={styles.dropdownField}>
@@ -324,7 +329,7 @@ function ProfileCreation() {
                   />
                 </div>
               </form>
-              <button className={styles.addExperience}>+ Add More Experience</button>
+              <button type="button" className={styles.addExperience}>+ Add More Experience</button>
             </section>
             <hr className={styles.divider} />
             <section className={styles.skills}>
@@ -341,12 +346,12 @@ function ProfileCreation() {
                   required
                 />
               </div>
-              <button className={styles.addSkill}>+ Add More Skills</button>
+              <button type="button" className={styles.addSkill}>+ Add More Skills</button>
             </section>
           </section>
         </div>
         <div className={styles.buttonContainer}>
-          <button type="button" className={styles.secondaryButton} onClick={handleStudentClick}>I am a student</button>
+          <button type="button" className={styles.secondaryButton} onClick={handleStudentClick}>I am not a student</button>
           <button type="submit" className={styles.submitButton} onClick={handleSubmit}>Register</button>
         </div>
       </div>
@@ -354,4 +359,4 @@ function ProfileCreation() {
   );
 }
 
-export default ProfileCreation;
+export default StudentProfileCreation;

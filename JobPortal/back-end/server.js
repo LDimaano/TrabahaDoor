@@ -125,6 +125,45 @@ app.post('/api/employer-profile', async (req, res) => {
   }
 });
 
+app.post('/api/student-profile', async (req, res) => {
+  const {
+    fullName,
+    phoneNumber,
+    email,
+    dateOfBirth,
+    gender,
+    address,
+    school,
+    degree,
+    industry,
+    internship,
+    startDate,
+    endDate,
+    description,
+    skills,
+  } = req.body;
+
+  try {
+    // Insert the data into the profiles table
+    const newProfile = await pool.query(
+      `INSERT INTO stu_profiles (
+        full_name, phone_number, email, date_of_birth, gender, address, 
+        school, degree, industry, internship, start_date, end_date, description, skills
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) 
+      RETURNING *`,
+      [fullName, phoneNumber, email, dateOfBirth, gender, address, school, degree, industry, internship, startDate, endDate, description, skills]
+    );
+
+    // Send the newly created profile back as the response
+    res.json(newProfile.rows[0]);
+  } catch (err) {
+    console.error('Error inserting profile:', err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+
 
 app.post('/register-jobseeker', async (req, res) => {
   const { firstName, lastName, location, jobTitle, workType, salary, industry, company } = req.body;
