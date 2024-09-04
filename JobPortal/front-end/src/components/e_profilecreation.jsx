@@ -12,7 +12,7 @@ function EmployerProfileCreation() {
   const [companySize, setCompanySize] = useState('500-1000 employees');
   const [foundedYear, setFoundedYear] = useState('2000');
   const [description, setDescription] = useState('Tech Innovations Ltd is a leading IT solutions provider specializing in software development and consulting.');
-  const [logo, setLogo] = useState(null);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +27,6 @@ function EmployerProfileCreation() {
       companySize,
       foundedYear,
       description,
-      logo
     };
 
     try {
@@ -47,13 +46,14 @@ function EmployerProfileCreation() {
       console.log(data);
     } catch (err) {
       console.error('Submission failed:', err);
+      setError('Failed to submit the profile. Please try again.');
     }
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setLogo(file);
-  };
+  // const handleFileChange = (event) => {
+  //   const file = event.target.files[0];
+  //   setLogo(file);
+  // };
 
   return (
     <main className={styles.profileCreation}>
@@ -103,14 +103,14 @@ function EmployerProfileCreation() {
                     id="profilePhotoUpload"
                     accept="image/png, image/jpeg"
                     className={styles.fileInput}
-                    onChange={handleFileChange}
+                    // onChange={handleFileChange}
                   />
                 </div>
               </div>
             </section>
             <hr className={styles.divider} />
             <section className={styles.personalDetails}>
-              <h3 className={styles.sectionTitle}>Personal Details</h3>
+              <h3 className={styles.sectionTitle}>Company Details</h3>
               <form className={styles.detailsForm}>
                 <div className={styles.inputField}>
                   <label htmlFor="companyName" className={styles.label}>
@@ -197,7 +197,7 @@ function EmployerProfileCreation() {
             </section>
             <hr className={styles.divider} />
             <section className={styles.workExperience}>
-              <h3 className={styles.sectionTitle}>Company details</h3>
+              <h3 className={styles.sectionTitle}>Additional Information</h3>
               <form className={styles.experienceForm}>
                 <div className={styles.inputField}>
                   <label htmlFor="companyAddress" className={styles.label}>
@@ -238,19 +238,20 @@ function EmployerProfileCreation() {
                       required
                     />
                   </div>
-                  <div className={styles.inputField}>
-                    <label htmlFor="description" className={styles.label}>
-                      Description <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="description"
-                      className={styles.input}
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      required
-                    />
-                  </div>
+                </div>
+                <div className={styles.inputField}>
+                  <label htmlFor="description" className={styles.label}>
+                    Description <span className={styles.required}>*</span>
+                  </label>
+                  <textarea
+                    id="description"
+                    className={styles.textarea}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={3}
+                    maxLength={400}
+                    required
+                  />
                 </div>
               </form>
             </section>

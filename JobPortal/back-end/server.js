@@ -78,6 +78,53 @@ app.post('/api/profile', async (req, res) => {
   }
 });
 
+app.post('/api/employer-profile', async (req, res) => {
+  const {
+    companyName,
+    contactPerson,
+    contactNumber,
+    email,
+    website,
+    industry,
+    companyAddress,
+    companySize,
+    foundedYear,
+    description,
+    logo
+  } = req.body;
+
+  try {
+    // Insert the data into the profiles table and return the inserted row
+    const newEmpProfile = await pool.query(
+      `INSERT INTO emp_profiles (
+        company_name, contact_person, contact_number, email, website, industry, 
+        company_address, company_size, founded_year, description
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+      RETURNING *`,
+      [
+        companyName,
+        contactPerson,
+        contactNumber,
+        email,
+        website,
+        industry,
+        companyAddress,
+        companySize,
+        foundedYear,
+        description,
+        // logo ? logo.filename : null
+      ]
+    );
+
+    // Send the newly created profile back as the response
+    res.json(newEmpProfile.rows[0]);
+  } catch (err) {
+    console.error('Error inserting profile:', err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 app.post('/register-jobseeker', async (req, res) => {
   const { firstName, lastName, location, jobTitle, workType, salary, industry, company } = req.body;
