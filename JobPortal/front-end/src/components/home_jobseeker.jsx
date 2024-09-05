@@ -1,8 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../css/home_jobseeker.module.css';
 import { useNavigate } from 'react-router-dom';
 
 function Header() {
+  const [email, setEmail] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('useEffect triggered'); // Log when useEffect runs
+    const fetchEmail = async () => {
+      try {
+        console.log('Fetching email'); // Log before fetch
+        const response = await fetch('/api/user-info');
+        console.log('Response received'); // Log after fetch
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Email fetched:', data.email); // Log email data
+          setEmail(data.email);
+        } else {
+          console.error('Failed to fetch email:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching email:', error);
+      }
+    };
+
+    fetchEmail();
+  }, []);
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarContent}>
@@ -13,6 +39,7 @@ function Header() {
             className={styles.logoImage} 
           />
           <span className={styles.logoText}>TrabahaDoor</span>
+          <span className={styles.welcomeText}>Welcome, {email}</span>
         </div>
         <ul className={styles.navMenu}>
           <li className={styles.navItem}>

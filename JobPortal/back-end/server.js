@@ -1,4 +1,6 @@
 const express = require('express');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const pool = require('./db');
 const jwt = require('jsonwebtoken'); 
@@ -6,6 +8,17 @@ const jwt = require('jsonwebtoken');
 const app = express();
 app.use(express.json()); // Middleware to parse JSON
 app.use(cors()); // Enable CORS
+
+// Middleware for parsing cookies
+app.use(cookieParser());
+
+// Middleware for session management
+app.use(session({
+  secret: 'a2f4b9c0e5d', // Replace with a strong secret key
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set secure: true if using HTTPS
+}));
 
 // Secret key for JWT
 const JWT_SECRET = '7f3e1d7c-7a1b-4c4b-8b2d-e8d2aef55f35';
@@ -238,6 +251,14 @@ app.post('/api/login', async (req, res) => {
     const token = jwt.sign({ id: user.id, usertype: user.usertype }, JWT_SECRET, { expiresIn: '1h' });
     const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/joblisting';
 
+    // Create session
+    req.session.user = {
+      id: user.id,
+      email: user.email,
+      usertype: user.usertype,
+      token: token
+    };
+
     console.log('Login successful, redirecting to:', redirectUrl); // Debugging log
     res.json({ token, redirectUrl });
   } catch (err) {
@@ -246,6 +267,28 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+
+// Route to fetch user email from session
+app.get('/api/user-info', (req, res) => {
+  try {
+    // Check if user is logged in
+    if (!req.session.user) {
+      return res.status(401).json({ message: 'User not logged in' });
+    }
+
+    // Fetch email from session
+    const { email } = req.session.user;
+
+    // Log the email to the console
+    console.log('Fetched email:', email);
+
+    // Respond with the email
+    res.json({ email });
+  } catch (err) {
+    console.error('Server error while fetching email:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 // Use routes
 app.use('/api/users', userRoutes);

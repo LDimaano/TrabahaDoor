@@ -26,6 +26,13 @@
   font: 700 24px/1 'Hind Vadodara', -apple-system, Roboto, Helvetica, sans-serif;
 }
 
+.welcomeText {
+  margin-left: 10px; /* Adjust spacing as needed */
+  font-size: 16px; /* Adjust font size as desired */
+  color: #333; /* Set the color */
+  /* Add any other styles you prefer */
+}
+
 .logoImage {
   aspect-ratio: 1;
   object-fit: contain;

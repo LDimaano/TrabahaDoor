@@ -7,7 +7,7 @@ import Modal from './modal';
 function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [usertype, setUserType] = useState('jobseeker'); // Default to 'jobseeker'
+  const [usertype, setUserType] = useState('jobseeker'); 
   const [isTermsModalOpen, setTermsModalOpen] = useState(false);
   const [isPrivacyModalOpen, setPrivacyModalOpen] = useState(false);
 
@@ -24,7 +24,7 @@ function Signup() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, usertype }), // Ensure userType is included
+        body: JSON.stringify({ email, password, usertype }), 
       });
   
       const result = await response.json();
