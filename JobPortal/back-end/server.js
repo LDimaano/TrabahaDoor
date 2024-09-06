@@ -31,30 +31,34 @@ const jobRoutes = require('./routes/jobs');
 const applicationRoutes = require('./routes/applications');
 
 // Define routes
+// Backend: Insert user and return userId
 app.post('/submit-form', async (req, res) => {
   const { email, password, usertype } = req.body;
-
-  console.log('Received data:', { email, password, usertype }); // Check values here
 
   if (!email || !password || !usertype) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
-    const query = 'INSERT INTO users (email, password, usertype) VALUES ($1, $2, $3)';
+    const query = 'INSERT INTO users (email, password, usertype) VALUES ($1, $2, $3) RETURNING user_id';
     const values = [email, password, usertype];
     
-    await pool.query(query, values);
+    const result = await pool.query(query, values);
+    
+    // Ensure userId is returned
+    const userId = result.rows[0].user_id;
 
-    res.status(201).json({ message: 'User registered successfully' });
+    res.status(201).json({ message: 'User registered successfully', userId });
   } catch (error) {
     console.error('Error inserting data:', error);
     res.status(500).json({ error: 'Error inserting data' });
   }
 });
 
+
 app.post('/api/profile', async (req, res) => {
   const {
+    user_id,        // Expect this value to be sent in the request body or query params
     fullName,
     phoneNumber,
     email,
@@ -71,16 +75,24 @@ app.post('/api/profile', async (req, res) => {
     skills,
   } = req.body;
 
+  // Log the request body to verify data
+  console.log('Request body:', req.body);
+
+  // Check that userId is provided
+  if (!user_id) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
   try {
-    // Insert the data into the profiles table
+    // Insert the data into the profiles table with the user_id
     const newProfile = await pool.query(
-      `INSERT INTO profiles (
-        full_name, phone_number, email, date_of_birth, gender, address, 
+      `INSERT INTO job_seeker (
+        user_id, full_name, phone_number, email, date_of_birth, gender, address, 
         job_title, salary, company, location, start_date, end_date, description, skills
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
       RETURNING *`,
-      [fullName, phoneNumber, email, dateOfBirth, gender, address, jobTitle, salary, company, location, startDate, endDate, description, skills]
+      [user_id, fullName, phoneNumber, email, dateOfBirth, gender, address, jobTitle, salary, company, location, startDate, endDate, description, skills]
     );
 
     // Send the newly created profile back as the response
@@ -91,8 +103,10 @@ app.post('/api/profile', async (req, res) => {
   }
 });
 
+
 app.post('/api/employer-profile', async (req, res) => {
   const {
+    user_id,
     companyName,
     contactPerson,
     contactNumber,
@@ -103,19 +117,26 @@ app.post('/api/employer-profile', async (req, res) => {
     companySize,
     foundedYear,
     description,
-    logo
   } = req.body;
 
+  // Log the request body to verify data
+  console.log('Request body:', req.body);
+
+  // Check that userId is provided
+  if (!user_id) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
   try {
     // Insert the data into the profiles table and return the inserted row
     const newEmpProfile = await pool.query(
       `INSERT INTO emp_profiles (
-        company_name, contact_person, contact_number, email, website, industry, 
+        user_id, company_name, contact_person, contact_number, email, website, industry, 
         company_address, company_size, founded_year, description
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
       RETURNING *`,
       [
+        user_id,
         companyName,
         contactPerson,
         contactNumber,
@@ -126,7 +147,6 @@ app.post('/api/employer-profile', async (req, res) => {
         companySize,
         foundedYear,
         description,
-        // logo ? logo.filename : null
       ]
     );
 
@@ -140,6 +160,7 @@ app.post('/api/employer-profile', async (req, res) => {
 
 app.post('/api/student-profile', async (req, res) => {
   const {
+    user_id,
     fullName,
     phoneNumber,
     email,
@@ -156,16 +177,23 @@ app.post('/api/student-profile', async (req, res) => {
     skills,
   } = req.body;
 
+   // Log the request body to verify data
+   console.log('Request body:', req.body);
+
+  // Check that userId is provided
+  if (!user_id) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
   try {
     // Insert the data into the profiles table
     const newProfile = await pool.query(
       `INSERT INTO stu_profiles (
-        full_name, phone_number, email, date_of_birth, gender, address, 
+        user_id, full_name, phone_number, email, date_of_birth, gender, address, 
         school, degree, industry, internship, start_date, end_date, description, skills
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
       RETURNING *`,
-      [fullName, phoneNumber, email, dateOfBirth, gender, address, school, degree, industry, internship, startDate, endDate, description, skills]
+      [user_id, fullName, phoneNumber, email, dateOfBirth, gender, address, school, degree, industry, internship, startDate, endDate, description, skills]
     );
 
     // Send the newly created profile back as the response

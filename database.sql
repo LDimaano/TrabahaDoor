@@ -11,43 +11,12 @@ CREATE TABLE users (
   usertype usertype_enum NOT NULL
 );
 --ALTER TABLE users RENAME COLUMN id TO userid;
+--ALTER TABLE your_table_name
+--ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
-CREATE TABLE job_seekers (
-  id SERIAL PRIMARY KEY,
-  first_name VARCHAR(50),
-  last_name VARCHAR(50),
-  location VARCHAR(100),
-  job_title VARCHAR(100),
-  work_type VARCHAR(50),
-  salary VARCHAR(50),
-  industry VARCHAR(100),
-  company VARCHAR(100)
-);
-
-
-CREATE TABLE students (
-    id SERIAL PRIMARY KEY,
-    first_name VARCHAR(255) NOT NULL,
-    last_name VARCHAR(255) NOT NULL,
-    location VARCHAR(255) NOT NULL,
-    school VARCHAR(255),
-    year_level VARCHAR(255),
-    specialization VARCHAR(255)
-);
-
-
-CREATE TABLE Employer (
-    id SERIAL PRIMARY KEY,
-    CompanyName VARCHAR(255) NOT NULL,
-    Location VARCHAR(255) NOT NULL,
-    Industry VARCHAR(255) NOT NULL,
-    DateFounded DATE NOT NULL,
-    Description TEXT NOT NULL,
-    jobtitle VARCHAR(255) NOT NULL;
-);
-
-CREATE TABLE profiles (
-  id SERIAL PRIMARY KEY,
+CREATE TABLE job_seeker (
+  jsid SERIAL PRIMARY KEY,
   full_name VARCHAR(255) NOT NULL,
   phone_number VARCHAR(20) NOT NULL,
   email VARCHAR(255) NOT NULL,
@@ -61,8 +30,46 @@ CREATE TABLE profiles (
   start_date DATE,
   end_date DATE,
   description TEXT,
-  skills TEXT
+  skills TEXT,
+  user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+
+CREATE TABLE stu_profiles (
+  id SERIAL PRIMARY KEY,
+  full_name VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(20),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  date_of_birth DATE,
+  gender VARCHAR(10),
+  address TEXT,
+  school VARCHAR(255),
+  degree VARCHAR(255),
+  industry VARCHAR(255),
+  internship BOOLEAN,
+  start_date DATE,
+  end_date DATE,
+  description TEXT,
+  skills TEXT 
+  user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE emp_profiles (
+    id SERIAL PRIMARY KEY, 
+    company_name VARCHAR(255) NOT NULL, 
+    contact_person VARCHAR(255),
+    contact_number VARCHAR(20),
+    email VARCHAR(255) UNIQUE, 
+    website VARCHAR(255), 
+    industry VARCHAR(255),
+    company_address TEXT, 
+    company_size VARCHAR(50), 
+    founded_year INTEGER, 
+    description TEXT 
+	user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
+);
+
 
 CREATE TABLE WorkExp (
     WorkExpID SERIAL PRIMARY KEY,

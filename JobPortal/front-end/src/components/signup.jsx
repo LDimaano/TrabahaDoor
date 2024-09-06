@@ -15,23 +15,39 @@ function Signup() {
 
   const handleClick = async (event) => {
     event.preventDefault();
-
+  
     console.log('Current userType:', usertype);
-
+  
     try {
       const response = await fetch('http://localhost:5000/submit-form', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, usertype }), 
+        body: JSON.stringify({ email, password, usertype }),
       });
   
       const result = await response.json();
-      
+  
       if (response.ok) {
         console.log('Form submitted successfully:', result);
-        navigate(usertype === 'jobseeker' ? '/j_profilecreation' : '/e_profilecreation');
+        
+        // Check if userId is received from the backend
+        const userId = result.userId;
+  
+        if (!userId) {
+          console.error('User ID is undefined in response:', result);
+          return; // Early return if userId is not defined
+        }
+  
+        // Store the userId in session storage
+        sessionStorage.setItem('userId', userId);
+  
+        // Debugging output to ensure userId is set
+        console.log(`Navigating to profile creation with userId: ${userId}`);
+  
+        // Navigate to the profile creation page with userId
+        navigate(usertype === 'jobseeker' ? `/j_profilecreation?userId=${userId}` : `/e_profilecreation?userId=${userId}`);
       } else {
         console.error('Error submitting form:', result.error);
       }

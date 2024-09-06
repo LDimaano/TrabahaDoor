@@ -24,7 +24,11 @@ function ProfileCreation() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const user_id = sessionStorage.getItem('userId'); // Or localStorage.getItem('userId');
+
     const profileData = {
+      user_id,
       fullName,
       phoneNumber,
       email,
@@ -41,6 +45,8 @@ function ProfileCreation() {
       skills,
     };
 
+    console.log('Submitting profile data:', profileData);
+
     try {
       const response = await fetch('http://localhost:5000/api/profile', {
         method: 'POST',
@@ -55,7 +61,12 @@ function ProfileCreation() {
       }
 
       const data = await response.json();
-      console.log(data);
+      console.log('Profile created successfully:', data);
+
+      // Navigate to login page after a delay
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000); // Adjust the delay as needed
     } catch (err) {
       console.error('Submission failed:', err);
       setError('Failed to submit the profile. Please try again.');

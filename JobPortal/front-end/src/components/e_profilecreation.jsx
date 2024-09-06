@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from '../css/profilecreation.module.css';
 
 function EmployerProfileCreation() {
+  const navigate = useNavigate();
+
   const [companyName, setCompanyName] = useState('Tech Innovations Ltd');
   const [contactPerson, setContactPerson] = useState('Jane Doe');
   const [contactNumber, setContactNumber] = useState('+44 1245 678 901');
@@ -16,7 +19,11 @@ function EmployerProfileCreation() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const user_id = sessionStorage.getItem('userId');
+
     const profileData = {
+      user_id,
       companyName,
       contactPerson,
       contactNumber,
@@ -28,6 +35,8 @@ function EmployerProfileCreation() {
       foundedYear,
       description,
     };
+
+    console.log('Submitting profile data:', profileData);
 
     try {
       const response = await fetch('http://localhost:5000/api/employer-profile', {
@@ -43,7 +52,12 @@ function EmployerProfileCreation() {
       }
 
       const data = await response.json();
-      console.log(data);
+      console.log('Profile created successfully:', data);
+
+      // Navigate to login page after a delay
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000); // Adjust the delay as needed
     } catch (err) {
       console.error('Submission failed:', err);
       setError('Failed to submit the profile. Please try again.');
@@ -256,7 +270,6 @@ function EmployerProfileCreation() {
               </form>
             </section>
             <div className={styles.buttonContainer}>
-              <button type="button" className={styles.secondaryButton}>I am a student</button>
               <button type="submit" className={styles.submitButton} onClick={handleSubmit}>Register</button>
             </div>
           </section>
