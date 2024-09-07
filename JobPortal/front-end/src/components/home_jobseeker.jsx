@@ -11,7 +11,11 @@ function Header() {
     const fetchEmail = async () => {
       try {
         console.log('Fetching email'); // Log before fetch
-        const response = await fetch('/api/user-info');
+        const response = await fetch('/api/user-info', {
+          headers: {
+            'Authorization': localStorage.getItem('token'), // Assumes token is stored in localStorage
+          },
+        });
         console.log('Response received'); // Log after fetch
 
         if (response.ok) {

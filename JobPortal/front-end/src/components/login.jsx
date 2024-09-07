@@ -23,6 +23,8 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
+        // Store token in localStorage
+        localStorage.setItem('token', data.token);
         // Redirect based on usertype
         navigate(data.redirectUrl);
       } else {
@@ -33,6 +35,7 @@ function Login() {
       setError('Something went wrong. Please try again.');
     }
   };
+
 
   return (
     <section className={styles.loginContainer}>

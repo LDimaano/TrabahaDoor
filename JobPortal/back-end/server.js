@@ -275,8 +275,12 @@ app.post('/api/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Generate JWT and decide redirection based on usertype
-    const token = jwt.sign({ id: user.id, usertype: user.usertype }, JWT_SECRET, { expiresIn: '1h' });
+    // Generate JWT and include email in the payload
+    const token = jwt.sign(
+      { id: user.id, usertype: user.usertype, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
     const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/joblisting';
 
     // Create session
@@ -288,6 +292,8 @@ app.post('/api/login', async (req, res) => {
     };
 
     console.log('Login successful, redirecting to:', redirectUrl); // Debugging log
+    console.log('Token stored in session:', req.session.user.token !== undefined); // Debugging log for token
+
     res.json({ token, redirectUrl });
   } catch (err) {
     console.error('Server error during login:', err);
@@ -296,27 +302,22 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-// Route to fetch user email from session
 app.get('/api/user-info', (req, res) => {
-  try {
-    // Check if user is logged in
-    if (!req.session.user) {
-      return res.status(401).json({ message: 'User not logged in' });
+  const token = req.headers['authorization'];
+
+  if (!token) {
+    return res.status(403).json({ message: 'No token provided' });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Failed to authenticate token' });
     }
 
-    // Fetch email from session
-    const { email } = req.session.user;
-
-    // Log the email to the console
-    console.log('Fetched email:', email);
-
-    // Respond with the email
-    res.json({ email });
-  } catch (err) {
-    console.error('Server error while fetching email:', err);
-    res.status(500).json({ message: 'Server error' });
-  }
+    res.json({ email: user.email });
+  });
 });
+
 
 // Use routes
 app.use('/api/users', userRoutes);
