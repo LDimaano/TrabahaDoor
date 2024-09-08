@@ -78,10 +78,6 @@ function ProfileCreation() {
     // Handle file upload logic here
   };
 
-  const handleStudentClick = () => {
-    navigate('/s_profilecreation'); // Navigate to s_profilecreation.jsx
-  };
-
   return (
     <main className={styles.profileCreation}>
       <div className={styles.content}>
@@ -357,7 +353,6 @@ function ProfileCreation() {
           </section>
         </div>
         <div className={styles.buttonContainer}>
-          <button type="button" className={styles.secondaryButton} onClick={handleStudentClick}>I am a student</button>
           <button type="submit" className={styles.submitButton} onClick={handleSubmit}>Register</button>
         </div>
       </div>
