@@ -5,7 +5,7 @@ CREATE TYPE usertype_enum AS ENUM ('jobseeker', 'employer', 'admin');
 CREATE TYPE gender AS ENUM ('Male', 'Female', 'Others');
 
 CREATE TABLE users (
-  id SERIAL PRIMARY KEY, 
+  user_id SERIAL PRIMARY KEY, 
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   usertype usertype_enum NOT NULL
@@ -66,43 +66,43 @@ CREATE TABLE emp_profiles (
     company_address TEXT, 
     company_size VARCHAR(50), 
     founded_year INTEGER, 
-    description TEXT 
+    description TEXT,
 	user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 
-CREATE TABLE WorkExp (
-    WorkExpID SERIAL PRIMARY KEY,
-    SeekerID INT REFERENCES JobSeeker(SeekerID),
-    Title VARCHAR(255),
-    Salary INT,
-    Company VARCHAR(255),
-    Location VARCHAR(255),
-    StartDate DATE,
-    EndDate DATE,
-    Description TEXT,
-    Skills TEXT
-);
+-- CREATE TABLE WorkExp (
+--     WorkExpID SERIAL PRIMARY KEY,
+--     SeekerID INT REFERENCES JobSeeker(SeekerID),
+--     Title VARCHAR(255),
+--     Salary INT,
+--     Company VARCHAR(255),
+--     Location VARCHAR(255),
+--     StartDate DATE,
+--     EndDate DATE,
+--     Description TEXT,
+--     Skills TEXT
+-- );
 
-CREATE TABLE JobListing (
-    JobID SERIAL PRIMARY KEY,
-    EmployerID INT REFERENCES Employer(EmployerID),
-    JobTitle VARCHAR(255),
-    Description TEXT,
-    Qualification TEXT,
-    Responsibility TEXT,
-    Salary INT,
-    EmploymentType VARCHAR(50),
-    Categories TEXT,
-    Skills TEXT,
-    DatePosted DATE,
-    DateFilled DATE
-);
+-- CREATE TABLE JobListing (
+--     JobID SERIAL PRIMARY KEY,
+--     EmployerID INT REFERENCES Employer(EmployerID),
+--     JobTitle VARCHAR(255),
+--     Description TEXT,
+--     Qualification TEXT,
+--     Responsibility TEXT,
+--     Salary INT,
+--     EmploymentType VARCHAR(50),
+--     Categories TEXT,
+--     Skills TEXT,
+--     DatePosted DATE,
+--     DateFilled DATE
+-- );
 
-CREATE TABLE Application (
-    ApplicationID SERIAL PRIMARY KEY,
-    JobID INT REFERENCES JobListing(JobID),
-    SeekerID INT REFERENCES JobSeeker(SeekerID),
-    Info TEXT,
-    Status VARCHAR(50)
-);
+-- CREATE TABLE Application (
+--     ApplicationID SERIAL PRIMARY KEY,
+--     JobID INT REFERENCES JobListing(JobID),
+--     SeekerID INT REFERENCES JobSeeker(SeekerID),
+--     Info TEXT,
+--     Status VARCHAR(50)
+-- );
