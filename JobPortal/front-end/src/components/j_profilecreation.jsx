@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../css/profilecreation.module.css';
 
-
 function ProfileCreation() {
   const navigate = useNavigate(); 
 
@@ -19,8 +18,56 @@ function ProfileCreation() {
   const [startDate, setStartDate] = useState('2020-08-09');
   const [endDate, setEndDate] = useState('2024-02-01');
   const [description, setDescription] = useState('');
-  const [skills, setSkills] = useState('');
+  const [skills, setSkills] = useState([{ value: '' }]);
+  const [experience, setExperience] = useState([{
+    jobTitle: '',
+    salary: '',
+    company: '',
+    location: '',
+    startDate: '',
+    endDate: '',
+    description: '',
+  }]);
   const [error, setError] = useState('');
+
+  const handleSkillChange = (index, event) => {
+    const newSkills = skills.slice();
+    newSkills[index].value = event.target.value;
+    setSkills(newSkills);
+  };
+
+  const handleAddSkill = () => {
+    setSkills([...skills, { value: '' }]);
+  };
+
+  const handleRemoveSkill = (index) => {
+    const newSkills = skills.filter((_, i) => i !== index);
+    setSkills(newSkills);
+  };
+
+  const handleExperienceChange = (index, event) => {
+    const { name, value } = event.target;
+    const newExperience = experience.slice();
+    newExperience[index] = { ...newExperience[index], [name]: value };
+    setExperience(newExperience);
+  };
+
+  const handleAddExperience = () => {
+    setExperience([...experience, {
+      jobTitle: '',
+      salary: '',
+      company: '',
+      location: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+    }]);
+  };
+
+  const handleRemoveExperience = (index) => {
+    const newExperience = experience.filter((_, i) => i !== index);
+    setExperience(newExperience);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,14 +82,8 @@ function ProfileCreation() {
       dateOfBirth,
       gender,
       address,
-      jobTitle,
-      salary,
-      company,
-      location,
-      startDate,
-      endDate,
-      description,
-      skills,
+      skills: skills.map(skill => skill.value),
+      experience,
     };
 
     console.log('Submitting profile data:', profileData);
@@ -98,7 +139,7 @@ function ProfileCreation() {
             <div className={styles.tabItem} />
           </nav>
           <section className={styles.profileDetails}>
-            <section className={styles.basicInformation}>
+          <section className={styles.basicInformation}>
               <h2 className={styles.sectionTitle}>Basic Information</h2>
               <p className={styles.sectionDescription}>
                 This is your personal information that you can update anytime.
@@ -230,125 +271,138 @@ function ProfileCreation() {
             <hr className={styles.divider} />
             <section className={styles.workExperience}>
               <h3 className={styles.sectionTitle}>Work Experience</h3>
-              <form className={styles.experienceForm}>
-                <div className={styles.inputField}>
-                  <label htmlFor="jobTitle" className={styles.label}>
-                    Title <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="jobTitle"
-                    className={styles.input}
-                    value={jobTitle}
-                    onChange={(e) => setJobTitle(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className={styles.inputField}>
-                  <label htmlFor="salary" className={styles.label}>
-                    Salary
-                  </label>
-                  <input
-                    type="text"
-                    id="salary"
-                    className={styles.input}
-                    value={salary}
-                    onChange={(e) => setSalary(e.target.value)}
-                  />
-                </div>
-                <div className={styles.row}>
+              {experience.map((exp, index) => (
+                <form key={index} className={styles.experienceForm}>
                   <div className={styles.inputField}>
-                    <label htmlFor="company" className={styles.label}>
-                      Company <span className={styles.required}>*</span>
+                    <label htmlFor={`jobTitle-${index}`} className={styles.label}>
+                      Title <span className={styles.required}>*</span>
                     </label>
                     <input
                       type="text"
-                      id="company"
+                      id={`jobTitle-${index}`}
+                      name="jobTitle"
                       className={styles.input}
-                      value={company}
-                      onChange={(e) => setCompany(e.target.value)}
+                      value={exp.jobTitle}
+                      onChange={(e) => handleExperienceChange(index, e)}
                       required
                     />
                   </div>
                   <div className={styles.inputField}>
-                    <label htmlFor="location" className={styles.label}>
-                      Location <span className={styles.required}>*</span>
+                    <label htmlFor={`salary-${index}`} className={styles.label}>
+                      Salary
                     </label>
                     <input
                       type="text"
-                      id="location"
+                      id={`salary-${index}`}
+                      name="salary"
                       className={styles.input}
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
+                      value={exp.salary}
+                      onChange={(e) => handleExperienceChange(index, e)}
+                    />
+                  </div>
+                  <div className={styles.row}>
+                    <div className={styles.inputField}>
+                      <label htmlFor={`company-${index}`} className={styles.label}>
+                        Company <span className={styles.required}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id={`company-${index}`}
+                        name="company"
+                        className={styles.input}
+                        value={exp.company}
+                        onChange={(e) => handleExperienceChange(index, e)}
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputField}>
+                      <label htmlFor={`location-${index}`} className={styles.label}>
+                        Location <span className={styles.required}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id={`location-${index}`}
+                        name="location"
+                        className={styles.input}
+                        value={exp.location}
+                        onChange={(e) => handleExperienceChange(index, e)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.row}>
+                    <div className={styles.dropdownField}>
+                      <label htmlFor={`startDate-${index}`} className={styles.label}>
+                        Start Date <span className={styles.required}>*</span>
+                      </label>
+                      <div className={styles.dropdown}>
+                        <input
+                          type="date"
+                          id={`startDate-${index}`}
+                          name="startDate"
+                          className={styles.select}
+                          value={exp.startDate}
+                          onChange={(e) => handleExperienceChange(index, e)}
+                          required
+                        />
+                        <img src="http://b.io/ext_11-" alt="" className={styles.dropdownIcon} />
+                      </div>
+                    </div>
+                    <div className={styles.dropdownField}>
+                      <label htmlFor={`endDate-${index}`} className={styles.label}>
+                        End Date <span className={styles.required}>*</span>
+                      </label>
+                      <div className={styles.dropdown}>
+                        <input
+                          type="date"
+                          id={`endDate-${index}`}
+                          name="endDate"
+                          className={styles.select}
+                          value={exp.endDate}
+                          onChange={(e) => handleExperienceChange(index, e)}
+                          required
+                        />
+                        <img src="http://b.io/ext_11-" alt="" className={styles.dropdownIcon} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.inputField}>
+                  <label htmlFor={`description-${index}`} className={styles.label}>
+                      Description <span className={styles.required}>*</span>
+                    </label>
+                    <textarea
+                      id={`description-${index}`}
+                      name="description"
+                      className={styles.textarea}
+                      value={exp.description}
+                      onChange={(e) => handleExperienceChange(index, e)}
                       required
                     />
                   </div>
-                </div>
-                <div className={styles.row}>
-                  <div className={styles.dropdownField}>
-                    <label htmlFor="startDate" className={styles.label}>
-                      Start Date <span className={styles.required}>*</span>
-                    </label>
-                    <div className={styles.dropdown}>
-                      <input
-                        type="date"
-                        id="startDate"
-                        className={styles.select}
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        required
-                      />
-                      <img src="http://b.io/ext_11-" alt="" className={styles.dropdownIcon} />
-                    </div>
-                  </div>
-                  <div className={styles.dropdownField}>
-                    <label htmlFor="endDate" className={styles.label}>
-                      End Date <span className={styles.required}>*</span>
-                    </label>
-                    <div className={styles.dropdown}>
-                      <input
-                        type="date"
-                        id="endDate"
-                        className={styles.select}
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        required
-                      />
-                      <img src="http://b.io/ext_11-" alt="" className={styles.dropdownIcon} />
-                    </div>
-                  </div>
-                </div>
-                <div className={styles.inputField}>
-                  <label htmlFor="description" className={styles.label}>
-                    Description <span className={styles.required}>*</span>
-                  </label>
-                  <textarea
-                    id="description"
-                    className={styles.textarea}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                  />
-                </div>
-              </form>
-              <button className={styles.addExperience}>+ Add More Experience</button>
+                  <button type="button" className={styles.removeExperience} onClick={() => handleRemoveExperience(index)}>Remove</button>
+                </form>
+              ))}
+              <button type="button" className={styles.addExperience} onClick={handleAddExperience}>+ Add More Experience</button>
             </section>
             <hr className={styles.divider} />
             <section className={styles.skills}>
-              <div className={styles.inputField}>
-                <label htmlFor="skills" className={styles.sectionTitle}>
-                  Skills <span className={styles.required}>*</span>
-                </label>
-                <input
-                  type="text"
-                  id="skills"
-                  className={styles.input}
-                  value={skills}
-                  onChange={(e) => setSkills(e.target.value)}
-                  required
-                />
+              <div className={styles.sectionTitle}>
+                Skills <span className={styles.required}>*</span>
               </div>
-              <button className={styles.addSkill}>+ Add More Skills</button>
+              {skills.map((skill, index) => (
+                <div key={index} className={styles.inputField}>
+                  <input
+                    type="text"
+                    id={`skill-${index}`}
+                    className={styles.input}
+                    value={skill.value}
+                    onChange={(e) => handleSkillChange(index, e)}
+                    required
+                  />
+                  <button type="button" className={styles.removeSkill} onClick={() => handleRemoveSkill(index)}>Remove</button>
+                </div>
+              ))}
+              <button type="button" className={styles.addSkill} onClick={handleAddSkill}>+ Add More Skills</button>
             </section>
           </section>
         </div>

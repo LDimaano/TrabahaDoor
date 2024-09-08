@@ -305,7 +305,19 @@
     padding: 0;
     margin-top: 16px;
   }
-  
+
+  .removeExperience,
+.removeSkill {
+  background-color: transparent;
+  border: none;
+  color: #f32804;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 16px;
+  text-align: left; /* Align text within the button to the left */
+}  
   @media (max-width: 768px) {
     .content {
       width: 100%;
