@@ -18,24 +18,23 @@ function Login() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        // Ensure credentials (cookies) are included
+        credentials: 'include', 
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Store token in localStorage
-        localStorage.setItem('token', data.token);
-        // Redirect based on usertype
+        // No token handling needed, session is automatically managed via cookies
         navigate(data.redirectUrl);
       } else {
-        setError(data.message);
+        setError(data.message || 'Login failed.');
       }
     } catch (err) {
       console.error('Error logging in:', err);
       setError('Something went wrong. Please try again.');
     }
   };
-
 
   return (
     <section className={styles.loginContainer}>

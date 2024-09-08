@@ -7,20 +7,18 @@ function Header() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('useEffect triggered'); // Log when useEffect runs
     const fetchEmail = async () => {
       try {
-        console.log('Fetching email'); // Log before fetch
-        const response = await fetch('/api/user-info', {
+        const response = await fetch('http://localhost:5000/api/user-info', {
+          method: 'GET',
+          credentials: 'include', // This ensures cookies (session) are sent with the request
           headers: {
-            'Authorization': localStorage.getItem('token'), // Assumes token is stored in localStorage
+            'Content-Type': 'application/json',
           },
         });
-        console.log('Response received'); // Log after fetch
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Email fetched:', data.email); // Log email data
           setEmail(data.email);
         } else {
           console.error('Failed to fetch email:', response.statusText);
@@ -43,7 +41,7 @@ function Header() {
             className={styles.logoImage} 
           />
           <span className={styles.logoText}>TrabahaDoor</span>
-          <span className={styles.welcomeText}>Welcome, {email}</span>
+          <span className={styles.welcomeText}>Welcome, {email || 'Guest'}</span>
         </div>
         <ul className={styles.navMenu}>
           <li className={styles.navItem}>
