@@ -34,27 +34,6 @@ CREATE TABLE job_seeker (
   user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE stu_profiles (
-  id SERIAL PRIMARY KEY,
-  full_name VARCHAR(255) NOT NULL,
-  phone_number VARCHAR(20),
-  email VARCHAR(255) UNIQUE NOT NULL,
-  date_of_birth DATE,
-  gender VARCHAR(10),
-  address TEXT,
-  school VARCHAR(255),
-  degree VARCHAR(255),
-  industry VARCHAR(255),
-  internship BOOLEAN,
-  start_date DATE,
-  end_date DATE,
-  description TEXT,
-  skills TEXT 
-  user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
-);
-
-
 CREATE TABLE emp_profiles (
     id SERIAL PRIMARY KEY, 
     company_name VARCHAR(255) NOT NULL, 
