@@ -1,69 +1,14 @@
 import React, { useState } from 'react';
-import Modal from './modal';
-
-
-const FormField = ({ label, type, placeholder, id }) => {
-  return (
-    <div className="mb-3 text-start">
-      <label htmlFor={id} className="form-label">{label}</label>
-      <input
-        type={type}
-        id={id}
-        placeholder={placeholder}
-        className="form-control"
-        aria-label={label}
-      />
-    </div>
-  );
-};
-
-
-const JobHeader = ({ logo, title, company, location, jobType }) => {
-  return (
-    <header className="mb-4">
-      <div className="d-flex align-items-center mb-3">
-        <img src={logo} alt={`${company} logo`} className="me-3" style={{ width: '100px', height: '100px' }} />
-        <div>
-          <h1 className="h3 mb-2 text-start">{title}</h1>
-          <div className="text-muted text-start">
-            <span className="me-3">{company}</span>
-            <span className="me-3">{location}</span>
-            <span>{jobType}</span>
-          </div>
-        </div>
-      </div>
-    </header>
-  );
-};
-
-
-const AdditionalInfo = () => {
-  return (
-    <div className="mb-3 text-start">
-      <label htmlFor="additionalInfo" className="form-label">Additional information</label>
-      <textarea
-        id="additionalInfo"
-        className="form-control"
-        placeholder="Add a cover letter or anything else you want to share"
-        aria-label="Additional information"
-        rows="4"
-      ></textarea>
-      <div className="d-flex justify-content-between mt-2 text-muted">
-        <span>Maximum 500 characters</span>
-        <span>0 / 500</span>
-      </div>
-    </div>
-  );
-};
-
+import FormField from '../components/formfield';
+import JobHeader from '../components/submitheader';
+import AdditionalInfo from '../components/jssubmitaddinfo';
+import Modal from '../components/modal';
 
 const SubmitApplication = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-
 
   const modalContent = (
     <div className="container">
@@ -98,7 +43,6 @@ const SubmitApplication = () => {
     </div>
   );
 
-
   return (
     <>
       <button onClick={openModal} className="btn btn-primary">Apply Now</button>
@@ -106,6 +50,5 @@ const SubmitApplication = () => {
     </>
   );
 };
-
 
 export default SubmitApplication;

@@ -9,8 +9,8 @@ import ProfileCreation from './components/j_profilecreation';
 import EmployerProfileCreation from './components/e_profilecreation';
 import JobPostingForm from './components/jobposting';
 import JobPostingPage from './components/jobposting_desc';  
-import HomeJobseeker from './components/home_jobseeker';
-import Jobdescription from './components/jobdescription';
+import HomeJobseeker from './pages/home_jobseeker';
+import Jobdescription from './pages/jobdescription';
 import Joblisting from './components/joblisting';
 import ApplicantProfile from './components/applicantdetail';
 
