@@ -1,58 +1,70 @@
 import React, { useState } from 'react';
-import styles from '../css/jobdescription.module.css';
 import SubmitApplication from './jobseeker_submit';
+
 
 const Header = () => {
   return (
-    <header className={styles.header}>
-      <div className={styles.headerContent}>
-        <nav className={styles.topNav}>
-          <div className={styles.menu}>
-            <div className={styles.logo}>
-              <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" className={styles.logoImage} />
-              <span className={styles.logoText}>TrabahaDoor</span>
-            </div>
-            <ul className={styles.menuItems}>
-              <li className={styles.menuItem}>
-                <a href="#" className={styles.activeLink}>Find Jobs</a>
-              </li>
-              <li className={styles.menuItem}>
-                <a href="#">Browse Companies</a>
-              </li>
-            </ul>
-          </div>
+    <header className="bg-transparent py-3">
+      <div className="container d-flex justify-content-between align-items-center">
+        <div className="d-flex align-items-center">
+          <img
+            src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+            alt="TrabahaDoor logo"
+            width="30"
+            height="30"
+            className="me-3"
+          />
+          <span className="fw-bold fs-4">TrabahaDoor</span>
+        </div>
+        <nav>
+          <ul className="nav" style={{ width: '100%' }}>
+            <li className="nav-item">
+              <a href="#" className="nav-link active" style={{ fontSize: '1.25rem' }}>Find Jobs</a>
+            </li>
+            <li className="nav-item">
+              <a href="#" className="nav-link" style={{ fontSize: '1.25rem' }}>Browse Companies</a>
+            </li>
+          </ul>
         </nav>
       </div>
     </header>
   );
 };
 
+
 const ProgressBar = ({ current, total }) => {
   const percentage = (current / total) * 100;
   return (
-    <div className={styles.progressBar}>
-      <p className={styles.progressText}>
-        <span className={styles.progressHighlight}>{current} applied</span> of {total} capacity
+    <div className="mb-4">
+      <p>
+        <strong>{current} applied</strong> of {total} capacity
       </p>
-      <div className={styles.progressBarContainer}>
-        <div className={styles.progressFill} style={{ width: `${percentage}%` }}></div>
+      <div className="progress">
+        <div
+          className="progress-bar"
+          role="progressbar"
+          style={{ width: `${percentage}%` }}
+          aria-valuenow={percentage}
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
       </div>
     </div>
   );
 };
 
+
 const Tag = ({ children, color = 'primary' }) => {
   return (
-    <span className={`${styles.tag} ${styles[color]}`}>
-      {children}
-    </span>
+    <span className={`badge bg-${color} me-2`}>{children}</span>
   );
 };
 
-const Button = ({ children, variant = 'primary', onClick, className, ...props }) => {
+
+const Button = ({ children, variant = 'primary', onClick, ...props }) => {
   return (
     <button
-      className={`${styles.button} ${styles[variant]} ${className}`}
+      className={`btn btn-${variant}`}
       onClick={onClick}
       {...props}
     >
@@ -60,6 +72,7 @@ const Button = ({ children, variant = 'primary', onClick, className, ...props })
     </button>
   );
 };
+
 
 const JobDetails = () => {
   const jobInfo = [
@@ -69,27 +82,28 @@ const JobDetails = () => {
   ];
   const skills = ['Time Management', 'Writing', 'Communication', 'English', 'Teamwork'];
 
+
   return (
-    <aside className={styles.jobDetails}>
-      <section className={styles.aboutRole}>
-        <h2 className={styles.sectionTitle}>About this role</h2>
+    <aside className="col-md-4">
+      <section className="mb-4">
+        <h2>About this role</h2>
         <ProgressBar current={5} total={10} />
         {jobInfo.map(({ label, value }) => (
-          <div key={label} className={styles.jobInfo}>
-            <span className={styles.jobInfoLabel}>{label}</span>
-            <span className={styles.jobInfoValue}>{value}</span>
+          <div key={label} className="d-flex justify-content-between mb-2">
+            <span>{label}</span>
+            <span className="fw-bold">{value}</span>
           </div>
         ))}
       </section>
-      <hr className={styles.divider} />
-      <section className={styles.categories}>
-        <h2 className={styles.sectionTitle}>Categories</h2>
+      <hr />
+      <section className="mb-4">
+        <h2>Categories</h2>
         <Tag color="secondary">Education</Tag>
       </section>
-      <hr className={styles.divider} />
-      <section className={styles.requiredSkills}>
-        <h2 className={styles.sectionTitle}>Required Skills</h2>
-        <div className={styles.skillTags}>
+      <hr />
+      <section>
+        <h2>Required Skills</h2>
+        <div className="d-flex flex-wrap">
           {skills.map((skill) => (
             <Tag key={skill}>{skill}</Tag>
           ))}
@@ -98,6 +112,7 @@ const JobDetails = () => {
     </aside>
   );
 };
+
 
 const JobContent = () => {
   const responsibilities = [
@@ -113,15 +128,16 @@ const JobContent = () => {
     'Previous teaching experience preferred'
   ];
 
+
   return (
-    <div className={styles.jobContent}>
-      <section className={styles.jobDescription}>
+    <div className="col-md-8">
+      <section className="mb-4">
         <h2>Description</h2>
         <p>
           We are seeking a dedicated and passionate teacher to join our team. The ideal candidate will be responsible for creating a positive learning environment, developing lesson plans, delivering engaging lectures, and assessing student progress. The teacher will also be responsible for fostering a supportive and inclusive classroom community.
         </p>
       </section>
-      <section className={styles.responsibilities}>
+      <section className="mb-4">
         <h2>Responsibilities</h2>
         <ul>
           {responsibilities.map((responsibility, index) => (
@@ -129,7 +145,7 @@ const JobContent = () => {
           ))}
         </ul>
       </section>
-      <section className={styles.qualifications}>
+      <section>
         <h2>Qualifications</h2>
         <ul>
           {qualifications.map((qualification, index) => (
@@ -141,34 +157,44 @@ const JobContent = () => {
   );
 };
 
+
 const JobDescription = () => {
   const [isModalOpen, setModalOpen] = useState(false);
+
+
   return (
-    <main className={styles.jobDescription}>
+    <main className="container mt-3"> {/* Reduced top margin */}
       <Header />
-      <hr className={styles.divider} />
-      <section className={styles.jobInfor}>
-        <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="Saint Anthony Montessori logo" className={styles.companyLogo} />
-        <div>
-          <h1 className={styles.jobTitle}>Teacher - Primary Level</h1>
-          <div className={styles.jobMeta}>
-            <span className={styles.companyName}>Saint Anthony Montessori</span>
-            <span className={styles.location}>San Jose, Batangas</span>
-            <span className={styles.jobType}>Full-Time</span>
+      <hr />
+      <section className="row mb-5">
+        <div className="col-md-8 d-flex align-items-center">
+          <img
+            src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+            alt="Saint Anthony Montessori logo"
+            width="100"
+            height="100"
+            className="me-4"
+          />
+          <div>
+            <h1>Teacher - Primary Level</h1>
+            <div className="d-flex flex-column">
+              <span className="text-muted">Saint Anthony Montessori</span>
+              <span>San Jose, Batangas</span>
+              <span>Full-Time</span>
+            </div>
           </div>
         </div>
-        <div className={styles.actionButtons}>
+        <div className="col-md-4 text-end">
           <SubmitApplication isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
         </div>
       </section>
-      <section className={styles.contentSection}>
-        <div className={styles.contentWrapper}>
-          <JobContent />
-          <JobDetails />
-        </div>
+      <section className="row">
+        <JobContent />
+        <JobDetails />
       </section>
     </main>
   );
 };
+
 
 export default JobDescription;

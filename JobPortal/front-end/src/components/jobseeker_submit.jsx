@@ -1,33 +1,34 @@
 import React, { useState } from 'react';
-import Modal from './modal'; 
-import styles from '../css/jobseeker_submit.module.css'; 
+import Modal from './modal';
+
 
 const FormField = ({ label, type, placeholder, id }) => {
   return (
-    <div className={styles.formField}>
-      <label htmlFor={id} className={styles.formLabel}>{label}</label>
+    <div className="mb-3 text-start">
+      <label htmlFor={id} className="form-label">{label}</label>
       <input
         type={type}
         id={id}
         placeholder={placeholder}
-        className={styles.formInput}
+        className="form-control"
         aria-label={label}
       />
     </div>
   );
 };
 
+
 const JobHeader = ({ logo, title, company, location, jobType }) => {
   return (
-    <header className={styles.header}>
-      <div className={styles.roleInfo}>
-        <img src={logo} alt={`${company} logo`} className={styles.companyLogo} />
-        <div className={styles.jobDetails}>
-          <h1 className={styles.jobTitle}>{title}</h1>
-          <div className={styles.jobMetadata}>
-            <span className={styles.metadataItem}>{company}</span>
-            <span className={styles.metadataItem}>{location}</span>
-            <span className={styles.metadataItem}>{jobType}</span>
+    <header className="mb-4">
+      <div className="d-flex align-items-center mb-3">
+        <img src={logo} alt={`${company} logo`} className="me-3" style={{ width: '100px', height: '100px' }} />
+        <div>
+          <h1 className="h3 mb-2 text-start">{title}</h1>
+          <div className="text-muted text-start">
+            <span className="me-3">{company}</span>
+            <span className="me-3">{location}</span>
+            <span>{jobType}</span>
           </div>
         </div>
       </div>
@@ -35,35 +36,38 @@ const JobHeader = ({ logo, title, company, location, jobType }) => {
   );
 };
 
+
 const AdditionalInfo = () => {
   return (
-    <div className={styles.additionalInfo}>
-      <label htmlFor="additionalInfo" className={styles.additionalInfoLabel}>Additional information</label>
-      <div className={styles.additionalInfoContent}>
-        <textarea
-          id="additionalInfo"
-          className={styles.additionalInfoTextarea}
-          placeholder="Add a cover letter or anything else you want to share"
-          aria-label="Additional information"
-        ></textarea>
-        <div className={styles.helperText}>
-          <span className={styles.characterLimit}>Maximum 500 characters</span>
-          <span className={styles.characterCount}>0 / 500</span>
-        </div>
+    <div className="mb-3 text-start">
+      <label htmlFor="additionalInfo" className="form-label">Additional information</label>
+      <textarea
+        id="additionalInfo"
+        className="form-control"
+        placeholder="Add a cover letter or anything else you want to share"
+        aria-label="Additional information"
+        rows="4"
+      ></textarea>
+      <div className="d-flex justify-content-between mt-2 text-muted">
+        <span>Maximum 500 characters</span>
+        <span>0 / 500</span>
       </div>
     </div>
   );
 };
 
+
 const SubmitApplication = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+
   const modalContent = (
-    <div className={styles.container}>
-      <section className={styles.base}>
+    <div className="container">
+      <section className="mb-4">
         <JobHeader
           logo="https://cdn.builder.io/api/v1/image/assets/TEMP/4510ed17dfd1da1e2f074cd5249c6b7e6c149301121221461cda3b29e3cb81e3?placeholderIfAbsent=true&apiKey=1081a2635faf4c6ab261e216f55348ae"
           title="Teacher - Primary Level"
@@ -71,37 +75,37 @@ const SubmitApplication = () => {
           location="San Jose, Batangas"
           jobType="Full-Time"
         />
-        <hr className={styles.divider} />
-        <div className={styles.formSection}>
-          <h2 className={styles.formTitle}>Submit your application</h2>
-          <p className={styles.formDescription}>
-            The following is required and will only be shared with Nomad
-          </p>
+        <hr />
+        <div className="mb-4 text-start">
+          <h2 className="h4">Submit your application</h2>
+          <p>The following is required and will only be shared with Nomad</p>
         </div>
         <form>
           <FormField label="Full name" type="text" placeholder="Enter your fullname" id="fullName" />
           <FormField label="Email address" type="email" placeholder="Enter your email address" id="email" />
           <FormField label="Phone number" type="tel" placeholder="Enter your phone number" id="phone" />
-          <hr className={styles.divider} />
+          <hr />
           <AdditionalInfo />
-          <hr className={styles.divider} />
-          <button type="submit" className={styles.submitButton}>Submit Application</button>
-          <p className={styles.termsText}>
+          <hr />
+          <button type="submit" className="btn btn-primary">Submit Application</button>
+          <p className="mt-3 text-start">
             By sending the request you can confirm that you accept our{" "}
-            <a href="#terms" className={styles.termsLink}>Terms of Service</a> and{" "}
-            <a href="#privacy" className={styles.privacyLink}>Privacy Policy</a>
+            <a href="#terms" className="link-primary">Terms of Service</a> and{" "}
+            <a href="#privacy" className="link-primary">Privacy Policy</a>
           </p>
         </form>
       </section>
     </div>
   );
 
+
   return (
     <>
-      <button onClick={openModal} className={styles.applyButton}>Apply Now</button>
+      <button onClick={openModal} className="btn btn-primary">Apply Now</button>
       <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent} />
     </>
   );
 };
+
 
 export default SubmitApplication;
