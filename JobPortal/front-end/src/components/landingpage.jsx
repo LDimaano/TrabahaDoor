@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../css/landingpage.module.css'; 
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -16,21 +16,25 @@ const Header = () => {
   const navItems = ['Home', 'About Us', 'Services', 'Contact Us'];
 
   return (
-    <header className={styles.header}>
-      <div className={styles.logoContainer}>
-        <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" className={styles.logoImage} />
-        <span className={styles.logoText}>TrabahaDoor</span>
-      </div>
-      <nav className={styles.navigation}>
-        {navItems.map((item, index) => (
-          <a key={index} href={`#${item.toLowerCase().replace(' ', '-')}`} className={styles.navItem}> 
-            {item}
-          </a>
-        ))}
-      </nav>
-      <div className={styles.authContainer}>
-        <button className={styles.loginButton} onClick={handleLoginClick}>Login</button>
-        <button className={styles.signupButton} onClick={handleSignupClick}>Sign Up</button>
+    <header className="navbar navbar-expand-lg navbar-light bg-light">
+      <div className="container">
+        <a className="navbar-brand" href="#">
+          <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" width="30" height="30" className="d-inline-block align-top" />
+          TrabahaDoor
+        </a>
+        <div className="collapse navbar-collapse">
+          <ul className="navbar-nav me-auto">
+            {navItems.map((item, index) => (
+              <li key={index} className="nav-item">
+                <a className="nav-link" href={`#${item.toLowerCase().replace(' ', '-')}`}>{item}</a>
+              </li>
+            ))}
+          </ul>
+          <div className="d-flex">
+            <button className="btn btn-outline-primary me-2" onClick={handleLoginClick}>Login</button>
+            <button className="btn btn-primary" onClick={handleSignupClick}>Sign Up</button>
+          </div>
+        </div>
       </div>
     </header>
   );
@@ -42,24 +46,31 @@ const Hero = () => {
   const handleButtonClick = () => {
     navigate('/j_profilecreation');
   };
-  
+
   return (
-    <section className={styles.hero}>
-      <div className={styles.heroContent}>
-        <h1 className={styles.heroTitle}>
-          OPENING <br />
-          <span className={styles.highlight}>Opportunities</span> <br />
-          <span className={styles.subHighlight}>for all</span>
-        </h1>
-        <p className={styles.heroDescription}>
-          Your Gateway to Career Opportunities! Opening doors to a brighter future with the Public Employment Service Office of San Jose, Batangas. Explore, Apply, Succeed!
-        </p>
-        <button className={styles.ctaButton} onClick={handleButtonClick}>
-          Get Started
-        </button>
-      </div>
-      <div className={styles.heroImageWrapper}>
-        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/dd4529adb83c64e54d505e5c50c741ae2faae77894b272c18394f2ee1c7392ee?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" alt="People working together" className={styles.heroImage} />
+    <section className="bg-light py-5">
+      <div className="container d-flex align-items-center">
+        <div className="text-content me-4">
+          <h1 className="display-4">
+            OPENING <br />
+            <span className="text-primary">Opportunities</span> <br />
+            <span className="text-secondary">for all</span>
+          </h1>
+          <p className="lead">
+            Your Gateway to Career Opportunities! Opening doors to a brighter future with the Public Employment Service Office of San Jose, Batangas. Explore, Apply, Succeed!
+          </p>
+          <button className="btn btn-primary btn-lg" onClick={handleButtonClick}>
+            Get Started
+          </button>
+        </div>
+        <div className="image-content">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/dd4529adb83c64e54d505e5c50c741ae2faae77894b272c18394f2ee1c7392ee?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
+            alt="People working together"
+            className="img-fluid"
+            style={{ maxWidth: '500px', height: 'auto' }}
+          />
+        </div>
       </div>
     </section>
   );
@@ -88,51 +99,50 @@ const Announcements = () => {
     );
   };
 
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-  };
-
   return (
-    <section className={styles.announcementsSection}>
-      <h2 className={styles.announcementsTitle}>ANNOUNCEMENTS</h2>
-      <hr className={styles.separator} /> 
-      <div className={styles.slideshowContainer}>
-        {slides.map((slide, index) => (
-          <div
-            key={index}
-            className={`${styles.mySlides} ${styles.fade} ${index === currentIndex ? styles.active : ''}`}
-          >
-            <div className={styles.numberText}>{index + 1} / {slides.length}</div>
-            <img src={slide.src} alt={slide.alt} className={styles.slideImage} />
-            <div className={styles.text}>{slide.caption}</div>
+    <section className="py-5">
+      <div className="container text-center">
+        <h2 className="mb-4">ANNOUNCEMENTS</h2>
+        <div id="carouselExampleControls" className="carousel slide" data-bs-ride="carousel">
+          <div className="carousel-inner">
+            {slides.map((slide, index) => (
+              <div key={index} className={`carousel-item ${index === currentIndex ? 'active' : ''}`}>
+                <div className="d-flex justify-content-center">
+                  <img 
+                    src={slide.src} 
+                    className="d-block" 
+                    alt={slide.alt} 
+                    style={{ maxWidth: '700px', height: 'auto' }} 
+                  />
+                </div>
+                <div className="carousel-caption d-none d-md-block">
+                  <h5>{slide.caption}</h5>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-        <a className={styles.prev} onClick={goToPreviousSlide}>&#10094;</a>
-        <a className={styles.next} onClick={goToNextSlide}>&#10095;</a>
+          <button className="carousel-control-prev" type="button" onClick={goToPreviousSlide}>
+            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button className="carousel-control-next" type="button" onClick={goToNextSlide}>
+            <span className="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+        </div>
       </div>
-      <div style={{ textAlign: "center" }}>
-        {slides.map((_, index) => (
-          <span
-            key={index}
-            className={`${styles.dot} ${index === currentIndex ? styles.active : ''}`}
-            onClick={() => goToSlide(index)}
-          ></span>
-        ))}
-      </div>
-      <hr className={styles.separator} />
     </section>
   );
 };
-
 const ServiceCard = ({ icon, title, description }) => {
   return (
-    <article className={styles.serviceCard}>
-      <div className={styles.iconWrapper}>
-        <img src={icon} alt="" className={styles.icon} />
+    <div className="col-lg-3 col-md-6 mb-4">
+      <div className="card h-100 text-center">
+        <img src={icon} alt="" className="card-img-top" />
+        <div className="card-body">
+          <h4 className="card-title">{title}</h4>
+          <p className="card-text">{description}</p>
+        </div>
       </div>
-      <h3 className={styles.servicesTitle}>{title}</h3>
-      <p className={styles.servicesDescription}>{description}</p>
-    </article>
+    </div>
   );
 };
 
@@ -161,17 +171,19 @@ const services = [
 
 const OurServices = () => {
   return (
-    <section className={styles.ourServices}>
-      <h2 className={styles.heading}>OUR SERVICES</h2>
-      <div className={styles.serviceGrid}>
-        {services.map((service, index) => (
-          <ServiceCard
-            key={index}
-            icon={service.icon}
-            title={service.title}
-            description={service.description}
-          />
-        ))}
+    <section className="py-5 bg-light">
+      <div className="container text-center">
+        <h2 className="mb-4">OUR SERVICES</h2>
+        <div className="row">
+          {services.map((service, index) => (
+            <ServiceCard
+              key={index}
+              icon={service.icon}
+              title={service.title}
+              description={service.description}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -179,30 +191,22 @@ const OurServices = () => {
 
 const AboutUs = () => {
   return (
-    <section className={styles.aboutContainer}>
-      <div className={styles.imageColumn}>
-        <img 
-          loading="lazy" 
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/bc8ceb35ea27108f4f8c5a04de801c84eeec28ac0633cc84f8307834cd82482c?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-          className={styles.aboutImage} 
-          alt="PESO San Jose office or team members"
-        />
-      </div>
-      <div className={styles.contentColumn}>
-        <div className={styles.contentWrapper}>
-          <div className={styles.textContent}>
-            <h2 className={styles.aboutTitle}>
-              About<br />
-              <span style={{ fontWeight: 500 }}>PESO San Jose</span>
-            </h2>
-            <p className={styles.aboutDescription}>
-              The Public Employment Service Office (PESO) of San Jose, Batangas, is a vital government agency dedicated to assisting job seekers, including students, indigents, and persons with disabilities (PWDs), in finding employment opportunities.
-            </p>
-            <p className={styles.aboutServices}>
-              PESO San Jose Batangas provides various services such as job fairs, skills training, and career counseling, aiming to enhance the employability of the local workforce and support economic development in the community.
-            </p>
+    <section className="py-5">
+      <div className="container">
+        <div className="row">
+          <div className="col-lg-6">
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/bc8ceb35ea27108f4f8c5a04de801c84eeec28ac0633cc84f8307834cd82482c?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
+              className="img-fluid"
+              alt="PESO San Jose office or team members"
+            />
           </div>
-          <button className={styles.exploreButton}>Explore More</button>
+          <div className="col-lg-6">
+            <h2>About <strong>PESO San Jose</strong></h2>
+            <p>The Public Employment Service Office (PESO) of San Jose, Batangas, is dedicated to assisting job seekers, including students, indigents, and persons with disabilities (PWDs), in finding employment opportunities.</p>
+            <p>PESO San Jose Batangas offers job fairs, skills training, and career counseling, supporting the local workforce and economic development.</p>
+            <button className="btn btn-primary">Explore More</button>
+          </div>
         </div>
       </div>
     </section>
@@ -211,98 +215,47 @@ const AboutUs = () => {
 
 const ContactSection = () => {
   return (
-    <section className={styles.contactSection}>
-      <div className={styles.contactInfo}>
-        <h2 className={styles.contactSubtitle}>Wanna hear more?</h2>
-        <h1 className={styles.contactTitle}>CONTACT US</h1>
-        <p className={styles.contactDescription}>
-          For more inquiries, visit us in our office. We would love to hear from you!
-        </p>
-      </div>
-      <div className={styles.mapContainer}>
-        <a
-          href="https://www.google.com/maps/search/?api=1&query=13.8693544,121.1062008" // Updated coordinates
-          className={styles.mapLink}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-        </a>
-        <div className={styles.mapWrapper}>
-          <iframe
-            src="https://www.google.com/maps?q=13.8693544,121.1062008&z=15&output=embed" // Updated coordinates
-            allowFullScreen=""
-            loading="lazy"
-            className={styles.mapIframe}
-            title="Office Location"
-          ></iframe>
-        </div>
+    <section className="py-5 bg-light">
+      <div className="container text-center">
+        <h2 className="mb-4">CONTACT US</h2>
+        <p>Visit our office for more inquiries. We would love to hear from you!</p>
+        <iframe
+          src="https://www.google.com/maps?q=13.8693544,121.1062008&z=15&output=embed"
+          className="w-100"
+          height="400"
+          allowFullScreen=""
+          loading="lazy"
+          title="Office Location"
+        ></iframe>
       </div>
     </section>
   );
 };
 
-
 const Footer = () => {
-  const aboutItems = ['Services', 'About Us', 'Contact'];
-  const resourceItems = ['Facebook'];
-
-  const FooterColumn = ({ title, items }) => {
-    return (
-      <div className={styles.footerColumn}>
-        <h2 className={styles.columnTitle}>{title}</h2>
-        <ul className={styles.columnList}>
-          {items.map((item, index) => (
-            <li key={index} className={styles.columnItem}>{item}</li>
-          ))}
-        </ul>
-      </div>
-    );
-  };
-
   return (
-    <footer className={styles.footer}>
-      <div className={styles.footerContent}>
-        <div className={styles.logoSection}>
-          <div className={styles.logoWrapper}>
-            <img 
-              loading="lazy" 
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/9a041a0749592ac4adcd0d49d215ec305d8ef2b8bfa04e2e12bc81be88b68fe4?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-              className={styles.logo} 
-              alt="TrabahaDoor logo" 
-            />
-            <div className={styles.brandName}>TrabahaDoor</div>
-          </div>
-          <p className={styles.description}>
-            Great platform for the job seeker that passionate about startups. Find your dream job easier.
-          </p>
-        </div>
-        <FooterColumn title="About" items={aboutItems} />
-        <FooterColumn title="Resources" items={resourceItems} />
+    <footer className="bg-dark text-white py-4">
+      <div className="container text-center">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/9a041a0749592ac4adcd0d49d215ec305d8ef2b8bfa04e2e12bc81be88b68fe4?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" alt="TrabahaDoor logo" width="50" />
+        <p className="mt-3">
+          2021 @ Trabahadoor. All rights reserved.
+        </p>
       </div>
-      <img 
-        loading="lazy" 
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/952d6d8de5a60a59be33590795d23544dcb9a79cdebfef402ce60593d73463c2?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
-        className={styles.divider} 
-        alt="" 
-      />
-      <p className={styles.copyright}>
-        2021 @ Trabahadoor. All rights reserved.
-      </p>
     </footer>
   );
 };
 
 const LandingPage = () => {
   return (
-    <main className={styles.landingPage}>
+    <div>
       <Header />
-      <Hero/>
+      <Hero />
       <Announcements />
-      <OurServices/>
-      <AboutUs/>
-      <ContactSection/>
-      <Footer/>
-    </main>
+      <OurServices />
+      <AboutUs />
+      <ContactSection />
+      <Footer />
+    </div>
   );
 };
 
