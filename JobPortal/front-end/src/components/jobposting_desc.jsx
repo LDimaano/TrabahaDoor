@@ -2,41 +2,45 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import styles from '../css/jobposting_desc.module.css';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 // TopNav Component
 function TopNav() {
   return (
-    <header className={styles.topNav}>
-      <div className={styles.companyInfo}>
+    <header className="d-flex justify-content-between align-items-center p-3 border-bottom">
+      <div className="d-flex align-items-center">
         <img 
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/1d41edab7dfd7b603d5a4ad1ca09c3c8f114a2c36e787393ece6fc0064e84327?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
           alt="Company logo" 
-          className={styles.companyLogo} 
+          className="me-3" 
+          style={{ maxWidth: '50px' }} 
         />
-        <div className={styles.companyDetails}>
-          <p className={styles.companyName}>Company</p>
-          <h1 className={styles.companyTitle}>
+        <div>
+          <p className="mb-0 fw-bold">Company</p>
+          <h1 className="mb-0 d-flex align-items-center">
             Saint Anthony Montessori
             <img 
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/094d56e22dd1b07143c6e0b7804b4e8167234f7715ffe38b80659cd99184a939?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
               alt="Verified badge" 
-              className={styles.verifiedBadge} 
+              className="ms-2"
+              style={{ maxWidth: '30px' }} 
             />
           </h1>
         </div>
       </div>
-      <div className={styles.actionArea}>
+      <div className="d-flex align-items-center">
         <img 
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/6dac324345bbc13698ac872cc77d9d263753bd48e8f7f2cbe129c409887b48dc?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
           alt="User profile" 
-          className={styles.userProfile} 
+          className="me-3" 
+          style={{ maxWidth: '40px', borderRadius: '50%' }} 
         />
-        <button className={styles.postJobButton}>
+        <button className="btn btn-primary d-flex align-items-center">
           <img 
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/2e7d66b5d85410abffc25e2d6f30311bb55cb26c3092bd566c5f85092b3362d6?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975" 
             alt="Post job icon" 
-            className={styles.postJobIcon} 
+            className="me-2" 
+            style={{ maxWidth: '20px' }} 
           />
           <span>Post a job</span>
         </button>
@@ -51,25 +55,26 @@ function PostJobHeader() {
 
   // Function to handle the back button click
   const handleBack = () => {
-    window.history.back();
+    navigate(-1); // Navigate back
   };
 
   return (
-    <section className={styles.postJobHeader}>
-      <button className={styles.backButton} onClick={handleBack} aria-label="Go back">
-      <FontAwesomeIcon icon={faArrowLeft} className={styles.backIcon} />
-    </button>
-      <h2 className={styles.postJobTitle}>Post a Job</h2>
+    <section className="d-flex align-items-center mb-4">
+      <button className="btn btn-outline-secondary me-3" onClick={handleBack} aria-label="Go back">
+        <FontAwesomeIcon icon={faArrowLeft} />
+      </button>
+      <h2 className="h4">Post a Job</h2>
     </section>
   );
 }
+
 // JobPostingStepper Component
 const StepperItem = ({ imgSrc, stepNumber, title, isActive }) => (
-  <div className={`${styles.stepperItem} ${isActive ? styles.active : ''}`}>
-    <img loading="lazy" src={imgSrc} alt={`Step ${stepNumber} icon`} className={styles.stepIcon} />
-    <div className={styles.stepInfo}>
-      <div className={styles.stepNumber}>Step {stepNumber}</div>
-      <div className={styles.stepTitle}>{title}</div>
+  <div className={`d-flex align-items-center ${isActive ? 'text-primary' : ''}`}>
+    <img loading="lazy" src={imgSrc} alt={`Step ${stepNumber} icon`} className="me-2" style={{ maxWidth: '30px' }} />
+    <div>
+      <div className="fw-bold">Step {stepNumber}</div>
+      <div>{title}</div>
     </div>
   </div>
 );
@@ -81,7 +86,7 @@ const JobPostingStepper = () => {
   ];
 
   return (
-    <nav className={styles.stepper}>
+    <nav className="d-flex justify-content-between my-4">
       {steps.map((step, index) => (
         <React.Fragment key={index}>
           <StepperItem
@@ -90,13 +95,12 @@ const JobPostingStepper = () => {
             title={step.title}
             isActive={step.isActive}
           />
-          {index < steps.length - 1 && <div className={styles.divider} />}
+          {index < steps.length - 1 && <div className="mx-2 border-end" style={{ height: '2rem' }} />}
         </React.Fragment>
       ))}
     </nav>
   );
 };
-
 
 // TextAreaField Component
 function TextAreaField({ label, description, placeholder }) {
@@ -107,30 +111,33 @@ function TextAreaField({ label, description, placeholder }) {
   };
 
   return (
-    <div className={styles.textAreaField}>
-      <div className={styles.fieldInfo}>
-        <label htmlFor={`${label.toLowerCase()}Input`} className={styles.fieldLabel}>{label}</label>
-        <p className={styles.fieldDescription}>{description}</p>
+    <div className="mb-4">
+      <div className="mb-2">
+        <label htmlFor={`${label.toLowerCase()}Input`} className="form-label">{label}</label>
+        <p>{description}</p>
       </div>
-      <div className={styles.inputWrapper}>
+      <div>
         <textarea
           id={`${label.toLowerCase()}Input`}
-          className={styles.textArea}
+          className="form-control"
           placeholder={placeholder}
           aria-label={label}
           value={value}
           onChange={handleChange}
+          rows="4"
         />
-        <div className={styles.textAreaTools}>
-          {['bold', 'italic', 'underline', 'list', 'link', 'image'].map((tool) => (
-            <button key={tool} type="button" className={styles.toolButton} aria-label={`${tool} text`}>
-              <img src={`http://b.io/ext_${tool}-`} alt={`${tool} icon`} className={styles.toolIcon} />
-            </button>
-          ))}
-        </div>
-        <div className={styles.characterCount}>
-          <span className={styles.maxCharacters}>Maximum 500 characters</span>
-          <span className={styles.currentCount}>{value.length} / 500</span>
+        <div className="d-flex justify-content-between mt-2">
+          {/* <div className="d-flex">
+            {['bold', 'italic', 'underline', 'list', 'link', 'image'].map((tool) => (
+              <button key={tool} type="button" className="btn btn-outline-secondary me-2" aria-label={`${tool} text`}>
+                <img src={`http://b.io/ext_${tool}-`} alt={`${tool} icon`} style={{ maxWidth: '20px' }} />
+              </button>
+            ))}
+          </div> */}
+          <div className="text-end">
+            <span className="d-block">Maximum 500 characters</span>
+            <span>{value.length} / 500</span>
+          </div>
         </div>
       </div>
     </div>
@@ -146,16 +153,15 @@ function JobDetailsForm() {
   ];
 
   return (
-    <form className={styles.jobDetailsForm}>
-      <h2 className={styles.formTitle}>Details</h2>
-      <p className={styles.formDescription}>
+    <form>
+      <h2 className="h4 mb-3">Details</h2>
+      <p className="mb-4">
         Add the description of the job, responsibilities, who you are, and nice-to-haves.
       </p>
-      <hr className={styles.formDivider} />
       {formFields.map((field, index) => (
         <React.Fragment key={field.label}>
           <TextAreaField {...field} />
-          {index < formFields.length - 1 && <hr className={styles.formDivider} />}
+          {index < formFields.length - 1 && <hr className="my-4" />}
         </React.Fragment>
       ))}
     </form>
@@ -165,12 +171,12 @@ function JobDetailsForm() {
 // JobPostingPage Component
 function JobPostingPage() {
   return (
-    <main className={styles.jobPostingPage}>
+    <main className="container my-4">
       <TopNav />
       <PostJobHeader />
       <JobPostingStepper />
       <JobDetailsForm />
-      <button className={styles.nextStepButton}>Post Job</button>
+      <button className="btn btn-primary mt-4">Post Job</button>
     </main>
   );
 }
