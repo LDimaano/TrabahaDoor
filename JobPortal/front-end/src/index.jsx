@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/index.css';
 import Login from './components/login';
 import Signup from './components/signup';
-import LandingPage from './components/landingpage';
+import LandingPage from './pages/landing';
 import ProfileCreation from './components/j_profilecreation';
 import EmployerProfileCreation from './components/e_profilecreation';
 import JobPostingForm from './components/jobposting';
