@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import styles from '../css/login_signup.module.css';
-import '../css/index.css';
 import { useNavigate } from 'react-router-dom';
-import Modal from './modal'; 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Modal from '../components/modal'; 
 
 function Signup() {
   const [email, setEmail] = useState('');
@@ -10,14 +9,12 @@ function Signup() {
   const [usertype, setUserType] = useState('jobseeker'); 
   const [isTermsModalOpen, setTermsModalOpen] = useState(false);
   const [isPrivacyModalOpen, setPrivacyModalOpen] = useState(false);
-
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleClick = async (event) => {
     event.preventDefault();
-  
-    console.log('Current userType:', usertype);
-  
+
     try {
       const response = await fetch('http://localhost:5000/submit-form', {
         method: 'POST',
@@ -26,33 +23,25 @@ function Signup() {
         },
         body: JSON.stringify({ email, password, usertype }),
       });
-  
+
       const result = await response.json();
-  
+
       if (response.ok) {
-        console.log('Form submitted successfully:', result);
-        
-        // Check if userId is received from the backend
         const userId = result.userId;
-  
+
         if (!userId) {
-          console.error('User ID is undefined in response:', result);
-          return; // Early return if userId is not defined
+          setError('User ID is missing from response.');
+          return;
         }
-  
-        // Store the userId in session storage
+
         sessionStorage.setItem('userId', userId);
-  
-        // Debugging output to ensure userId is set
-        console.log(`Navigating to profile creation with userId: ${userId}`);
-  
-        // Navigate to the profile creation page with userId
         navigate(usertype === 'jobseeker' ? `/j_profilecreation?userId=${userId}` : `/e_profilecreation?userId=${userId}`);
       } else {
-        console.error('Error submitting form:', result.error);
+        setError(result.error || 'Error submitting form.');
       }
     } catch (error) {
       console.error('Network or server error:', error);
+      setError('Network error. Please try again.');
     }
   };
 
@@ -70,79 +59,82 @@ function Signup() {
   const closePrivacyModal = () => setPrivacyModalOpen(false);
 
   return (
-    <section className={styles.loginContainer}>
-      <div className={styles.flexContainer}>
-        <LoginContainer />
-        <form className={styles.formContainer} onSubmit={handleClick}>
-          <div className={styles.loginForm}>
-            <h2 className={styles.welcomeText}>Sign up Now</h2>
-            <div className={styles.dividerSection}>
-              <div className={styles.dividerLine} />
-              <p className={styles.dividerText}>Sign up with email</p>
-              <div className={styles.dividerLine} />
-            </div>
-            <div className={styles.forms}>
-              <label className={styles.textFieldGroup}>
-                <span className={styles.textFieldLabel}>Email Address</span>
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+      <div className="container">
+        <div className="row">
+          <SignupContainer />
+          <form className="col-lg-6 d-flex align-items-center" onSubmit={handleClick}>
+            <div className="card p-5 shadow-lg w-100">
+              <h2 className="text-center mb-4">Sign up Now</h2>
+              <div className="text-center mb-4">
+                <hr className="w-25 d-inline-block" />
+                <span className="mx-2">Sign up with email</span>
+                <hr className="w-25 d-inline-block" />
+              </div>
+              {error && <div className="alert alert-danger">{error}</div>}
+              <div className="mb-3">
+                <label htmlFor="emailInput" className="form-label">Email Address</label>
                 <input 
                   type="email" 
-                  className={styles.textFieldInput} 
+                  className="form-control form-control-lg" 
                   placeholder="Enter your Email Address" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   id="emailInput" 
                   aria-label="Enter your Email Address"
                 />
-              </label>
-              <label className={styles.textFieldGroup}>
-                <span className={styles.textFieldLabel}>Password</span>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="passwordInput" className="form-label">Password</label>
                 <input 
                   type="password" 
-                  className={styles.textFieldInput} 
+                  className="form-control form-control-lg" 
                   placeholder="Enter password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   id="passwordInput" 
                   aria-label="Enter your password"
                 />
-              </label>
-              <div className={styles.userTypeContainer}>
-                <label className={styles.radioGroup}>
+              </div>
+              <div className="mb-3">
+                <label className="form-check-label me-3">
                   <input 
                     type="radio" 
                     name="usertype" 
                     value="jobseeker" 
                     checked={usertype === 'jobseeker'} 
                     onChange={() => setUserType('jobseeker')}
+                    className="form-check-input me-1"
                   />
-                  <span>Job Seeker</span>
+                  Job Seeker
                 </label>
-                <label className={styles.radioGroup}>
-                <input 
+                <label className="form-check-label">
+                  <input 
                     type="radio" 
                     name="usertype" 
                     value="employer" 
                     checked={usertype === 'employer'} 
                     onChange={() => setUserType('employer')}
+                    className="form-check-input me-1"
                   />
-                  <span>Employer</span>
+                  Employer
                 </label>
               </div>
-              <button className={styles.submitButton} type="submit">Continue</button>
+              <button className="btn btn-primary btn-lg w-100" type="submit">Continue</button>
+              <div className="text-center mt-3">
+                <span>Already have an account?</span>
+                <a href="/login" className="ms-2">Log in</a>
+              </div>
+              <div className="text-center mt-3">
+                <p>
+                  By clicking 'Continue', you acknowledge that you have read and accept the 
+                  <a href="#" className="ms-1" onClick={openTermsModal}>Terms of Service</a> and 
+                  <a href="#" className="ms-1" onClick={openPrivacyModal}>Privacy Policy</a>.
+                </p>
+              </div>
             </div>
-            <div className={styles.alreadyAccount}>
-              <span>Already have an account?</span>
-              <a href="/login" className={styles.signUpLink}>Log in</a>
-            </div>
-            <div className={styles.alreadyAccount}>
-              <p>
-                By clicking 'Continue', you acknowledge that you have read and accept the 
-                <a href="/terms-of-service" className={styles.signUpLink} onClick={openTermsModal}> Terms of Service</a> and 
-                <a href="/privacy-policy" className={styles.signUpLink} onClick={openPrivacyModal}> Privacy Policy</a>.
-              </p>
-            </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
 
       <Modal 
@@ -153,7 +145,6 @@ function Signup() {
             <h2>Terms of Service</h2>
             <p><strong>Effective Date:</strong> 2025</p>
             <p>Welcome to Trabahadoor! These Terms of Service govern your use of our website provided by PESO San Jose. By accessing or using our Platform, you agree to be bound by these Terms. If you do not agree, please do not use our Platform.</p>
-            {/* Other Terms of Service content */}
             <h3>Contact Us</h3>
             <p>If you have any questions about these Terms, please contact us at (email of sanjose).</p>
           </div>
@@ -165,25 +156,26 @@ function Signup() {
         content={
           <div>
             <h2>Privacy Policy</h2>
-            {/* Privacy Policy Content */}
+            <p>[Insert your Privacy Policy Content here]</p>
           </div>
         }
       />
-    </section>
+    </div>
   );
 }
 
-function LoginContainer() {
+function SignupContainer() {
   return (
-    <div className={styles.infoContainer}>
+    <div className="col-lg-6 d-flex flex-column align-items-center justify-content-center mb-4 mb-lg-0">
       <img 
         src={`${process.env.PUBLIC_URL}/assets/jobfair.jpg`} 
         alt="Illustration of opportunities" 
-        className={styles.imageResponsive} 
+        className="img-fluid mb-3" 
         loading="lazy" 
+        style={{ maxHeight: '600px', objectFit: 'cover' }}
       />
-      <h1 className={styles.headerText}>Welcome to Trabahadoor!</h1>
-      <p className={styles.subHeaderText}>See the opportunities awaiting for you</p>
+      <h1 className="text-center">Welcome to Trabahadoor!</h1>
+      <p className="text-center">See the opportunities awaiting for you</p>
     </div>
   );
 }

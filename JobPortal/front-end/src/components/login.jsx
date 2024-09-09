@@ -103,7 +103,7 @@ function LoginContainer() {
         alt="Illustration of opportunities"
         className="img-fluid mb-3"
         loading="lazy"
-        style={{ maxHeight: '300px', objectFit: 'cover' }}
+        style={{ maxHeight: '600px', objectFit: 'cover' }}
       />
       <h1 className="text-center">Welcome to Trabahadoor!</h1>
       <p className="text-center">See the opportunities awaiting you</p>

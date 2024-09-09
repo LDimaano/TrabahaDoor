@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../css/profilecreation.module.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function EmployerProfileCreation() {
   const navigate = useNavigate();
@@ -64,217 +64,169 @@ function EmployerProfileCreation() {
     }
   };
 
-  // const handleFileChange = (event) => {
-  //   const file = event.target.files[0];
-  //   setLogo(file);
-  // };
+  const handleFileChange = (event) => {
+    // Handle file change if needed
+  };
 
   return (
-    <main className={styles.profileCreation}>
-      <div className={styles.content}>
-        <nav className={styles.topNav}>
-          <h1 className={styles.pageTitle}>Create your Profile</h1>
-          <div className={styles.action}>
-            <button className={styles.backButton}>Back to homepage</button>
-            <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" className={styles.logoImage} />
-          </div>
-        </nav>
-        <div className={styles.mainContent}>
-          <nav className={styles.tabs}>
-            <div className={styles.tabItem}>
-              <span className={styles.tabText}>My Profile</span>
-              <div className={styles.activeIndicator} />
-            </div>
-            <div className={styles.tabItem} />
-            <div className={styles.tabItem} />
-          </nav>
-          <section className={styles.profileDetails}>
-            <section className={styles.basicInformation}>
-              <h2 className={styles.sectionTitle}>Basic Information</h2>
-              <p className={styles.sectionDescription}>
-                This is your personal information that you can update anytime.
-              </p>
-            </section>
-            <hr className={styles.divider} />
-            <section className={styles.profilePhoto}>
-              <div className={styles.photoInfo}>
-                <h3 className={styles.photoTitle}>Profile Photo</h3>
-                <p className={styles.photoDescription}>
-                  This image will be shown publicly as your profile picture, it will help recruiters recognize you!
-                </p>
-              </div>
-              <div className={styles.photoUpload}>
-                <div className={styles.uploadArea}>
-                  <label htmlFor="profilePhotoUpload" className={styles.uploadLabel}>
-                    <img src="http://b.io/ext_10-" alt="" className={styles.uploadIcon} />
-                    <p className={styles.uploadInstructions}>
-                      <span className={styles.clickToReplace}>Click to replace</span> or drag and drop
-                    </p>
-                    <p className={styles.fileRequirements}>PNG, or JPG (max. 400 x 400px)</p>
-                  </label>
-                  <input
-                    type="file"
-                    id="profilePhotoUpload"
-                    accept="image/png, image/jpeg"
-                    className={styles.fileInput}
-                    // onChange={handleFileChange}
-                  />
-                </div>
-              </div>
-            </section>
-            <hr className={styles.divider} />
-            <section className={styles.personalDetails}>
-              <h3 className={styles.sectionTitle}>Company Details</h3>
-              <form className={styles.detailsForm}>
-                <div className={styles.inputField}>
-                  <label htmlFor="companyName" className={styles.label}>
-                    Company name <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="companyName"
-                    className={styles.input}
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className={styles.row}>
-                  <div className={styles.inputField}>
-                    <label htmlFor="contactPerson" className={styles.label}>
-                      Contact person <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="contactPerson"
-                      className={styles.input}
-                      value={contactPerson}
-                      onChange={(e) => setContactPerson(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputField}>
-                    <label htmlFor="contactNumber" className={styles.label}>
-                      Contact number <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="tel"
-                      id="contactNumber"
-                      className={styles.input}
-                      value={contactNumber}
-                      onChange={(e) => setContactNumber(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className={styles.row}>
-                  <div className={styles.inputField}>
-                    <label htmlFor="email" className={styles.label}>
-                      Email <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      className={styles.input}
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputField}>
-                    <label htmlFor="website" className={styles.label}>
-                      Website <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="url"
-                      id="website"
-                      className={styles.input}
-                      value={website}
-                      onChange={(e) => setWebsite(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className={styles.inputField}>
-                  <label htmlFor="industry" className={styles.label}>
-                    Industry
-                  </label>
-                  <input
-                    type="text"
-                    id="industry"
-                    className={styles.input}
-                    value={industry}
-                    onChange={(e) => setIndustry(e.target.value)}
-                  />
-                </div>
-              </form>
-            </section>
-            <hr className={styles.divider} />
-            <section className={styles.workExperience}>
-              <h3 className={styles.sectionTitle}>Additional Information</h3>
-              <form className={styles.experienceForm}>
-                <div className={styles.inputField}>
-                  <label htmlFor="companyAddress" className={styles.label}>
-                    Company address <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="companyAddress"
-                    className={styles.input}
-                    value={companyAddress}
-                    onChange={(e) => setCompanyAddress(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className={styles.inputField}>
-                  <label htmlFor="companySize" className={styles.label}>
-                    Company size
-                  </label>
-                  <input
-                    type="text"
-                    id="companySize"
-                    className={styles.input}
-                    value={companySize}
-                    onChange={(e) => setCompanySize(e.target.value)}
-                  />
-                </div>
-                <div className={styles.row}>
-                  <div className={styles.inputField}>
-                    <label htmlFor="foundedYear" className={styles.label}>
-                      Founded year <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="foundedYear"
-                      className={styles.input}
-                      value={foundedYear}
-                      onChange={(e) => setFoundedYear(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className={styles.inputField}>
-                  <label htmlFor="description" className={styles.label}>
-                    Description <span className={styles.required}>*</span>
-                  </label>
-                  <textarea
-                    id="description"
-                    className={styles.textarea}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={3}
-                    maxLength={400}
-                    required
-                  />
-                </div>
-              </form>
-            </section>
-            <div className={styles.buttonContainer}>
-              <button type="submit" className={styles.submitButton} onClick={handleSubmit}>Register</button>
-            </div>
-          </section>
+    <main className="container mt-4">
+      <nav className="navbar navbar-light bg-light mb-4">
+        <a className="navbar-brand" href="/">TrabahaDoor</a>
+        <div className="d-flex">
+          <button className="btn btn-secondary me-2">Back to homepage</button>
+          <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" className="d-inline-block align-top" style={{ height: '40px' }} />
         </div>
+      </nav>
+      <div className="mb-4">
+        <ul className="nav nav-tabs">
+          <li className="nav-item">
+            <a className="nav-link active" href="#">My Profile</a>
+          </li>
+          {/* Add more tabs if needed */}
+        </ul>
       </div>
+      <section className="mb-4">
+        <h2>Profile Photo</h2>
+        <p>This image will be shown publicly as your profile picture, it will help recruiters recognize you!</p>
+        <div className="mb-3">
+          <label htmlFor="profilePhotoUpload" className="form-label">
+            <img src="http://b.io/ext_10-" alt="" style={{ height: '60px' }} />
+            <p className="mt-2">Click to replace or drag and drop</p>
+            <p className="text-muted">PNG, or JPG (max. 400 x 400px)</p>
+          </label>
+          <input
+            type="file"
+            id="profilePhotoUpload"
+            accept="image/png, image/jpeg"
+            className="form-control"
+            onChange={handleFileChange}
+          />
+        </div>
+      </section>
+      <section className="mb-4">
+        <h3>Company Details</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="companyName" className="form-label">Company Name <span className="text-danger">*</span></label>
+            <input
+              type="text"
+              id="companyName"
+              className="form-control"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <label htmlFor="contactPerson" className="form-label">Contact Person <span className="text-danger">*</span></label>
+              <input
+                type="text"
+                id="contactPerson"
+                className="form-control"
+                value={contactPerson}
+                onChange={(e) => setContactPerson(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="contactNumber" className="form-label">Contact Number <span className="text-danger">*</span></label>
+              <input
+                type="tel"
+                id="contactNumber"
+                className="form-control"
+                value={contactNumber}
+                onChange={(e) => setContactNumber(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <label htmlFor="email" className="form-label">Email <span className="text-danger">*</span></label>
+              <input
+                type="email"
+                id="email"
+                className="form-control"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="website" className="form-label">Website <span className="text-danger">*</span></label>
+              <input
+                type="url"
+                id="website"
+                className="form-control"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="industry" className="form-label">Industry</label>
+            <input
+              type="text"
+              id="industry"
+              className="form-control"
+              value={industry}
+              onChange={(e) => setIndustry(e.target.value)}
+            />
+          </div>
+          <hr />
+          <h3>Additional Information</h3>
+          <div className="mb-3">
+            <label htmlFor="companyAddress" className="form-label">Company Address <span className="text-danger">*</span></label>
+            <input
+              type="text"
+              id="companyAddress"
+              className="form-control"
+              value={companyAddress}
+              onChange={(e) => setCompanyAddress(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="companySize" className="form-label">Company Size</label>
+            <input
+              type="text"
+              id="companySize"
+              className="form-control"
+              value={companySize}
+              onChange={(e) => setCompanySize(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="foundedYear" className="form-label">Founded Year <span className="text-danger">*</span></label>
+            <input
+              type="text"
+              id="foundedYear"
+              className="form-control"
+              value={foundedYear}
+              onChange={(e) => setFoundedYear(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="description" className="form-label">Description <span className="text-danger">*</span></label>
+            <textarea
+              id="description"
+              className="form-control"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              maxLength={400}
+              required
+            />
+          </div>
+          <div className="text-center">
+            <button type="submit" className="btn btn-success">Register</button>
+          </div>
+        </form>
+        {error && <div className="alert alert-danger mt-3">{error}</div>}
+      </section>
     </main>
   );
 }
