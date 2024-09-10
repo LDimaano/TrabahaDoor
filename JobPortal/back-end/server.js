@@ -96,7 +96,7 @@ app.post('/api/login', async (req, res) => {
     };
 
 
-    const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/joblisting';
+    const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/applicantlist';
 
 
     res.json({ redirectUrl });

@@ -11,8 +11,8 @@ import JobPostingForm from './components/jobposting';
 import JobPostingPage from './components/jobposting_desc';  
 import HomeJobseeker from './pages/home_jobseeker';
 import Jobdescription from './pages/jobdescription';
-import Joblisting from './components/joblisting';
-import ApplicantProfile from './components/applicantdetail';
+import ApplicantList from './pages/applicantlist';
+// import ApplicantProfile from './pages/applicantdetails';
 
 
 
@@ -32,8 +32,8 @@ root.render(
         <Route path="/home_jobseeker" element={<HomeJobseeker />} />
         <Route path="/jobposting_desc" element={<JobPostingPage/>} />
         <Route path="/jobdescription" element={<Jobdescription />} />
-        <Route path="/joblisting" element={<Joblisting />} />
-        <Route path="/applicantdetail" element={<ApplicantProfile/>} />
+        <Route path="/applicantlist" element={<ApplicantList/>} />
+        {/* <Route path="/applicantdetails" element={<ApplicantProfile/>} /> */}
       </Routes>
     </Router>
   </React.StrictMode>
