@@ -7,7 +7,7 @@ import Signup from './pages/signup';
 import LandingPage from './pages/landing';
 import ProfileCreation from './components/j_profilecreation';
 import EmployerProfileCreation from './components/e_profilecreation';
-import JobPostingForm from './components/jobposting';
+import JobPostingForm from './pages/jobposting';
 import JobPostingPage from './components/jobposting_desc';  
 import HomeJobseeker from './pages/home_jobseeker';
 import Jobdescription from './pages/jobdescription';
