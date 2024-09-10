@@ -17,7 +17,7 @@ const ApplicantTable = ({ applicants, currentApplicants, setApplicants }) => {
   };
 
   const handleSeeApplication = (applicant) => {
-    navigate('/applicantdetails', { state: { applicant } });
+    navigate('/appdetails', { state: { applicant } });
   };
 
   return (

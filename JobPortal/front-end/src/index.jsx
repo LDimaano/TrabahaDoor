@@ -12,7 +12,7 @@ import JobPostingPage from './components/jobposting_desc';
 import HomeJobseeker from './pages/home_jobseeker';
 import Jobdescription from './pages/jobdescription';
 import ApplicantList from './pages/applicantlist';
-// import ApplicantProfile from './pages/applicantdetails';
+import ApplicantProfile from './pages/appdetails';
 
 
 
@@ -33,7 +33,7 @@ root.render(
         <Route path="/jobposting_desc" element={<JobPostingPage/>} />
         <Route path="/jobdescription" element={<Jobdescription />} />
         <Route path="/applicantlist" element={<ApplicantList/>} />
-        {/* <Route path="/applicantdetails" element={<ApplicantProfile/>} /> */}
+        <Route path="/appdetails" element={<ApplicantProfile/>} /> 
       </Routes>
     </Router>
   </React.StrictMode>
