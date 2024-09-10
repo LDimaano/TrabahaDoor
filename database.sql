@@ -1,11 +1,14 @@
 CREATE DATABASE trabahadoor;
 
+
 CREATE TYPE usertype_enum AS ENUM ('jobseeker', 'employer', 'admin');
+
 
 CREATE TYPE gender AS ENUM ('Male', 'Female', 'Others');
 
+
 CREATE TABLE users (
-  user_id SERIAL PRIMARY KEY, 
+  user_id SERIAL PRIMARY KEY,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   usertype usertype_enum NOT NULL
@@ -15,41 +18,75 @@ CREATE TABLE users (
 --ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 --ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
-CREATE TABLE job_seeker (
-  jsid SERIAL PRIMARY KEY,
-  full_name VARCHAR(255) NOT NULL,
-  phone_number VARCHAR(20) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  date_of_birth DATE,
-  gender gender NOT NULL,
-  address VARCHAR(255),
-  job_title VARCHAR(255) NOT NULL,
-  salary VARCHAR(50),
-  company VARCHAR(255) NOT NULL,
-  location VARCHAR(255) NOT NULL,
-  start_date DATE,
-  end_date DATE,
-  description TEXT,
-  skills TEXT,
-  user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
-);
+
+-- CREATE TABLE job_seeker (
+--   jsid SERIAL PRIMARY KEY,
+--   full_name VARCHAR(255) NOT NULL,
+--   phone_number VARCHAR(20) NOT NULL,
+--   email VARCHAR(255) NOT NULL,
+--   date_of_birth DATE,
+--   gender gender NOT NULL,
+--   address VARCHAR(255),
+--   job_title VARCHAR(255) NOT NULL,
+--   salary VARCHAR(50),
+--   company VARCHAR(255) NOT NULL,
+--   location VARCHAR(255) NOT NULL,
+--   start_date DATE,
+--   end_date DATE,
+--   description TEXT,
+--   skills TEXT,
+--   user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
+-- );
+
 
 CREATE TABLE emp_profiles (
-    id SERIAL PRIMARY KEY, 
-    company_name VARCHAR(255) NOT NULL, 
+    id SERIAL PRIMARY KEY,
+    company_name VARCHAR(255) NOT NULL,
     contact_person VARCHAR(255),
     contact_number VARCHAR(20),
-    email VARCHAR(255) UNIQUE, 
-    website VARCHAR(255), 
+    email VARCHAR(255) UNIQUE,
+    website VARCHAR(255),
     industry VARCHAR(255),
-    company_address TEXT, 
-    company_size VARCHAR(50), 
-    founded_year INTEGER, 
+    company_address TEXT,
+    company_size VARCHAR(50),
+    founded_year INTEGER,
     description TEXT,
-	user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
+    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 
+CREATE TABLE job_seekers (
+    jsid SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
+    full_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    date_of_birth DATE NOT NULL,
+    gender VARCHAR(10) NOT NULL,
+    address TEXT
+);
+
+
+-- Job Experience Table
+CREATE TABLE job_experience (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
+    job_title VARCHAR(255) NOT NULL,
+    salary VARCHAR(50),
+    company VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    description TEXT
+);
+
+
+-- JS Skills Table
+CREATE TABLE js_skills (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
+    skill_name VARCHAR(255) NOT NULL
+);
 -- CREATE TABLE WorkExp (
 --     WorkExpID SERIAL PRIMARY KEY,
 --     SeekerID INT REFERENCES JobSeeker(SeekerID),
@@ -62,6 +99,7 @@ CREATE TABLE emp_profiles (
 --     Description TEXT,
 --     Skills TEXT
 -- );
+
 
 -- CREATE TABLE JobListing (
 --     JobID SERIAL PRIMARY KEY,
@@ -78,6 +116,7 @@ CREATE TABLE emp_profiles (
 --     DateFilled DATE
 -- );
 
+
 -- CREATE TABLE Application (
 --     ApplicationID SERIAL PRIMARY KEY,
 --     JobID INT REFERENCES JobListing(JobID),
@@ -85,3 +124,5 @@ CREATE TABLE emp_profiles (
 --     Info TEXT,
 --     Status VARCHAR(50)
 -- );
+
+

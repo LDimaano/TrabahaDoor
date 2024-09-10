@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Header() {
-  const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchEmail = async () => {
+    const fetchFullName = async () => {
       try {
         const response = await fetch('http://localhost:5000/api/user-info', {
           method: 'GET',
@@ -19,16 +19,17 @@ function Header() {
 
         if (response.ok) {
           const data = await response.json();
-          setEmail(data.email);
+          console.log('API response data:', data); // Log the API response
+          setFullName(data.fullName || ''); // Ensure that fullName is set or default to empty string
         } else {
-          console.error('Failed to fetch email:', response.statusText);
+          console.error('Failed to fetch full name:', response.statusText);
         }
       } catch (error) {
-        console.error('Error fetching email:', error);
+        console.error('Error fetching full name:', error);
       }
     };
 
-    fetchEmail();
+    fetchFullName();
   }, []);
 
   return (
@@ -45,7 +46,7 @@ function Header() {
           <span className="fw-bold">TrabahaDoor</span>
         </a>
         <div className="navbar-text">
-          Welcome, {email || 'Guest'}
+          Welcome, {fullName || 'Guest'} {/* Display the full name or 'Guest' */}
         </div>
       </div>
     </nav>

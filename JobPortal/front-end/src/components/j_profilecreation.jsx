@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
+
+
 function ProfileCreation() {
   const navigate = useNavigate();
+
 
   const [fullName, setFullName] = useState('Juan A. Dela Cruz');
   const [phoneNumber, setPhoneNumber] = useState('+44 1245 572 135');
@@ -73,9 +76,8 @@ function ProfileCreation() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-
-    const user_id = sessionStorage.getItem('userId'); // Or localStorage.getItem('userId');
+    const user_id = sessionStorage.getItem('userId');
+    console.log('Retrieved user_id:', user_id);
 
 
     const profileData = {
@@ -88,8 +90,11 @@ function ProfileCreation() {
       address,
       skills: skills.map(skill => skill.value),
       experience,
-      photo, // Include photo in profileData if necessary
+      photo,
     };
+
+
+    console.log('Submitting profile data:', profileData);
 
 
     try {
@@ -111,7 +116,6 @@ function ProfileCreation() {
       console.log('Profile created successfully:', data);
 
 
-      // Navigate to login page after a delay
       setTimeout(() => {
         navigate('/login');
       }, 3000);
@@ -120,13 +124,14 @@ function ProfileCreation() {
       setError('Failed to submit the profile. Please try again.');
     }
   };
-
-
+ 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setPhoto(file);
     // Handle file upload logic here
   };
+
+
 
 
   return (
@@ -338,6 +343,6 @@ function ProfileCreation() {
 }
 
 
+
+
 export default ProfileCreation;
-
-
