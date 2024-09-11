@@ -48,8 +48,7 @@ const JobPosting = () => {
 
       if (response.ok) {
         alert('Job posted successfully!');
-        // Optionally, redirect or clear the form
-        navigate('/');
+        navigate('/applicantlist');
       } else {
         alert('Failed to post job. Please try again.');
       }

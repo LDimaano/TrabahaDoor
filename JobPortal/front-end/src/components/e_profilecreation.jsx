@@ -1,186 +1,51 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-// TopNav Component
-function TopNav() {
-  return (
-    <nav className="navbar navbar-light bg-light mb-4">
-      <a className="navbar-brand" href="/">TrabahaDoor</a>
-      <div className="d-flex">
-        <a className="btn btn-secondary me-2" href="/">Back to homepage</a>
-        <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" className="d-inline-block align-top" style={{ height: '40px' }} />
-      </div>
-    </nav>
-  );
-}
-
-// PostJobHeader Component
-function PostJobHeader() {
+function EmployerProfileCreation() {
   const navigate = useNavigate();
 
-  // Function to handle the back button click
-  const handleBack = () => {
-    navigate(-1); // Navigate back
-  };
-
-  return (
-    <section className="d-flex align-items-center mb-4">
-      <button className="btn btn-outline-secondary me-3" onClick={handleBack} aria-label="Go back">
-        <FontAwesomeIcon icon={faArrowLeft} />
-      </button>
-      <h2 className="h4">Post a Job</h2>
-    </section>
-  );
-}
-
-// FormSection Component
-const FormSection = ({ title, description, children }) => (
-  <section className="mb-4">
-    <h3 className="h5">{title}</h3>
-    <p>{description}</p>
-    <div>{children}</div>
-  </section>
-);
-
-// InputField Component
-const InputField = ({ label, placeholder, value, onChange }) => (
-  <div className="mb-3">
-    <label htmlFor={label.toLowerCase()} className="form-label">
-      {label}
-    </label>
-    <input
-      type="text"
-      id={label.toLowerCase()}
-      className="form-control"
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-    />
-  </div>
-);
-
-// CheckboxGroup Component
-const CheckboxGroup = ({ label, options, name, onChange }) => (
-  <div className="mb-3">
-    <label className="form-label">{label}</label>
-    {options.map((option, index) => (
-      <div key={index} className="form-check">
-        <input
-          type="checkbox"
-          id={option.toLowerCase()}
-          value={option}
-          name={name}
-          className="form-check-input"
-          onChange={onChange}
-        />
-        <label htmlFor={option.toLowerCase()} className="form-check-label">
-          {option}
-        </label>
-      </div>
-    ))}
-  </div>
-);
-
-// SalaryRange Component
-const SalaryRange = () => (
-  <div className="mb-3">
-    <label htmlFor="salary" className="form-label">Salary Range</label>
-    <select id="salary" className="form-select">
-      <option value="below-15000">Below ₱15,000</option>
-      <option value="15000-25000">₱15,000 - ₱25,000</option>
-      <option value="25001-35000">₱25,001 - ₱35,000</option>
-      <option value="35001-50000">₱35,001 - ₱50,000</option>
-      <option value="50001-75000">₱50,001 - ₱75,000</option>
-      <option value="75001-100000">₱75,001 - ₱100,000</option>
-      <option value="above-100000">Above ₱100,000</option>
-    </select>
-  </div>
-);
-
-// Dropdown Component
-const Dropdown = ({ placeholder }) => (
-  <div className="mb-3">
-    <label htmlFor="industry" className="form-label">Industry</label>
-    <select id="industry" className="form-select">
-      <option value="">{placeholder}</option>
-    </select>
-  </div>
-);
-
-// SkillTags Component
-const SkillTags = ({ placeholder }) => (
-  <div className="mb-3">
-    <label htmlFor="skills" className="form-label">Skills</label>
-    <select id="skills" className="form-select">
-      <option value="">{placeholder}</option>
-    </select>
-  </div>
-);
-
-// TextAreaField Component
-const TextAreaField = ({ label, description, placeholder, value, onChange }) => (
-  <div className="mb-4">
-    <div className="mb-2">
-      <label htmlFor={`${label.toLowerCase()}Input`} className="form-label">{label}</label>
-      <p>{description}</p>
-    </div>
-    <textarea
-      id={`${label.toLowerCase()}Input`}
-      className="form-control"
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      rows="4"
-    />
-  </div>
-);
-
-// JobPosting Component
-const JobPosting = () => {
-  const navigate = useNavigate(); // Initialize navigate
-  const [formData, setFormData] = useState({
-    jobTitle: '',
-    jobType: [],
-    salaryRange: '',
-    industry: '',
-    skills: '',
-    responsibilities: '',
-    jobDescription: '',
-    qualifications: ''
-  });
-  
+  const [companyName, setCompanyName] = useState('Tech Innovations Ltd');
+  const [contactPerson, setContactPerson] = useState('Jane Doe');
+  const [contactNumber, setContactNumber] = useState('+44 1245 678 901');
+  const [email, setEmail] = useState('contact@techinnovations.com');
+  const [website, setWebsite] = useState('http://www.techinnovations.com');
+  const [industry, setIndustry] = useState('Information Technology');
+  const [companyAddress, setCompanyAddress] = useState('123 Tech Lane, Silicon Valley');
+  const [companySize, setCompanySize] = useState('500-1000 employees');
+  const [foundedYear, setFoundedYear] = useState('2000');
+  const [description, setDescription] = useState('Tech Innovations Ltd is a leading IT solutions provider specializing in software development and consulting.');
   const [error, setError] = useState('');
-
-  const handleChange = (e) => {
-    const { id, value, checked, type, name } = e.target;
-    if (type === 'checkbox') {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: checked
-          ? [...prevData[name], value]
-          : prevData[name].filter((item) => item !== value),
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [id]: value,
-      }));
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const user_id = sessionStorage.getItem('userId');
+    console.log('Retrieved user_id:', user_id);
+
+    const profileData = {
+      user_id,
+      companyName,
+      contactPerson,
+      contactNumber,
+      email,
+      website,
+      industry,
+      companyAddress,
+      companySize,
+      foundedYear,
+      description,
+    };
+
+    console.log('Submitting profile data:', profileData);
 
     try {
-      const response = await fetch('http://localhost:5000/api/job-posting', {
+      const response = await fetch('http://localhost:5000/api/employer-profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(profileData),
       });
 
       if (!response.ok) {
@@ -188,91 +53,183 @@ const JobPosting = () => {
       }
 
       const data = await response.json();
-      console.log('Job posting created successfully:', data);
-      
-      // Navigate to next step or page
-      navigate('/next-step');
+      console.log('Profile created successfully:', data);
+
+      // Navigate to login page after a delay
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000); // Adjust the delay as needed
     } catch (err) {
       console.error('Submission failed:', err);
-      setError('Failed to submit the job posting. Please try again.');
+      setError('Failed to submit the profile. Please try again.');
     }
   };
 
+  const handleFileChange = (event) => {
+    // Handle file change if needed
+  };
+
   return (
-    <div className="container mt-4">
-      <TopNav />
-      <PostJobHeader />
-      
-      <form onSubmit={handleSubmit}>
-        <FormSection
-          title="Job Information"
-          description="Fill in the details for the job posting."
-        >
-          <InputField
-            label="Job Title"
-            placeholder="Enter the job title"
-            value={formData.jobTitle}
-            onChange={handleChange}
+    <main className="container mt-4">
+      <nav className="navbar navbar-light bg-light mb-4">
+        <a className="navbar-brand" href="/">TrabahaDoor</a>
+        <div className="d-flex">
+          <button className="btn btn-secondary me-2">Back to homepage</button>
+          <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" className="d-inline-block align-top" style={{ height: '40px' }} />
+        </div>
+      </nav>
+      <div className="mb-4">
+        <ul className="nav nav-tabs">
+          <li className="nav-item">
+            <a className="nav-link active" href="#">My Profile</a>
+          </li>
+          {/* Add more tabs if needed */}
+        </ul>
+      </div>
+      <section className="mb-4">
+        <h2>Profile Photo</h2>
+        <p>This image will be shown publicly as your profile picture, it will help recruiters recognize you!</p>
+        <div className="mb-3">
+          <label htmlFor="profilePhotoUpload" className="form-label">
+            <img src="http://b.io/ext_10-" alt="" style={{ height: '60px' }} />
+            <p className="mt-2">Click to replace or drag and drop</p>
+            <p className="text-muted">PNG, or JPG (max. 400 x 400px)</p>
+          </label>
+          <input
+            type="file"
+            id="profilePhotoUpload"
+            accept="image/png, image/jpeg"
+            className="form-control"
+            onChange={handleFileChange}
           />
-          <Dropdown placeholder="Select Industry" />
-          <SkillTags placeholder="Select Skills" />
-          <SalaryRange />
-        </FormSection>
-
-        <FormSection
-          title="Job Type"
-          description="Select the type of job."
-        >
-          <CheckboxGroup
-            label="Job Type"
-            options={['Full-time', 'Part-time', 'Contract', 'Internship']}
-            name="jobType"
-            onChange={handleChange}
-          />
-        </FormSection>
-
-        <FormSection
-          title="Responsibilities"
-          description="List the responsibilities for this role."
-        >
-          <TextAreaField
-            label="Responsibilities"
-            placeholder="Enter the responsibilities"
-            value={formData.responsibilities}
-            onChange={handleChange}
-          />
-        </FormSection>
-
-        <FormSection
-          title="Job Description"
-          description="Provide a detailed description of the job."
-        >
-          <TextAreaField
-            label="Job Description"
-            placeholder="Enter the job description"
-            value={formData.jobDescription}
-            onChange={handleChange}
-          />
-        </FormSection>
-
-        <FormSection
-          title="Qualifications"
-          description="List the qualifications required for this role."
-        >
-          <TextAreaField
-            label="Qualifications"
-            placeholder="Enter the qualifications"
-            value={formData.qualifications}
-            onChange={handleChange}
-          />
-        </FormSection>
-
-        {error && <div className="alert alert-danger">{error}</div>}
-
-        <button type="submit" className="btn btn-primary">Post Job</button>
-      </form>
-    </div>
+        </div>
+      </section>
+      <section className="mb-4">
+        <h3>Company Details</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="companyName" className="form-label">Company Name <span className="text-danger">*</span></label>
+            <input
+              type="text"
+              id="companyName"
+              className="form-control"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <label htmlFor="contactPerson" className="form-label">Contact Person <span className="text-danger">*</span></label>
+              <input
+                type="text"
+                id="contactPerson"
+                className="form-control"
+                value={contactPerson}
+                onChange={(e) => setContactPerson(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="contactNumber" className="form-label">Contact Number <span className="text-danger">*</span></label>
+              <input
+                type="tel"
+                id="contactNumber"
+                className="form-control"
+                value={contactNumber}
+                onChange={(e) => setContactNumber(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <label htmlFor="email" className="form-label">Email <span className="text-danger">*</span></label>
+              <input
+                type="email"
+                id="email"
+                className="form-control"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="website" className="form-label">Website <span className="text-danger">*</span></label>
+              <input
+                type="url"
+                id="website"
+                className="form-control"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="industry" className="form-label">Industry</label>
+            <input
+              type="text"
+              id="industry"
+              className="form-control"
+              value={industry}
+              onChange={(e) => setIndustry(e.target.value)}
+            />
+          </div>
+          <hr />
+          <h3>Additional Information</h3>
+          <div className="mb-3">
+            <label htmlFor="companyAddress" className="form-label">Company Address <span className="text-danger">*</span></label>
+            <input
+              type="text"
+              id="companyAddress"
+              className="form-control"
+              value={companyAddress}
+              onChange={(e) => setCompanyAddress(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="companySize" className="form-label">Company Size</label>
+            <input
+              type="text"
+              id="companySize"
+              className="form-control"
+              value={companySize}
+              onChange={(e) => setCompanySize(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="foundedYear" className="form-label">Founded Year <span className="text-danger">*</span></label>
+            <input
+              type="text"
+              id="foundedYear"
+              className="form-control"
+              value={foundedYear}
+              onChange={(e) => setFoundedYear(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="description" className="form-label">Description <span className="text-danger">*</span></label>
+            <textarea
+              id="description"
+              className="form-control"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              maxLength={400}
+              required
+            />
+          </div>
+          <div className="text-center">
+            <button type="submit" className="btn btn-success">Register</button>
+          </div>
+        </form>
+        {error && <div className="alert alert-danger mt-3">{error}</div>}
+      </section>
+    </main>
   );
-};
+}
 
-export default JobPosting;
+export default EmployerProfileCreation;

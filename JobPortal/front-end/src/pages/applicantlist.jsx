@@ -14,6 +14,9 @@ const ApplicantDashboard = () => {
     // ... (other applicants)
   ]);
 
+  const userId = sessionStorage.getItem('user_id');
+  console.log('Retrieved user_id:', userId);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [applicantsPerPage, setApplicantsPerPage] = useState(10);
