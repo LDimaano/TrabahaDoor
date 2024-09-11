@@ -4,7 +4,6 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const pool = require('./db'); // Your database pool
 
-
 // Use environment variables for secrets
 require('dotenv').config();
 
@@ -13,9 +12,6 @@ app.use(express.json()); // Middleware to parse JSON
 app.use(cors({ origin: 'http://localhost:3000', credentials: true })); // Enable CORS for your frontend with credentials
 // Middleware for parsing cookies
 app.use(cookieParser());
-
-
-
 
 // Middleware for session management
 app.use(session({
@@ -29,16 +25,12 @@ app.use(session({
   }
 }));
 
-
 // Import routes
 const userRoutes = require('./routes/users');
 const jobSeekerRoutes = require('./routes/jobseekers');
 const employerRoutes = require('./routes/employers');
 const jobRoutes = require('./routes/jobs');
 const applicationRoutes = require('./routes/applications');
-
-
-
 
 // Define routes
 app.post('/submit-form', async (req, res) => {
@@ -72,16 +64,13 @@ app.post('/api/profile', async (req, res) => {
     skills, // Array of skill values
   } = req.body;
 
-
   // Log the request body to verify data
   console.log('Received request body:', req.body);
-
 
   // Check that user_id is provided
   if (!user_id) {
     return res.status(400).json({ error: 'User ID is required' });
   }
-
 
   try {
     // Insert the profile data into the job_seekers table
@@ -94,10 +83,7 @@ app.post('/api/profile', async (req, res) => {
       [user_id, fullName, phoneNumber, email, dateOfBirth, gender, address]
     );
 
-
     const profileId = newProfileResult.rows[0].jsid;
-
-
     // Insert experience data
     for (const exp of experience) {
       await pool.query(
@@ -108,20 +94,16 @@ app.post('/api/profile', async (req, res) => {
         [user_id, exp.jobTitle, exp.salary, exp.company, exp.location, exp.startDate, exp.endDate, exp.description]
       );
     }
-
-
     // Insert skills data
     for (const skill of skills) {
       await pool.query(
         `INSERT INTO js_skills (
-          user_id, skill_name
+          user_id, skill_id
         )
         VALUES ($1, $2)`,
-        [user_id, skill]
+        [user_id, skill.skill_id]
       );
     }
-
-
     // Send a successful response
     res.json({ message: 'Profile created successfully', profileId });
   } catch (err) {
@@ -131,10 +113,19 @@ app.post('/api/profile', async (req, res) => {
   }
 });
 
+app.get('/api/skills', async (req, res) => {
+  try {
+    const skills = await pool.query('SELECT skill_id, skill_name FROM skills');
+    res.json(skills.rows); // Array of objects { skill_id, skill_name }
+  } catch (err) {
+    console.error('Error fetching skills:', err);
+    res.status(500).json({ error: 'Error fetching skills' });
+  }
+});
+
 // Login route using session
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const userQuery = 'SELECT * FROM users WHERE email = $1';
     const { rows } = await pool.query(userQuery, [email]);
@@ -155,8 +146,7 @@ app.post('/api/login', async (req, res) => {
       usertype: user.usertype
     };
 
-    const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/applicantlist';
-
+    const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/joblisting';
 
     res.json({ redirectUrl });
   } catch (err) {
@@ -165,9 +155,9 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+
 app.get('/api/user-info', async (req, res) => {
   console.log('Session data:', req.session);
-
   if (!req.session.user) {
     return res.status(403).json({ message: 'Not authenticated' });
   }
@@ -195,41 +185,6 @@ app.get('/api/user-info', async (req, res) => {
   }
 });
 
-app.get('/api/user-infoemp', async (req, res) => {
-  console.log('Session data:', req.session);
-
-  if (!req.session.user) {
-    return res.status(403).json({ message: 'Not authenticated' });
-  }
-
-  const userId = req.session.user.user_id;
-  console.log('User ID from session:', userId);
-
-  try {
-    // Use a join to fetch company_name from emp_profiles and email from users
-    const result = await pool.query(
-      `SELECT emp_profiles.company_name, users.email 
-       FROM emp_profiles 
-       JOIN users ON emp_profiles.user_id = users.user_id 
-       WHERE emp_profiles.user_id = $1`,
-      [userId]
-    );
-
-    console.log('Database query result:', result.rows);
-
-    if (result.rows.length > 0) {
-      const { company_name, email } = result.rows[0]; // Destructure company_name and email
-      res.json({ company_name, email }); // Send both company_name and email in the response
-    } else {
-      res.status(404).json({ message: 'User not found' });
-    }
-  } catch (error) {
-    console.error('Error fetching company info:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-
 // Logout route to destroy session
 app.post('/api/logout', (req, res) => {
   req.session.destroy((err) => {
@@ -240,7 +195,6 @@ app.post('/api/logout', (req, res) => {
     res.json({ message: 'Logged out successfully' });
   });
 });
-
 
 app.post('/api/employer-profile', async (req, res) => {
   const {
@@ -293,11 +247,6 @@ app.post('/api/employer-profile', async (req, res) => {
   }
 });
 
-
-
-
-
-
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/jobseekers', jobSeekerRoutes);
@@ -308,11 +257,11 @@ app.use('/api/applications', applicationRoutes);
 
 
 
+
+
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-
-
-

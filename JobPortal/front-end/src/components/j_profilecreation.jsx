@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-
+import Select from 'react-select';
 
 
 function ProfileCreation() {
@@ -24,20 +25,44 @@ function ProfileCreation() {
     endDate: '',
     description: '',
   }]);
-  const [skills, setSkills] = useState([{ value: '' }]);
+  const [skills, setSkills] = useState([]); // Changed to an empty array initially
+  const [availableSkills, setAvailableSkills] = useState([]); // Holds skills fetched from backend
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
 
 
-  const handleSkillChange = (index, event) => {
-    const newSkills = skills.slice();
-    newSkills[index].value = event.target.value;
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/skills');
+        if (!response.ok) throw new Error('Failed to fetch skills');
+        const data = await response.json();
+        // Convert data to { value: skill_id, label: skill_name }
+        const skillOptions = data.map(skill => ({
+          value: skill.skill_id,
+          label: skill.skill_name
+        }));
+        setAvailableSkills(skillOptions);
+      } catch (error) {
+        console.error('Error fetching skills:', error);
+        setError('Failed to load skills.');
+      }
+    };
+
+
+    fetchSkills();
+  }, []);
+
+
+  const handleSkillChange = (index, selectedOption) => {
+    const newSkills = [...skills];
+    newSkills[index] = selectedOption; // Set the selected skill object
     setSkills(newSkills);
   };
 
 
   const handleAddSkill = () => {
-    setSkills([...skills, { value: '' }]);
+    setSkills([...skills, null]); // Add an empty skill object
   };
 
 
@@ -49,7 +74,7 @@ function ProfileCreation() {
 
   const handleExperienceChange = (index, event) => {
     const { name, value } = event.target;
-    const newExperience = experience.slice();
+    const newExperience = [...experience];
     newExperience[index] = { ...newExperience[index], [name]: value };
     setExperience(newExperience);
   };
@@ -88,7 +113,7 @@ function ProfileCreation() {
       dateOfBirth,
       gender,
       address,
-      skills: skills.map(skill => skill.value),
+      skills: skills.map(skill => skill?.value || ''), // Ensure the value is extracted correctly
       experience,
       photo,
     };
@@ -124,7 +149,8 @@ function ProfileCreation() {
       setError('Failed to submit the profile. Please try again.');
     }
   };
- 
+
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setPhoto(file);
@@ -132,12 +158,11 @@ function ProfileCreation() {
   };
 
 
-
-
   return (
     <div className="container mt-4">
       <h1 className="text-center">Create your Profile</h1>
       <form onSubmit={handleSubmit}>
+        {/* Uncomment the following section if you want to include photo upload */}
         {/* <div className="mb-3">
           <label htmlFor="photo" className="form-label">Upload Your Photo *</label>
           <input
@@ -320,13 +345,13 @@ function ProfileCreation() {
         <div className="mb-4">
           <h3>Skills</h3>
           {skills.map((skill, index) => (
-            <div key={index} className="input-group mb-3">
-              <input
-                type="text"
-                className="form-control"
-                value={skill.value}
-                onChange={(e) => handleSkillChange(index, e)}
-                required
+            <div key={index} className="mb-3">
+              <Select
+                options={availableSkills}
+                value={skill} // Directly use the skill object
+                onChange={selectedOption => handleSkillChange(index, selectedOption)}
+                placeholder="Select a skill"
+                isClearable
               />
               <button type="button" className="btn btn-outline-danger" onClick={() => handleRemoveSkill(index)}>Remove</button>
             </div>
@@ -343,6 +368,6 @@ function ProfileCreation() {
 }
 
 
-
-
 export default ProfileCreation;
+
+
