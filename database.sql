@@ -94,20 +94,17 @@ CREATE TABLE js_skills (
 CREATE TABLE JobListings (
     JobID SERIAL PRIMARY KEY,
     JobTitle VARCHAR(255) NOT NULL,
-    EmploymentType VARCHAR(20) CHECK (EmploymentType IN ('Full-time', 'Part-time', 'Remote', 'Internship', 'Contract')),
-    SalaryRange VARCHAR(20) CHECK (SalaryRange IN ('Below 15000', '15001-25000', '25001-35000', '35001-50000', '50001-75000', '75001-100000', 'Above 100000')),
     Industry VARCHAR(255) NOT NULL,
-    Skills TEXT,
-    JobDescription TEXT,
+    Skills VARCHAR(255) NOT NULL,
+    SalaryRange VARCHAR(20) CHECK (SalaryRange IN ('Below 15000', '15001-25000', '25001-35000', '35001-50000', '50001-75000', '75001-100000', 'Above 100000')),
+    EmploymentType VARCHAR(20) CHECK (EmploymentType IN ('Full-time', 'Part-time', 'work from home')),
     Responsibilities TEXT,
+    JobDescription TEXT, 
     Qualifications TEXT,
     DateCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    DateFilled TIMESTAMP NULL,
-    INDEX (JobTitle),
-    INDEX (EmploymentType),
-    INDEX (SalaryRange),
-    INDEX (Industry)
+    DateFilled TIMESTAMP
 );
+
 
 
 -- CREATE TABLE WorkExp (

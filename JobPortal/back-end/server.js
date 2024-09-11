@@ -146,7 +146,7 @@ app.post('/api/login', async (req, res) => {
       usertype: user.usertype
     };
 
-    const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/joblisting';
+    const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/applicantlist';
 
     res.json({ redirectUrl });
   } catch (err) {
@@ -282,6 +282,50 @@ app.post('/api/employer-profile', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
+//joblistings
+app.post('/api/joblistings', async (req, res) => {
+  const {
+    JobTitle,
+    Industry,
+    SalaryRange,
+    Skills,
+    JobType,
+    Responsibilities,
+    JobDescription,
+    Qualifications
+  } = req.body;
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO joblistings (
+        JobTitle, Industry, SalaryRange, Skills, JobType, Responsibilities, JobDescription, Qualifications
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      [
+        JobTitle,
+        Industry,
+        SalaryRange,
+        Skills,
+        JobType,
+        Responsibilities,
+        JobDescription,
+        Qualifications
+      ]
+    );
+
+    res.status(201).json({
+      message: 'Job posted successfully!',
+      job: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error posting job:', error);
+    res.status(500).json({
+      message: 'Failed to post job. Please try again.',
+      error: error.message
+    });
+  }
+});
+
 
 // Use routes
 app.use('/api/users', userRoutes);
