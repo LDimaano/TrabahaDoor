@@ -35,7 +35,7 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <aside className="p-3 d-flex flex-column" style={{ backgroundColor: '#2c3e50', width: '250px', height: '100vh', position: 'relative' }}>
+    <aside className="p-3 d-flex flex-column" style={{ backgroundColor: '#044474', width: '250px', height: '100vh', position: 'relative' }}>
       <div className="d-flex align-items-center justify-content-center mb-4">
         <img
           src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}

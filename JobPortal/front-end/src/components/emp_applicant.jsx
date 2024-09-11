@@ -61,7 +61,6 @@ const ApplicantTable = ({ applicants, currentApplicants, setApplicants }) => {
                 <button className="btn btn-link" onClick={() => handleSeeApplication(applicant)}>
                   See Application
                 </button>
-                <FontAwesomeIcon icon={faEllipsisH} />
               </td>
             </tr>
           ))}
