@@ -19,8 +19,9 @@ function EmployerProfileCreation() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     const user_id = sessionStorage.getItem('userId');
+    console.log('Retrieved user_id:', user_id);
 
     const profileData = {
       user_id,

@@ -8,7 +8,7 @@ import LandingPage from './pages/landing';
 import ProfileCreation from './components/j_profilecreation';
 import EmployerProfileCreation from './components/e_profilecreation';
 import JobPostingForm from './pages/jobposting';
-import JobPostingPage from './components/jobposting_desc';  
+import JobPostingPage from './pages/jobposting2';  
 import HomeJobseeker from './pages/home_jobseeker';
 import Jobdescription from './pages/jobdescription';
 import ApplicantList from './pages/applicantlist';
@@ -30,7 +30,7 @@ root.render(
         <Route path="/e_profilecreation" element={<EmployerProfileCreation/>} />
         <Route path="/jobposting" element={<JobPostingForm/>} />
         <Route path="/home_jobseeker" element={<HomeJobseeker />} />
-        <Route path="/jobposting_desc" element={<JobPostingPage/>} />
+        <Route path="/jobposting2" element={<JobPostingPage/>} />
         <Route path="/jobdescription" element={<Jobdescription />} />
         <Route path="/applicantlist" element={<ApplicantList/>} />
         <Route path="/appdetails" element={<ApplicantProfile/>} /> 
