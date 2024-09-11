@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import EmpHeader from '../components/emp_header'; // Import the EmpHeader component
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 const JobPosting = () => {
@@ -59,79 +60,17 @@ const JobPosting = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container mt-4"> {/* Added margin top here */}
       {/* Top Navigation */}
-      <header className="d-flex justify-content-between align-items-center p-3 border-bottom">
-        <div className="d-flex align-items-center">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/1d41edab7dfd7b603d5a4ad1ca09c3c8f114a2c36e787393ece6fc0064e84327?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
-            alt="Company logo"
-            className="me-3"
-            style={{ maxWidth: '50px' }}
-          />
-          <div>
-            <p className="mb-0 fw-bold">Company</p>
-            <h1 className="mb-0 d-flex align-items-center">
-              Saint Anthony Montessori
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/094d56e22dd1b07143c6e0b7804b4e8167234f7715ffe38b80659cd99184a939?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
-                alt="Verified badge"
-                className="ms-2"
-                style={{ maxWidth: '30px' }}
-              />
-            </h1>
-          </div>
-        </div>
-        <div className="d-flex align-items-center">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/6dac324345bbc13698ac872cc77d9d263753bd48e8f7f2cbe129c409887b48dc?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
-            alt="User profile"
-            className="me-3"
-            style={{ maxWidth: '40px', borderRadius: '50%' }}
-          />
-          <button className="btn btn-primary d-flex align-items-center">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/2e7d66b5d85410abffc25e2d6f30311bb55cb26c3092bd566c5f85092b3362d6?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
-              alt="Post job icon"
-              className="me-2"
-              style={{ maxWidth: '20px' }}
-            />
-            <span>Post a job</span>
-          </button>
-        </div>
-      </header>
+      <EmpHeader /> {/* Use EmpHeader component */}
 
       {/* Post Job Header */}
       <section className="d-flex align-items-center mb-4">
-        <button className="btn btn-outline-secondary me-3" onClick={handleBack} aria-label="Go back">
+        <button className="btn btn-outline-secondary me-3" onClick={handleBack} aria-label="Go back" style={{ border: 'none', color: 'black' }}>
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
         <h2 className="h4">Post a Job</h2>
       </section>
-
-      {/* Job Posting Stepper */}
-      <nav className="d-flex justify-content-between my-4">
-        {[{
-          imgSrc: 'https://cdn.builder.io/api/v1/image/assets/TEMP/6a42fd1310401124f065989747c4a4f9f75a4e05167b241e82d076d6bb0a9963?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975',
-          title: 'Job Information',
-          isActive: true,
-        }, {
-          imgSrc: 'https://cdn.builder.io/api/v1/image/assets/TEMP/46c54760f1a99081a79cc0bf9bcef9fc0e5a10546bbbac656e7081a2d3814873?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975',
-          title: 'Job Description',
-          isActive: false,
-        }].map((step, index) => (
-          <React.Fragment key={index}>
-            <div className={`d-flex align-items-center ${step.isActive ? 'text-primary' : ''}`}>
-              <img loading="lazy" src={step.imgSrc} alt={`Step ${index + 1} icon`} className="me-2" style={{ maxWidth: '30px' }} />
-              <div>
-                <div className="fw-bold">Step {index + 1}</div>
-                <div>{step.title}</div>
-              </div>
-            </div>
-            {index < 1 && <div className="mx-2 border-end" style={{ height: '2rem' }} />}
-          </React.Fragment>
-        ))}
-      </nav>
 
       {/* Job Posting Form */}
       <form className="p-4" onSubmit={handleSubmit}>
@@ -259,7 +198,7 @@ const JobPosting = () => {
           </div>
         </section>
 
-        <button type="submit" className="btn btn-primary">Post Job</button>
+        <button type="submit" className="btn btn-primary mt-3">Post Job</button>
       </form>
     </div>
   );

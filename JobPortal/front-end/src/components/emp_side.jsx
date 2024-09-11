@@ -1,4 +1,3 @@
-// src/components/Sidebar.js
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBuilding, faUserFriends, faClipboardList } from '@fortawesome/free-solid-svg-icons';
@@ -20,9 +19,8 @@ const Sidebar = () => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('API response data:', data); // Log the API response
+          console.log('API response data:', data);
           
-          // Set the company name and email from the response data
           setCompanyName(data.company_name || '');
           setEmail(data.email || '');
         } else {
@@ -37,10 +35,15 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <aside className="bg-dark text-white p-3 d-flex flex-column" style={{ width: '250px', height: '100vh', position: 'relative' }}>
-      <div className="text-center mb-4">
-        <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor Logo" className="img-fluid" style={{ width: '50px' }} />
-        <h4 className="mt-2">TrabahaDoor</h4>
+    <aside className="p-3 d-flex flex-column" style={{ backgroundColor: '#2c3e50', width: '250px', height: '100vh', position: 'relative' }}>
+      <div className="d-flex align-items-center justify-content-center mb-4">
+        <img
+          src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+          alt="TrabahaDoor Logo"
+          className="img-fluid"
+          style={{ width: '30px', marginRight: '10px' }} // Add margin to the right of the logo
+        />
+        <h4 className="mb-0 text-white" style={{ fontSize: '18px' }}>TrabahaDoor</h4> {/* Text color set to white */}
       </div>
       <nav className="flex-grow-1">
         <ul className="nav flex-column">
@@ -64,11 +67,16 @@ const Sidebar = () => {
           </li>
         </ul>
       </nav>
-      <div className="mt-4 text-center" style={{ position: 'absolute', bottom: '20px', left: '0', right: '0' }}>
-        <img src={`${process.env.PUBLIC_URL}/assets/profile.png`} alt="User Avatar" className="img-fluid rounded-circle" style={{ width: '50px', borderRadius: '50%' }} />
+      <div className="mt-4 text-center text-white" style={{ position: 'absolute', bottom: '20px', left: '0', right: '0' }}>
+        <img
+          src={`${process.env.PUBLIC_URL}/assets/profile.png`}
+          alt="User Avatar"
+          className="img-fluid rounded-circle"
+          style={{ width: '50px', borderRadius: '50%' }}
+        />
         <div className="mt-2">
           <p className="mb-0">{company_name}</p>
-          <small> {email}  </small>
+          <small>{email}</small>
         </div>
       </div>
     </aside>

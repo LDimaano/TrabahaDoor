@@ -1,4 +1,3 @@
-// src/components/Header.js
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -6,14 +5,14 @@ import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const navigate = useNavigate();
-  const [company_name, setCompanyName] = useState(''); // State to store the full name
+  const [company_name, setCompanyName] = useState(''); // State to store the company name
 
   const handlePostJobClick = () => {
     navigate('/jobposting');
   };
 
   useEffect(() => {
-    const fetchcompanyname = async () => {
+    const fetchCompanyName = async () => {
       try {
         const response = await fetch('http://localhost:5000/api/user-infoemp', {
           method: 'GET',
@@ -26,16 +25,16 @@ const Header = () => {
         if (response.ok) {
           const data = await response.json();
           console.log('API response data:', data); // Log the API response
-          setCompanyName(data.company_name || ''); // Set the full name or default to empty string
+          setCompanyName(data.company_name || ''); // Set the company name or default to empty string
         } else {
-          console.error('Failed to fetch full name:', response.statusText);
+          console.error('Failed to fetch company name:', response.statusText);
         }
       } catch (error) {
-        console.error('Error fetching full name:', error);
+        console.error('Error fetching company name:', error);
       }
     };
 
-    fetchcompanyname();
+    fetchCompanyName();
   }, []);
 
   return (
@@ -53,8 +52,8 @@ const Header = () => {
         </div>
       </div>
       <div className="d-flex align-items-center">
-      <div className="navbar-text">
-          Welcome, {company_name || 'Guest'} {/* Display the full name or 'Guest' */}
+        <div className="navbar-text me-3">
+          Welcome, {company_name || 'Guest'} {/* Display the company name or 'Guest' */}
         </div>
         <FontAwesomeIcon icon={faBell} className="me-3" />
         <button className="btn btn-primary" onClick={handlePostJobClick}>
