@@ -286,6 +286,7 @@ app.post('/api/employer-profile', async (req, res) => {
 //joblistings
 app.post('/api/joblistings', async (req, res) => {
   const {
+    user_id,
     JobTitle,
     Industry,
     SalaryRange,
@@ -296,12 +297,19 @@ app.post('/api/joblistings', async (req, res) => {
     Qualifications
   } = req.body;
 
+  console.log("Received request body: ", req.body)
+
+  if (!user_id){
+    return res.status(400).json({error: 'User ID is required'})
+  }
+
   try {
     const result = await pool.query(
       `INSERT INTO joblistings (
-        JobTitle, Industry, SalaryRange, Skills, JobType, Responsibilities, JobDescription, Qualifications
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+        user_id, JobTitle, Industry, SalaryRange, Skills, JobType, Responsibilities, JobDescription, Qualifications
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
       [
+        user_id,
         JobTitle,
         Industry,
         SalaryRange,

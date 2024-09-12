@@ -105,6 +105,10 @@ CREATE TABLE JobListings (
     DateFilled TIMESTAMP
 );
 
+--ALTER TABLE JobListings
+--ADD COLUMN user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE;
+
+
 
 
 -- CREATE TABLE WorkExp (

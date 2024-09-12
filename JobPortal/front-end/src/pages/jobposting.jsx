@@ -25,8 +25,22 @@ const JobPosting = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Attempt to retrieve user_id from session storage
+    const user_id = sessionStorage.getItem('userId');
+  
+    // Log the user_id value for debugging purposes
+    console.log('Retrieved user_id:', user_id);
+  
+    // Check if user_id is null or undefined
+    if (!user_id) {
+      alert('User ID not found. Please log in again.');
+      return; // Exit the function if user_id is not found
+    }
+  
+    // Construct the jobData object with user_id and other form fields
     const jobData = {
+      user_id: user_id,
       JobTitle: jobTitle,
       Industry: industry,
       SalaryRange: salaryRange,
@@ -36,8 +50,9 @@ const JobPosting = () => {
       Qualifications: qualifications,
       JobType: jobType // New field
     };
-
+  
     try {
+      // Send a POST request to the server with jobData
       const response = await fetch('http://localhost:5000/api/joblistings', {
         method: 'POST',
         headers: {
@@ -45,14 +60,17 @@ const JobPosting = () => {
         },
         body: JSON.stringify(jobData),
       });
-
+  
+      // Check if the response is successful
       if (response.ok) {
         alert('Job posted successfully!');
-        navigate('/applicantlist');
+        navigate('/applicantlist'); // Navigate to another page upon success
       } else {
+        // Handle server response errors
         alert('Failed to post job. Please try again.');
       }
     } catch (error) {
+      // Handle network or other errors
       console.error('Error posting job:', error);
       alert('An error occurred. Please try again.');
     }
