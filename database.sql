@@ -89,24 +89,6 @@ CREATE TABLE js_skills (
 );
 
 
---Jobtitle posting
-
-CREATE TABLE JobListings (
-    JobID SERIAL PRIMARY KEY,
-    JobTitle VARCHAR(255) NOT NULL,
-    Industry VARCHAR(255) NOT NULL,
-    Skills VARCHAR(255) NOT NULL,
-    SalaryRange VARCHAR(20) CHECK (SalaryRange IN ('Below 15000', '15001-25000', '25001-35000', '35001-50000', '50001-75000', '75001-100000', 'Above 100000')),
-    EmploymentType VARCHAR(20) CHECK (EmploymentType IN ('Full-time', 'Part-time', 'work from home')),
-    Responsibilities TEXT,
-    JobDescription TEXT, 
-    Qualifications TEXT,
-    DateCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    DateFilled TIMESTAMP
-);
-
---ALTER TABLE JobListings
---ADD COLUMN user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE;
 CREATE TABLE joblistings (
     job_id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
@@ -143,6 +125,11 @@ CREATE TABLE job_skills (
     FOREIGN KEY (jobid) REFERENCES joblistings(jobid) ON DELETE CASCADE,
     FOREIGN KEY (skill_id) REFERENCES skills(skill_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id) -- Use the correct column name here
+);
+
+CREATE TABLE job_titles (
+    id SERIAL PRIMARY KEY,
+    job_title VARCHAR(255) NOT NULL
 );
 
 

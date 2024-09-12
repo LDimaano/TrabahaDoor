@@ -205,6 +205,19 @@ app.get('/api/user-info', async (req, res) => {
   }
 });
 
+app.get('/api/jobtitles', async (req, res) => {
+  try {
+    // Query the job_titles table
+    const jobTitles = await pool.query('SELECT id, job_title FROM job_titles');
+    
+    // Send the job titles as a JSON response
+    res.json(jobTitles.rows); // Array of objects { id, job_title }
+  } catch (err) {
+    console.error('Error fetching job titles:', err);
+    res.status(500).json({ error: 'Error fetching job titles' });
+  }
+});
+
 
 app.get('/api/user-infoemp', async (req, res) => {
   console.log('Session data:', req.session);

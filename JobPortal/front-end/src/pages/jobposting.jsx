@@ -10,11 +10,12 @@ const JobPosting = () => {
   const [responsibilities, setResponsibilities] = useState("");
   const [jobDescription, setJobDescription] = useState(""); // Updated from requirements
   const [qualifications, setQualifications] = useState("");
-  const [jobTitle, setJobTitle] = useState("");
+  const [jobTitle, setJobTitle] = useState(null); // Changed to null initially
   const [industry, setIndustry] = useState(""); // Updated from location
   const [salaryRange, setSalaryRange] = useState("");
   const [skills, setSkills] = useState([]); // Changed to an empty array initially
   const [availableSkills, setAvailableSkills] = useState([]);
+  const [availableJobTitles, setAvailableJobTitles] = useState([]); // New state for job titles
   const [jobType, setJobType] = useState("");
   const [error, setError] = useState(''); // New state for job type
   
@@ -37,7 +38,26 @@ const JobPosting = () => {
         setError('Failed to load skills.');
       }
     };
+
+    const fetchJobTitles = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/jobtitles'); // Ensure this URL is correct
+        if (!response.ok) throw new Error('Failed to fetch job titles');
+        const data = await response.json();
+        // Convert data to { value: id, label: job_title }
+        const jobTitleOptions = data.map(jobTitle => ({
+          value: jobTitle.id, // Use 'id' from the API response
+          label: jobTitle.job_title // Use 'job_title' from the API response
+        }));
+        setAvailableJobTitles(jobTitleOptions);
+      } catch (error) {
+        console.error('Error fetching job titles:', error);
+        setError('Failed to load job titles.');
+      }
+    };    
+
     fetchSkills();
+    fetchJobTitles();
   }, []);
 
   const handleSkillChange = (index, selectedOption) => {
@@ -55,6 +75,10 @@ const JobPosting = () => {
     setSkills(newSkills);
   };
 
+  const handleJobTitleChange = (selectedOption) => {
+    setJobTitle(selectedOption); // Set the selected job title object
+  };
+
   // Function to handle the back button click
   const handleBack = () => {
     navigate(-1); // Navigate back
@@ -65,7 +89,7 @@ const JobPosting = () => {
     e.preventDefault();
   
     // Attempt to retrieve user_id from session storage
-    const user_id = sessionStorage.getItem('user_id')
+    const user_id = sessionStorage.getItem('user_id');
   
     // Log the user_id value for debugging purposes
     console.log('Retrieved user_id:', user_id);
@@ -79,7 +103,7 @@ const JobPosting = () => {
     // Construct the jobData object with user_id and other form fields
     const jobData = {
       user_id: user_id,
-      JobTitle: jobTitle,
+      JobTitle: jobTitle?.value || '', // Get the value from the selected job title object
       Industry: industry,
       SalaryRange: salaryRange,
       skills: skills.map(skill => skill?.value || ''), 
@@ -134,13 +158,12 @@ const JobPosting = () => {
           <p>Provide details about the job title, industry, and location.</p>
           <div className="mb-3">
             <label htmlFor="jobTitle" className="form-label">Job Title</label>
-            <input
-              type="text"
+            <Select
               id="jobTitle"
-              className="form-control"
-              placeholder="Enter job title"
               value={jobTitle}
-              onChange={(e) => setJobTitle(e.target.value)}
+              options={availableJobTitles}
+              onChange={handleJobTitleChange}
+              placeholder="Select a job title"
             />
           </div>
           <div className="mb-3">
@@ -240,7 +263,7 @@ const JobPosting = () => {
 
         {/* Skills Section Moved to End */}
         <section className="mb-4">
-          <h3 className="h5">Requred skills</h3>
+          <h3 className="h5">Required Skills</h3>
           <p>Select the skills required for this job.</p>
           {skills.map((skill, index) => (
             <div className="mb-3" key={index}>
