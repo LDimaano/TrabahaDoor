@@ -12,6 +12,7 @@ import HomeJobseeker from './pages/home_jobseeker';
 import Jobdescription from './pages/jobdescription';
 import ApplicantList from './pages/applicantlist';
 import ApplicantProfile from './pages/appdetails';
+import HomeEmployer from './pages/home_employer';
 
 
 
@@ -32,6 +33,7 @@ root.render(
         <Route path="/jobdescription" element={<Jobdescription />} />
         <Route path="/applicantlist" element={<ApplicantList/>} />
         <Route path="/appdetails" element={<ApplicantProfile/>} /> 
+        <Route path="/home_employer" element={<HomeEmployer/>} /> 
       </Routes>
     </Router>
   </React.StrictMode>
