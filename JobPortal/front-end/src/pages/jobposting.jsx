@@ -27,7 +27,7 @@ const JobPosting = () => {
     e.preventDefault();
   
     // Attempt to retrieve user_id from session storage
-    const user_id = sessionStorage.getItem('userId');
+    const user_id = sessionStorage.getItem('user_id')
   
     // Log the user_id value for debugging purposes
     console.log('Retrieved user_id:', user_id);

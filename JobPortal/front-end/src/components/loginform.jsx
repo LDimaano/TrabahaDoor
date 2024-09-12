@@ -9,7 +9,7 @@ function LoginForm() {
 
   const handleClick = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch('http://localhost:5000/api/login', {
         method: 'POST',
@@ -19,10 +19,16 @@ function LoginForm() {
         body: JSON.stringify({ email, password }),
         credentials: 'include', // Ensure credentials (cookies) are included
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
+        // Store user details in session storage
+        sessionStorage.setItem('user_id', data.user.user_id);
+        sessionStorage.setItem('email', data.user.email);
+        sessionStorage.setItem('usertype', data.user.usertype);
+  
+        // Navigate to the appropriate URL
         navigate(data.redirectUrl);
       } else {
         setError(data.message || 'Login failed.');
@@ -32,7 +38,7 @@ function LoginForm() {
       setError('Something went wrong. Please try again.');
     }
   };
-
+  
   return (
     <form className="col-lg-6 d-flex align-items-center" onSubmit={handleClick}>
       <div className="card p-5 shadow-lg w-100">

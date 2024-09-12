@@ -124,31 +124,51 @@ app.get('/api/skills', async (req, res) => {
 });
 
 // Login route using session
+
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
+
   try {
+    // Check if user exists
     const userQuery = 'SELECT * FROM users WHERE email = $1';
     const { rows } = await pool.query(userQuery, [email]);
 
     if (rows.length === 0) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
+
     const user = rows[0];
 
+    // Directly compare the passwords (assuming plain text)
     if (password !== user.password) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Set session data
+    // Set session data on the server-side (if needed)
     req.session.user = {
       user_id: user.user_id,
       email: user.email,
-      usertype: user.usertype
+      usertype: user.usertype,
     };
 
-    const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/applicantlist';
+    // Save session and handle errors
+    req.session.save(err => {
+      if (err) {
+        console.error('Error saving session:', err);
+        return res.status(500).json({ message: 'Session save error' });
+      }
 
-    res.json({ redirectUrl });
+      // Send the user data along with the redirect URL
+      const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/applicantlist';
+      res.json({ 
+        redirectUrl,
+        user: {
+          user_id: user.user_id,
+          email: user.email,
+          usertype: user.usertype
+        }
+      });
+    });
   } catch (err) {
     console.error('Server error during login:', err);
     res.status(500).json({ message: 'Server error' });
