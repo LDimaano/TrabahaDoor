@@ -71,22 +71,12 @@ function EmployerProfileCreation() {
 
   return (
     <main className="container mt-4">
-      <nav className="navbar navbar-light bg-light mb-4">
-        <a className="navbar-brand" href="/">TrabahaDoor</a>
-        <div className="d-flex">
-          <button className="btn btn-secondary me-2">Back to homepage</button>
-          <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" className="d-inline-block align-top" style={{ height: '40px' }} />
-        </div>
-      </nav>
+  
       <div className="mb-4">
-        <ul className="nav nav-tabs">
-          <li className="nav-item">
-            <a className="nav-link active" href="#">My Profile</a>
-          </li>
-          {/* Add more tabs if needed */}
-        </ul>
+      <h1 className="text-center">Create your Profile</h1>
+      <h5 className="text-center">Let us know more about your company</h5>
       </div>
-      <section className="mb-4">
+      {/* <section className="mb-4">
         <h2>Profile Photo</h2>
         <p>This image will be shown publicly as your profile picture, it will help recruiters recognize you!</p>
         <div className="mb-3">
@@ -103,7 +93,7 @@ function EmployerProfileCreation() {
             onChange={handleFileChange}
           />
         </div>
-      </section>
+      </section> */}
       <section className="mb-4">
         <h3>Company Details</h3>
         <form onSubmit={handleSubmit}>
@@ -223,7 +213,7 @@ function EmployerProfileCreation() {
             />
           </div>
           <div className="text-center">
-            <button type="submit" className="btn btn-success">Register</button>
+          <button type="submit" className="btn btn-success float-end">Register</button>
           </div>
         </form>
         {error && <div className="alert alert-danger mt-3">{error}</div>}

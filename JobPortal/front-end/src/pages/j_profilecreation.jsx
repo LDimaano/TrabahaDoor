@@ -4,8 +4,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 
 
+
+
 function ProfileCreation() {
   const navigate = useNavigate();
+
+
 
 
   const [fullName, setFullName] = useState('Juan A. Dela Cruz');
@@ -29,6 +33,8 @@ function ProfileCreation() {
   const [photo, setPhoto] = useState(null);
 
 
+
+
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -48,8 +54,12 @@ function ProfileCreation() {
     };
 
 
+
+
     fetchSkills();
   }, []);
+
+
 
 
   const handleSkillChange = (index, selectedOption) => {
@@ -59,9 +69,13 @@ function ProfileCreation() {
   };
 
 
+
+
   const handleAddSkill = () => {
     setSkills([...skills, null]); // Add an empty skill object
   };
+
+
 
 
   const handleRemoveSkill = (index) => {
@@ -70,12 +84,16 @@ function ProfileCreation() {
   };
 
 
+
+
   const handleExperienceChange = (index, event) => {
     const { name, value } = event.target;
     const newExperience = [...experience];
     newExperience[index] = { ...newExperience[index], [name]: value };
     setExperience(newExperience);
   };
+
+
 
 
   const handleAddExperience = () => {
@@ -91,16 +109,22 @@ function ProfileCreation() {
   };
 
 
+
+
   const handleRemoveExperience = (index) => {
     const newExperience = experience.filter((_, i) => i !== index);
     setExperience(newExperience);
   };
 
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user_id = sessionStorage.getItem('userId');
     console.log('Retrieved user_id:', user_id);
+
+
 
 
     const profileData = {
@@ -117,7 +141,11 @@ function ProfileCreation() {
     };
 
 
+
+
     console.log('Submitting profile data:', profileData);
+
+
 
 
     try {
@@ -130,13 +158,19 @@ function ProfileCreation() {
       });
 
 
+
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
 
+
+
       const data = await response.json();
       console.log('Profile created successfully:', data);
+
+
 
 
       setTimeout(() => {
@@ -149,6 +183,8 @@ function ProfileCreation() {
   };
 
 
+
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setPhoto(file);
@@ -156,9 +192,12 @@ function ProfileCreation() {
   };
 
 
+
+
   return (
     <div className="container mt-4">
       <h1 className="text-center">Create your Profile</h1>
+      <h5 className="text-center">Let us know more about you</h5>
       <form onSubmit={handleSubmit}>
         {/* Uncomment the following section if you want to include photo upload */}
         {/* <div className="mb-3">
@@ -364,8 +403,4 @@ function ProfileCreation() {
     </div>
   );
 }
-
-
 export default ProfileCreation;
-
-
