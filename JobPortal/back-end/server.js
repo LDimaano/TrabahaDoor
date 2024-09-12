@@ -304,55 +304,111 @@ app.post('/api/employer-profile', async (req, res) => {
 });
 
 //joblistings
+// app.post('/api/joblistings', async (req, res) => {
+//   const {
+//     user_id,
+//     JobTitle,
+//     Industry,
+//     SalaryRange,
+//     Skills,
+//     JobType,
+//     Responsibilities,
+//     JobDescription,
+//     Qualifications
+//   } = req.body;
+
+//   console.log("Received request body: ", req.body)
+
+//   if (!user_id){
+//     return res.status(400).json({error: 'User ID is required'})
+//   }
+
+//   try {
+//     const result = await pool.query(
+//       `INSERT INTO joblistings (
+//         user_id, JobTitle, Industry, SalaryRange, Skills, JobType, Responsibilities, JobDescription, Qualifications
+//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+//       [
+//         user_id,
+//         JobTitle,
+//         Industry,
+//         SalaryRange,
+//         Skills,
+//         JobType,
+//         Responsibilities,
+//         JobDescription,
+//         Qualifications
+//       ]
+//     );
+
+//     res.status(201).json({
+//       message: 'Job posted successfully!',
+//       job: result.rows[0]
+//     });
+//   } catch (error) {
+//     console.error('Error posting job:', error);
+//     res.status(500).json({
+//       message: 'Failed to post job. Please try again.',
+//       error: error.message
+//     });
+//   }
+// });
 app.post('/api/joblistings', async (req, res) => {
   const {
-    user_id,
+    user_id, // This should be the user_id from the users table
     JobTitle,
     Industry,
     SalaryRange,
-    Skills,
     JobType,
     Responsibilities,
     JobDescription,
-    Qualifications
+    Qualifications,
+    skills // Array of skill IDs
   } = req.body;
 
-  console.log("Received request body: ", req.body)
+  // Log the request body to verify data
+  console.log('Received request body:', req.body);
 
-  if (!user_id){
-    return res.status(400).json({error: 'User ID is required'})
+  // Check that user_id is provided
+  if (!user_id) {
+    return res.status(400).json({ error: 'User ID is required' });
   }
 
   try {
-    const result = await pool.query(
+    // Insert the job listing data into the joblistings table
+    const newJobResult = await pool.query(
       `INSERT INTO joblistings (
-        user_id, JobTitle, Industry, SalaryRange, Skills, JobType, Responsibilities, JobDescription, Qualifications
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-      [
-        user_id,
-        JobTitle,
-        Industry,
-        SalaryRange,
-        Skills,
-        JobType,
-        Responsibilities,
-        JobDescription,
-        Qualifications
-      ]
+        user_id, JobTitle, Industry, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING job_id`,
+      [user_id, JobTitle, Industry, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications]
     );
 
-    res.status(201).json({
-      message: 'Job posted successfully!',
-      job: result.rows[0]
-    });
-  } catch (error) {
-    console.error('Error posting job:', error);
-    res.status(500).json({
-      message: 'Failed to post job. Please try again.',
-      error: error.message
-    });
+    const job_id = newJobResult.rows[0].job_id;
+
+    // Insert skills data
+    for (const skill_id of skills) {
+      await pool.query(
+        `INSERT INTO job_skills (
+          job_id, skill_id, user_id
+        )
+        VALUES ($1, $2, $3)`,
+        [job_id, skill_id, user_id]
+      );
+    }
+
+    // Send a successful response
+    res.json({ message: 'Job posted successfully', job_id });
+  } catch (err) {
+    // Log error message
+    console.error('Error posting job:', err.message);
+    res.status(500).send('Server Error');
   }
 });
+
+
+
 
 
 // Use routes

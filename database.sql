@@ -107,7 +107,43 @@ CREATE TABLE JobListings (
 
 --ALTER TABLE JobListings
 --ADD COLUMN user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE;
+CREATE TABLE joblistings (
+    job_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    JobTitle VARCHAR(255) NOT NULL,
+    Industry VARCHAR(255) NOT NULL,
+    SalaryRange VARCHAR(20) CHECK (
+        SalaryRange IN (
+            'Below 15000', 
+            '15001-25000', 
+            '25001-35000', 
+            '35001-50000', 
+            '50001-75000', 
+            '75001-100000', 
+            'Above 100000'
+        )
+    ),
+    JobType VARCHAR(20) CHECK (
+        JobType IN ('Full-time', 'Part-time', 'Work from Home')
+    ),
+    Responsibilities TEXT,
+    JobDescription TEXT,
+    Qualifications TEXT,
+    DateCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    DateFilled TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) -- Adjust if your users table uses a different column
+);
 
+
+CREATE TABLE job_skills (
+    jobid INTEGER NOT NULL,
+    skill_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    PRIMARY KEY (jobid, skill_id),
+    FOREIGN KEY (jobid) REFERENCES joblistings(jobid) ON DELETE CASCADE,
+    FOREIGN KEY (skill_id) REFERENCES skills(skill_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) -- Use the correct column name here
+);
 
 
 

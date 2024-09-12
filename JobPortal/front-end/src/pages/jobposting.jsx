@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import EmpHeader from '../components/emp_header'; // Import the EmpHeader component
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import Select from 'react-select'; // Import react-select
 
 const JobPosting = () => {
   const [responsibilities, setResponsibilities] = useState("");
@@ -12,10 +13,47 @@ const JobPosting = () => {
   const [jobTitle, setJobTitle] = useState("");
   const [industry, setIndustry] = useState(""); // Updated from location
   const [salaryRange, setSalaryRange] = useState("");
-  const [skills, setSkills] = useState("");
-  const [jobType, setJobType] = useState(""); // New state for job type
+  const [skills, setSkills] = useState([]); // Changed to an empty array initially
+  const [availableSkills, setAvailableSkills] = useState([]);
+  const [jobType, setJobType] = useState("");
+  const [error, setError] = useState(''); // New state for job type
   
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/skills');
+        if (!response.ok) throw new Error('Failed to fetch skills');
+        const data = await response.json();
+        // Convert data to { value: skill_id, label: skill_name }
+        const skillOptions = data.map(skill => ({
+          value: skill.skill_id,
+          label: skill.skill_name
+        }));
+        setAvailableSkills(skillOptions);
+      } catch (error) {
+        console.error('Error fetching skills:', error);
+        setError('Failed to load skills.');
+      }
+    };
+    fetchSkills();
+  }, []);
+
+  const handleSkillChange = (index, selectedOption) => {
+    const newSkills = [...skills];
+    newSkills[index] = selectedOption; // Set the selected skill object
+    setSkills(newSkills);
+  };
+
+  const handleAddSkill = () => {
+    setSkills([...skills, null]); // Add an empty skill object
+  };
+
+  const handleRemoveSkill = (index) => {
+    const newSkills = skills.filter((_, i) => i !== index);
+    setSkills(newSkills);
+  };
 
   // Function to handle the back button click
   const handleBack = () => {
@@ -44,7 +82,7 @@ const JobPosting = () => {
       JobTitle: jobTitle,
       Industry: industry,
       SalaryRange: salaryRange,
-      Skills: skills,
+      skills: skills.map(skill => skill?.value || ''), 
       Responsibilities: responsibilities,
       JobDescription: jobDescription, // Updated from requirements
       Qualifications: qualifications,
@@ -135,17 +173,6 @@ const JobPosting = () => {
             </select>
           </div>
           <div className="mb-3">
-            <label htmlFor="skills" className="form-label">Skills</label>
-            <input
-              type="text"
-              id="skills"
-              className="form-control"
-              placeholder="Enter required skills"
-              value={skills}
-              onChange={(e) => setSkills(e.target.value)}
-            />
-          </div>
-          <div className="mb-3">
             <label htmlFor="jobType" className="form-label">Job Type</label>
             <select
               id="jobType"
@@ -187,7 +214,7 @@ const JobPosting = () => {
             <textarea
               id="jobDescription"
               className="form-control"
-              placeholder="Describe the job responsibilities and requirements."
+              placeholder="Describe the role, objectives, and company culture."
               rows="4"
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
@@ -196,26 +223,60 @@ const JobPosting = () => {
               <span className="text-muted">{jobDescription.length}/3000</span>
             </div>
           </div>
-          <div className="mb-4">
-            <div className="mb-2">
-              <label htmlFor="qualifications" className="form-label">Qualifications</label>
-              <p>List the qualifications and skills required for this job.</p>
-            </div>
-            <textarea
-              id="qualifications"
-              className="form-control"
-              placeholder="Describe the skills and qualifications necessary for this role."
-              rows="4"
-              value={qualifications}
-              onChange={(e) => setQualifications(e.target.value)}
-            />
-            <div className="d-flex justify-content-end">
-              <span className="text-muted">{qualifications.length}/3000</span>
-            </div>
-          </div>
         </section>
 
-        <button type="submit" className="btn btn-primary mt-3">Post Job</button>
+        <section className="mb-4">
+          <h3 className="h5">Qualifications</h3>
+          <p>List the qualifications and requirements for this job.</p>
+          <textarea
+            id="qualifications"
+            className="form-control"
+            placeholder="Describe the education, experience, and skills required for this position."
+            rows="4"
+            value={qualifications}
+            onChange={(e) => setQualifications(e.target.value)}
+          />
+        </section>
+
+        {/* Skills Section Moved to End */}
+        <section className="mb-4">
+          <h3 className="h5">Requred skills</h3>
+          <p>Select the skills required for this job.</p>
+          {skills.map((skill, index) => (
+            <div className="mb-3" key={index}>
+              <div className="d-flex">
+                <Select
+                  id={`skill_${index}`}
+                  value={skill}
+                  options={availableSkills}
+                  onChange={(selectedOption) => handleSkillChange(index, selectedOption)}
+                  placeholder="Select a skill"
+                  className="flex-grow-1 me-2"
+                />
+                <button
+                  type="button"
+                  className="btn btn-outline-danger"
+                  onClick={() => handleRemoveSkill(index)}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            className="btn btn-outline-primary"
+            onClick={handleAddSkill}
+          >
+            Add Skill
+          </button>
+        </section>
+
+        <div className="d-flex justify-content-end">
+          <button type="submit" className="btn btn-primary">
+            Post Job
+          </button>
+        </div>
       </form>
     </div>
   );

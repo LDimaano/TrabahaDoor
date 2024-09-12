@@ -9,9 +9,6 @@ import Select from 'react-select';
 function ProfileCreation() {
   const navigate = useNavigate();
 
-
-
-
   const [fullName, setFullName] = useState('Juan A. Dela Cruz');
   const [phoneNumber, setPhoneNumber] = useState('+44 1245 572 135');
   const [email, setEmail] = useState('juandelacruz@gmail.com');
@@ -31,9 +28,6 @@ function ProfileCreation() {
   const [availableSkills, setAvailableSkills] = useState([]); // Holds skills fetched from backend
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
-
-
-
 
   useEffect(() => {
     const fetchSkills = async () => {
