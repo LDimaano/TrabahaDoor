@@ -83,9 +83,9 @@ CREATE TABLE job_experience (
 
 -- JS Skills Table
 CREATE TABLE js_skills (
-    id SERIAL PRIMARY KEY,
+    id Serial primary key,
+    Skill_id INTEGER REFERENCES skills(skill_id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-    skill_name VARCHAR(255) NOT NULL
 );
 
 
@@ -118,13 +118,13 @@ CREATE TABLE joblistings (
 
 
 CREATE TABLE job_skills (
-    jobid INTEGER NOT NULL,
+    job_id INTEGER NOT NULL,
     skill_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    PRIMARY KEY (jobid, skill_id),
-    FOREIGN KEY (jobid) REFERENCES joblistings(jobid) ON DELETE CASCADE,
+    PRIMARY KEY (job_id, skill_id),
+    FOREIGN KEY (job_id) REFERENCES joblistings(job_id) ON DELETE CASCADE,
     FOREIGN KEY (skill_id) REFERENCES skills(skill_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id) -- Use the correct column name here
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
 CREATE TABLE job_titles (

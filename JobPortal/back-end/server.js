@@ -316,56 +316,6 @@ app.post('/api/employer-profile', async (req, res) => {
   }
 });
 
-//joblistings
-// app.post('/api/joblistings', async (req, res) => {
-//   const {
-//     user_id,
-//     JobTitle,
-//     Industry,
-//     SalaryRange,
-//     Skills,
-//     JobType,
-//     Responsibilities,
-//     JobDescription,
-//     Qualifications
-//   } = req.body;
-
-//   console.log("Received request body: ", req.body)
-
-//   if (!user_id){
-//     return res.status(400).json({error: 'User ID is required'})
-//   }
-
-//   try {
-//     const result = await pool.query(
-//       `INSERT INTO joblistings (
-//         user_id, JobTitle, Industry, SalaryRange, Skills, JobType, Responsibilities, JobDescription, Qualifications
-//       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-//       [
-//         user_id,
-//         JobTitle,
-//         Industry,
-//         SalaryRange,
-//         Skills,
-//         JobType,
-//         Responsibilities,
-//         JobDescription,
-//         Qualifications
-//       ]
-//     );
-
-//     res.status(201).json({
-//       message: 'Job posted successfully!',
-//       job: result.rows[0]
-//     });
-//   } catch (error) {
-//     console.error('Error posting job:', error);
-//     res.status(500).json({
-//       message: 'Failed to post job. Please try again.',
-//       error: error.message
-//     });
-//   }
-// });
 app.post('/api/joblistings', async (req, res) => {
   const {
     user_id, // This should be the user_id from the users table
@@ -420,7 +370,18 @@ app.post('/api/joblistings', async (req, res) => {
   }
 });
 
+//fetching joblisting
 
+// Endpoint to get job listings
+app.get('/api/joblistings', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM joblistings');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching job listings:', error);
+    res.status(500).send('Server error');
+  }
+});
 
 
 
@@ -430,12 +391,6 @@ app.use('/api/jobseekers', jobSeekerRoutes);
 app.use('/api/employers', employerRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
-
-
-
-
-
-
 
 
 const PORT = process.env.PORT || 5000;
