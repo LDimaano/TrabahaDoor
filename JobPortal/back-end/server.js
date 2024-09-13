@@ -61,7 +61,7 @@ app.post('/api/profile', async (req, res) => {
     gender,
     address,
     experience, // Array of experience objects
-    skills, // Array of skill values
+    skills // Array of skill IDs or skill objects containing skill_id
   } = req.body;
 
   // Log the request body to verify data
@@ -84,6 +84,7 @@ app.post('/api/profile', async (req, res) => {
     );
 
     const profileId = newProfileResult.rows[0].jsid;
+
     // Insert experience data
     for (const exp of experience) {
       await pool.query(
@@ -94,16 +95,18 @@ app.post('/api/profile', async (req, res) => {
         [user_id, exp.jobTitle, exp.salary, exp.company, exp.location, exp.startDate, exp.endDate, exp.description]
       );
     }
-    // Insert skills data
-    for (const skill of skills) {
+
+    // Insert skills data - assuming skills array contains skill_id directly
+    for (const skill_id of skills) {
       await pool.query(
         `INSERT INTO js_skills (
           user_id, skill_id
         )
         VALUES ($1, $2)`,
-        [user_id, skill.skill_id]
+        [user_id, skill_id]
       );
     }
+
     // Send a successful response
     res.json({ message: 'Profile created successfully', profileId });
   } catch (err) {
@@ -112,6 +115,7 @@ app.post('/api/profile', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
 
 app.get('/api/skills', async (req, res) => {
   try {
