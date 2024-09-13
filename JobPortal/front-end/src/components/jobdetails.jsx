@@ -1,20 +1,32 @@
-import React from 'react';
-import ProgressBar from './progressbar';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Tag from './jstag';
 
-const JobDetails = () => {
-  const jobInfo = [
-    { label: 'Job Posted On', value: 'April 1, 2024' },
-    { label: 'Job Type', value: 'Full-Time' },
-    { label: 'Salary', value: '20k-30k PHP' }
-  ];
-  const skills = ['Time Management', 'Writing', 'Communication', 'English', 'Teamwork'];
+const JobDetails = ({ jobInfo, skills }) => {
+  const [fetchedSkills, setFetchedSkills] = useState([]);
+  const { jobId } = useParams();
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        // Fetch job details including skills from the API
+        const response = await fetch(`http://localhost:5000/api/joblistings/${jobId}`);
+        const data = await response.json();
+        setFetchedSkills(data.skills || []); // Ensure data.skills is always an array
+      } catch (error) {
+        console.error('Error fetching skills:', error);
+      }
+    };
+
+    if (jobId) {
+      fetchSkills();
+    }
+  }, [jobId]);
 
   return (
     <aside className="col-md-4">
       <section className="mb-4">
         <h2>About this role</h2>
-        <ProgressBar current={5} total={10} />
         {jobInfo.map(({ label, value }) => (
           <div key={label} className="d-flex justify-content-between mb-2">
             <span>{label}</span>
@@ -23,16 +35,11 @@ const JobDetails = () => {
         ))}
       </section>
       <hr />
-      <section className="mb-4">
-        <h2>Categories</h2>
-        <Tag color="secondary">Education</Tag>
-      </section>
-      <hr />
       <section>
         <h2>Required Skills</h2>
         <div className="d-flex flex-wrap">
-          {skills.map((skill) => (
-            <Tag key={skill}>{skill}</Tag>
+          {(skills.length > 0 ? skills : fetchedSkills).map((skill, index) => (
+            <Tag key={index}>{skill}</Tag>
           ))}
         </div>
       </section>

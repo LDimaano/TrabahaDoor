@@ -8,7 +8,7 @@ function JobListItem({ job }) {
     // Navigate to the job description page with dynamic job ID
     navigate(`/jobdescription/${job.job_id}`);
   };
-
+  
   return (
     <li className="list-group-item d-flex justify-content-between align-items-center">
       <div className="d-flex">

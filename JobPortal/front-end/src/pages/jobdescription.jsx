@@ -1,11 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Header from '../components/jsheader';
 import JobContent from '../components/jobcontent';
 import JobDetails from '../components/jobdetails';
 import SubmitApplication from '../pages/jobseeker_submit';
 
 const JobDescription = () => {
+  const { jobId } = useParams();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [jobData, setJobData] = useState(null);
+
+  useEffect(() => {
+    const fetchJobData = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/joblistings/${jobId}`);
+        const data = await response.json();
+        setJobData(data);
+      } catch (error) {
+        console.error('Error fetching job data:', error);
+      }
+    };
+
+    fetchJobData();
+  }, [jobId]);
+
+  if (!jobData) return <div>Loading...</div>;
 
   return (
     <main className="container mt-3">
@@ -15,17 +34,17 @@ const JobDescription = () => {
         <div className="col-md-8 d-flex align-items-center">
           <img
             src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
-            alt="Saint Anthony Montessori logo"
+            alt={`${jobData.company_name} logo`}
             width="100"
             height="100"
             className="me-4"
           />
           <div>
-            <h1>Teacher - Primary Level</h1>
+            <h1>{jobData.job_title}</h1>
             <div className="d-flex flex-column">
-              <span className="text-muted">Saint Anthony Montessori</span>
-              <span>San Jose, Batangas</span>
-              <span>Full-Time</span>
+              <span className="text-muted">{jobData.company_name}</span>
+              <span>{jobData.industry}</span>
+              <span>{jobData.job_type}</span>
             </div>
           </div>
         </div>
@@ -34,8 +53,19 @@ const JobDescription = () => {
         </div>
       </section>
       <section className="row">
-        <JobContent />
-        <JobDetails />
+        <JobContent
+          jobdescription={jobData.jobdescription}
+          responsibilities={jobData.responsibilities ? jobData.responsibilities.split(',') : []}
+          qualifications={jobData.qualifications ? jobData.qualifications.split(',') : []}
+        />
+        <JobDetails
+          jobInfo={[
+            { label: 'Job Posted On', value: new Date(jobData.datecreated).toLocaleDateString() },
+            { label: 'Job Type', value: jobData.jobtype },
+            { label: 'Salary', value: jobData.salaryrange }
+          ]}
+          skills={jobData.skills || []} 
+        />
       </section>
     </main>
   );

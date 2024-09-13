@@ -320,6 +320,7 @@ app.post('/api/employer-profile', async (req, res) => {
   }
 });
 
+
 app.post('/api/joblistings', async (req, res) => {
   const {
     user_id, // This should be the user_id from the users table
@@ -332,6 +333,8 @@ app.post('/api/joblistings', async (req, res) => {
     Qualifications,
     skills // Array of skill IDs
   } = req.body;
+
+  
 
   // Log the request body to verify data
   console.log('Received request body:', req.body);
@@ -393,6 +396,41 @@ app.get('/api/postedjobs', async (req, res) => {
   } catch (error) {
     console.error('Error fetching job listings:', error);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get job listing details including company info
+app.get('/api/joblistings/:jobId', async (req, res) => {
+  const { jobId } = req.params;
+  const jobQuery = `
+    SELECT jl.*, jt.job_title, ep.company_name
+    FROM joblistings jl
+    JOIN job_titles jt ON jl.Jobtitle_id = jt.jobtitle_id
+    JOIN emp_profiles ep ON jl.user_id = ep.user_id
+    WHERE jl.job_id = $1;
+  `;
+  const skillsQuery = `
+    SELECT s.skill_name
+    FROM job_skills js
+    JOIN skills s ON js.skill_id = s.skill_id
+    WHERE js.job_id = $1;
+  `;
+  
+  try {
+    const jobResult = await pool.query(jobQuery, [jobId]);
+    const skillsResult = await pool.query(skillsQuery, [jobId]);
+    
+    if (jobResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+    
+    const jobData = jobResult.rows[0];
+    const skills = skillsResult.rows.map(row => row.skill_name);
+    
+    res.json({ ...jobData, skills });
+  } catch (error) {
+    console.error('Error fetching job details:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
