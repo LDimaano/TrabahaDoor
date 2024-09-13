@@ -5,23 +5,24 @@ function JobListItem({ job }) {
   const navigate = useNavigate();
 
   const handleApplyClick = () => {
-    // Navigate to the job description page; you can pass job ID or other details as needed
-    navigate(`/jobdescription/${job.jobid}`); // Assuming you'll use job_id for dynamic routing
+    // Navigate to the job description page with dynamic job ID
+    navigate(`/jobdescription/${job.job_id}`);
   };
 
   return (
     <li className="list-group-item d-flex justify-content-between align-items-center">
       <div className="d-flex">
         <img
-          src={job.logo || 'default-logo-url.png'} // Provide a default if no logo is available
-          alt={`${job.Industry} logo`} // Use Industry or any relevant field if company is not available
+          src={job.logo || 'default-logo-url.png'}
+          alt={`${job.Industry} logo`}
           width="50"
           height="50"
           className="me-3"
         />
         <div>
-          <h5>{job.JobTitle}</h5> {/* Updated to match JobTitle from the database */}
-          <p>{job.Industry}</p> {/* Adjust based on available data */}
+          <h5>{job.job_title}</h5>
+          <p>{job.industry}</p>
+          <p>{job.salaryrange}</p> {/* Add SalaryRange for more details */}
         </div>
       </div>
       <button className="btn btn-primary" onClick={handleApplyClick}>

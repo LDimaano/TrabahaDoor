@@ -10,7 +10,7 @@ const JobPosting = () => {
   const [responsibilities, setResponsibilities] = useState("");
   const [jobDescription, setJobDescription] = useState(""); // Updated from requirements
   const [qualifications, setQualifications] = useState("");
-  const [jobTitle, setJobTitle] = useState(null); // Changed to null initially
+  const [jobTitle, setJobTitle] = useState(''); // Changed to null initially
   const [industry, setIndustry] = useState(""); // Updated from location
   const [salaryRange, setSalaryRange] = useState("");
   const [skills, setSkills] = useState([]); // Changed to an empty array initially
@@ -44,9 +44,9 @@ const JobPosting = () => {
         const response = await fetch('http://localhost:5000/api/jobtitles'); // Ensure this URL is correct
         if (!response.ok) throw new Error('Failed to fetch job titles');
         const data = await response.json();
-        // Convert data to { value: id, label: job_title }
+        // Convert data to { value: jobtitle_id, label: job_title }
         const jobTitleOptions = data.map(jobTitle => ({
-          value: jobTitle.id, // Use 'id' from the API response
+          value: jobTitle.jobtitle_id, // Use 'id' from the API response
           label: jobTitle.job_title // Use 'job_title' from the API response
         }));
         setAvailableJobTitles(jobTitleOptions);
@@ -103,7 +103,7 @@ const JobPosting = () => {
     // Construct the jobData object with user_id and other form fields
     const jobData = {
       user_id: user_id,
-      JobTitle: jobTitle?.value || '', // Get the value from the selected job title object
+      jobtitle_id: jobTitle?.value || '', // Get the value from the selected job title object
       Industry: industry,
       SalaryRange: salaryRange,
       skills: skills.map(skill => skill?.value || ''), 

@@ -92,7 +92,7 @@ CREATE TABLE js_skills (
 CREATE TABLE joblistings (
     job_id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
-    JobTitle VARCHAR(255) NOT NULL,
+    Jobtitle_id INTEGER NOT NULL,
     Industry VARCHAR(255) NOT NULL,
     SalaryRange VARCHAR(20) CHECK (
         SalaryRange IN (
@@ -113,8 +113,8 @@ CREATE TABLE joblistings (
     Qualifications TEXT,
     DateCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     DateFilled TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) -- Adjust if your users table uses a different column
-);
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (jobtitle_id) REFERENCES job_titles(jobtitle_id));
 
 
 CREATE TABLE job_skills (
@@ -128,7 +128,7 @@ CREATE TABLE job_skills (
 );
 
 CREATE TABLE job_titles (
-    id SERIAL PRIMARY KEY,
+    jobtitle_id SERIAL PRIMARY KEY,
     job_title VARCHAR(255) NOT NULL
 );
 

@@ -163,7 +163,7 @@ app.post('/api/login', async (req, res) => {
       }
 
       // Send the user data along with the redirect URL
-      const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/home_employer';
+      const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/applicantlist';
       res.json({ 
         redirectUrl,
         user: {
@@ -212,7 +212,7 @@ app.get('/api/user-info', async (req, res) => {
 app.get('/api/jobtitles', async (req, res) => {
   try {
     // Query the job_titles table
-    const jobTitles = await pool.query('SELECT id, job_title FROM job_titles');
+    const jobTitles = await pool.query('SELECT jobtitle_id, job_title FROM job_titles');
     
     // Send the job titles as a JSON response
     res.json(jobTitles.rows); // Array of objects { id, job_title }
@@ -323,7 +323,7 @@ app.post('/api/employer-profile', async (req, res) => {
 app.post('/api/joblistings', async (req, res) => {
   const {
     user_id, // This should be the user_id from the users table
-    JobTitle,
+    jobtitle_id,
     Industry,
     SalaryRange,
     JobType,
@@ -345,11 +345,11 @@ app.post('/api/joblistings', async (req, res) => {
     // Insert the job listing data into the joblistings table
     const newJobResult = await pool.query(
       `INSERT INTO joblistings (
-        user_id, JobTitle, Industry, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications
+        user_id, jobtitle_id, industry, salaryrange, jobtype, responsibilities, jobdescription, qualifications
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING job_id`,
-      [user_id, JobTitle, Industry, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications]
+      [user_id, jobtitle_id, Industry, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications]
     );
 
     const job_id = newJobResult.rows[0].job_id;
@@ -377,16 +377,24 @@ app.post('/api/joblistings', async (req, res) => {
 //fetching joblisting
 
 // Endpoint to get job listings
-app.get('/api/joblistings', async (req, res) => {
+app.get('/api/postedjobs', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM joblistings');
+    const result = await pool.query(`
+      SELECT 
+        joblistings.job_id, 
+        job_titles.job_title, 
+        joblistings.industry, 
+        joblistings.salaryrange
+      FROM joblistings
+      JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
+    `);
+    
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching job listings:', error);
-    res.status(500).send('Server error');
+    res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 
 // Use routes
