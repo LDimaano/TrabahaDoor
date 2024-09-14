@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import FormField from '../components/formfield';
 import JobHeader from '../components/submitheader';
 import AdditionalInfo from '../components/jssubmitaddinfo';
@@ -6,19 +7,37 @@ import Modal from '../components/modal';
 
 const SubmitApplication = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [jobDetails, setJobDetails] = useState({});
+  const { jobId } = useParams(); // Get jobId from the URL
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  // Fetch job details when the component mounts
+  useEffect(() => {
+    const fetchJobDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/joblistings/${jobId}`);
+        const data = await response.json();
+        setJobDetails(data); // Set fetched job details to state
+      } catch (error) {
+        console.error('Error fetching job details:', error);
+      }
+    };
+
+    if (jobId) {
+      fetchJobDetails(); // Trigger the fetch if jobId is available
+    }
+  }, [jobId]);
+
   const modalContent = (
     <div className="container">
       <section className="mb-4">
+        {/* Dynamically populate job details from fetched jobDetails */}
         <JobHeader
-          logo="https://cdn.builder.io/api/v1/image/assets/TEMP/4510ed17dfd1da1e2f074cd5249c6b7e6c149301121221461cda3b29e3cb81e3?placeholderIfAbsent=true&apiKey=1081a2635faf4c6ab261e216f55348ae"
-          title="Teacher - Primary Level"
-          company="Saint Anthony Montessori"
-          location="San Jose, Batangas"
-          jobType="Full-Time"
+          logo={jobDetails.logo || 'default-logo-url'} // Placeholder for a logo if not provided
+          title={jobDetails.job_title || 'Job Title'}  // job_title from API
+          company={jobDetails.company_name || 'Company Name'} // company_name from API
         />
         <hr />
         <div className="mb-4 text-start">

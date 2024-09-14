@@ -17,9 +17,15 @@ const Header = () => {
   return (
     <header className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container">
-        <a className="navbar-brand" href="#">
-          <img src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} alt="TrabahaDoor logo" width="30" height="30" className="d-inline-block align-top" />
-          TrabahaDoor
+        <a className="navbar-brand d-flex align-items-center" href="#">
+          <img 
+            src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`} 
+            alt="TrabahaDoor logo" 
+            width="30" 
+            height="30" 
+            className="d-inline-block align-top" 
+          />
+          <span className="ms-2 fw-bold">TrabahaDoor</span>
         </a>
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav me-auto">

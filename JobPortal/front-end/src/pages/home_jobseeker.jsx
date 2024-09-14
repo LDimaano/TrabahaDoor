@@ -11,9 +11,15 @@ function HomeJobSeeker() {
       <Header />
       <main className="row mt-4">
         <SearchForm />
-        <div className="d-flex">
-          <FilterSection />
-          <JobList />
+        <div className="row mt-3">
+          {/* Filter Section (taking 3 columns) */}
+          <div className="col-md-3">
+            <FilterSection />
+          </div>
+          {/* Job List (taking 9 columns, entire remaining width) */}
+          <div className="col-md-9">
+            <JobList />
+          </div>
         </div>
         <Pagination />
       </main>
