@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Header() {
   const [fullName, setFullName] = useState('');
+  const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // To get the current path
 
@@ -35,7 +36,24 @@ function Header() {
   }, []);
 
   const getNavLinkClass = (path) => {
-    return location.pathname === path ? 'nav-link active text-center' : 'nav-link text-center';
+    return location.pathname === path ? 'nav-link active' : 'nav-link';
+  };
+
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
+  };
+
+  const handleProfileClick = () => {
+    navigate('/js_myprofile'); // Use absolute path
+  };
+
+  const activeBarStyle = {
+    position: 'absolute',
+    bottom: '-5px',
+    left: '0',
+    right: '0',
+    height: '2px',
+    backgroundColor: '#007bff', // Active bar color
   };
 
   return (
@@ -57,27 +75,42 @@ function Header() {
           </span>
         </div>
         <div className="collapse navbar-collapse">
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
+          <ul className="navbar-nav ms-auto d-flex align-items-center">
+            <li className="nav-item mx-3 position-relative">
               <Link to="/jobs" className={getNavLinkClass('/jobs')}>
-                <i className="fas fa-briefcase fa-sm" style={{ color: '#333' }}></i> {/* Job Icon */}
-                <br />
-                Jobs
+                <i className="fas fa-briefcase fa-lg" style={{ color: '#6c757d' }}></i>
               </Link>
+              {location.pathname === '/jobs' && (
+                <div style={activeBarStyle} />
+              )}
             </li>
-            <li className="nav-item">
-              <Link to="/notifications" className={getNavLinkClass('/notifications')}>
-                <i className="fas fa-bell fa-sm" style={{ color: '#333' }}></i> {/* Notifications Icon */}
-                <br />
-                Notifications
-              </Link>
+            <li className="nav-item mx-3 position-relative">
+              <button
+                className="btn btn-link"
+                onClick={toggleNotifications}
+                aria-expanded={showNotifications}
+              >
+                <i className="fas fa-bell fa-lg" style={{ color: '#6c757d' }}></i>
+              </button>
+              {showNotifications && (
+                <div className="position-absolute bg-white border rounded shadow p-2" style={{ top: '100%', right: '0', width: '250px' }}>
+                  <p>No new notifications</p> {/* Replace with actual notifications */}
+                </div>
+              )}
+              {location.pathname === '/notifications' && (
+                <div style={activeBarStyle} />
+              )}
             </li>
-            <li className="nav-item">
-              <Link to="/profile" className={getNavLinkClass('/profile')}>
-                <i className="fas fa-user fa-sm" style={{ color: '#333' }}></i> {/* Profile Icon */}
-                <br />
-                Profile
-              </Link>
+            <li className="nav-item mx-3 position-relative">
+              <button
+                className="btn btn-link"
+                onClick={handleProfileClick} // Handle profile click
+              >
+                <i className="fas fa-user fa-lg" style={{ color: '#6c757d' }}></i>
+              </button>
+              {location.pathname === '/js_myprofile' && (
+                <div style={activeBarStyle} />
+              )}
             </li>
           </ul>
         </div>
