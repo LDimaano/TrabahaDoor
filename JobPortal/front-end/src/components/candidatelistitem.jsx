@@ -5,7 +5,8 @@ function ApplicantListItem({ applicant }) {
   const navigate = useNavigate();
 
   const handleApplyClick = () => {
-    navigate('/appdetails');
+    // Navigate to the job description page with dynamic jsid
+    navigate(`/appdetails/${applicant.jsid}`);
   };
 
   return (
@@ -19,9 +20,9 @@ function ApplicantListItem({ applicant }) {
           className="me-3"
         />
         <div>
-          <h5>{applicant.name}</h5>
-          <p>{applicant.jobTitle} at {applicant.company}</p>
-          <p>{applicant.location}</p>
+          <h5>{applicant.full_name}</h5>
+          <p>{applicant.email}</p>
+          <p>{applicant.address}</p>
         </div>
       </div>
       <button className="btn btn-primary" onClick={handleApplyClick}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '../../components/jsheader';
+import Header from '../../components/empheader';
 import SearchForm from '../../components/searchform';
 import FilterSection from '../../components/filtersection';
 import CandidateList from '../../components/candidatelist';
@@ -11,9 +11,15 @@ function HomeEmployer() {
       <Header />
       <main className="row mt-4">
         <SearchForm />
-        <div className="d-flex">
-          <FilterSection />
-          <CandidateList />
+        <div className="row mt-3">
+          {/* Filter Section (taking 3 columns) */}
+          <div className="col-md-3">
+            <FilterSection />
+          </div>
+          {/* Job List (taking 9 columns, entire remaining width) */}
+          <div className="col-md-9">
+            <CandidateList />
+          </div>
         </div>
         <Pagination />
       </main>

@@ -77,6 +77,29 @@ function Header() {
     navigate('/js_notifications'); // Navigate to notifications page
   };
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/users/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        // Clear session data
+        window.sessionStorage.clear();
+        // Redirect to login page or home page
+        window.location.href = '/'; // Adjust as needed
+      } else {
+        console.error('Failed to log out:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   const activeBarStyle = {
     position: 'absolute',
     bottom: '-5px',
@@ -155,6 +178,14 @@ function Header() {
               {location.pathname === '/js_myprofile' && (
                 <div style={activeBarStyle} />
               )}
+            </li>
+            <li className="nav-item mx-3">
+              <button
+                className="btn btn-link"
+                onClick={handleLogout} // Handle logout click
+              >
+                <i className="fas fa-sign-out-alt fa-lg" style={{ color: '#6c757d' }}></i>
+              </button>
             </li>
           </ul>
         </div>

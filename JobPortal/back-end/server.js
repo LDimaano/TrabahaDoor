@@ -30,7 +30,7 @@ const userRoutes = require('./routes/users');
 const jobSeekerRoutes = require('./routes/jobseekers');
 const employerRoutes = require('./routes/employers');
 const jobRoutes = require('./routes/jobs');
-const applicationRoutes = require('./routes/applications');
+const applicantsRoutes = require('./routes/applicants');
 
 // Define routes
 
@@ -57,67 +57,12 @@ app.get('/api/jobtitles', async (req, res) => {
   }
 });
 
-app.get('/api/postedjobs', async (req, res) => {
-  try {
-    const result = await pool.query(`
-      SELECT 
-        joblistings.job_id, 
-        job_titles.job_title, 
-        joblistings.industry, 
-        joblistings.salaryrange
-      FROM joblistings
-      JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
-    `);
-    
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error fetching job listings:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// Get job listing details including company info
-app.get('/api/joblistings/:jobId', async (req, res) => {
-  const { jobId } = req.params;
-  const jobQuery = `
-    SELECT jl.*, jt.job_title, ep.company_name
-    FROM joblistings jl
-    JOIN job_titles jt ON jl.Jobtitle_id = jt.jobtitle_id
-    JOIN emp_profiles ep ON jl.user_id = ep.user_id
-    WHERE jl.job_id = $1;
-  `;
-  const skillsQuery = `
-    SELECT s.skill_name
-    FROM job_skills js
-    JOIN skills s ON js.skill_id = s.skill_id
-    WHERE js.job_id = $1;
-  `;
-  
-  try {
-    const jobResult = await pool.query(jobQuery, [jobId]);
-    const skillsResult = await pool.query(skillsQuery, [jobId]);
-    
-    if (jobResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Job not found' });
-    }
-    
-    const jobData = jobResult.rows[0];
-    const skills = skillsResult.rows.map(row => row.skill_name);
-    
-    res.json({ ...jobData, skills });
-  } catch (error) {
-    console.error('Error fetching job details:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/jobseekers', jobSeekerRoutes);
 app.use('/api/employers', employerRoutes);
 app.use('/api/jobs', jobRoutes);
-app.use('/api/applications', applicationRoutes);
+app.use('/api/applicants', applicantsRoutes);
 
 
 const PORT = process.env.PORT || 5000;
