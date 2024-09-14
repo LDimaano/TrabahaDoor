@@ -1,9 +1,9 @@
 import React from 'react';
-import Header from '../components/jsheader';
-import SearchForm from '../components/searchform';
-import FilterSection from '../components/filtersection';
-import JobList from '../components/joblist';
-import Pagination from '../components/pagination';
+import Header from '../../components/jsheader';
+import SearchForm from '../../components/searchform';
+import FilterSection from '../../components/filtersection';
+import JobList from '../../components/joblist';
+import Pagination from '../../components/pagination';
 
 function HomeJobSeeker() {
   return (

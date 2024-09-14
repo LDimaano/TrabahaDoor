@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import EmpHeader from '../components/emp_header'; // Import the EmpHeader component
+import EmpHeader from '../../components/emp_header'; // Import the EmpHeader component
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import Select from 'react-select'; // Import react-select
 

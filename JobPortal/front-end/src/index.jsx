@@ -2,17 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/index.css';
-import Login from './pages/login';
-import Signup from './pages/signup';
+import Login from './pages/Auth/login';
+import Signup from './pages/Auth/signup';
 import LandingPage from './pages/landing';
-import ProfileCreation from './pages/j_profilecreation';
-import EmployerProfileCreation from './pages/e_profilecreation';
-import JobPostingForm from './pages/jobposting'; 
-import HomeJobseeker from './pages/home_jobseeker';
-import Jobdescription from './pages/jobdescription';
-import ApplicantList from './pages/applicantlist';
-import ApplicantProfile from './pages/appdetails';
-import HomeEmployer from './pages/home_employer';
+import ProfileCreation from './pages/Jobseeker/j_profilecreation';
+import EmployerProfileCreation from './pages/Employer/e_profilecreation';
+import JobPostingForm from './pages/Employer/jobposting'; 
+import HomeJobseeker from './pages/Jobseeker/home_jobseeker';
+import Jobdescription from './pages/Jobseeker/jobdescription';
+import ApplicantList from './pages/Employer/applicantlist';
+import ApplicantProfile from './pages/Employer/appdetails';
+import HomeEmployer from './pages/Employer/home_employer';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 

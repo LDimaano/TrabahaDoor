@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Header from '../components/jsheader';
-import JobContent from '../components/jobcontent';
-import JobDetails from '../components/jobdetails';
-import SubmitApplication from '../pages/jobseeker_submit';
+import Header from '../../components/jsheader';
+import JobContent from '../../components/jobcontent';
+import JobDetails from '../../components/jobdetails';
+import SubmitApplication from './jobseeker_submit';
 
 const JobDescription = () => {
   const { jobId } = useParams();

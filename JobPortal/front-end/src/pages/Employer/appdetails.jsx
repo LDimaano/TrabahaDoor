@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 // import Sidebar from '../components/emp_side';
-import Header from '../components/emp_header';
-import ApplicantDetails from '../components/app_details';
-import ApplicantProfile from '../components/app_profile';
-import ApplicantCard from '../components/app_card';
+import Header from '../../components/emp_header';
+import ApplicantDetails from '../../components/app_details';
+import ApplicantProfile from '../../components/app_profile';
+import ApplicantCard from '../../components/app_card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 

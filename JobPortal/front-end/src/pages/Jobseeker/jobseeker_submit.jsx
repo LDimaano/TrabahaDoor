@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import FormField from '../components/formfield';
-import JobHeader from '../components/submitheader';
-import AdditionalInfo from '../components/jssubmitaddinfo';
-import Modal from '../components/modal';
+import FormField from '../../components/formfield';
+import JobHeader from '../../components/submitheader';
+import AdditionalInfo from '../../components/jssubmitaddinfo';
+import Modal from '../../components/modal';
 
 const SubmitApplication = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

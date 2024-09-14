@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import SignupContainer from '../components/signupcontainer';
-import SignupForm from '../components/signupform';
-import { TermsModal, PrivacyModal } from '../components/termsandprivacy';
+import SignupContainer from '../../components/signupcontainer';
+import SignupForm from '../../components/signupform';
+import { TermsModal, PrivacyModal } from '../../components/termsandprivacy';
 
 function Signup() {
   const [isTermsModalOpen, setTermsModalOpen] = useState(false);

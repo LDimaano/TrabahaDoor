@@ -1,9 +1,9 @@
 // src/pages/ApplicantDashboard.js
 import React, { useState } from 'react';
-import Sidebar from '../components/emp_side';
-import Header from '../components/emp_header';
-import ApplicantTable from '../components/emp_applicant';
-import Pagination from '../components/emp_pagination';
+import Sidebar from '../../components/emp_side';
+import Header from '../../components/emp_header';
+import ApplicantTable from '../../components/emp_applicant';
+import Pagination from '../../components/emp_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter} from '@fortawesome/free-solid-svg-icons';
 
