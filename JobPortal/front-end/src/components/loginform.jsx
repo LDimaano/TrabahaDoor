@@ -11,13 +11,13 @@ function LoginForm() {
     e.preventDefault();
   
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetch('http://localhost:5000/api/users/login', { // Updated URL to match backend
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-        credentials: 'include', // Ensure credentials (cookies) are included
+        credentials: 'include', // Include credentials (for cookies and session)
       });
   
       const data = await response.json();
@@ -38,6 +38,7 @@ function LoginForm() {
       setError('Something went wrong. Please try again.');
     }
   };
+  
   
   return (
     <form className="col-lg-6 d-flex align-items-center" onSubmit={handleClick}>

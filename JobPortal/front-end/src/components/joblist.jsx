@@ -5,7 +5,7 @@ function JobList() {
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/postedjobs') // Make sure this matches your backend route
+    fetch('http://localhost:5000/api/jobs/postedjobs') // Make sure this matches your backend route
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

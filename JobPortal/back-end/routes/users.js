@@ -2,69 +2,71 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// Create a new user
-router.post('/', async (req, res) => {
-  const { username, password, email, userType } = req.body;
+router.post('/submit-form', async (req, res) => {
+  const { email, password, usertype } = req.body;
+  if (!email || !password || !usertype) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
   try {
-    const newUser = await pool.query(
-      'INSERT INTO users (Username, Password, Email, UserType) VALUES ($1, $2, $3, $4) RETURNING *',
-      [username, password, email, userType]
-    );
-    res.json(newUser.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    const query = 'INSERT INTO users (email, password, usertype) VALUES ($1, $2, $3) RETURNING user_id';
+    const values = [email, password, usertype];
+   
+    const result = await pool.query(query, values);
+    const userId = result.rows[0].user_id;
+    res.status(201).json({ message: 'User registered successfully', userId });
+  } catch (error) {
+    console.error('Error inserting data:', error);
+    res.status(500).json({ error: 'Error inserting data' });
   }
 });
 
-// Get all users
-router.get('/', async (req, res) => {
-  try {
-    const users = await pool.query('SELECT * FROM users');
-    res.json(users.rows);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
 
-// Get a user by ID
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
   try {
-    const user = await pool.query('SELECT * FROM users WHERE UserID = $1', [id]);
-    res.json(user.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
+    // Check if user exists
+    const userQuery = 'SELECT * FROM users WHERE email = $1';
+    const { rows } = await pool.query(userQuery, [email]);
 
-// Update a user
-router.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  const { username, password, email, userType } = req.body;
-  try {
-    const updateUser = await pool.query(
-      'UPDATE users SET Username = $1, Password = $2, Email = $3, UserType = $4 WHERE UserID = $5 RETURNING *',
-      [username, password, email, userType, id]
-    );
-    res.json(updateUser.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
+    if (rows.length === 0) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
-// Delete a user
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    await pool.query('DELETE FROM users WHERE UserID = $1', [id]);
-    res.json({ message: 'User deleted' });
+    const user = rows[0];
+
+    // Directly compare the passwords (assuming plain text)
+    if (password !== user.password) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Set session data on the server-side (if needed)
+    req.session.user = {
+      user_id: user.user_id,
+      email: user.email,
+      usertype: user.usertype,
+    };
+
+    // Save session and handle errors
+    req.session.save(err => {
+      if (err) {
+        console.error('Error saving session:', err);
+        return res.status(500).json({ message: 'Session save error' });
+      }
+
+      // Send the user data along with the redirect URL
+      const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/applicantlist';
+      res.json({ 
+        redirectUrl,
+        user: {
+          user_id: user.user_id,
+          email: user.email,
+          usertype: user.usertype
+        }
+      });
+    });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Server error during login:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

@@ -115,7 +115,7 @@ const JobPosting = () => {
   
     try {
       // Send a POST request to the server with jobData
-      const response = await fetch('http://localhost:5000/api/joblistings', {
+      const response = await fetch('http://localhost:5000/api/jobs/joblistings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

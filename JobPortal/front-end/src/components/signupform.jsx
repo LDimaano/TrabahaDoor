@@ -11,26 +11,26 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
 
   const handleClick = async (event) => {
     event.preventDefault();
-
+  
     try {
-      const response = await fetch('http://localhost:5000/submit-form', {
+      const response = await fetch('http://localhost:5000/api/users/submit-form', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password, usertype }),
       });
-
+  
       const result = await response.json();
-
+  
       if (response.ok) {
         const userId = result.userId;
-
+  
         if (!userId) {
-          setError('User ID is missing from response.');
+          setError('User ID is missing from the response.');
           return;
         }
-
+  
         sessionStorage.setItem('userId', userId);
         navigate(usertype === 'jobseeker' ? `/j_profilecreation?userId=${userId}` : `/e_profilecreation?userId=${userId}`);
       } else {
@@ -41,6 +41,7 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
       setError('Network error. Please try again.');
     }
   };
+  
 
   return (
     <form className="col-lg-6 d-flex align-items-center" onSubmit={handleClick}>

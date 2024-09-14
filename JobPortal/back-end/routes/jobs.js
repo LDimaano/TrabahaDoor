@@ -2,70 +2,113 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// Create a new job listing
-router.post('/', async (req, res) => {
-  const { employerID, jobTitle, description, qualification, responsibility, salary, employmentType, categories, skills, datePosted, dateFilled } = req.body;
+router.post('/joblistings', async (req, res) => {
+  const {
+    user_id,
+    jobtitle_id,
+    Industry,
+    SalaryRange,
+    JobType,
+    Responsibilities,
+    JobDescription,
+    Qualifications,
+    skills // Array of skill IDs
+  } = req.body;
+
+  // Log the request body to verify data
+  console.log('Received request body:', req.body);
+
+  // Check that user_id is provided
+  if (!user_id) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
   try {
-    const newJob = await pool.query(
-      'INSERT INTO JobListing (EmployerID, JobTitle, Description, Qualification, Responsibility, Salary, EmploymentType, Categories, Skills, DatePosted, DateFilled) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
-      [employerID, jobTitle, description, qualification, responsibility, salary, employmentType, categories, skills, datePosted, dateFilled]
+    // Insert the job listing data into the joblistings table
+    const newJobResult = await pool.query(
+      `INSERT INTO joblistings (
+        user_id, jobtitle_id, industry, salaryrange, jobtype, responsibilities, jobdescription, qualifications
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING job_id`,
+      [user_id, jobtitle_id, Industry, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications]
     );
-    res.json(newJob.rows[0]);
+
+    const job_id = newJobResult.rows[0].job_id;
+
+    // Insert skills data
+    for (const skill_id of skills) {
+      await pool.query(
+        `INSERT INTO job_skills (
+          job_id, skill_id, user_id
+        )
+        VALUES ($1, $2, $3)`,
+        [job_id, skill_id, user_id]
+      );
+    }
+
+    // Send a successful response
+    res.json({ message: 'Job posted successfully', job_id });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    // Log error message
+    console.error('Error posting job:', err.message);
+    res.status(500).send('Server Error');
   }
 });
 
-// Get all job listings
-router.get('/', async (req, res) => {
+router.get('/postedjobs', async (req, res) => {
   try {
-    const jobs = await pool.query('SELECT * FROM JobListing');
-    res.json(jobs.rows);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    const result = await pool.query(`
+      SELECT 
+        joblistings.job_id, 
+        job_titles.job_title, 
+        joblistings.industry, 
+        joblistings.salaryrange
+      FROM joblistings
+      JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
+    `);
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching job listings:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
-// Get a job listing by ID
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
+// GET endpoint to fetch job listing details including company info
+router.get('/joblistings/:jobId', async (req, res) => {
+  const { jobId } = req.params;
+  const jobQuery = `
+    SELECT jl.*, jt.job_title, ep.company_name
+    FROM joblistings jl
+    JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
+    JOIN emp_profiles ep ON jl.user_id = ep.user_id
+    WHERE jl.job_id = $1;
+  `;
+  const skillsQuery = `
+    SELECT s.skill_name
+    FROM job_skills js
+    JOIN skills s ON js.skill_id = s.skill_id
+    WHERE js.job_id = $1;
+  `;
+  
   try {
-    const job = await pool.query('SELECT * FROM JobListing WHERE JobID = $1', [id]);
-    res.json(job.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    const jobResult = await pool.query(jobQuery, [jobId]);
+    const skillsResult = await pool.query(skillsQuery, [jobId]);
+    
+    if (jobResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+    
+    const jobData = jobResult.rows[0];
+    const skills = skillsResult.rows.map(row => row.skill_name);
+    
+    res.json({ ...jobData, skills });
+  } catch (error) {
+    console.error('Error fetching job details:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Update a job listing
-router.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  const { employerID, jobTitle, description, qualification, responsibility, salary, employmentType, categories, skills, datePosted, dateFilled } = req.body;
-  try {
-    const updateJob = await pool.query(
-      'UPDATE JobListing SET EmployerID = $1, JobTitle = $2, Description = $3, Qualification = $4, Responsibility = $5, Salary = $6, EmploymentType = $7, Categories = $8, Skills = $9, DatePosted = $10, DateFilled = $11 WHERE JobID = $12 RETURNING *',
-      [employerID, jobTitle, description, qualification, responsibility, salary, employmentType, categories, skills, datePosted, dateFilled, id]
-    );
-    res.json(updateJob.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
-
-// Delete a job listing
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    await pool.query('DELETE FROM JobListing WHERE JobID = $1', [id]);
-    res.json({ message: 'Job listing deleted' });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
 
 module.exports = router;

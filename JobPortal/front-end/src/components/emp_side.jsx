@@ -9,7 +9,7 @@ const Sidebar = () => {
   useEffect(() => {
     const fetchCompanyInfo = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/user-infoemp', {
+        const response = await fetch('http://localhost:5000/api/employers/user-infoemp', {
           method: 'GET',
           credentials: 'include',
           headers: {

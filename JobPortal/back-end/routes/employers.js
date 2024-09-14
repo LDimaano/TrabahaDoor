@@ -2,69 +2,92 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// Create a new employer
-router.post('/', async (req, res) => {
-  const { companyName, location, industry, dateFounded, description, userID } = req.body;
+router.post('/employer-profile', async (req, res) => {
+  const {
+    user_id,
+    companyName,
+    contactPerson,
+    contactNumber,
+    email,
+    website,
+    industry,
+    companyAddress,
+    companySize,
+    foundedYear,
+    description,
+  } = req.body;
+
+  // Log the request body to verify data
+  console.log('Request body:', req.body);
+
+  // Check that user_id is provided
+  if (!user_id) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
   try {
-    const newEmployer = await pool.query(
-      'INSERT INTO Employer (CompanyName, Location, Industry, DateFounded, Description, UserID) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [companyName, location, industry, dateFounded, description, userID]
+    // Insert the data into the profiles table and return the inserted row
+    const newEmpProfile = await pool.query(
+      `INSERT INTO emp_profiles (
+        user_id, company_name, contact_person, contact_number, email, website, industry,
+        company_address, company_size, founded_year, description
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      RETURNING *`,
+      [
+        user_id,
+        companyName,
+        contactPerson,
+        contactNumber,
+        email,
+        website,
+        industry,
+        companyAddress,
+        companySize,
+        foundedYear,
+        description,
+      ]
     );
-    res.json(newEmployer.rows[0]);
+
+    // Send the newly created profile back as the response
+    res.json(newEmpProfile.rows[0]);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Error inserting profile:', err.message);
+    res.status(500).send('Server Error');
   }
 });
 
-// Get all employers
-router.get('/', async (req, res) => {
-  try {
-    const employers = await pool.query('SELECT * FROM Employer');
-    res.json(employers.rows);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
+router.get('/user-infoemp', async (req, res) => {
+  console.log('Session data:', req.session);
 
-// Get an employer by ID
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const employer = await pool.query('SELECT * FROM Employer WHERE EmployerID = $1', [id]);
-    res.json(employer.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+  if (!req.session.user) {
+    return res.status(403).json({ message: 'Not authenticated' });
   }
-});
 
-// Update an employer
-router.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  const { companyName, location, industry, dateFounded, description, userID } = req.body;
+  const userId = req.session.user.user_id;
+  console.log('User ID from session:', userId);
+
   try {
-    const updateEmployer = await pool.query(
-      'UPDATE Employer SET CompanyName = $1, Location = $2, Industry = $3, DateFounded = $4, Description = $5, UserID = $6 WHERE EmployerID = $7 RETURNING *',
-      [companyName, location, industry, dateFounded, description, userID, id]
+    // Use a join to fetch company_name from emp_profiles and email from users
+    const result = await pool.query(
+      `SELECT emp_profiles.company_name, users.email 
+       FROM emp_profiles 
+       JOIN users ON emp_profiles.user_id = users.user_id 
+       WHERE emp_profiles.user_id = $1`,
+      [userId]
     );
-    res.json(updateEmployer.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
 
-// Delete an employer
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    await pool.query('DELETE FROM Employer WHERE EmployerID = $1', [id]);
-    res.json({ message: 'Employer deleted' });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.log('Database query result:', result.rows);
+
+    if (result.rows.length > 0) {
+      const { company_name, email } = result.rows[0]; // Destructure company_name and email
+      res.json({ company_name, email }); // Send both company_name and email in the response
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching company info:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
