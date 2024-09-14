@@ -14,6 +14,7 @@ import ApplicantList from './pages/Employer/applicantlist';
 import ApplicantProfile from './pages/Employer/appdetails';
 import HomeEmployer from './pages/Employer/home_employer';
 import MyProfile from './pages/Jobseeker/js_myprofile'; 
+import Notifications from './pages/Jobseeker/js_notifications'; // Import the Notifications page
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -34,6 +35,7 @@ root.render(
         <Route path="/applicantlist" element={<ApplicantList />} />
         <Route path="/appdetails" element={<ApplicantProfile />} /> 
         <Route path="/home_employer" element={<HomeEmployer />} /> 
+        <Route path="/js_notifications" element={<Notifications />} /> {/* Add route for Notifications page */}
       </Routes>
     </Router>
   </React.StrictMode>

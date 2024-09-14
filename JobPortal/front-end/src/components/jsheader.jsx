@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function Header() {
   const [fullName, setFullName] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
   const location = useLocation(); // To get the current path
 
@@ -35,6 +36,31 @@ function Header() {
     fetchFullName();
   }, []);
 
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/notifications', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setNotifications(data.notifications || []);
+        } else {
+          console.error('Failed to fetch notifications:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
   const getNavLinkClass = (path) => {
     return location.pathname === path ? 'nav-link active' : 'nav-link';
   };
@@ -45,6 +71,10 @@ function Header() {
 
   const handleProfileClick = () => {
     navigate('/js_myprofile'); // Use absolute path
+  };
+
+  const handleViewAllClick = () => {
+    navigate('/js_notifications'); // Navigate to notifications page
   };
 
   const activeBarStyle = {
@@ -94,7 +124,21 @@ function Header() {
               </button>
               {showNotifications && (
                 <div className="position-absolute bg-white border rounded shadow p-2" style={{ top: '100%', right: '0', width: '250px' }}>
-                  <p>No new notifications</p> {/* Replace with actual notifications */}
+                  <div className="notifications-list">
+                    {notifications.length > 0 ? (
+                      notifications.map((notification, index) => (
+                        <p key={index}>{notification.message}</p>
+                      ))
+                    ) : (
+                      <p>No new notifications</p>
+                    )}
+                    <button
+                      className="btn btn-link mt-2"
+                      onClick={handleViewAllClick}
+                    >
+                      View All Notifications
+                    </button>
+                  </div>
                 </div>
               )}
               {location.pathname === '/notifications' && (
