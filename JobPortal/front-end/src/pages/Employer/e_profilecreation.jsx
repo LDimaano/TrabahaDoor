@@ -1,225 +1,151 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import FormField from '../../components/formfield';
+import JobHeader from '../../components/submitheader';
+import AdditionalInfo from '../../components/jssubmitaddinfo';
+import Modal from '../../components/modal';
 
-function EmployerProfileCreation() {
-  const navigate = useNavigate();
+function SubmitApplication() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [jobDetails, setJobDetails] = useState({});
+    const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [additionalInfo, setAdditionalInfo] = useState('');
+    const { jobId } = useParams();
+    const user_id = sessionStorage.getItem('user_id');
 
-  const [companyName, setCompanyName] = useState('Tech Innovations Ltd');
-  const [contactPerson, setContactPerson] = useState('Jane Doe');
-  const [contactNumber, setContactNumber] = useState('+44 1245 678 901');
-  const [email, setEmail] = useState('contact@techinnovations.com');
-  const [website, setWebsite] = useState('http://www.techinnovations.com');
-  const [industry, setIndustry] = useState('Information Technology');
-  const [companyAddress, setCompanyAddress] = useState('123 Tech Lane, Silicon Valley');
-  const [companySize, setCompanySize] = useState('500-1000 employees');
-  const [foundedYear, setFoundedYear] = useState('2000');
-  const [description, setDescription] = useState('Tech Innovations Ltd is a leading IT solutions provider specializing in software development and consulting.');
-  const [error, setError] = useState('');
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    const user_id = sessionStorage.getItem('userId');
-    console.log('Retrieved user_id:', user_id);
+    useEffect(() => {
+        const fetchJobDetails = async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/api/jobs/joblistings/${jobId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch job details');
+                }
+                const data = await response.json();
+                setJobDetails(data);
+            } catch (error) {
+                console.error('Error fetching job details:', error);
+            }
+        };
 
-    const profileData = {
-      user_id,
-      companyName,
-      contactPerson,
-      contactNumber,
-      email,
-      website,
-      industry,
-      companyAddress,
-      companySize,
-      foundedYear,
-      description,
+        if (jobId) {
+            fetchJobDetails();
+        }
+    }, [jobId]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log({
+            jobId,
+            user_id,
+            fullName,
+            email,
+            phoneNumber,
+            additionalInfo,
+        });
+
+        try {
+            const response = await fetch('http://localhost:5000/api/jobs/applications', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    jobId,
+                    user_id,
+                    fullName,
+                    email,
+                    phoneNumber,
+                    additionalInfo,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Error response:', errorText);
+                let errorData;
+                try {
+                    errorData = JSON.parse(errorText);
+                } catch {
+                    errorData = { error: errorText };
+                }
+                throw new Error(errorData.error || 'An unexpected error occurred.');
+            }
+
+            const result = await response.json();
+            alert(result.message || 'Application submitted successfully!');
+            closeModal();
+        } catch (error) {
+            console.error('Error submitting application:', error);
+            alert(error.message || 'Failed to submit the application. Please try again later.');
+        }
     };
 
-    console.log('Submitting profile data:', profileData);
-
-    try {
-      const response = await fetch('http://localhost:5000/api/employers/employer-profile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(profileData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('Profile created successfully:', data);
-
-      // Navigate to login page after a delay
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000); // Adjust the delay as needed
-    } catch (err) {
-      console.error('Submission failed:', err);
-      setError('Failed to submit the profile. Please try again.');
-    }
-  };
-
-  const handleFileChange = (event) => {
-    // Handle file change if needed
-  };
-
-  return (
-    <main className="container mt-4">
-  
-      <div className="mb-4">
-      <h1 className="text-center">Create your Profile</h1>
-      <h5 className="text-center">Let us know more about your company</h5>
-      </div>
-      {/* <section className="mb-4">
-        <h2>Profile Photo</h2>
-        <p>This image will be shown publicly as your profile picture, it will help recruiters recognize you!</p>
-        <div className="mb-3">
-          <label htmlFor="profilePhotoUpload" className="form-label">
-            <img src="http://b.io/ext_10-" alt="" style={{ height: '60px' }} />
-            <p className="mt-2">Click to replace or drag and drop</p>
-            <p className="text-muted">PNG, or JPG (max. 400 x 400px)</p>
-          </label>
-          <input
-            type="file"
-            id="profilePhotoUpload"
-            accept="image/png, image/jpeg"
-            className="form-control"
-            onChange={handleFileChange}
-          />
+    const modalContent = (
+        <div className="container">
+            <section className="mb-4">
+                <JobHeader
+                    logo={jobDetails.logo || 'default-logo-url'}
+                    title={jobDetails.job_title || 'Job Title'}
+                    company={jobDetails.company_name || 'Company Name'}
+                />
+                <hr />
+                <div className="mb-4 text-start">
+                    <h2 className="h4">Submit your application</h2>
+                    <p>The following is required and will only be shared with Nomad</p>
+                </div>
+                <form onSubmit={handleSubmit}>
+                    <FormField
+                        label="Full name"
+                        type="text"
+                        placeholder="Enter your full name"
+                        id="fullName"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                    />
+                    <FormField
+                        label="Email address"
+                        type="email"
+                        placeholder="Enter your email address"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <FormField
+                        label="Phone number"
+                        type="tel"
+                        placeholder="Enter your phone number"
+                        id="phoneNumber"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                    />
+                    <hr />
+                    <AdditionalInfo
+                        value={additionalInfo}
+                        onChange={(e) => setAdditionalInfo(e.target.value)}
+                    />
+                    <hr />
+                    <button type="submit" className="btn btn-primary">Submit Application</button>
+                    <p className="mt-3 text-start">
+                        By sending the request you confirm that you accept our{" "}
+                        <a href="#terms" className="link-primary">Terms of Service</a> and{" "}
+                        <a href="#privacy" className="link-primary">Privacy Policy</a>
+                    </p>
+                </form>
+            </section>
         </div>
-      </section> */}
-      <section className="mb-4">
-        <h3>Company Details</h3>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="companyName" className="form-label">Company Name <span className="text-danger">*</span></label>
-            <input
-              type="text"
-              id="companyName"
-              className="form-control"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="row mb-3">
-            <div className="col-md-6">
-              <label htmlFor="contactPerson" className="form-label">Contact Person <span className="text-danger">*</span></label>
-              <input
-                type="text"
-                id="contactPerson"
-                className="form-control"
-                value={contactPerson}
-                onChange={(e) => setContactPerson(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="contactNumber" className="form-label">Contact Number <span className="text-danger">*</span></label>
-              <input
-                type="tel"
-                id="contactNumber"
-                className="form-control"
-                value={contactNumber}
-                onChange={(e) => setContactNumber(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div className="row mb-3">
-            <div className="col-md-6">
-              <label htmlFor="email" className="form-label">Email <span className="text-danger">*</span></label>
-              <input
-                type="email"
-                id="email"
-                className="form-control"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="website" className="form-label">Website <span className="text-danger">*</span></label>
-              <input
-                type="url"
-                id="website"
-                className="form-control"
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="industry" className="form-label">Industry</label>
-            <input
-              type="text"
-              id="industry"
-              className="form-control"
-              value={industry}
-              onChange={(e) => setIndustry(e.target.value)}
-            />
-          </div>
-          <hr />
-          <h3>Additional Information</h3>
-          <div className="mb-3">
-            <label htmlFor="companyAddress" className="form-label">Company Address <span className="text-danger">*</span></label>
-            <input
-              type="text"
-              id="companyAddress"
-              className="form-control"
-              value={companyAddress}
-              onChange={(e) => setCompanyAddress(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="companySize" className="form-label">Company Size</label>
-            <input
-              type="text"
-              id="companySize"
-              className="form-control"
-              value={companySize}
-              onChange={(e) => setCompanySize(e.target.value)}
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="foundedYear" className="form-label">Founded Year <span className="text-danger">*</span></label>
-            <input
-              type="text"
-              id="foundedYear"
-              className="form-control"
-              value={foundedYear}
-              onChange={(e) => setFoundedYear(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="description" className="form-label">Description <span className="text-danger">*</span></label>
-            <textarea
-              id="description"
-              className="form-control"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              maxLength={400}
-              required
-            />
-          </div>
-          <div className="text-center">
-          <button type="submit" className="btn btn-success float-end">Register</button>
-          </div>
-        </form>
-        {error && <div className="alert alert-danger mt-3">{error}</div>}
-      </section>
-    </main>
-  );
+    );
+
+    return (
+        <>
+            <button onClick={openModal} className="btn btn-primary">Apply Now</button>
+            <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent} />
+        </>
+    );
 }
 
-export default EmployerProfileCreation;
+export default SubmitApplication;

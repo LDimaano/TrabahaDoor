@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FormField = ({ label, type, placeholder, id }) => {
+const FormField = ({ label, type, placeholder, value, onChange, id }) => {
   return (
     <div className="mb-3 text-start">
       <label htmlFor={id} className="form-label">{label}</label>
@@ -8,6 +8,8 @@ const FormField = ({ label, type, placeholder, id }) => {
         type={type}
         id={id}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         className="form-control"
         aria-label={label}
       />
