@@ -110,5 +110,23 @@ router.get('/joblistings/:jobId', async (req, res) => {
   }
 });
 
+router.post('/applications', async (req, res) => {
+  const { jobId, user_id, fullName, email, phoneNumber, additionalInfo } = req.body;
+
+  try {
+    await pool.query(
+      `INSERT INTO applications (job_id, user_id, full_name, email, phone_number, additional_info) 
+      VALUES ($1, $2, $3, $4, $5, $6)`,
+      [jobId, user_id, fullName, email, phoneNumber, additionalInfo] // Make sure field names match
+    );
+    res.status(201).json({ message: 'Application submitted successfully!' });
+  } catch (error) {
+    console.error('Error submitting application:', error);
+    // Send a JSON response with error details
+    res.status(500).json({ error: 'An error occurred while submitting the application', details: error.message });
+  }
+});
+
+
 
 module.exports = router;
