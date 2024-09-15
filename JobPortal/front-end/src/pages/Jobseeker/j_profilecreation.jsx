@@ -14,7 +14,7 @@ function ProfileCreation() {
   const [address, setAddress] = useState('Galamay-Amo, San Jose');
   const [experience, setExperience] = useState([{
     jobTitle: null,
-    salaryRange: '', // Initialize salary range
+    salaryRange: null, // Initialize salary range
     company: '',
     location: '',
     startDate: '',
@@ -60,7 +60,7 @@ function ProfileCreation() {
         if (!response.ok) throw new Error('Failed to fetch job titles');
         const data = await response.json();
         const jobTitleOptions = data.map(jobTitle => ({
-          value: jobTitle.id,
+          value: jobTitle.jobtitle_id,
           label: jobTitle.job_title
         }));
         setAvailableJobTitles(jobTitleOptions);
