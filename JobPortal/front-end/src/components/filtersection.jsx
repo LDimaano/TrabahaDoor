@@ -2,14 +2,20 @@ import React from 'react';
 import FilterGroup from './filtergroup';
 
 function FilterSection() {
-  const employmentTypes = ['Full-time', 'Part-Time', 'Remote', 'Internship', 'Contract'];
-  const categories = ['Agriculture', 'Tourism', 'Marketing', 'Business', 'Human Resource', 'Healthcare', 'Engineering', 'Technology'];
-  const salaryRanges = ['$700 - $1000', '$1000 - $1500', '$1500 - $2000', '$3000 or above'];
+  const employmentTypes = ['Full-time', 'Part-Time', 'Work from Home'];
+  const salaryRanges = [
+    'Below 15000',
+    '15001-25000',
+    '25001-35000',
+    '35001-50000',
+    '50001-75000',
+    '75001-100000',
+    'Above 100000'
+  ];
 
   return (
-    <div className="col-md-3">
-      <FilterGroup title="Type of Employment" items={employmentTypes} />
-      <FilterGroup title="Categories" items={categories} />
+    <div className="col-md-6"> {/* Adjusted to col-md-6 for more space */}
+      <FilterGroup title="Employment Type" items={employmentTypes} />
       <FilterGroup title="Salary Range" items={salaryRanges} />
     </div>
   );
