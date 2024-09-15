@@ -2,7 +2,9 @@ import React from 'react';
 
 const ContactItem = ({ icon, label, value }) => (
   <div className="d-flex align-items-center mb-2">
-    <img src={icon} alt={`${label} icon`} className="me-2" style={{ width: '24px' }} />
+    <div className="me-2" style={{ width: '24px' }}>
+      {icon} {/* Directly render the icon component */}
+    </div>
     <span>{label}:</span>
     <span className="ms-2">{value}</span>
   </div>

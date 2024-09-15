@@ -1,16 +1,13 @@
 import React from 'react';
-import InfoItem from './infoitem';
 
-const PersonalInfo = () => (
-  <section>
-    <h3>Personal Info</h3>
-    <div className="row">
-      <InfoItem label="Full Name" value="Jerome Bell" />
-      <InfoItem label="Date of Birth" value="March 23, 1995 (26 y.o)" />
-      <InfoItem label="Gender" value="Male" />
-      <InfoItem label="Address" value="Brgy. Abra, San Jose, Batangas" />
-    </div>
-  </section>
+const PersonalInfo = ({ data }) => (
+  <div>
+    <h4>Personal Information</h4>
+    <p><strong>Full Name:</strong> {data.fullName}</p>
+    <p><strong>Date of Birth:</strong> {data.dateOfBirth}</p>
+    <p><strong>Gender:</strong> {data.gender}</p>
+    <p><strong>Address:</strong> {data.address}</p>
+  </div>
 );
 
 export default PersonalInfo;

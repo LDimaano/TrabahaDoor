@@ -2,15 +2,14 @@ import React from 'react';
 import PersonalInfo from './personal_info';
 import ProfessionalInfo from './prof_info';
 
-const ApplicantProfile = () => (
+const ApplicantProfile = ({ personalData, professionalData }) => (
   <main className="bg-white p-4 border rounded">
     <div>
-      <PersonalInfo />
+      <PersonalInfo data={personalData} />
       <hr />
-      <ProfessionalInfo />
+      <ProfessionalInfo data={professionalData} />
     </div>
   </main>
 );
-
 
 export default ApplicantProfile;

@@ -76,39 +76,70 @@ router.get('/postedjobs', async (req, res) => {
 });
 
 // GET endpoint to fetch job listing details including company info
-router.get('/joblistings/:jobId', async (req, res) => {
-  const { jobId } = req.params;
-  const jobQuery = `
-    SELECT jl.*, jt.job_title, ep.company_name
-    FROM joblistings jl
-    JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
-    JOIN emp_profiles ep ON jl.user_id = ep.user_id
-    WHERE jl.job_id = $1;
+router.get('/job-seeker/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  // SQL query to fetch job seeker details
+  const jobSeekerQuery = `
+    SELECT js.full_name, js.email, js.phone_number, je.job_title, je.start_date, je.end_date, je_description
+    FROM job_seekers js
+    LEFT JOIN job_experience je ON js.user_id = je.user_id
+    WHERE js.user_id = $1;
   `;
+
+  // SQL query to fetch skills
   const skillsQuery = `
     SELECT s.skill_name
-    FROM job_skills js
-    JOIN skills s ON js.skill_id = s.skill_id
-    WHERE js.job_id = $1;
+    FROM js_skills jss
+    JOIN skills s ON jss.skill_id = s.skill_id
+    WHERE jss.user_id = $1;
   `;
-  
+
   try {
-    const jobResult = await pool.query(jobQuery, [jobId]);
-    const skillsResult = await pool.query(skillsQuery, [jobId]);
-    
-    if (jobResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Job not found' });
+    // Execute queries
+    const jobSeekerResult = await pool.query(jobSeekerQuery, [userId]);
+    const skillsResult = await pool.query(skillsQuery, [userId]);
+
+    // Check if job seeker exists
+    if (jobSeekerResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Job seeker not found' });
     }
-    
-    const jobData = jobResult.rows[0];
+
+    // Extract job seeker data
+    const jobSeekerData = jobSeekerResult.rows[0];
     const skills = skillsResult.rows.map(row => row.skill_name);
-    
-    res.json({ ...jobData, skills });
+
+    // Calculate work experience in years
+    const calculateWorkExperience = (experiences) => {
+      const totalYears = experiences.reduce((total, exp) => {
+        const startYear = new Date(exp.start_date).getFullYear();
+        const endYear = exp.end_date ? new Date(exp.end_date).getFullYear() : new Date().getFullYear();
+        return total + (endYear - startYear);
+      }, 0);
+      return `${totalYears} Years`;
+    };
+
+    // Aggregate job experience
+    const jobExperience = jobSeekerResult.rows.map(row => ({
+      job_title: row.job_title,
+      start_date: row.start_date,
+      end_date: row.end_date
+    }));
+
+    res.json({
+      jobSeeker: {
+        ...jobSeekerData,
+        jobExperience: jobExperience,
+        workExperience: calculateWorkExperience(jobExperience),
+      },
+      skills
+    });
   } catch (error) {
-    console.error('Error fetching job details:', error);
+    console.error('Error fetching job seeker details:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 router.post('/applications', async (req, res) => {
   const { jobId, user_id, fullName, email, phoneNumber, additionalInfo } = req.body;

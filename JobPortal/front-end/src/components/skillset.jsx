@@ -1,12 +1,17 @@
 import React from 'react';
+import Tag from './jstag'; // Make sure the path is correct
 
-const SkillSet = () => (
-  <div className="col-md-12">
-    <span className="fw-bold">Skill set:</span>
-    <div className="d-flex flex-wrap">
-      {['English', 'Leadership', 'Teamwork'].map((skill, index) => (
-        <span key={index} className="badge bg-secondary me-2">{skill}</span>
-      ))}
+const SkillSet = ({ skills = [] }) => (
+  <div className="skill-set">
+    <h4>Skills</h4>
+    <div className="tags-container">
+      {skills.length > 0 ? (
+        skills.map((skill, index) => (
+          <Tag key={index}>{skill}</Tag>
+        ))
+      ) : (
+        <span>No skills listed</span>
+      )}
     </div>
   </div>
 );
