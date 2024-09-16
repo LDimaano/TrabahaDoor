@@ -1,91 +1,74 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Header from '../../components/jsheader';
-import ApplicantProfile from '../../components/app_profile';
-import ApplicantCard from '../../components/app_card';
+import JobContent from '../../components/jobcontent';
+import JobDetails from '../../components/jobdetails';
+import SubmitApplication from './jobseeker_submit';
 
-const MyProfile = () => {
-  const [applicantData, setApplicantData] = useState(null);
-  const [personalData, setPersonalData] = useState(null);
-  const [professionalData, setProfessionalData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+const JobDescription = () => {
+  const { jobId } = useParams();
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [jobData, setJobData] = useState(null);
 
   useEffect(() => {
-    const fetchApplicantData = async () => {
+    const fetchJobData = async () => {
       try {
-        const userId = sessionStorage.getItem('user_id');
-        const response = await fetch(`http://localhost:5000/api/jobseekers/job-seeker/${userId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch applicant data');
-        }
+        const response = await fetch(`http://localhost:5000/api/jobs/joblistings/${jobId}`);
         const data = await response.json();
-
-        // Set the state for applicant data
-        setApplicantData({
-          name: data.jobSeeker.full_name || 'Not Provided',
-          profession: data.jobSeeker.job_title || 'Not Specified',
-          image: 'https://cdn.builder.io/api/v1/image/assets/TEMP/3abeed5f2de2d8df2f096ae96cc50be8ac71d626c31b3c38ffa0141113466826', // Placeholder or actual image URL
-          email: data.jobSeeker.email || 'Not Provided',
-          phone: data.jobSeeker.phone_number || 'Not Provided',
-        });
-
-        // Set the state for personal data
-        setPersonalData({
-          fullName: data.jobSeeker.full_name || 'Not Provided',
-          dateOfBirth: data.jobSeeker.date_of_birth ? new Date(data.jobSeeker.date_of_birth).toLocaleDateString() + ` (${new Date().getFullYear() - new Date(data.jobSeeker.date_of_birth).getFullYear()} y.o)` : 'Not Provided',
-          gender: data.jobSeeker.gender || 'Not Specified',
-          address: data.jobSeeker.address || 'Address not provided',
-        });
-
-        // Calculate work experience in years
-        const calculateWorkExperience = (experiences) => {
-          const totalYears = experiences.reduce((total, exp) => {
-            const startYear = new Date(exp.start_date).getFullYear();
-            const endYear = new Date(exp.end_date).getFullYear();
-            return total + (endYear - startYear);
-          }, 0);
-          return `${totalYears} Years` || 'Not Specified';
-        };
-
-        // Set the state for professional data
-        setProfessionalData({
-          currentJob: data.jobSeeker.job_title || 'Not Specified',
-          workExperience: calculateWorkExperience(data.jobExperience || []),
-          skills: data.skills.map(skill => skill.skill_name) || [],
-        });
-
-        setIsLoading(false);
+        setJobData(data);
       } catch (error) {
-        console.error('Error fetching applicant data:', error);
-        setIsLoading(false);
+        console.error('Error fetching job data:', error);
       }
     };
 
-    fetchApplicantData();
-  }, []);
+    fetchJobData();
+  }, [jobId]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (!jobData) return <div>Loading...</div>;
 
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <main className="container mt-3">
       <Header />
-      <main className="flex-grow-1 p-4 container">
-        <section>
-          <h3 className="mb-4">My Profile</h3>
-          <div className="d-flex">
-            <div className="flex-fill me-4">
-              <ApplicantProfile
-                personalData={personalData}
-                professionalData={professionalData}
-              />
+      <hr />
+      <section className="row mb-5">
+        <div className="col-md-8 d-flex align-items-center">
+          <img
+            src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+            alt={`${jobData.company_name} logo`}
+            width="100"
+            height="100"
+            className="me-4"
+          />
+          <div>
+            <h1>{jobData.job_title}</h1>
+            <div className="d-flex flex-column">
+              <span className="text-muted">{jobData.company_name}</span>
+              <span>{jobData.industry}</span>
+              <span>{jobData.job_type}</span>
             </div>
-            <ApplicantCard applicant={applicantData} />
           </div>
-        </section>
-      </main>
-    </div>
+        </div>
+        <div className="col-md-4 text-end">
+          <SubmitApplication isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
+        </div>
+      </section>
+      <section className="row">
+        <JobContent
+          jobdescription={jobData.jobdescription}
+          responsibilities={jobData.responsibilities ? jobData.responsibilities.split(',') : []}
+          qualifications={jobData.qualifications ? jobData.qualifications.split(',') : []}
+        />
+        <JobDetails
+          jobInfo={[
+            { label: 'Job Posted On', value: new Date(jobData.datecreated).toLocaleDateString() },
+            { label: 'Job Type', value: jobData.jobtype },
+            { label: 'Salary', value: jobData.salaryrange }
+          ]}
+          skills={jobData.skills || []} 
+        />
+      </section>
+    </main>
   );
 };
 
-export default MyProfile;
+export default JobDescription;

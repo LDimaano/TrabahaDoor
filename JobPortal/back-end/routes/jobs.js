@@ -75,6 +75,40 @@ router.get('/postedjobs', async (req, res) => {
   }
 });
 
+router.get('/joblistings/:jobId', async (req, res) => {
+  const { jobId } = req.params;
+  const jobQuery = `
+    SELECT jl.*, jt.job_title, ep.company_name
+    FROM joblistings jl
+    JOIN job_titles jt ON jl.Jobtitle_id = jt.jobtitle_id
+    JOIN emp_profiles ep ON jl.user_id = ep.user_id
+    WHERE jl.job_id = $1;
+  `;
+  const skillsQuery = `
+    SELECT s.skill_name
+    FROM job_skills js
+    JOIN skills s ON js.skill_id = s.skill_id
+    WHERE js.job_id = $1;
+  `;
+  
+  try {
+    const jobResult = await pool.query(jobQuery, [jobId]);
+    const skillsResult = await pool.query(skillsQuery, [jobId]);
+    
+    if (jobResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+    
+    const jobData = jobResult.rows[0];
+    const skills = skillsResult.rows.map(row => row.skill_name);
+    
+    res.json({ ...jobData, skills });
+  } catch (error) {
+    console.error('Error fetching job details:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // GET endpoint to fetch job listing details including company info
 router.get('/job-seeker/:userId', async (req, res) => {
   const { userId } = req.params;
