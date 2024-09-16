@@ -11,10 +11,11 @@ function ProfileCreation() {
   const [email, setEmail] = useState('juandelacruz@gmail.com');
   const [dateOfBirth, setDateOfBirth] = useState('1997-08-09');
   const [gender, setGender] = useState('Male');
-  const [address, setAddress] = useState('Galamay-Amo, San Jose');
+  const [address, setAddress] = useState(null);
+  const [addressOptions, setAddressOptions] = useState([]);
   const [experience, setExperience] = useState([{
     jobTitle: null,
-    salaryRange: null, // Initialize salary range
+    salaryRange: null,
     company: '',
     location: '',
     startDate: '',
@@ -24,7 +25,7 @@ function ProfileCreation() {
   const [skills, setSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]);
-  const [salaryRanges] = useState([ // Static or dynamic depending on your use case
+  const [salaryRanges] = useState([
     { value: '', label: 'Select salary range' },
     { value: 'Below 15000', label: 'Below 15000' },
     { value: '15001-25000', label: '15001-25000' },
@@ -70,8 +71,25 @@ function ProfileCreation() {
       }
     };
 
+    const fetchAddresses = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/addresses'); // Adjust URL if necessary
+        if (!response.ok) throw new Error('Failed to fetch addresses');
+        const data = await response.json();
+        const addressOptions = data.map(address => ({
+          value: address.address_id,
+          label: address.location
+        }));
+        setAddressOptions(addressOptions);
+      } catch (error) {
+        console.error('Error fetching addresses:', error);
+        setError('Failed to load addresses.');
+      }
+    };
+
     fetchSkills();
     fetchJobTitles();
+    fetchAddresses();
   }, []);
 
   const handleSkillChange = (index, selectedOption) => {
@@ -129,7 +147,7 @@ function ProfileCreation() {
     e.preventDefault();
     const user_id = sessionStorage.getItem('userId');
     console.log('Retrieved user_id:', user_id);
-
+  
     const profileData = {
       user_id,
       fullName,
@@ -137,22 +155,21 @@ function ProfileCreation() {
       email,
       dateOfBirth,
       gender,
-      address,
+      address_id: address?.value || '', // Ensure the field name matches the backend
       skills: skills.map(skill => skill?.value || ''),
       experience: experience.map(exp => ({
         jobTitle: exp.jobTitle?.value || '',
-        salaryRange: exp.salaryRange?.value || '',
+        salary: exp.salaryRange?.value || '', // Assuming salary is mapped from salaryRange
         company: exp.company,
         location: exp.location,
         startDate: exp.startDate,
         endDate: exp.endDate,
         description: exp.description
       })),
-      photo,
     };
-
+  
     console.log('Submitting profile data:', profileData);
-
+  
     try {
       const response = await fetch('http://localhost:5000/api/jobseekers/profile', {
         method: 'POST',
@@ -161,14 +178,19 @@ function ProfileCreation() {
         },
         body: JSON.stringify(profileData),
       });
-
+  
+      // Read the response body as JSON
+      const responseBody = await response.json(); // Use response.json() directly
+  
+      console.log('Response Status:', response.status);
+      console.log('Response Body:', responseBody);
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const data = await response.json();
-      console.log('Profile created successfully:', data);
-
+  
+      console.log('Profile created successfully:', responseBody);
+  
       setTimeout(() => {
         navigate('/login');
       }, 3000);
@@ -177,6 +199,7 @@ function ProfileCreation() {
       setError('Failed to submit the profile. Please try again.');
     }
   };
+  
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -265,12 +288,12 @@ function ProfileCreation() {
           </div>
           <div className="mb-3">
             <label htmlFor="address" className="form-label">Address *</label>
-            <input
-              type="text"
-              className="form-control"
-              id="address"
+            <Select
+              options={addressOptions}
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              onChange={(selectedOption) => setAddress(selectedOption)}
+              placeholder="Select an address"
+              isClearable
               required
             />
           </div>
@@ -423,3 +446,4 @@ function ProfileCreation() {
 }
 
 export default ProfileCreation;
+

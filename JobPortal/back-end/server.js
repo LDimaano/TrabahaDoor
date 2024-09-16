@@ -57,6 +57,16 @@ app.get('/api/jobtitles', async (req, res) => {
   }
 });
 
+app.get('/api/addresses', async (req, res) => {
+  try {
+    const Adresses = await pool.query('SELECT address_id, location FROM address');
+    res.json(Adresses.rows);
+  } catch (err) {
+    console.error('Error fetching addresses:', err);
+    res.status(500).json({ error: 'Failed to fetch addresses' });
+  }
+});
+
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/jobseekers', jobSeekerRoutes);

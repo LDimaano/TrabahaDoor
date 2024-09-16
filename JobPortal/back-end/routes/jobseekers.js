@@ -10,7 +10,7 @@ router.post('/profile', async (req, res) => {
     email,
     dateOfBirth,
     gender,
-    address,
+    address_id, // Change from address to address_id
     experience, // Array of experience objects
     skills // Array of skill IDs or skill objects containing skill_id
   } = req.body;
@@ -18,20 +18,23 @@ router.post('/profile', async (req, res) => {
   // Log the request body to verify data
   console.log('Received request body:', req.body);
 
-  // Check that user_id is provided
+  // Check that user_id and address_id are provided
   if (!user_id) {
     return res.status(400).json({ error: 'User ID is required' });
+  }
+  if (!address_id) {
+    return res.status(400).json({ error: 'Address ID is required' });
   }
 
   try {
     // Insert the profile data into the job_seekers table
     const newProfileResult = await pool.query(
       `INSERT INTO job_seekers (
-        user_id, full_name, phone_number, email, date_of_birth, gender, address
+        user_id, full_name, phone_number, email, date_of_birth, gender, address_id
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING jsid`,
-      [user_id, fullName, phoneNumber, email, dateOfBirth, gender, address]
+      [user_id, fullName, phoneNumber, email, dateOfBirth, gender, address_id]
     );
 
     const profileId = newProfileResult.rows[0].jsid;
@@ -101,10 +104,11 @@ router.get('/job-seeker/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Query job seeker data
+    // Query job seeker data with address location
     const jobSeekerData = await pool.query(`
-      SELECT js.full_name, js.email, js.phone_number, js.date_of_birth, js.gender, js.address
+      SELECT js.full_name, js.email, js.phone_number, js.date_of_birth, js.gender, a.location as address
       FROM job_seekers js
+      LEFT JOIN address a ON js.address_id = a.address_id
       WHERE js.user_id = $1
     `, [userId]);
 
@@ -113,7 +117,7 @@ router.get('/job-seeker/:userId', async (req, res) => {
       SELECT je.jobtitle_id, jt.job_title, je.company, je.start_date, je.end_date, je.description
       FROM job_experience je
       JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
-      WHERE je.user_id = $1;
+      WHERE je.user_id = $1
     `, [userId]);
 
     // Query skills data
@@ -156,5 +160,6 @@ router.get('/job-seeker/:userId', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
 
 module.exports = router;

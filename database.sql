@@ -31,14 +31,15 @@ CREATE TABLE emp_profiles (
 
 
 CREATE TABLE job_seekers (
-    jsid SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-    full_name VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(20) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    date_of_birth DATE NOT NULL,
-    gender VARCHAR(10) NOT NULL,
-    address TEXT
+  jsid SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  full_name VARCHAR(255),
+  phone_number VARCHAR(50),
+  email VARCHAR(255),
+  date_of_birth DATE,
+  gender VARCHAR(50),
+  address_id INT,
+  FOREIGN KEY (address_id) REFERENCES address(address_id) ON DELETE SET NULL
 );
 
 
@@ -120,3 +121,9 @@ CREATE TABLE applications (
     FOREIGN KEY (job_id) REFERENCES joblistings(job_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+CREATE TABLE address (
+  address_id SERIAL PRIMARY KEY,
+  location VARCHAR(255) NOT NULL
+);
+
