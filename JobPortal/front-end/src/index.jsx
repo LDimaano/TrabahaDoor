@@ -15,8 +15,9 @@ import Applicantdetails from './pages/Employer/appdetails';
 import HomeEmployer from './pages/Employer/home_employer';
 import MyProfile from './pages/Jobseeker/js_myprofile'; 
 import Notifications from './pages/Jobseeker/js_notifications'; 
-import ApplicantProfile from './pages/Employer/applicant_profile'; 
+import EmpProfile from './pages/Employer/emp_profile'; 
 import ApplicantJoblisting from './pages/Employer/applicant_joblisting'; 
+import ApplicantProfile from './pages/Employer/applicant_profile'; 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -38,8 +39,9 @@ root.render(
         <Route path="/appdetails" element={<Applicantdetails />} /> 
         <Route path="/home_employer" element={<HomeEmployer />} /> 
         <Route path="/js_notifications" element={<Notifications />} /> 
-        <Route path="/applicant_profile" element={<ApplicantProfile />} /> 
+        <Route path="/emp_profile" element={<EmpProfile />} /> 
         <Route path="/applicant_joblisting" element={<ApplicantJoblisting />} /> 
+        <Route path="/applicant_profile/:user_id" element={<ApplicantProfile />} /> 
       </Routes>
     </Router>
   </React.StrictMode>

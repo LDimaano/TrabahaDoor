@@ -40,7 +40,7 @@ router.post('/profile', async (req, res) => {
     for (const exp of experience) {
       await pool.query(
         `INSERT INTO job_experience (
-          user_id, job_title, salary, company, location, start_date, end_date, description
+          user_id, jobtitle_id, salary, company, location, start_date, end_date, description
         )
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
         [user_id, exp.jobTitle, exp.salary, exp.company, exp.location, exp.startDate, exp.endDate, exp.description]
@@ -110,9 +110,10 @@ router.get('/job-seeker/:userId', async (req, res) => {
 
     // Query job experience data
     const jobExperienceData = await pool.query(`
-      SELECT je.job_title, je.company, je.start_date, je.end_date, je.description
+      SELECT je.jobtitle_id, jt.job_title, je.company, je.start_date, je.end_date, je.description
       FROM job_experience je
-      WHERE je.user_id = $1
+      JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
+      WHERE je.user_id = $1;
     `, [userId]);
 
     // Query skills data

@@ -46,13 +46,14 @@ CREATE TABLE job_seekers (
 CREATE TABLE job_experience (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-    job_title VARCHAR(255) NOT NULL,
+    jobtitle_id INTEGER NOT NULL,
     salary VARCHAR(50),
     company VARCHAR(255) NOT NULL,
     location VARCHAR(255) NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    description TEXT
+    description TEXT,
+	FOREIGN KEY (jobtitle_id) REFERENCES job_titles(jobtitle_id)
 );
 
 

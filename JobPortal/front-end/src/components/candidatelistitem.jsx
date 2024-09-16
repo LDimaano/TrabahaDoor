@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 function ApplicantListItem({ applicant }) {
   const navigate = useNavigate();
 
-  const handleApplyClick = () => {
-    // Navigate to the job description page with dynamic jsid
-    navigate(`/appdetails/${applicant.jsid}`);
+  const handleViewDetailsClick = () => {
+    // Navigate to the applicant's profile page using their user_id
+    navigate(`/applicant_profile/${applicant.user_id}`);
   };
 
   return (
@@ -14,7 +14,7 @@ function ApplicantListItem({ applicant }) {
       <div className="d-flex">
         <img
           src={applicant.profilePicture}
-          alt={`${applicant.name} profile`}
+          alt={`${applicant.full_name} profile`}
           width="50"
           height="50"
           className="me-3"
@@ -25,7 +25,7 @@ function ApplicantListItem({ applicant }) {
           <p>{applicant.address}</p>
         </div>
       </div>
-      <button className="btn btn-primary" onClick={handleApplyClick}>
+      <button className="btn btn-primary" onClick={handleViewDetailsClick}>
         View Details
       </button>
     </li>
