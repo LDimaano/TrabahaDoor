@@ -45,7 +45,10 @@ function Header() {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await fetch('http://localhost:5000/employers/api/notifications/${userId}', {
+                const userId = sessionStorage.getItem('user_id'); // Get userId from session storage
+                if (!userId) return;
+
+                const response = await fetch(`http://localhost:5000/api/employers/notifications/${userId}`, {
                     method: 'GET',
                     credentials: 'include',
                     headers: {
@@ -84,26 +87,26 @@ function Header() {
     };
 
     const handleLogout = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/users/logout', {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-  
-        if (response.ok) {
-          window.sessionStorage.clear();
-          window.location.href = '/'; // Adjust as needed
-        } else {
-          console.error('Failed to log out:', response.statusText);
+        try {
+            const response = await fetch('http://localhost:5000/api/users/logout', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                window.sessionStorage.clear();
+                window.location.href = '/'; // Adjust as needed
+            } else {
+                console.error('Failed to log out:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error logging out:', error);
         }
-      } catch (error) {
-        console.error('Error logging out:', error);
-      }
     };
-    
+
     const activeBarStyle = {
         position: 'absolute',
         bottom: '-5px',
@@ -111,6 +114,22 @@ function Header() {
         right: '0',
         height: '2px',
         backgroundColor: '#007bff',
+    };
+
+    const notificationDropdownStyle = {
+        position: 'absolute',
+        top: '60px', // Adjust as needed to align below the header
+        right: '0',
+        width: '350px', // Increase width for a larger dropdown
+        zIndex: 1050, // Bootstrap dropdowns use z-index 1050, ensure it appears on top
+        maxHeight: '400px', // Optional: limit the height and make it scrollable if needed
+        overflowY: 'auto' // Make dropdown scrollable if content exceeds max height
+    };
+
+    const notificationItemStyle = {
+        borderBottom: '1px solid #ddd', // Separator between notifications
+        padding: '10px 15px',
+        fontSize: '0.875rem'
     };
 
     return (
@@ -150,17 +169,22 @@ function Header() {
                                 <i className="fas fa-bell fa-lg" style={{ color: '#6c757d' }}></i>
                             </button>
                             {showNotifications && (
-                                <div className="position-absolute bg-white border rounded shadow p-2" style={{ top: '100%', right: '0', width: '250px' }}>
+                                <div className="bg-white border rounded shadow p-3" style={notificationDropdownStyle}>
+                                    <div className="mb-2">
+                                        <h5 className="mb-3">Notifications</h5>
+                                    </div>
                                     <div className="notifications-list">
                                         {notifications.length > 0 ? (
                                             notifications.map((notification, index) => (
-                                                <p key={index}>{notification.message}</p>
+                                                <div key={index} style={notificationItemStyle}>
+                                                    {notification.message}
+                                                </div>
                                             ))
                                         ) : (
                                             <p>No new notifications</p>
                                         )}
                                         <button
-                                            className="btn btn-link mt-2"
+                                            className="btn btn-link btn-sm mt-2"
                                             onClick={handleViewAllClick}
                                         >
                                             View All Notifications
