@@ -118,6 +118,7 @@ CREATE TABLE applications (
     phone_number VARCHAR(20) NOT NULL,
     additional_info TEXT,
     date_applied TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) DEFAULT 'new';
     FOREIGN KEY (job_id) REFERENCES joblistings(job_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );

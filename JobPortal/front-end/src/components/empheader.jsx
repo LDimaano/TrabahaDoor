@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import '@fortawesome/fontawesome-free/css/all.min.css'; // Import Font Awesome
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Header() {
@@ -26,7 +26,7 @@ function Header() {
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('API response data:', data); // Log the API response
+                    console.log('API response data:', data);
                     setCompanyInfo({
                         companyName: data.company_name || '',
                         contactPerson: data.contact_person || ''
@@ -45,7 +45,7 @@ function Header() {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/notifications', {
+                const response = await fetch('http://localhost:5000/employers/api/notifications/${userId}', {
                     method: 'GET',
                     credentials: 'include',
                     headers: {
@@ -80,7 +80,7 @@ function Header() {
     };
 
     const handleViewAllClick = () => {
-        navigate('/js_notifications'); // Navigate to notifications page
+        navigate('/emp_notifications'); // Navigate to notifications page
     };
 
     const handleLogout = async () => {
@@ -94,9 +94,7 @@ function Header() {
         });
   
         if (response.ok) {
-          // Clear session data
           window.sessionStorage.clear();
-          // Redirect to login page or home page
           window.location.href = '/'; // Adjust as needed
         } else {
           console.error('Failed to log out:', response.statusText);
@@ -112,7 +110,7 @@ function Header() {
         left: '0',
         right: '0',
         height: '2px',
-        backgroundColor: '#007bff', // Active bar color
+        backgroundColor: '#007bff',
     };
 
     return (
@@ -128,7 +126,7 @@ function Header() {
                     />
                     <span className="fw-bold">TrabahaDoor</span>
                 </a>
-                <div className="mx-auto text-center"> {/* Center the welcome text */}
+                <div className="mx-auto text-center">
                     <span className="navbar-text">
                         Welcome, {companyInfo.companyName || 'Company name'} - {companyInfo.contactPerson || 'Guest'}
                     </span>
@@ -177,7 +175,7 @@ function Header() {
                         <li className="nav-item mx-3 position-relative">
                             <button
                                 className="btn btn-link"
-                                onClick={handleProfileClick} // Handle profile click
+                                onClick={handleProfileClick}
                             >
                                 <i className="fas fa-user fa-lg" style={{ color: '#6c757d' }}></i>
                             </button>
@@ -188,7 +186,7 @@ function Header() {
                         <li className="nav-item mx-3">
                             <button
                                 className="btn btn-link"
-                                onClick={handleLogout} // Handle logout click
+                                onClick={handleLogout}
                             >
                                 <i className="fas fa-sign-out-alt fa-lg" style={{ color: '#6c757d' }}></i>
                             </button>

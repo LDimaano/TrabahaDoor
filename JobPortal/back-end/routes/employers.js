@@ -133,6 +133,49 @@ router.get('/joblistings', async (req, res) => {
   }
 });
 
+router.get('/notifications/:userId', async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const result = await pool.query(
+      `SELECT a.full_name, jt.job_title, j.job_id, a.status
+       FROM applications a
+       JOIN joblistings j ON a.job_id = j.job_id
+       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
+       JOIN users u ON j.user_id = u.user_id
+       WHERE u.user_id = $1
+       ORDER BY a.date_applied DESC;`,
+      [userId]
+    );
+
+    console.log('Query Result:', result.rows); // Debugging: Check if query returns rows
+
+    // Create notifications with both new and viewed statuses
+    const notifications = result.rows.map(row => ({
+      message: `${row.full_name} has applied to be a ${row.job_title}`,
+      job_id: row.job_id,
+      status: row.status, // Include the notification status
+    }));
+
+    console.log('Notifications:', notifications); // Debugging: Check if notifications are created
+
+    // Update the status of new notifications only
+    const newJobIds = notifications.filter(n => n.status === 'new').map(n => n.job_id);
+    if (newJobIds.length > 0) {
+      const formattedJobIds = newJobIds.map(id => `'${id}'`).join(', ');
+      await pool.query(
+        `UPDATE applications
+         SET status = 'viewed'
+         WHERE status = 'new' AND job_id IN (${formattedJobIds})`
+      );
+    }
+
+    res.json({ notifications });
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
 
 
 module.exports = router;

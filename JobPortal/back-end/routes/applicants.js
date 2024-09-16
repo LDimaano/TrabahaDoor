@@ -10,9 +10,10 @@ router.get('/applicantlist', async (req, res) => {
         job_seekers.user_id,
         job_seekers.full_name, 
         users.email, 
-        job_seekers.address
+        address.location
       FROM job_seekers
       JOIN users ON job_seekers.user_id = users.user_id
+	  JOIN address ON job_seekers.address_id = address.address_id
     `);
     
     res.json(result.rows);
@@ -28,8 +29,9 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
 
     // Query job seeker data
     const jobSeekerData = await pool.query(`
-      SELECT js.full_name, js.email, js.phone_number, js.date_of_birth, js.gender, js.address
+      SELECT js.full_name, js.email, js.phone_number, js.date_of_birth, js.gender, address.location
       FROM job_seekers js
+      JOIN address ON js.address_id = address.address_id
       WHERE js.user_id = $1
     `, [user_id]);
 
