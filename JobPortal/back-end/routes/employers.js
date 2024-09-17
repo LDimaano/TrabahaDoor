@@ -10,7 +10,7 @@ router.post('/employer-profile', async (req, res) => {
     contactNumber,
     email,
     website,
-    industry,
+    industry_id,
     companyAddress,
     companySize,
     foundedYear,
@@ -29,7 +29,7 @@ router.post('/employer-profile', async (req, res) => {
     // Insert the data into the profiles table and return the inserted row
     const newEmpProfile = await pool.query(
       `INSERT INTO emp_profiles (
-        user_id, company_name, contact_person, contact_number, email, website, industry,
+        user_id, company_name, contact_person, contact_number, email, website, industry_id,
         company_address, company_size, founded_year, description
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -41,7 +41,7 @@ router.post('/employer-profile', async (req, res) => {
         contactNumber,
         email,
         website,
-        industry,
+        industry_id,
         companyAddress,
         companySize,
         foundedYear,
