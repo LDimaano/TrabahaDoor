@@ -13,15 +13,19 @@ function ProfileCreation() {
   const [gender, setGender] = useState('Male');
   const [address, setAddress] = useState(null);
   const [addressOptions, setAddressOptions] = useState([]);
-  const [experience, setExperience] = useState([{
-    jobTitle: null,
-    salaryRange: null,
-    company: '',
-    location: '',
-    startDate: '',
-    endDate: '',
-    description: '',
-  }]);
+  const [industry, setIndustry] = useState(null); 
+  const [industryOptions, setIndustryOptions] = useState([]); 
+  const [experience, setExperience] = useState([
+    {
+      jobTitle: null,
+      salaryRange: null,
+      company: '',
+      location: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+    },
+  ]);
   const [skills, setSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]);
@@ -33,64 +37,10 @@ function ProfileCreation() {
     { value: '35001-50000', label: '35001-50000' },
     { value: '50001-75000', label: '50001-75000' },
     { value: '75001-100000', label: '75001-100000' },
-    { value: 'Above 100000', label: 'Above 100000' }
+    { value: 'Above 100000', label: 'Above 100000' },
   ]);
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
-
-  useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/skills');
-        if (!response.ok) throw new Error('Failed to fetch skills');
-        const data = await response.json();
-        const skillOptions = data.map(skill => ({
-          value: skill.skill_id,
-          label: skill.skill_name
-        }));
-        setAvailableSkills(skillOptions);
-      } catch (error) {
-        console.error('Error fetching skills:', error);
-        setError('Failed to load skills.');
-      }
-    };
-
-    const fetchJobTitles = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/jobtitles');
-        if (!response.ok) throw new Error('Failed to fetch job titles');
-        const data = await response.json();
-        const jobTitleOptions = data.map(jobTitle => ({
-          value: jobTitle.jobtitle_id,
-          label: jobTitle.job_title
-        }));
-        setAvailableJobTitles(jobTitleOptions);
-      } catch (error) {
-        console.error('Error fetching job titles:', error);
-        setError('Failed to load job titles.');
-      }
-    };
-
-    const fetchAddresses = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/addresses'); // Adjust URL if necessary
-        if (!response.ok) throw new Error('Failed to fetch addresses');
-        const data = await response.json();
-        const addressOptions = data.map(address => ({
-          value: address.address_id,
-          label: address.location
-        }));
-        setAddressOptions(addressOptions);
-      } catch (error) {
-        console.error('Error fetching addresses:', error);
-        setError('Failed to load addresses.');
-      }
-    };
-
-    fetchSkills();
-    fetchJobTitles();
-    fetchAddresses();
-  }, []);
 
   const handleSkillChange = (index, selectedOption) => {
     const newSkills = [...skills];
@@ -146,8 +96,7 @@ function ProfileCreation() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user_id = sessionStorage.getItem('userId');
-    console.log('Retrieved user_id:', user_id);
-  
+
     const profileData = {
       user_id,
       fullName,
@@ -155,21 +104,20 @@ function ProfileCreation() {
       email,
       dateOfBirth,
       gender,
-      address_id: address?.value || '', // Ensure the field name matches the backend
+      address_id: address?.value || '',
+      industry_id: industry?.value || '', 
       skills: skills.map(skill => skill?.value || ''),
       experience: experience.map(exp => ({
         jobTitle: exp.jobTitle?.value || '',
-        salary: exp.salaryRange?.value || '', // Assuming salary is mapped from salaryRange
+        salary: exp.salaryRange?.value || '',
         company: exp.company,
         location: exp.location,
         startDate: exp.startDate,
         endDate: exp.endDate,
-        description: exp.description
+        description: exp.description,
       })),
     };
-  
-    console.log('Submitting profile data:', profileData);
-  
+
     try {
       const response = await fetch('http://localhost:5000/api/jobseekers/profile', {
         method: 'POST',
@@ -178,19 +126,14 @@ function ProfileCreation() {
         },
         body: JSON.stringify(profileData),
       });
-  
-      // Read the response body as JSON
-      const responseBody = await response.json(); // Use response.json() directly
-  
-      console.log('Response Status:', response.status);
-      console.log('Response Body:', responseBody);
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
+      const responseBody = await response.json();
       console.log('Profile created successfully:', responseBody);
-  
+
       setTimeout(() => {
         navigate('/login');
       }, 3000);
@@ -199,29 +142,101 @@ function ProfileCreation() {
       setError('Failed to submit the profile. Please try again.');
     }
   };
-  
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setPhoto(file);
   };
 
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/skills');
+        if (!response.ok) throw new Error('Failed to fetch skills');
+        const data = await response.json();
+        const skillOptions = data.map(skill => ({
+          value: skill.skill_id,
+          label: skill.skill_name,
+        }));
+        setAvailableSkills(skillOptions);
+      } catch (error) {
+        console.error('Error fetching skills:', error);
+        setError('Failed to load skills.');
+      }
+    };
+
+    const fetchJobTitles = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/jobtitles');
+        if (!response.ok) throw new Error('Failed to fetch job titles');
+        const data = await response.json();
+        const jobTitleOptions = data.map(jobTitle => ({
+          value: jobTitle.jobtitle_id,
+          label: jobTitle.job_title,
+        }));
+        setAvailableJobTitles(jobTitleOptions);
+      } catch (error) {
+        console.error('Error fetching job titles:', error);
+        setError('Failed to load job titles.');
+      }
+    };
+
+    const fetchAddresses = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/addresses'); 
+        if (!response.ok) throw new Error('Failed to fetch addresses');
+        const data = await response.json();
+        const addressOptions = data.map(address => ({
+          value: address.address_id,
+          label: address.location,
+        }));
+        setAddressOptions(addressOptions);
+      } catch (error) {
+        console.error('Error fetching addresses:', error);
+        setError('Failed to load addresses.');
+      }
+    };
+
+    const fetchIndustries = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/industries'); 
+        if (!response.ok) throw new Error('Failed to fetch industries');
+        const data = await response.json();
+        const industryOptions = data.map(industry => ({
+          value: industry.industry_id,
+          label: industry.industry_name,
+        }));
+        setIndustryOptions(industryOptions);
+      } catch (error) {
+        console.error('Error fetching industries:', error);
+        setError('Failed to load industries.');
+      }
+    };
+
+    fetchSkills();
+    fetchJobTitles();
+    fetchAddresses();
+    fetchIndustries();
+  }, []);
+
   return (
     <div className="container mt-4">
       <h1 className="text-center">Create your Profile</h1>
       <h5 className="text-center">Let us know more about you</h5>
+        <div className="mb-4 border p-4">
+          <h3>Profile Photo</h3>
+          <div className="mb-3">
+            <label htmlFor="photo" className="form-label">Upload your profile photo</label>
+            <input
+              type="file"
+              className="form-control"
+              id="photo"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+          </div>
+        </div>
       <form onSubmit={handleSubmit}>
-        {/* Uncomment the following section if you want to include photo upload */}
-        {/* <div className="mb-3">
-          <label htmlFor="photo" className="form-label">Upload Your Photo *</label>
-          <input
-            type="file"
-            className="form-control"
-            id="photo"
-            onChange={handleFileChange}
-            required
-          />
-        </div> */}
         <div className="mb-4 border p-4">
           <h3>Personal Details</h3>
           <div className="mb-3">
@@ -248,7 +263,7 @@ function ProfileCreation() {
               />
             </div>
             <div className="col-md-6">
-              <label htmlFor="email" className="form-label">Email *</label>
+              <label htmlFor="email" className="form-label">Email Address *</label>
               <input
                 type="email"
                 className="form-control"
@@ -280,115 +295,130 @@ function ProfileCreation() {
                 onChange={(e) => setGender(e.target.value)}
                 required
               >
+                <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Other">Other</option>
               </select>
             </div>
           </div>
           <div className="mb-3">
             <label htmlFor="address" className="form-label">Address *</label>
             <Select
+              id="address"
               options={addressOptions}
               value={address}
-              onChange={(selectedOption) => setAddress(selectedOption)}
-              placeholder="Select an address"
+              onChange={setAddress}
+              placeholder="Select Address"
+              isClearable
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="industry" className="form-label">Industry *</label>
+            <Select
+              id="industry"
+              options={industryOptions}
+              value={industry}
+              onChange={setIndustry}
+              placeholder="Select Industry"
               isClearable
               required
             />
           </div>
         </div>
+
         <div className="mb-4 border p-4">
-          <h3>Work Experience</h3>
+          <h3>Experience</h3>
           {experience.map((exp, index) => (
-            <div key={index} className="mb-4">
-              <div className="row mb-3">
-                <div className="col-md-6">
-                  <label htmlFor={`jobTitle_${index}`} className="form-label">Job Title *</label>
+            <div key={index} className="mb-3">
+              <label className="form-label">Experience {index + 1}</label>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label htmlFor={`jobTitle-${index}`} className="form-label">Job Title</label>
                   <Select
+                    id={`jobTitle-${index}`}
                     options={availableJobTitles}
                     value={exp.jobTitle}
                     onChange={(selectedOption) => handleExperienceJobTitleChange(index, selectedOption)}
-                    placeholder="Select job title"
+                    placeholder="Select Job Title"
                     isClearable
                   />
                 </div>
-                <div className="col-md-6">
-                  <label htmlFor={`salaryRange_${index}`} className="form-label">Salary Range *</label>
+                <div className="col-md-6 mb-3">
+                  <label htmlFor={`salaryRange-${index}`} className="form-label">Salary Range</label>
                   <Select
+                    id={`salaryRange-${index}`}
                     options={salaryRanges}
                     value={exp.salaryRange}
                     onChange={(selectedOption) => handleExperienceSalaryRangeChange(index, selectedOption)}
-                    placeholder="Select salary range"
+                    placeholder="Select Salary Range"
                     isClearable
                   />
                 </div>
               </div>
               <div className="mb-3">
-                <label htmlFor={`company_${index}`} className="form-label">Company *</label>
+                <label htmlFor={`company-${index}`} className="form-label">Company</label>
                 <input
                   type="text"
                   className="form-control"
-                  id={`company_${index}`}
+                  id={`company-${index}`}
                   name="company"
                   value={exp.company}
                   onChange={(event) => handleExperienceChange(index, event)}
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor={`location_${index}`} className="form-label">Location *</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id={`location_${index}`}
-                  name="location"
-                  value={exp.location}
-                  onChange={(event) => handleExperienceChange(index, event)}
-                  required
+                  placeholder="Company"
                 />
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor={`startDate_${index}`} className="form-label">Start Date *</label>
+                  <label htmlFor={`location-${index}`} className="form-label">Location</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id={`location-${index}`}
+                    name="location"
+                    value={exp.location}
+                    onChange={(event) => handleExperienceChange(index, event)}
+                    placeholder="Location"
+                  />
+                </div>
+                <div className="col-md-3">
+                  <label htmlFor={`startDate-${index}`} className="form-label">Start Date</label>
                   <input
                     type="date"
                     className="form-control"
-                    id={`startDate_${index}`}
+                    id={`startDate-${index}`}
                     name="startDate"
                     value={exp.startDate}
                     onChange={(event) => handleExperienceChange(index, event)}
-                    required
                   />
                 </div>
-                <div className="col-md-6">
-                  <label htmlFor={`endDate_${index}`} className="form-label">End Date *</label>
+                <div className="col-md-3">
+                  <label htmlFor={`endDate-${index}`} className="form-label">End Date</label>
                   <input
                     type="date"
                     className="form-control"
-                    id={`endDate_${index}`}
+                    id={`endDate-${index}`}
                     name="endDate"
                     value={exp.endDate}
                     onChange={(event) => handleExperienceChange(index, event)}
-                    required
                   />
                 </div>
               </div>
               <div className="mb-3">
-                <label htmlFor={`description_${index}`} className="form-label">Description *</label>
+                <label htmlFor={`description-${index}`} className="form-label">Description</label>
                 <textarea
                   className="form-control"
-                  id={`description_${index}`}
+                  id={`description-${index}`}
                   name="description"
                   value={exp.description}
                   onChange={(event) => handleExperienceChange(index, event)}
+                  placeholder="Describe your responsibilities and accomplishments"
                   rows="3"
-                  required
                 />
               </div>
               <button
                 type="button"
-                className="btn btn-danger"
+                className="btn btn-danger mb-3"
                 onClick={() => handleRemoveExperience(index)}
               >
                 Remove Experience
@@ -408,20 +438,23 @@ function ProfileCreation() {
           <h3>Skills</h3>
           {skills.map((skill, index) => (
             <div key={index} className="mb-3">
-              <Select
-                options={availableSkills}
-                value={skill}
-                onChange={(selectedOption) => handleSkillChange(index, selectedOption)}
-                placeholder="Select a skill"
-                isClearable
-              />
-              <button
-                type="button"
-                className="btn btn-danger mt-2"
-                onClick={() => handleRemoveSkill(index)}
-              >
-                Remove Skill
-              </button>
+              <label className="form-label">Skill {index + 1}</label>
+              <div className="d-flex">
+                <Select
+                  options={availableSkills}
+                  value={skill}
+                  onChange={(selectedOption) => handleSkillChange(index, selectedOption)}
+                  placeholder="Select Skill"
+                  isClearable
+                />
+                <button
+                  type="button"
+                  className="btn btn-danger ms-2"
+                  onClick={() => handleRemoveSkill(index)}
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           ))}
           <button
@@ -433,17 +466,18 @@ function ProfileCreation() {
           </button>
         </div>
 
-        <div className="mb-3 text-center">
-          <button type="submit" className="btn btn-success">
-            Submit
-          </button>
-        </div>
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
 
-        {error && <p className="text-danger text-center">{error}</p>}
+        <div className="d-grid gap-2">
+          <button type="submit" className="btn btn-success">Submit Profile</button>
+        </div>
       </form>
     </div>
   );
 }
 
 export default ProfileCreation;
-

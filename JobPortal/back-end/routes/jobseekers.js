@@ -10,7 +10,8 @@ router.post('/profile', async (req, res) => {
     email,
     dateOfBirth,
     gender,
-    address_id, // Change from address to address_id
+    address_id, 
+    industry_id,
     experience, // Array of experience objects
     skills // Array of skill IDs or skill objects containing skill_id
   } = req.body;
@@ -30,11 +31,11 @@ router.post('/profile', async (req, res) => {
     // Insert the profile data into the job_seekers table
     const newProfileResult = await pool.query(
       `INSERT INTO job_seekers (
-        user_id, full_name, phone_number, email, date_of_birth, gender, address_id
+        user_id, full_name, phone_number, email, date_of_birth, gender, address_id, industry_id
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING jsid`,
-      [user_id, fullName, phoneNumber, email, dateOfBirth, gender, address_id]
+      [user_id, fullName, phoneNumber, email, dateOfBirth, gender, address_id, industry_id]
     );
 
     const profileId = newProfileResult.rows[0].jsid;
