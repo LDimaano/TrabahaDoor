@@ -7,7 +7,7 @@ const ApplicantCard = ({ applicant }) => (
   <aside className="bg-white p-4 border rounded">
     <header className="d-flex align-items-center mb-3">
         <img
-      src={applicantData.image}
+      src={applicant.image}
       alt="Profile"
       className="img-fluid rounded-circle"
   style={{ width: '150px', height: '150px' }}

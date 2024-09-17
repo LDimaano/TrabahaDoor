@@ -93,10 +93,55 @@ function ProfileCreation() {
     setExperience(newExperience);
   };
 
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    const userId = sessionStorage.getItem('userId');
+    
+    if (!file) {
+      console.error('No file selected');
+      return;
+    }
+    
+    const formData = new FormData();
+    formData.append('profilePicture', file);
+    
+    try {
+      console.log('Uploading file...', file);
+      const response = await fetch(`http://localhost:5000/api/upload-profile-picture/${userId}`, {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('Uploaded image data:', data);
+      setPhoto(data.profilePictureUrl); // Set the photo URL in state
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+    }
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    // Ensure user ID is available
     const user_id = sessionStorage.getItem('userId');
-
+  
+    // If photo is not set, attempt to upload and wait
+    if (!photo) {
+      await handleFileChange({ target: { files: [document.getElementById('photo').files[0]] } });
+    }
+  
+    if (!photo) {
+      setError('Please upload a profile picture before submitting the form.');
+      return;
+    }
+  
+    // Continue with profile data submission
     const profileData = {
       user_id,
       fullName,
@@ -116,9 +161,9 @@ function ProfileCreation() {
         endDate: exp.endDate,
         description: exp.description,
       })),
-      photo
+      profile_picture_url: photo // Ensure this is populated correctly
     };
-
+  
     try {
       const response = await fetch('http://localhost:5000/api/jobseekers/profile', {
         method: 'POST',
@@ -127,49 +172,20 @@ function ProfileCreation() {
         },
         body: JSON.stringify(profileData),
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const responseBody = await response.json();
       console.log('Profile created successfully:', responseBody);
-
+  
       setTimeout(() => {
         navigate('/login');
       }, 3000);
     } catch (err) {
       console.error('Submission failed:', err);
       setError('Failed to submit the profile. Please try again.');
-    }
-  };
-
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    const userId = sessionStorage.getItem('userId');
-  
-    if (!file) {
-      console.error('No file selected');
-      return;
-    }
-  
-    const formData = new FormData();
-    formData.append('profilePicture', file);
-  
-    try {
-      const response = await fetch(`http://localhost:5000/api/upload-profile-picture/${userId}`, {
-        method: 'POST',
-        body: formData,
-      });
-  
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-  
-      const data = await response.json();
-      setPhoto(data.profilePictureUrl);
-    } catch (error) {
-      console.error('Error uploading profile picture:', error);
     }
   };
   
