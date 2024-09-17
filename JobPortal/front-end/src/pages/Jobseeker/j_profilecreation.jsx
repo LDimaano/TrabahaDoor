@@ -97,6 +97,7 @@ function ProfileCreation() {
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     const userId = sessionStorage.getItem('userId');
+    console.log('User ID:', userId);
     
     if (!file) {
       console.error('No file selected');
@@ -124,6 +125,7 @@ function ProfileCreation() {
       console.error('Error uploading profile picture:', error);
     }
   };
+  
   
   const handleSubmit = async (e) => {
     e.preventDefault();

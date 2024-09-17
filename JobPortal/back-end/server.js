@@ -26,80 +26,59 @@ app.use(session({
   }
 }));
 
-// Serve static files in the 'uploads' directory
+// Serve static files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Multer setup for file uploads
+// Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Directory where files will be saved
+    cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+    cb(null, `${Date.now()}-${file.originalname}`);
   }
 });
+
 const upload = multer({ storage: storage });
 
 // Route to upload a profile picture
+// Your existing route
 app.post('/api/upload-profile-picture/:userId', upload.single('profilePicture'), async (req, res) => {
+  console.log('Request received to upload profile picture');
   try {
-    const userId = req.params.userId; // Get userId from URL parameters
+    const userId = req.params.userId;
+    console.log('Received user ID:', userId);
 
-    // Ensure the userId exists
     if (!userId) {
+      console.log('No user ID provided');
       return res.status(400).json({ error: 'User ID is required' });
     }
 
-    const file = req.file; // Get the uploaded file
+    const file = req.file;
     if (!file) {
+      console.log('No file uploaded');
       return res.status(400).json({ error: 'File upload failed. No file was provided.' });
     }
 
-    // Use backticks for template literal to dynamically insert the file name
-    const profilePictureUrl = `http://localhost:5000/uploads/${file.filename}`; 
+    const profilePictureUrl = `http://localhost:5000/uploads/${file.filename}`;
 
-    // Log for debugging
     console.log('File uploaded:', profilePictureUrl);
     console.log('User ID:', userId);
 
-    // Update the profile_picture_url in the database
     const result = await pool.query(
-      'UPDATE job_seekers SET profile_picture_url = $1 WHERE user_id = $2',
-      [profilePictureUrl, userId]
+      'INSERT INTO profilepictures (user_id, profile_picture_url) VALUES ($1, $2)',
+      [userId, profilePictureUrl]
     );
-
-    // If no rows are updated, it means the user was not found
+    
     if (result.rowCount === 0) {
+      console.log('User not found in the database');
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Return the profile picture URL as a response
     res.json({ profilePictureUrl });
   } catch (error) {
     console.error('Error uploading profile picture:', error);
     res.status(500).json({ error: 'Failed to upload profile picture' });
-  }
-});
-
-
-// Route to get profile picture URL by user ID
-app.get('/api/profile-picture/:userId', async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const result = await pool.query(
-      'SELECT profile_picture_url FROM job_seekers WHERE user_id = $1',
-      [userId]
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const profilePictureUrl = result.rows[0].profile_picture_url;
-    res.json({ profilePictureUrl });
-  } catch (err) {
-    console.error('Error fetching profile picture URL:', err.message);
-    res.status(500).json({ error: 'Server error' });
   }
 });
 

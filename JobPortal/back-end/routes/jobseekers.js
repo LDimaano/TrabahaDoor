@@ -107,13 +107,26 @@ router.get('/job-seeker/:userId', async (req, res) => {
 
     // Query job seeker data with address location
     const jobSeekerData = await pool.query(`
-      SELECT js.full_name, js.email, js.phone_number, js.date_of_birth, js.gender, js.address_id, a.location, js.industry_id, i.industry_name
+      SELECT 
+        js.full_name, 
+        js.email, 
+        js.phone_number, 
+        js.date_of_birth, 
+        js.gender, 
+        js.address_id, 
+        a.location, 
+        js.industry_id, 
+        i.industry_name,
+        pp.profile_picture_url
       FROM job_seekers js
       LEFT JOIN address a ON js.address_id = a.address_id
       LEFT JOIN industries i ON js.industry_id = i.industry_id
+      LEFT JOIN profilepictures pp ON js.user_id = pp.user_id
       WHERE js.user_id = $1
     `, [userId]);
 
+    console.log('Fetched job seeker data:', jobSeekerData.rows);
+    
     // Query job experience data
     const jobExperienceData = await pool.query(`
       SELECT je.jobtitle_id, jt.job_title, je.company, je.start_date, je.end_date, je.description
@@ -143,7 +156,6 @@ router.get('/job-seeker/:userId', async (req, res) => {
     const jobSeeker = jobSeekerData.rows[0] || {};
     // Assuming job_title from the first job experience or a fallback value
     const jobTitle = jobExperiences.length > 0 ? jobExperiences[0].job_title : 'Not Specified';
-
     res.json({
       jobSeeker: {
         full_name: jobSeeker.full_name || 'Not Provided',
@@ -153,6 +165,7 @@ router.get('/job-seeker/:userId', async (req, res) => {
         gender: jobSeeker.gender || 'Not Specified',
         address: jobSeeker.location || 'Address not provided',
         industry: jobSeeker.industry_name || 'Industry not provided',
+        image: jobSeeker.profile_picture_url  || 'No Image',
         job_title: jobTitle // Set the job title from the first job experience
       },
       jobExperience: jobExperiences, // Return all job experiences

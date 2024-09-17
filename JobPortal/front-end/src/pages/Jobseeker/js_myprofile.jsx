@@ -26,17 +26,25 @@ const MyProfile = () => {
         }
         const data = await response.json();
 
+        // Debugging console logs
+        console.log('Fetched Data:', data);
+
+        // Assuming `data.jobSeeker` contains all necessary information
+        console.log('Job Seeker Data:', data.jobSeeker);
+
         // Set the state for applicant data
-        setApplicantData({
+        const newApplicantData = {
           name: data.jobSeeker.full_name || 'Not Provided',
           profession: data.jobSeeker.job_title || 'Not Specified',
-          image: 'https://cdn.builder.io/api/v1/image/assets/TEMP/3abeed5f2de2d8df2f096ae96cc50be8ac71d626c31b3c38ffa0141113466826', // Placeholder or actual image URL
+          image: data.jobSeeker.image,
           email: data.jobSeeker.email || 'Not Provided',
           phone: data.jobSeeker.phone_number || 'Not Provided',
-        });
+        };
+        setApplicantData(newApplicantData);
+        console.log('Updated Applicant Data:', newApplicantData); // Debugging console log
 
         // Set the state for personal data
-        setPersonalData({
+        const newPersonalData = {
           fullName: data.jobSeeker.full_name || 'Not Provided',
           dateOfBirth: data.jobSeeker.date_of_birth ? 
             `${new Date(data.jobSeeker.date_of_birth).toLocaleDateString()} (${new Date().getFullYear() - new Date(data.jobSeeker.date_of_birth).getFullYear()} y.o)` 
@@ -44,18 +52,22 @@ const MyProfile = () => {
           gender: data.jobSeeker.gender || 'Not Specified',
           address: data.jobSeeker.address || 'Address not provided',
           industry: data.jobSeeker.industry || 'Industry not provided'
-        });
+        };
+        setPersonalData(newPersonalData);
+        console.log('Updated Personal Data:', newPersonalData); // Debugging console log
 
         // Handle professional data
         const firstJobExperience = data.jobExperience[0] || {};
 
-        setProfessionalData({
+        const newProfessionalData = {
           currentJob: firstJobExperience.job_title || 'Not Specified',
           workExperience: data.jobExperience || [], // Use the entire array
           skills: data.skills.map(skill => skill.skill_name) || [],
           description: firstJobExperience.description || 'No Description', 
           company: firstJobExperience.company || 'No Company Provided',
-        });
+        };
+        setProfessionalData(newProfessionalData);
+        console.log('Updated Professional Data:', newProfessionalData); // Debugging console log
 
         setIsLoading(false);
       } catch (error) {
@@ -65,24 +77,6 @@ const MyProfile = () => {
     };
 
     fetchApplicantData();
-  }, []);
-  useEffect(() => {
-    const userId = sessionStorage.getItem('user_id');
-  
-    const fetchProfilePicture = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/api/jobseekers/profile-picture/${userId}`);
-        const data = await response.json();
-        setApplicantData(prevData => ({
-          ...prevData,
-          image: data.profilePictureUrl || 'default-placeholder.png', // Default placeholder if no profile picture
-        }));
-      } catch (error) {
-        console.error('Error fetching profile picture:', error);
-      }
-    };
-  
-    fetchProfilePicture();
   }, []);
   
   if (isLoading) {

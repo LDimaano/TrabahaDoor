@@ -135,3 +135,10 @@ CREATE TABLE industries (
     industry_id SERIAL PRIMARY KEY,
     industry_name VARCHAR(255) NOT NULL
 );
+
+CREATE TABLE profilepictures (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    profile_picture_url VARCHAR(255) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
