@@ -39,7 +39,8 @@ CREATE TABLE job_seekers (
   date_of_birth DATE,
   gender VARCHAR(50),
   address_id INT,
-  industry_id INT, -- New column for industry_id
+  industry_id INT, 
+  profile_picture_url VARCHAR(255);
   FOREIGN KEY (address_id) REFERENCES address(address_id) ON DELETE CASCADE,
   FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE; -- Reference to industries table
 );

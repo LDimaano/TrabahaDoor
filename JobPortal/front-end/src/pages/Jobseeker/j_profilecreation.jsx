@@ -13,8 +13,8 @@ function ProfileCreation() {
   const [gender, setGender] = useState('Male');
   const [address, setAddress] = useState(null);
   const [addressOptions, setAddressOptions] = useState([]);
-  const [industry, setIndustry] = useState(null); 
-  const [industryOptions, setIndustryOptions] = useState([]); 
+  const [industry, setIndustry] = useState(null);
+  const [industryOptions, setIndustryOptions] = useState([]);
   const [experience, setExperience] = useState([
     {
       jobTitle: null,
@@ -105,7 +105,7 @@ function ProfileCreation() {
       dateOfBirth,
       gender,
       address_id: address?.value || '',
-      industry_id: industry?.value || '', 
+      industry_id: industry?.value || '',
       skills: skills.map(skill => skill?.value || ''),
       experience: experience.map(exp => ({
         jobTitle: exp.jobTitle?.value || '',
@@ -116,6 +116,7 @@ function ProfileCreation() {
         endDate: exp.endDate,
         description: exp.description,
       })),
+      photo
     };
 
     try {
@@ -143,11 +144,35 @@ function ProfileCreation() {
     }
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
-    setPhoto(file);
+    const userId = sessionStorage.getItem('userId');
+  
+    if (!file) {
+      console.error('No file selected');
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('profilePicture', file);
+  
+    try {
+      const response = await fetch(`http://localhost:5000/api/upload-profile-picture/${userId}`, {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data = await response.json();
+      setPhoto(data.profilePictureUrl);
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+    }
   };
-
+  
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -183,7 +208,7 @@ function ProfileCreation() {
 
     const fetchAddresses = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/addresses'); 
+        const response = await fetch('http://localhost:5000/api/addresses');
         if (!response.ok) throw new Error('Failed to fetch addresses');
         const data = await response.json();
         const addressOptions = data.map(address => ({
@@ -199,7 +224,7 @@ function ProfileCreation() {
 
     const fetchIndustries = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/industries'); 
+        const response = await fetch('http://localhost:5000/api/industries');
         if (!response.ok) throw new Error('Failed to fetch industries');
         const data = await response.json();
         const industryOptions = data.map(industry => ({
@@ -223,6 +248,7 @@ function ProfileCreation() {
     <div className="container mt-4">
       <h1 className="text-center">Create your Profile</h1>
       <h5 className="text-center">Let us know more about you</h5>
+      <form onSubmit={handleSubmit}>
         <div className="mb-4 border p-4">
           <h3>Profile Photo</h3>
           <div className="mb-3">
@@ -236,7 +262,6 @@ function ProfileCreation() {
             />
           </div>
         </div>
-      <form onSubmit={handleSubmit}>
         <div className="mb-4 border p-4">
           <h3>Personal Details</h3>
           <div className="mb-3">
@@ -481,3 +506,4 @@ function ProfileCreation() {
 }
 
 export default ProfileCreation;
+

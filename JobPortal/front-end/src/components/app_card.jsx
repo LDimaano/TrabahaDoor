@@ -6,7 +6,13 @@ import ContactItem from './contactitem';
 const ApplicantCard = ({ applicant }) => (
   <aside className="bg-white p-4 border rounded">
     <header className="d-flex align-items-center mb-3">
-      <img src={applicant.image} alt={applicant.name} className="me-3" style={{ width: '100px', borderRadius: '50%' }} />
+        <img
+      src={applicantData.image}
+      alt="Profile"
+      className="img-fluid rounded-circle"
+  style={{ width: '150px', height: '150px' }}
+/>
+
       <div>
         <h2 className="mb-0">{applicant.name}</h2>
         <p className="text-muted">{applicant.profession}</p>

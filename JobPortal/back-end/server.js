@@ -2,6 +2,8 @@ const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const multer = require('multer')
+const path = require('path');;
 const pool = require('./db'); // Your database pool
 
 // Use environment variables for secrets
@@ -64,6 +66,88 @@ app.get('/api/addresses', async (req, res) => {
   } catch (err) {
     console.error('Error fetching addresses:', err);
     res.status(500).json({ error: 'Failed to fetch addresses' });
+  }
+});
+
+app.get('/api/industries', async (req, res) => {
+  try {
+    const Industries = await pool.query('SELECT industry_id, industry_name FROM industries');
+    res.json(Industries.rows);
+  } catch (err) {
+    console.error('Error fetching industries:', err);
+    res.status(500).json({ error: 'Failed to fetch industries' });
+  }
+});
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${Date.now()}_${file.originalname}`);
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
+});
+
+app.post('/api/upload-profile-picture/:userId', upload.single('profilePicture'), async (req, res) => {
+  try {
+    const userId = req.params.userId; // Get userId from URL parameters
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ error: 'File upload failed' });
+    }
+
+    const profilePictureUrl = `http://localhost:5000/uploads/${file.filename}`;
+
+    // Log to verify file path and userId
+    console.log('File uploaded:', profilePictureUrl);
+    console.log('User ID:', userId);
+
+    // Update profile_picture_url in the database
+    const result = await pool.query(
+      'UPDATE job_seekers SET profile_picture_url = $1 WHERE user_id = $2',
+      [profilePictureUrl, userId]
+    );
+
+    // Check if the update was successful
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ profilePictureUrl });
+  } catch (error) {
+    console.error('Error uploading profile picture:', error);
+    res.status(500).json({ error: 'Failed to upload profile picture' });
+  }
+});
+
+
+
+
+// Route to get profile picture URL by user ID
+app.get('/api/profile-picture/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const result = await pool.query(
+      'SELECT profile_picture_url FROM job_seekers WHERE user_id = $1',
+      [userId]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const profilePictureUrl = result.rows[0].profile_picture_url;
+    res.json({ profilePictureUrl });
+  } catch (err) {
+    console.error('Error fetching profile picture URL:', err.message);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 

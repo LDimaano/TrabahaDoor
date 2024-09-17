@@ -66,7 +66,25 @@ const MyProfile = () => {
 
     fetchApplicantData();
   }, []);
-
+  useEffect(() => {
+    const userId = sessionStorage.getItem('user_id');
+  
+    const fetchProfilePicture = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/jobseekers/profile-picture/${userId}`);
+        const data = await response.json();
+        setApplicantData(prevData => ({
+          ...prevData,
+          image: data.profilePictureUrl || 'default-placeholder.png', // Default placeholder if no profile picture
+        }));
+      } catch (error) {
+        console.error('Error fetching profile picture:', error);
+      }
+    };
+  
+    fetchProfilePicture();
+  }, []);
+  
   if (isLoading) {
     return <div>Loading...</div>;
   }
