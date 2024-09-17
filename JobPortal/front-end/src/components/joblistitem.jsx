@@ -14,14 +14,14 @@ function JobListItem({ job }) {
       <div className="d-flex">
         <img
           src={job.logo || 'default-logo-url.png'}
-          alt={`${job.Industry} logo`}
+          alt={`${job.industry_name} logo`}
           width="50"
           height="50"
           className="me-3"
         />
         <div>
           <h5>{job.job_title}</h5>
-          <p>{job.industry}</p>
+          <p>{job.industry_name}</p>
           <p>{job.salaryrange}</p> {/* Add SalaryRange for more details */}
         </div>
       </div>

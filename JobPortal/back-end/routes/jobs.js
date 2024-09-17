@@ -6,7 +6,7 @@ router.post('/joblistings', async (req, res) => {
   const {
     user_id,
     jobtitle_id,
-    Industry,
+    industry_id,
     SalaryRange,
     JobType,
     Responsibilities,
@@ -27,11 +27,11 @@ router.post('/joblistings', async (req, res) => {
     // Insert the job listing data into the joblistings table
     const newJobResult = await pool.query(
       `INSERT INTO joblistings (
-        user_id, jobtitle_id, industry, salaryrange, jobtype, responsibilities, jobdescription, qualifications
+        user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING job_id`,
-      [user_id, jobtitle_id, Industry, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications]
+      [user_id, jobtitle_id, industry_id, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications]
     );
 
     const job_id = newJobResult.rows[0].job_id;
@@ -62,10 +62,11 @@ router.get('/postedjobs', async (req, res) => {
       SELECT 
         joblistings.job_id, 
         job_titles.job_title, 
-        joblistings.industry, 
+        industries.industry_name, 
         joblistings.salaryrange
       FROM joblistings
       JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
+      JOIN industries ON joblistings.industry_id = industries.industry_id
     `);
     
     res.json(result.rows);
@@ -78,10 +79,11 @@ router.get('/postedjobs', async (req, res) => {
 router.get('/joblistings/:jobId', async (req, res) => {
   const { jobId } = req.params;
   const jobQuery = `
-    SELECT jl.*, jt.job_title, ep.company_name
+    SELECT jl.*, jt.job_title, ep.company_name, i.industry_name
     FROM joblistings jl
     JOIN job_titles jt ON jl.Jobtitle_id = jt.jobtitle_id
     JOIN emp_profiles ep ON jl.user_id = ep.user_id
+	  JOIN industries i ON jl.industry_id = i.industry_id
     WHERE jl.job_id = $1;
   `;
   const skillsQuery = `

@@ -72,10 +72,10 @@ CREATE TABLE js_skills (
 CREATE TABLE joblistings (
     job_id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
-    Jobtitle_id INTEGER NOT NULL,
-    Industry VARCHAR(255) NOT NULL,
-    SalaryRange VARCHAR(20) CHECK (
-        SalaryRange IN (
+    jobtitle_id INTEGER,
+    industry_id INTEGER,  -- Assuming industry_id is INTEGER in industries table
+    salaryrange VARCHAR(20) CHECK (
+        salaryrange IN (
             'Below 15000', 
             '15001-25000', 
             '25001-35000', 
@@ -85,16 +85,19 @@ CREATE TABLE joblistings (
             'Above 100000'
         )
     ),
-    JobType VARCHAR(20) CHECK (
-        JobType IN ('Full-time', 'Part-time', 'Work from Home')
+    jobtype VARCHAR(20) CHECK (
+        jobtype IN ('Full-time', 'Part-time', 'Work from Home')
     ),
-    Responsibilities TEXT,
-    JobDescription TEXT,
-    Qualifications TEXT,
-    DateCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    DateFilled TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (jobtitle_id) REFERENCES job_titles(jobtitle_id));
+    responsibilities TEXT,
+    jobdescription TEXT,
+    qualifications TEXT,
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_filled TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (jobtitle_id) REFERENCES job_titles(jobtitle_id) ON DELETE CASCADE,
+    FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
+);
+
 
 
 CREATE TABLE job_skills (

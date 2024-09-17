@@ -11,7 +11,8 @@ const JobPosting = () => {
   const [jobDescription, setJobDescription] = useState(""); // Updated from requirements
   const [qualifications, setQualifications] = useState("");
   const [jobTitle, setJobTitle] = useState(''); // Changed to null initially
-  const [industry, setIndustry] = useState(""); // Updated from location
+  const [industry, setIndustry] = useState(null);
+  const [industryOptions, setIndustryOptions] = useState([]); 
   const [salaryRange, setSalaryRange] = useState("");
   const [skills, setSkills] = useState([]); // Changed to an empty array initially
   const [availableSkills, setAvailableSkills] = useState([]);
@@ -56,8 +57,25 @@ const JobPosting = () => {
       }
     };    
 
+    const fetchIndustries = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/industries');
+        if (!response.ok) throw new Error('Failed to fetch industries');
+        const data = await response.json();
+        const industryOptions = data.map(industry => ({
+          value: industry.industry_id,
+          label: industry.industry_name,
+        }));
+        setIndustryOptions(industryOptions);
+      } catch (error) {
+        console.error('Error fetching industries:', error);
+        setError('Failed to load industries.');
+      }
+    };
+
     fetchSkills();
     fetchJobTitles();
+    fetchIndustries();
   }, []);
 
   const handleSkillChange = (index, selectedOption) => {
@@ -104,7 +122,7 @@ const JobPosting = () => {
     const jobData = {
       user_id: user_id,
       jobtitle_id: jobTitle?.value || '', // Get the value from the selected job title object
-      Industry: industry,
+      industry_id: industry?.value || '',
       SalaryRange: salaryRange,
       skills: skills.map(skill => skill?.value || ''), 
       Responsibilities: responsibilities,
@@ -167,16 +185,17 @@ const JobPosting = () => {
             />
           </div>
           <div className="mb-3">
-            <label htmlFor="industry" className="form-label">Industry</label>
-            <input
-              type="text"
-              id="industry"
-              className="form-control"
-              placeholder="Enter industry"
-              value={industry}
-              onChange={(e) => setIndustry(e.target.value)}
-            />
-          </div>
+          <label htmlFor="industry" className="form-label">Industry *</label>
+          <Select
+            id="industry"
+            options={industryOptions}
+            value={industry}
+            onChange={setIndustry}
+            placeholder="Select Industry"
+            isClearable
+            required
+          />
+        </div>
           <div className="mb-3">
             <label htmlFor="salaryRange" className="form-label">Salary Range</label>
             <select
