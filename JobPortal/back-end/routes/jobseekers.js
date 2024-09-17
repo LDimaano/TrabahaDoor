@@ -107,9 +107,10 @@ router.get('/job-seeker/:userId', async (req, res) => {
 
     // Query job seeker data with address location
     const jobSeekerData = await pool.query(`
-      SELECT js.full_name, js.email, js.phone_number, js.date_of_birth, js.gender, a.location as address
+      SELECT js.full_name, js.email, js.phone_number, js.date_of_birth, js.gender, js.address_id, a.location, js.industry_id, i.industry_name
       FROM job_seekers js
       LEFT JOIN address a ON js.address_id = a.address_id
+      LEFT JOIN industries i ON js.industry_id = i.industry_id
       WHERE js.user_id = $1
     `, [userId]);
 
@@ -150,7 +151,8 @@ router.get('/job-seeker/:userId', async (req, res) => {
         phone_number: jobSeeker.phone_number || 'Not Provided',
         date_of_birth: jobSeeker.date_of_birth ? new Date(jobSeeker.date_of_birth).toLocaleDateString() : null,
         gender: jobSeeker.gender || 'Not Specified',
-        address: jobSeeker.address || 'Address not provided',
+        address: jobSeeker.location || 'Address not provided',
+        industry: jobSeeker.industry_name || 'Industry not provided',
         job_title: jobTitle // Set the job title from the first job experience
       },
       jobExperience: jobExperiences, // Return all job experiences

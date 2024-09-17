@@ -7,6 +7,7 @@ const PersonalInfo = ({ data }) => (
     <p><strong>Date of Birth:</strong> {data.dateOfBirth}</p>
     <p><strong>Gender:</strong> {data.gender}</p>
     <p><strong>Address:</strong> {data.address}</p>
+    <p><strong>Industry:</strong> {data.industry}</p>
   </div>
 );
 
