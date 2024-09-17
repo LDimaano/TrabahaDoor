@@ -21,12 +21,13 @@ CREATE TABLE emp_profiles (
     contact_number VARCHAR(20),
     email VARCHAR(255) UNIQUE,
     website VARCHAR(255),
-    industry VARCHAR(255),
+    industry_id INT,
     company_address TEXT,
     company_size VARCHAR(50),
     founded_year INTEGER,
     description TEXT,
-    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
+    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE; 
 );
 
 

@@ -79,7 +79,7 @@ function Header() {
     };
 
     const handleProfileClick = () => {
-        navigate('/applicantlist'); // Use absolute path
+        navigate('/emp_myprofile'); // Use absolute path
     };
 
     const handleViewAllClick = () => {
@@ -152,14 +152,14 @@ function Header() {
                 </div>
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav ms-auto d-flex align-items-center">
-                        <li className="nav-item mx-3 position-relative">
-                            <Link to="/jobs" className={getNavLinkClass('/jobs')}>
-                                <i className="fas fa-briefcase fa-lg" style={{ color: '#6c757d' }}></i>
-                            </Link>
-                            {location.pathname === '/jobs' && (
-                                <div style={activeBarStyle} />
-                            )}
-                        </li>
+                    <li className="nav-item mx-3 position-relative">
+                        <Link to="/applicantlist" className={getNavLinkClass('/applicantlist')}>
+                        <i className="fas fa-briefcase fa-lg" style={{ color: '#6c757d' }}></i>
+                        </Link>
+                    {location.pathname === '/applicantlist' && (
+                <div style={activeBarStyle} />
+                    )}
+                    </li>
                         <li className="nav-item mx-3 position-relative">
                             <button
                                 className="btn btn-link"
@@ -203,7 +203,7 @@ function Header() {
                             >
                                 <i className="fas fa-user fa-lg" style={{ color: '#6c757d' }}></i>
                             </button>
-                            {location.pathname === '/applicantlist' && (
+                            {location.pathname === '/emp_myprofile' && (
                                 <div style={activeBarStyle} />
                             )}
                         </li>
