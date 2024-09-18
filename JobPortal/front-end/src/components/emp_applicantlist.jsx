@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function ApplicantJoblist({ currentListings }) {
+function ApplicantJoblist({ currentListings, onHiringStageChange, hiringStages }) {
   const navigate = useNavigate();
 
   const handleSeeApplication = (user_id) => {
@@ -22,9 +22,6 @@ function ApplicantJoblist({ currentListings }) {
         </thead>
         <tbody>
           {currentListings.map((listing) => {
-            // Debugging: log the entire listing object to check its structure
-            console.log("Listing data:", listing);
-
             return (
               <tr key={listing.user_id}>
                 <td>
@@ -37,7 +34,55 @@ function ApplicantJoblist({ currentListings }) {
                   {listing.full_name}
                 </td>
                 <td>
-                  {/* Add the hiring stage if available */}
+                  {/* Bootstrap CSS Dropdown */}
+                  <div className="dropdown">
+                    <button
+                      className="btn btn-secondary dropdown-toggle"
+                      type="button"
+                      id={`dropdownMenuButton-${listing.user_id}`}
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      {hiringStages[listing.user_id] || 'Received'}
+                    </button>
+                    <ul
+                      className="dropdown-menu"
+                      aria-labelledby={`dropdownMenuButton-${listing.user_id}`}
+                    >
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={() => onHiringStageChange(listing.user_id, 'Received')}
+                        >
+                          Received
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={() => onHiringStageChange(listing.user_id, 'In review')}
+                        >
+                          In review
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={() => onHiringStageChange(listing.user_id, 'For interview')}
+                        >
+                          For interview
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={() => onHiringStageChange(listing.user_id, 'Filled')}
+                        >
+                          Filled
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
                 </td>
                 <td>{new Date(listing.date_applied).toLocaleDateString()}</td>
                 <td>{listing.additional_info}</td>

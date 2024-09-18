@@ -16,6 +16,16 @@ const ApplicantDashboard = () => {
   const [listingsPerPage, setListingsPerPage] = useState(10);
   const [error, setError] = useState(null);
 
+  const [hiringStages, setHiringStages] = useState({});
+
+    const handleHiringStageChange = (userId, newStage) => {
+      setHiringStages((prevStages) => ({
+        ...prevStages,
+        [userId]: newStage,
+      }));
+    };
+
+
   const handleBack = () => {
     navigate(-1); 
   };
@@ -103,7 +113,12 @@ const ApplicantDashboard = () => {
               </button>
             </div>
           </div>
-          <ApplicantJoblist currentListings={currentListings} />
+          <ApplicantJoblist 
+              currentListings={currentListings}
+              hiringStages={hiringStages}
+              onHiringStageChange={handleHiringStageChange}
+            />
+
           <Pagination listingsPerPage={listingsPerPage} totalListings={filteredListings.length} paginate={paginate} currentPage={currentPage} />
         </section>
       </main>

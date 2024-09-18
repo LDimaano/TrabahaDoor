@@ -91,8 +91,8 @@ CREATE TABLE joblistings (
     responsibilities TEXT,
     jobdescription TEXT,
     qualifications TEXT,
-    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    date_filled TIMESTAMP,
+    datecreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    datefilled TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (jobtitle_id) REFERENCES job_titles(jobtitle_id) ON DELETE CASCADE,
     FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
