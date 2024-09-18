@@ -40,11 +40,17 @@ const ApplicantDashboard = () => {
           },
           credentials: 'include', 
         });
-
+  
+        if (response.status === 404) {
+          // Handle 404 status differently (e.g., do nothing)
+          console.log('No applicants found (404).');
+          return;
+        }
+  
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+  
         const data = await response.json();
         setJobs(data);
       } catch (error) {
@@ -52,12 +58,12 @@ const ApplicantDashboard = () => {
         console.error('Error fetching applicants:', error);
       }
     };
-
+  
     if (jobId) { // Ensure jobId exists before fetching
       fetchApplicants();
     }
   }, [jobId]); // Re-run effect when jobId changes
-
+  
   if (error) {
     return <div>Error: {error}</div>;
   }

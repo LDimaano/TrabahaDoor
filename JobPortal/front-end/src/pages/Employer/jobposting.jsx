@@ -144,7 +144,7 @@ const JobPosting = () => {
       // Check if the response is successful
       if (response.ok) {
         alert('Job posted successfully!');
-        navigate('/applicantlist'); // Navigate to another page upon success
+        navigate('/applicant_joblisting'); // Navigate to another page upon success
       } else {
         // Handle server response errors
         alert('Failed to post job. Please try again.');
