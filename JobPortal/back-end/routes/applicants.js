@@ -124,7 +124,8 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
         date_of_birth: jobSeeker.date_of_birth ? new Date(jobSeeker.date_of_birth).toLocaleDateString() : null,
         gender: jobSeeker.gender || 'Not Specified',
         address: jobSeeker.location|| 'Address not provided',
-        industry: jobSeeker.industry_name|| 'Address not provided',
+        industry: jobSeeker.industry_name || 'Industry not provided',
+        image: jobSeeker.profile_picture_url  || 'No Image',
         job_title: jobTitle
       },
       jobExperience: jobExperiences,
