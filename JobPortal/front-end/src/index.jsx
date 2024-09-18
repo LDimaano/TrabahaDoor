@@ -18,10 +18,15 @@ import Notifications from './pages/Jobseeker/js_notifications';
 import EmpProfile from './pages/Employer/emp_profile'; 
 import ApplicantJoblisting from './pages/Employer/applicant_joblisting'; 
 import ApplicantProfile from './pages/Employer/applicant_profile'; 
-import DashboardAnalytics from './pages/Admin/admindashboard';
+
 import EmpNotifications from './pages/Employer/emp_notifications';
 import EmpMyProfile from './pages/Employer/emp_myprofile';
 
+import DashboardAnalytics from './pages/Admin/admindashboard';
+import AdminEmployer from './pages/Admin/admin_employers';
+import AdminApplicants from './pages/Admin/admin_applicants';
+import AdminJobs from './pages/Admin/admin_joblistings';
+import AdminUsers from './pages/Admin/admin_users';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -47,6 +52,10 @@ root.render(
         <Route path="/applicant_joblisting" element={<ApplicantJoblisting />} /> 
         <Route path="/applicant_profile/:user_id" element={<ApplicantProfile />} /> 
         <Route path="/admindashboard" element={<DashboardAnalytics />} /> 
+        <Route path="/admin_employers" element={<AdminEmployer />} /> 
+        <Route path="/admin_applicants" element={<AdminApplicants />} /> 
+        <Route path="/admin_joblistings" element={<AdminJobs />} /> 
+        <Route path="/admin_users" element={<AdminUsers />} /> 
         <Route path="/emp_notifications" element={<EmpNotifications />} /> 
         <Route path="/emp_myprofile" element={<EmpMyProfile />} /> 
       </Routes>
