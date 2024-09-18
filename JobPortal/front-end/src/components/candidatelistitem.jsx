@@ -17,13 +17,13 @@ function ApplicantListItem({ applicant }) {
   return (
     <li className="list-group-item d-flex justify-content-between align-items-center">
       <div className="d-flex">
-        <img
-          src={applicant.profilePicture}
-          alt={`${applicant.full_name} profile`}
-          width="50"
-          height="50"
-          className="me-3"
-        />
+      <img
+        src={applicant.profile_picture_url}
+        alt={`${applicant.full_name} profile`}
+        className="rounded-circle me-3"
+        width="50"
+        height="50"
+      />
         <div>
           <h5>{applicant.full_name}</h5>
           <p>{applicant.job_title || 'Job title not available'}</p> {/* Correct field access */}
