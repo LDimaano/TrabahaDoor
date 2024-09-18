@@ -12,10 +12,10 @@ const ApplicantCard = ({ applicant }) => {
     <aside className="bg-white p-4 border rounded">
       <header className="d-flex align-items-center mb-3">
         <img
-          src={applicant.image} 
+          src={applicant.image}
           alt="Profile"
-          className="img-fluid rounded-circle"
-          style={{ width: '150px', height: '150px' }}
+          className="img-fluid rounded-circle me-3" // Added Bootstrap margin-end class
+          style={{ width: '120px', height: '120px' }}
         />
         <div>
           <h2 className="mb-0">{applicant.name}</h2>
