@@ -45,7 +45,7 @@ const MyProfile = () => {
         setApplicantData({
           name: data.jobSeeker.full_name || 'Not Provided',
           profession: data.jobSeeker.job_title || 'Not Specified',
-          image: 'https://cdn.builder.io/api/v1/image/assets/TEMP/3abeed5f2de2d8df2f096ae96cc50be8ac71d626c31b3c38ffa0141113466826', // Placeholder or actual image URL
+          image: data.jobSeeker.image,
           email: data.jobSeeker.email || 'Not Provided',
           phone: data.jobSeeker.phone_number || 'Not Provided',
         });
@@ -58,6 +58,7 @@ const MyProfile = () => {
             : 'Not Provided',
           gender: data.jobSeeker.gender || 'Not Specified',
           address: data.jobSeeker.address || 'Address not provided',
+          industry: data.jobSeeker.industry|| 'Industry not provided',
         });
 
         // Handle professional data
