@@ -21,23 +21,32 @@ const ApplicantDashboard = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'include', 
+          credentials: 'include',
         });
-
+  
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+  
         const data = await response.json();
-        setJobs(data);
+        
+        // Check if there are no jobs
+        if (data.length === 0) {
+          // Optionally handle no jobs here, e.g., redirect or set a default state
+          setJobs([]); // Or handle it as needed
+        } else {
+          setJobs(data);
+        }
+        
       } catch (error) {
-        setError(error.message);
+        // Handle other errors that are not related to empty job listings
         console.error('Error fetching job listings:', error);
       }
     };
-
+  
     fetchJobs();
   }, []);
+  
 
   if (error) {
     return <div>Error: {error}</div>;

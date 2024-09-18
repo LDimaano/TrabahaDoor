@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBuilding, faUserFriends, faClipboardList, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faUserFriends, faClipboardList, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
   const [company_name, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
+  const [profile_picture_url, setProfilePictureUrl] = useState('');
 
   useEffect(() => {
     const fetchCompanyInfo = async () => {
@@ -23,6 +24,7 @@ const Sidebar = () => {
           
           setCompanyName(data.company_name || '');
           setEmail(data.email || '');
+          setProfilePictureUrl(data.profile_picture_url || '');
         } else {
           console.error('Failed to fetch company information:', response.statusText);
         }
@@ -71,9 +73,9 @@ const Sidebar = () => {
       <nav className="flex-grow-1">
         <ul className="nav flex-column">
           <li className="nav-item">
-            <a href="/applicant_profile" className="nav-link text-white">
-              <FontAwesomeIcon icon={faBuilding} className="me-2" />
-              Profile
+            <a href="/home_employer" className="nav-link text-white">
+              <FontAwesomeIcon icon={faHome} className="me-2" />
+              Home
             </a>
           </li>
           <li className="nav-item active">
@@ -92,7 +94,7 @@ const Sidebar = () => {
       </nav>
       <div className="mt-4 text-center text-white" style={{ position: 'absolute', bottom: '80px', left: '0', right: '0' }}>
         <img
-          src={`${process.env.PUBLIC_URL}/assets/profile.png`}
+          src={profile_picture_url}
           alt="User Avatar"
           className="img-fluid rounded-circle"
           style={{ width: '50px', borderRadius: '50%' }}
@@ -102,9 +104,21 @@ const Sidebar = () => {
           <small>{email}</small>
         </div>
       </div>
-      <button onClick={handleLogout} className="btn btn-danger mt-auto" style={{ position: 'absolute', bottom: '20px', left: '0', right: '0' }}>
+      <button
+        onClick={handleLogout}
+        className="btn btn-danger mt-auto"
+        style={{
+          position: 'absolute',
+          bottom: '20px',
+          left: '0',
+          right: '0',
+          backgroundColor: 'transparent',
+          border: 'none', // Optional: to remove the default border
+          color: 'white', // Change this to your desired text color
+        }}
+      >
         <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
-        Logout
+          Logout
       </button>
     </aside>
   );

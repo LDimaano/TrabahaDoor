@@ -72,18 +72,24 @@ router.get('/user-infoemp', async (req, res) => {
   try {
     // Use a join to fetch company_name from emp_profiles and email from users
     const result = await pool.query(
-      `SELECT emp_profiles.company_name, users.email, emp_profiles.contact_person
+      `
+       SELECT emp_profiles.company_name, 
+	      users.email, 
+	      emp_profiles.contact_person,
+	      pp.profile_picture_url
        FROM emp_profiles 
        JOIN users ON emp_profiles.user_id = users.user_id 
-       WHERE emp_profiles.user_id = $1`,
+	     JOIN profilepictures pp ON users.user_id = pp.user_id
+       WHERE emp_profiles.user_id = $1
+       `,
       [userId]
     );
 
     console.log('Database query result:', result.rows);
 
     if (result.rows.length > 0) {
-      const { company_name, email, contact_person } = result.rows[0]; // Destructure company_name and email
-      res.json({ company_name, email, contact_person }); // Send both company_name and email in the response
+      const { company_name, email, contact_person, profile_picture_url } = result.rows[0]; // Destructure company_name and email
+      res.json({ company_name, email, contact_person, profile_picture_url }); // Send both company_name and email in the response
     } else {
       res.status(404).json({ message: 'User not found' });
     }
