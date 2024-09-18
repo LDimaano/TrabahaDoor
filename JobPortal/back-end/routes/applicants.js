@@ -139,6 +139,48 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
   }
 });
 
+//fetching applied applicants
+router.get('/appliedapplicants/:jobId', async (req, res) => {
+  console.log('Session data:', req.session);
+
+  if (!req.session.user) {
+    return res.status(403).json({ message: 'Not authenticated' });
+  }
+  const jobId = req.params.jobId; // Fetch jobId from route parameter
+  console.log('Job ID from params:', jobId);
+
+  try {
+    const result = await pool.query(
+      `SELECT 
+        a.application_id,
+        a.job_id,
+        a.user_id,
+        a.full_name,
+        a.email,
+        a.additional_info,
+        a.date_applied,
+        pp.profile_picture_url,
+        j.job_title
+      FROM applications a
+      JOIN profilepictures pp ON a.user_id = pp.user_id
+      JOIN joblistings jl ON a.job_id = jl.job_id
+      JOIN job_titles j ON jl.jobtitle_id = j.jobtitle_id
+      WHERE a.job_id = $1`,
+      [jobId] // Pass jobId as parameters
+    );
+
+    console.log('Applicants query result:', result.rows);
+
+    if (result.rows.length > 0) {
+      res.json(result.rows);
+    } else {
+      res.status(404).json({ message: 'No Applicants found for this job listing' });
+    }
+  } catch (error) {
+    console.error('Error fetching applicants:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 
 

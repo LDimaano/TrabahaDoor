@@ -4,9 +4,12 @@ import { useNavigate } from 'react-router-dom';
 function ApplicantJoblist({ currentListings }) {
   const navigate = useNavigate();
 
+  // Function to navigate to the job description page using jobId
   const handleApplyClick = (jobId) => {
-    // Navigate to the job description page with dynamic job ID
-    navigate(`/jobdescription/${jobId}`);
+    navigate(`/emp_jobdescription/${jobId}`);
+  };
+  const handleSeeApplicants = (jobId) => {
+    navigate(`/applicantlist/${jobId}`);
   };
 
   return (
@@ -16,26 +19,43 @@ function ApplicantJoblist({ currentListings }) {
           <tr>
             <th>Job Title</th>
             <th>Date Created</th>
-            <th>Action</th>
+            <th>View Applicants</th>
+            <th>View Joblisting</th>
           </tr>
         </thead>
         <tbody>
-          {currentListings.map((listing) => (
-            <tr>
-              <td>{listing.job_title}</td>
-              <td>{new Date(listing.datecreated).toLocaleDateString()}</td>
+          {currentListings.map((listing) => {
+            // Debugging: log the entire listing object to check its structure
+            console.log("Listing data:", listing);
 
-              <td>
-                <button className="btn btn-primary" onClick={() => handleApplyClick(listing.job_id)}>
-                  See Application
-                </button>
-              </td>
-            </tr>
-          ))}
+            return (
+              <tr key={listing.job_id || listing.jobId}>
+                <td>{listing.job_title}</td>
+                <td>{new Date(listing.datecreated).toLocaleDateString()}</td>
+                <td>
+                <button 
+                    className="btn btn-primary" 
+                    onClick={() => handleSeeApplicants(listing.job_id || listing.jobId)}
+                  >
+                    See applicants
+                  </button>
+                </td>
+                <td>
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={() => handleApplyClick(listing.job_id || listing.jobId)}
+                  >
+                    See joblisting
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
   );
-};
+}
 
 export default ApplicantJoblist;
+  

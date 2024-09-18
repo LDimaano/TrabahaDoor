@@ -163,9 +163,11 @@ router.get('/joblistings', async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT 
+      `
+      SELECT 
           jl.datecreated,
-          jt.job_title
+          jt.job_title,
+		  jl.job_id
        FROM 
           joblistings jl
        JOIN 
@@ -173,7 +175,8 @@ router.get('/joblistings', async (req, res) => {
        ON 
           jl.jobtitle_id = jt.jobtitle_id
        WHERE 
-          jl.user_id = $1`,
+          jl.user_id = $1
+          `,
       [userId]
     );
 

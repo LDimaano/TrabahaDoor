@@ -10,6 +10,7 @@ import EmployerProfileCreation from './pages/Employer/e_profilecreation';
 import JobPostingForm from './pages/Employer/jobposting'; 
 import HomeJobseeker from './pages/Jobseeker/home_jobseeker';
 import Jobdescription from './pages/Jobseeker/jobdescription';
+import EmpJobdescription from './pages/Employer/emp_jobdescription';
 import ApplicantList from './pages/Employer/applicantlist';
 import Applicantdetails from './pages/Employer/appdetails';
 import HomeEmployer from './pages/Employer/home_employer';
@@ -43,8 +44,9 @@ root.render(
         <Route path="/jobposting" element={<JobPostingForm />} />
         <Route path="/home_jobseeker" element={<HomeJobseeker />} />
         <Route path="/jobdescription/:jobId" element={<Jobdescription />} />
+        <Route path="/emp_jobdescription/:jobId" element={<EmpJobdescription />} />
         <Route path="/js_myprofile" element={<MyProfile />} />
-        <Route path="/applicantlist" element={<ApplicantList />} />
+        <Route path="/applicantlist/:jobId" element={<ApplicantList />} />
         <Route path="/appdetails" element={<Applicantdetails />} /> 
         <Route path="/home_employer" element={<HomeEmployer />} /> 
         <Route path="/js_notifications" element={<Notifications />} /> 

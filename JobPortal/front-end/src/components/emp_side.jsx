@@ -78,12 +78,6 @@ const Sidebar = () => {
               Home
             </a>
           </li>
-          <li className="nav-item active">
-            <a href="/applicantlist" className="nav-link text-white">
-              <FontAwesomeIcon icon={faUserFriends} className="me-2" />
-              All Applicants
-            </a>
-          </li>
           <li className="nav-item">
             <a href="/applicant_joblisting" className="nav-link text-white">
               <FontAwesomeIcon icon={faClipboardList} className="me-2" />
