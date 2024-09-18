@@ -1,13 +1,14 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons'; // Import the faUser icon
+import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons'; // Import the faBuilding icon for All Employers
 
 const SideBar = () => {
   const menuItems = [
-    { icon: faTachometerAlt, caption: "Dashboard" },
-    { icon: faUsers, caption: "All Applicants", active: true },
-    { icon: faBriefcase, caption: "Job Listing" },
-    { icon: faUser, caption: "All Users" }, // Added All Users menu item
+    { icon: faTachometerAlt, caption: "Dashboard", link: "/admin_dashboard" },
+    { icon: faBuilding, caption: "All Employers", link: "/admin_employers" }, // Updated link for All Employers
+    { icon: faUsers, caption: "All Applicants", link: "/admin_applicants", active: true },
+    { icon: faBriefcase, caption: "Job Listing", link: "/admin_joblistings" }, // Updated link for Job Listings
+    { icon: faUser, caption: "All Users", link: "/admin_users" } // Updated link for All Users
   ];
 
   const handleLogout = () => {
@@ -34,7 +35,7 @@ const SideBar = () => {
         <ul className="nav flex-column">
           {menuItems.map((item, index) => (
             <li key={index} className={`nav-item ${item.active ? 'active' : ''}`}>
-              <a href={`/${item.caption.replace(/\s+/g, '').toLowerCase()}`} className="nav-link text-white">
+              <a href={item.link} className="nav-link text-white">
                 <FontAwesomeIcon icon={item.icon} className="me-2" />
                 {item.caption}
               </a>
