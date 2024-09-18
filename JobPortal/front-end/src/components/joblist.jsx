@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import JobListItem from './joblistitem';
 
-function JobList() {
+function JobList({ filters, searchQuery }) {
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/jobs/postedjobs') // Make sure this matches your backend route
+    fetch('http://localhost:5000/api/jobs/postedjobs')
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -17,11 +17,37 @@ function JobList() {
       })
       .catch((error) => console.error('Error fetching job listings:', error));
   }, []);
-  
+
+  const applyFilters = (jobs) => {
+    const { employmentTypes, salaryRanges } = filters;
+    const employmentTypesLower = employmentTypes.map(type => type.toLowerCase());
+    const salaryRangesLower = salaryRanges.map(range => range.toLowerCase());
+
+    return jobs.filter(job => {
+      const jobEmploymentType = job.employmentType ? job.employmentType.toLowerCase() : '';
+      const jobSalaryRange = job.salaryrange ? job.salaryrange.toLowerCase() : ''; // Match salaryrange
+
+      return (
+        (employmentTypesLower.length === 0 || employmentTypesLower.includes(jobEmploymentType)) &&
+        (salaryRangesLower.length === 0 || salaryRangesLower.includes(jobSalaryRange))
+      );
+    });
+  };
+
+  const applySearch = (jobs) => {
+    if (!searchQuery) return jobs;
+    return jobs.filter(job =>
+      (job.job_title && job.job_title.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (job.industry_name && job.industry_name.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+  };
+
+  const filteredJobs = applyFilters(jobs);
+  const searchedJobs = applySearch(filteredJobs);
 
   return (
     <ul className="list-group">
-      {jobs.map((job) => (
+      {searchedJobs.map((job) => (
         <JobListItem key={job.job_id} job={job} />
       ))}
     </ul>

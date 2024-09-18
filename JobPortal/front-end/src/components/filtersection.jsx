@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import FilterGroup from './filtergroup';
 
-function FilterSection() {
+function FilterSection({ onFilterChange }) {
+  const [selectedEmploymentTypes, setSelectedEmploymentTypes] = useState([]);
+  const [selectedSalaryRanges, setSelectedSalaryRanges] = useState([]);
+
   const employmentTypes = ['Full-time', 'Part-Time', 'Work from Home'];
   const salaryRanges = [
     'Below 15000',
@@ -13,10 +16,30 @@ function FilterSection() {
     'Above 100000'
   ];
 
+  const handleEmploymentTypeChange = (selectedItems) => {
+    setSelectedEmploymentTypes(selectedItems);
+    onFilterChange('employmentTypes', selectedItems);
+  };
+
+  const handleSalaryRangeChange = (selectedItems) => {
+    setSelectedSalaryRanges(selectedItems);
+    onFilterChange('salaryRanges', selectedItems);
+  };
+
   return (
     <div className="col-md-6"> {/* Adjusted to col-md-6 for more space */}
-      <FilterGroup title="Employment Type" items={employmentTypes} />
-      <FilterGroup title="Salary Range" items={salaryRanges} />
+      <FilterGroup
+        title="Employment Type"
+        items={employmentTypes}
+        selectedItems={selectedEmploymentTypes}
+        onChange={handleEmploymentTypeChange}
+      />
+      <FilterGroup
+        title="Salary Range"
+        items={salaryRanges}
+        selectedItems={selectedSalaryRanges}
+        onChange={handleSalaryRangeChange}
+      />
     </div>
   );
 }

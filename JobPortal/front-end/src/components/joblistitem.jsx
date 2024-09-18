@@ -5,7 +5,6 @@ function JobListItem({ job }) {
   const navigate = useNavigate();
 
   const handleApplyClick = () => {
-    // Navigate to the job description page with dynamic job ID
     navigate(`/jobdescription/${job.job_id}`);
   };
   
@@ -22,7 +21,7 @@ function JobListItem({ job }) {
         <div>
           <h5>{job.job_title}</h5>
           <p>{job.industry_name}</p>
-          <p>{job.salaryrange}</p> {/* Add SalaryRange for more details */}
+          <p>{job.salaryrange}</p> {/* Display Salary Range */}
         </div>
       </div>
       <button className="btn btn-primary" onClick={handleApplyClick}>
