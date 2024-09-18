@@ -49,7 +49,7 @@ const MyProfile = () => {
           company_address: data.employer.company_address || 'Not Provided',
           industry: data.employer.industry || 'Not Provided',
           company_size: data.employer.company_size || 'Not Provided',
-          founded_year: data.employer.foundedyear || 'Not Provided',
+          founded_year: data.employer.foundedYear || 'Not Provided',
           description: data.employer.description || 'Not Provided'
         };
         setCompanyData(newCompanyData);

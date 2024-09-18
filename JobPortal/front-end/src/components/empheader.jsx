@@ -153,7 +153,7 @@ function Header() {
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav ms-auto d-flex align-items-center">
                     <li className="nav-item mx-3 position-relative">
-                        <Link to="/applicantlist" className={getNavLinkClass('/applicantlist')}>
+                        <Link to="/applicant_joblisting" className={getNavLinkClass('/applicant_joblisting')}>
                         <i className="fas fa-briefcase fa-lg" style={{ color: '#6c757d' }}></i>
                         </Link>
                     {location.pathname === '/applicantlist' && (

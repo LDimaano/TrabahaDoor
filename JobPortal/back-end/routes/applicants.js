@@ -56,7 +56,7 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
     const jobSeekerData = await pool.query(`
        SELECT 
         js.full_name, 
-        js.email, 
+        u.email, 
         js.phone_number, 
         js.date_of_birth, 
         js.gender, 
@@ -69,6 +69,7 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
       LEFT JOIN address a ON js.address_id = a.address_id
       LEFT JOIN industries i ON js.industry_id = i.industry_id
       LEFT JOIN profilepictures pp ON js.user_id = pp.user_id
+	    JOIN users u ON js.user_id = u.user_id
       WHERE js.user_id = $1
     `, [user_id]);
 

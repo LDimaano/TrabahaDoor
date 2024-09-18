@@ -13,11 +13,11 @@ function JobListItem({ job }) {
     <li className="list-group-item d-flex justify-content-between align-items-center">
       <div className="d-flex">
         <img
-          src={job.logo || 'default-logo-url.png'}
+          src={job.profile_picture_url || 'default-logo-url.png'}
           alt={`${job.industry_name} logo`}
+          className="rounded-circle me-3"
           width="50"
           height="50"
-          className="me-3"
         />
         <div>
           <h5>{job.job_title}</h5>

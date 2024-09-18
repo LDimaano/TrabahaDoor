@@ -33,7 +33,7 @@ const JobDescription = () => {
       <section className="row mb-5">
         <div className="col-md-8 d-flex align-items-center">
           <img
-            src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+            src={jobData.profile_picture_url}
             alt={`${jobData.company_name} logo`}
             width="100"
             height="100"

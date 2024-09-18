@@ -63,10 +63,12 @@ router.get('/postedjobs', async (req, res) => {
         joblistings.job_id, 
         job_titles.job_title, 
         industries.industry_name, 
-        joblistings.salaryrange
+        joblistings.salaryrange,
+		    pp.profile_picture_url
       FROM joblistings
       JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
       JOIN industries ON joblistings.industry_id = industries.industry_id
+	    JOIN profilepictures pp ON joblistings.user_id = pp.user_id
     `);
     
     res.json(result.rows);
@@ -78,32 +80,43 @@ router.get('/postedjobs', async (req, res) => {
 
 router.get('/joblistings/:jobId', async (req, res) => {
   const { jobId } = req.params;
+  console.log(`Fetching job details for Job ID: ${jobId}`);
+
   const jobQuery = `
-    SELECT jl.*, jt.job_title, ep.company_name, i.industry_name
+    SELECT jl.*, jt.job_title, ep.company_name, i.industry_name, pp.profile_picture_url
     FROM joblistings jl
     JOIN job_titles jt ON jl.Jobtitle_id = jt.jobtitle_id
     JOIN emp_profiles ep ON jl.user_id = ep.user_id
-	  JOIN industries i ON jl.industry_id = i.industry_id
+    JOIN industries i ON jl.industry_id = i.industry_id
+    JOIN profilepictures pp ON jl.user_id = pp.user_id
     WHERE jl.job_id = $1;
   `;
+
   const skillsQuery = `
     SELECT s.skill_name
     FROM job_skills js
     JOIN skills s ON js.skill_id = s.skill_id
     WHERE js.job_id = $1;
   `;
-  
+
   try {
+    console.log('Executing job query...');
     const jobResult = await pool.query(jobQuery, [jobId]);
-    const skillsResult = await pool.query(skillsQuery, [jobId]);
-    
+    console.log('Job query result:', jobResult.rows);
+
     if (jobResult.rows.length === 0) {
+      console.warn(`Job not found for Job ID: ${jobId}`);
       return res.status(404).json({ error: 'Job not found' });
     }
-    
+
+    console.log('Executing skills query...');
+    const skillsResult = await pool.query(skillsQuery, [jobId]);
+    console.log('Skills query result:', skillsResult.rows);
+
     const jobData = jobResult.rows[0];
     const skills = skillsResult.rows.map(row => row.skill_name);
     
+    console.log('Responding with job data and skills:', { ...jobData, skills });
     res.json({ ...jobData, skills });
   } catch (error) {
     console.error('Error fetching job details:', error);
