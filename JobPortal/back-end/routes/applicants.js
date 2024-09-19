@@ -157,6 +157,7 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
         a.user_id,
         a.full_name,
         a.email,
+        a.phone_nummber,
         a.additional_info,
         a.date_applied,
         pp.profile_picture_url,

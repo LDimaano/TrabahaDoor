@@ -1,14 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState({});
 
   const handleSeeApplication = (user_id) => {
+    // This navigates to a new page
     navigate(`/applicant_profile/${user_id}`);
   };
+
+  const openModal = (listing) => {
+    setModalData(listing);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => setIsModalOpen(false);
 
   const handleStageChangeInJoblist = async (userId, newStage) => {
     try {
@@ -84,19 +94,49 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
                 </div>
               </td>
               <td>{new Date(listing.date_applied).toLocaleDateString()}</td>
-              <td>{listing.additional_info}</td>
+              <td>
+                <button
+                  className="btn btn-outline-primary"
+                  onClick={() => openModal(listing)}
+                >
+                  <FontAwesomeIcon icon={faEye} /> View
+                </button>
+              </td>
               <td>
                 <button
                   className="btn btn-outline-primary"
                   onClick={() => handleSeeApplication(listing.user_id)}
                 >
-               <FontAwesomeIcon icon={faEye} />   View 
+                  <FontAwesomeIcon icon={faEye} /> View
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="modal fade show" style={{ display: 'block' }} role="dialog">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Application Details</h5>
+              </div>
+              <div className="modal-body">
+                <p><strong>Full Name:</strong> {modalData.full_name}</p>
+                <p><strong>Job Title:</strong> {modalData.job_title}</p>
+                <p><strong>Email:</strong> {modalData.email}</p>
+                <p><strong>Phone Number:</strong> {modalData.phone_number}</p>
+                <p><strong>Additional Info:</strong> {modalData.additional_info}</p>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={closeModal}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
