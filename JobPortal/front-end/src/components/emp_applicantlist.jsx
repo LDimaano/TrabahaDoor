@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const navigate = useNavigate();
+  const { jobId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
+  const [localHiringStages, setLocalHiringStages] = useState(hiringStages);
 
-  const handleSeeApplication = (user_id) => {
-    // This navigates to a new page
-    navigate(`/applicant_profile/${user_id}`);
+  useEffect(() => {
+    // Sync local state with prop changes
+    setLocalHiringStages(hiringStages);
+  }, [hiringStages]);
+
+  const handleSeeApplication = (userId) => {
+    navigate(`/applicant_profile/${userId}`);
   };
 
   const openModal = (listing) => {
@@ -22,20 +28,25 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
 
   const handleStageChangeInJoblist = async (userId, newStage) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/applicants/applications/${userId}`, {
+      const response = await fetch(`http://localhost:5000/api/applicants/applications/${userId}/${jobId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ hiringStage: newStage }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update hiring stage');
+        const errorData = await response.text();
+        throw new Error(errorData || 'Failed to update hiring stage');
       }
 
+      // Notify the parent (ApplicantDashboard) that the hiring stage has changed
       onStageChange(userId, newStage);
+      
+      // Update local state to reflect the new hiring stage
+      setLocalHiringStages(prevStages => ({
+        ...prevStages,
+        [userId]: newStage
+      }));
     } catch (error) {
       console.error('Error updating hiring stage:', error.message);
     }
@@ -74,7 +85,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    {hiringStages[listing.user_id] || 'Received'}
+                    {localHiringStages[listing.user_id] || 'Received'}
                   </button>
                   <ul
                     className="dropdown-menu"
@@ -122,6 +133,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Application Details</h5>
+                <button type="button" className="btn-close" onClick={closeModal}></button>
               </div>
               <div className="modal-body">
                 <p><strong>Full Name:</strong> {modalData.full_name}</p>

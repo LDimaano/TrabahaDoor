@@ -1,25 +1,59 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; 
+import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../../components/emp_side';
 import Header from '../../components/emp_header';
 import Pagination from '../../components/emp_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter, faArrowLeft } from '@fortawesome/free-solid-svg-icons'; 
+import { faFilter, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import ApplicantJoblist from '../../components/emp_applicantlist';
 
 const ApplicantDashboard = () => {
-  const navigate = useNavigate(); 
-  const { jobId } = useParams(); 
+  const navigate = useNavigate();
+  const { jobId } = useParams();
   const [jobs, setJobs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [listingsPerPage, setListingsPerPage] = useState(10);
+  const [listingsPerPage] = useState(10);
   const [error, setError] = useState(null);
   const [hiringStages, setHiringStages] = useState({});
 
+  useEffect(() => {
+    if (jobId) {
+      fetchApplicants();
+    }
+  }, [jobId]);
+
+  const fetchApplicants = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/applicants/appliedapplicants/${jobId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(errorData || 'Failed to fetch applicants');
+      }
+
+      const data = await response.json();
+      setJobs(data);
+
+      // Initialize hiringStages with fetched data
+      const initialStages = data.reduce((acc, applicant) => {
+        acc[applicant.user_id] = applicant.hiring_stage || 'Received'; // Assuming status is used
+        return acc;
+      }, {});
+      setHiringStages(initialStages);
+    } catch (error) {
+      setError(error.message);
+      console.error('Error fetching applicants:', error);
+    }
+  };
+
   const handleStageChangeInDashboard = async (userId, newStage) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/applicants/applications/${userId}`, {
+      const response = await fetch(`http://localhost:5000/api/applicants/applications/${userId}/${jobId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ hiringStage: newStage }),
@@ -27,72 +61,23 @@ const ApplicantDashboard = () => {
 
       if (!response.ok) {
         const errorData = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, ${errorData}`);
+        throw new Error(errorData || 'Failed to update hiring stage');
       }
 
-      const data = await response.json();
-      setHiringStages((prevStages) => ({
-        ...prevStages,
-        [userId]: newStage,
-      }));
+      // Optionally refetch applicants to ensure the state is synchronized
+      await fetchApplicants();
     } catch (error) {
       console.error('Error updating hiring stage:', error.message);
     }
   };
 
-  
-
   const handleBack = () => {
-    navigate(-1); 
+    navigate(-1);
   };
-
-  useEffect(() => {
-    const fetchApplicants = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/api/applicants/appliedapplicants/${jobId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', 
-        });
-  
-        if (response.status === 404) {
-          console.log('No applicants found (404).');
-          return;
-        }
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
-        const data = await response.json();
-        setJobs(data);
-
-        // Initialize hiringStages with fetched data if needed
-        const initialStages = data.reduce((acc, applicant) => {
-          acc[applicant.user_id] = applicant.hiring_stage || 'Received'; // Assuming hiring_stage is a field in the data
-          return acc;
-        }, {});
-        setHiringStages(initialStages);
-      } catch (error) {
-        setError(error.message);
-        console.error('Error fetching applicants:', error);
-      }
-    };
-  
-    if (jobId) {
-      fetchApplicants();
-    }
-  }, [jobId]);
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page on search
   };
 
   const filteredListings = jobs.filter(listing =>
@@ -105,6 +90,10 @@ const ApplicantDashboard = () => {
   const currentListings = filteredListings.slice(indexOfFirstListing, indexOfLastListing);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="d-flex">
@@ -120,8 +109,8 @@ const ApplicantDashboard = () => {
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#000', 
-                  fontSize: '1.5rem', 
+                  color: '#000',
+                  fontSize: '1.5rem',
                   cursor: 'pointer',
                 }}
               >
@@ -145,13 +134,13 @@ const ApplicantDashboard = () => {
           <ApplicantJoblist 
             currentListings={currentListings}
             hiringStages={hiringStages}
-            onStageChange={handleStageChangeInDashboard} 
+            onStageChange={handleStageChangeInDashboard}
           />
           <Pagination 
-            listingsPerPage={listingsPerPage} 
-            totalListings={filteredListings.length} 
-            paginate={paginate} 
-            currentPage={currentPage} 
+            listingsPerPage={listingsPerPage}
+            totalListings={filteredListings.length}
+            paginate={paginate}
+            currentPage={currentPage}
           />
         </section>
       </main>

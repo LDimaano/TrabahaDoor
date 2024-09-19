@@ -141,14 +141,12 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
 
 //fetching applied applicants
 router.get('/appliedapplicants/:jobId', async (req, res) => {
-  console.log('Session data:', req.session);
-
   if (!req.session.user) {
     return res.status(403).json({ message: 'Not authenticated' });
   }
-  const jobId = req.params.jobId; // Fetch jobId from route parameter
-  console.log('Job ID from params:', jobId);
-
+  
+  const jobId = req.params.jobId;
+  
   try {
     const result = await pool.query(
       `SELECT 
@@ -157,8 +155,9 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
         a.user_id,
         a.full_name,
         a.email,
-        a.phone_nummber,
+        a.phone_number,
         a.additional_info,
+        a.status AS hiring_stage,
         a.date_applied,
         pp.profile_picture_url,
         j.job_title
@@ -167,10 +166,8 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
       JOIN joblistings jl ON a.job_id = jl.job_id
       JOIN job_titles j ON jl.jobtitle_id = j.jobtitle_id
       WHERE a.job_id = $1`,
-      [jobId] // Pass jobId as parameters
+      [jobId]
     );
-
-    console.log('Applicants query result:', result.rows);
 
     if (result.rows.length > 0) {
       res.json(result.rows);
@@ -184,25 +181,28 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
 });
 
 
-router.put('/applications/:userId', async (req, res) => {
-  const { userId } = req.params;
+router.put('/applications/:userId/:jobId', async (req, res) => {
+  const { userId, jobId } = req.params;
   const { hiringStage } = req.body;
 
   const allowedStages = ['Received', 'In review', 'For interview', 'Filled'];
 
   try {
-    if (!userId || !hiringStage) {
-      return res.status(400).json({ error: 'Invalid input: userId and hiringStage are required.' });
+    if (!userId || !hiringStage || !jobId) {
+      return res.status(400).json({ error: 'Invalid input: userId, jobId, and hiringStage are required.' });
     }
 
     if (!allowedStages.includes(hiringStage)) {
       return res.status(400).json({ error: `Invalid hiring stage: ${hiringStage}. Must be one of ${allowedStages.join(', ')}.` });
     }
 
-    const result = await pool.query('UPDATE applications SET status = $1 WHERE user_id = $2', [hiringStage, userId]);
+    const result = await pool.query(
+      'UPDATE applications SET status = $1 WHERE user_id = $2 AND job_id = $3',
+      [hiringStage, userId, jobId]
+    );
 
     if (result.rowCount === 0) {
-      return res.status(404).json({ error: `User with ID ${userId} not found.` });
+      return res.status(404).json({ error: `User with ID ${userId} or Job ID ${jobId} not found.` });
     }
 
     res.status(200).json({ message: 'Hiring stage updated successfully.' });
@@ -211,6 +211,5 @@ router.put('/applications/:userId', async (req, res) => {
     res.status(500).json({ error: 'Failed to update hiring stage. Please try again later.' });
   }
 });
-
 
 module.exports = router;
