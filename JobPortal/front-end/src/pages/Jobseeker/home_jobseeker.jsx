@@ -25,10 +25,31 @@ function HomeJobSeeker() {
     console.log(searchData.selectedIndustry);
   };
 
+  // Inline styles for the title
+  const titleStyle = {
+    fontSize: '2rem', // Font size
+    fontWeight: '700', // Font weight
+    color: '#333', // Darker text color
+    textAlign: 'center', // Center the text
+    margin: '2rem 0', // Margin above and below
+    position: 'relative', // Position relative for pseudo-elements
+  };
+
+  const subtitleStyle = {
+    fontSize: '1.2rem', // Smaller font size for the subtitle
+    color: '#666', // Lighter text color
+    textAlign: 'center', // Center the subtitle
+    marginTop: '0.5rem', // Space above the subtitle
+  };
+
   return (
     <div className="container">
       <Header />
       <main className="row mt-4">
+        <div style={titleStyle}>
+          <h1>Find Jobs</h1>
+          <div style={subtitleStyle}>Discover opportunities that match your skills and interests</div>
+        </div>
         <SearchForm onSearch={handleSearchChange} />
         <div className="row mt-3">
           {/* Filter Section (taking 3 columns) */}
