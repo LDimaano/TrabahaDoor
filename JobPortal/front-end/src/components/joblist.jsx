@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import JobListItem from './joblistitem';
 
-function JobList({ filters, searchQuery }) {
+function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQuery }) {
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
@@ -24,11 +24,11 @@ function JobList({ filters, searchQuery }) {
     const salaryRangesLower = salaryRanges.map(range => range.toLowerCase());
 
     return jobs.filter(job => {
-      const jobEmploymentType = job.employmentType ? job.employmentType.toLowerCase() : '';
+      const jobType = job.jobtype ? job.jobtype.toLowerCase() : ''; // Updated to use jobtype
       const jobSalaryRange = job.salaryrange ? job.salaryrange.toLowerCase() : ''; // Match salaryrange
 
       return (
-        (employmentTypesLower.length === 0 || employmentTypesLower.includes(jobEmploymentType)) &&
+        (employmentTypesLower.length === 0 || employmentTypesLower.includes(jobType)) &&
         (salaryRangesLower.length === 0 || salaryRangesLower.includes(jobSalaryRange))
       );
     });
@@ -46,11 +46,17 @@ function JobList({ filters, searchQuery }) {
   const searchedJobs = applySearch(filteredJobs);
 
   return (
-    <ul className="list-group">
-      {searchedJobs.map((job) => (
-        <JobListItem key={job.job_id} job={job} />
-      ))}
-    </ul>
+    <div>
+      {searchedJobs.length === 0 ? (
+        <p>No jobs available</p>
+      ) : (
+        <ul className="list-group">
+          {searchedJobs.map((job) => (
+            <JobListItem key={job.job_id} job={job} />
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 

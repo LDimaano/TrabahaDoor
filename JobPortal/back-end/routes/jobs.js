@@ -64,6 +64,7 @@ router.get('/postedjobs', async (req, res) => {
         job_titles.job_title, 
         industries.industry_name, 
         joblistings.salaryrange,
+        joblistings.jobtype,
 		    pp.profile_picture_url
       FROM joblistings
       JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Tag from './jstag'; // Assuming you have a Tag component
 
 function JobListItem({ job }) {
   const navigate = useNavigate();
@@ -7,7 +8,11 @@ function JobListItem({ job }) {
   const handleApplyClick = () => {
     navigate(`/jobdescription/${job.job_id}`);
   };
-  
+
+  const itemStyle = {
+    marginBottom: '0.5rem', // Reduces space between items
+  };
+
   return (
     <li className="list-group-item d-flex justify-content-between align-items-center">
       <div className="d-flex">
@@ -19,9 +24,10 @@ function JobListItem({ job }) {
           height="50"
         />
         <div>
-          <h5>{job.job_title}</h5>
-          <p>{job.industry_name}</p>
-          <p>{job.salaryrange}</p> {/* Display Salary Range */}
+          <h5 style={itemStyle}>{job.job_title}</h5>
+          <p style={itemStyle}>{job.industry_name}</p>
+          <p style={itemStyle}>{job.salaryrange}</p> 
+          <Tag>{job.jobtype}</Tag> {/* Use the Tag component for jobtype */}
         </div>
       </div>
       <button className="btn btn-primary" onClick={handleApplyClick}>
