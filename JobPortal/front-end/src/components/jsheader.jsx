@@ -130,13 +130,13 @@ function Header() {
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav ms-auto d-flex align-items-center">
             <li className="nav-item mx-3 position-relative">
-              <Link to="/jobs" className={getNavLinkClass('/jobs')}>
+              <Link to="/js_joblistings" className={getNavLinkClass('/js_joblistings')}>
                 <i className="fas fa-briefcase fa-lg" style={{ color: '#6c757d' }}></i>
               </Link>
-              {location.pathname === '/jobs' && (
-                <div style={activeBarStyle} />
-              )}
-            </li>
+            {location.pathname === '/js_joblistings' && (
+            <div style={activeBarStyle} />
+            )}
+          </li>
             <li className="nav-item mx-3 position-relative">
               <button
                 className="btn btn-link"

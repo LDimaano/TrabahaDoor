@@ -20,6 +20,7 @@ import ApplicantList from './pages/Employer/applicantlist';
 import Applicantdetails from './pages/Employer/appdetails';
 import HomeEmployer from './pages/Employer/home_employer';
 import MyProfile from './pages/Jobseeker/js_myprofile'; 
+import JobseekerJobListing from './pages/Jobseeker/js_joblistings'; 
 import Notifications from './pages/Jobseeker/js_notifications'; 
 import EmpProfile from './pages/Employer/emp_profile'; 
 import ApplicantJoblisting from './pages/Employer/applicant_joblisting'; 
@@ -51,6 +52,7 @@ root.render(
         <Route path="/jobdescription/:jobId" element={<Jobdescription />} />
         <Route path="/emp_jobdescription/:jobId" element={<EmpJobdescription />} />
         <Route path="/js_myprofile" element={<MyProfile />} />
+        <Route path="/js_joblistings" element={<JobseekerJobListing />} />
         <Route path="/applicantlist/:jobId" element={<ApplicantList />} />
         <Route path="/appdetails" element={<Applicantdetails />} /> 
         <Route path="/home_employer" element={<HomeEmployer />} /> 

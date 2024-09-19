@@ -178,4 +178,40 @@ router.get('/job-seeker/:userId', async (req, res) => {
 });
 
 
+// fetching jobseeker's joblistings
+router.get('/getUserJobListings', async (req, res) => {
+  const userId = req.query.user_id;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const query = ` 
+    SELECT 
+      jl.job_id,
+      jl.user_id AS emp_id,
+      pp.profile_picture_url,
+      jt.job_title,
+      a.date_applied,
+      a.status,
+      a.user_id AS js_id
+    FROM applications a
+    JOIN joblistings jl ON a.job_id = jl.job_id
+    JOIN profilepictures pp ON jl.user_id = pp.user_id
+    JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
+    WHERE a.user_id = $1
+  `;
+
+  try {
+    const result = await pool.query(query, [userId]);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching job listings:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+
 module.exports = router;
