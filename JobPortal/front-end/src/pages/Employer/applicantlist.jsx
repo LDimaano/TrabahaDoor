@@ -4,27 +4,43 @@ import Sidebar from '../../components/emp_side';
 import Header from '../../components/emp_header';
 import Pagination from '../../components/emp_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter, faArrowLeft } from '@fortawesome/free-solid-svg-icons'; // Import the arrow icon
+import { faFilter, faArrowLeft } from '@fortawesome/free-solid-svg-icons'; 
 import ApplicantJoblist from '../../components/emp_applicantlist';
 
 const ApplicantDashboard = () => {
   const navigate = useNavigate(); 
-  const { jobId } = useParams(); // Get jobId from URL params
+  const { jobId } = useParams(); 
   const [jobs, setJobs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [listingsPerPage, setListingsPerPage] = useState(10);
   const [error, setError] = useState(null);
-
   const [hiringStages, setHiringStages] = useState({});
 
-    const handleHiringStageChange = (userId, newStage) => {
+  const handleStageChangeInDashboard = async (userId, newStage) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/applicants/applications/${userId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hiringStage: newStage }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, ${errorData}`);
+      }
+
+      const data = await response.json();
       setHiringStages((prevStages) => ({
         ...prevStages,
         [userId]: newStage,
       }));
-    };
+    } catch (error) {
+      console.error('Error updating hiring stage:', error.message);
+    }
+  };
 
+  
 
   const handleBack = () => {
     navigate(-1); 
@@ -42,7 +58,6 @@ const ApplicantDashboard = () => {
         });
   
         if (response.status === 404) {
-          // Handle 404 status differently (e.g., do nothing)
           console.log('No applicants found (404).');
           return;
         }
@@ -53,17 +68,24 @@ const ApplicantDashboard = () => {
   
         const data = await response.json();
         setJobs(data);
+
+        // Initialize hiringStages with fetched data if needed
+        const initialStages = data.reduce((acc, applicant) => {
+          acc[applicant.user_id] = applicant.hiring_stage || 'Received'; // Assuming hiring_stage is a field in the data
+          return acc;
+        }, {});
+        setHiringStages(initialStages);
       } catch (error) {
         setError(error.message);
         console.error('Error fetching applicants:', error);
       }
     };
   
-    if (jobId) { // Ensure jobId exists before fetching
+    if (jobId) {
       fetchApplicants();
     }
-  }, [jobId]); // Re-run effect when jobId changes
-  
+  }, [jobId]);
+
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -93,15 +115,16 @@ const ApplicantDashboard = () => {
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="d-flex align-items-center">
               <button 
-              className="btn p-0 me-3"
-              onClick={handleBack}
-              style={{
+                className="btn p-0 me-3"
+                onClick={handleBack}
+                style={{
                   background: 'transparent',
                   border: 'none',
                   color: '#000', 
                   fontSize: '1.5rem', 
                   cursor: 'pointer',
-                }}>
+                }}
+              >
                 <FontAwesomeIcon icon={faArrowLeft} />
               </button>
               <h3>Applicants: {filteredListings.length}</h3>
@@ -120,12 +143,16 @@ const ApplicantDashboard = () => {
             </div>
           </div>
           <ApplicantJoblist 
-              currentListings={currentListings}
-              hiringStages={hiringStages}
-              onHiringStageChange={handleHiringStageChange}
-            />
-
-          <Pagination listingsPerPage={listingsPerPage} totalListings={filteredListings.length} paginate={paginate} currentPage={currentPage} />
+            currentListings={currentListings}
+            hiringStages={hiringStages}
+            onStageChange={handleStageChangeInDashboard} 
+          />
+          <Pagination 
+            listingsPerPage={listingsPerPage} 
+            totalListings={filteredListings.length} 
+            paginate={paginate} 
+            currentPage={currentPage} 
+          />
         </section>
       </main>
     </div>
