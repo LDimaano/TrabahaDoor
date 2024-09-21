@@ -43,6 +43,7 @@ function Header() {
 
     if (userId) {
       socket.emit('joinRoom', userId);
+      fetchNotifications();
     }
 
     socket.on('newNotification', (notification) => {

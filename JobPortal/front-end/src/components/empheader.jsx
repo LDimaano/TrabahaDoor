@@ -51,11 +51,13 @@ function Header() {
 
     if (userId) {
       socket.emit('joinRoom', userId);
+      fetchNotifications();
     }
 
     socket.on('newNotification', (notification) => {
       setNotifications((prev) => [...prev, notification]);
       setNotificationCount((prevCount) => prevCount + 1);
+      
     });
 
     return () => {
