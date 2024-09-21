@@ -147,7 +147,7 @@ const handleViewAllClick = () => {
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav ms-auto d-flex align-items-center">
             <li className="nav-item mx-3 position-relative">
-              <Link to="/js_joblistings" className={getNavLinkClass('/js_joblistings')}>
+              <Link to="/applicant_joblisting" className={getNavLinkClass('/js_joblistings')}>
                 <i className="fas fa-briefcase fa-lg" style={{ color: '#6c757d' }}></i>
               </Link>
             </li>
