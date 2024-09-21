@@ -94,15 +94,15 @@ app.get('/api/notifications', async (req, res) => {
   }
 
   try {
-    // Fetch only new notifications
+    // Fetch all notifications (both 'new' and 'viewed')
     const result = await pool.query(
       `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied
-      FROM applications a
-      JOIN joblistings j ON a.job_id = j.job_id
-      JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
-      JOIN users u ON j.user_id = u.user_id
-      WHERE u.user_id = $1 AND a.status = 'new'  -- Fetch only new notifications
-      ORDER BY a.date_applied DESC;`,
+       FROM applications a
+       JOIN joblistings j ON a.job_id = j.job_id
+       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
+       JOIN users u ON j.user_id = u.user_id
+       WHERE u.user_id = $1
+       ORDER BY a.date_applied DESC;`,
       [userId]
     );
 
@@ -113,7 +113,6 @@ app.get('/api/notifications', async (req, res) => {
       date_applied: row.date_applied,
     }));
 
-    // Return all notifications (can filter or paginate in the frontend)
     res.json({ notifications });
   } catch (error) {
     console.error('Error fetching notifications:', error);
@@ -158,29 +157,37 @@ app.get('/api/allnotifications', async (req, res) => {
 
 
 // Endpoint to mark a notification as read
-app.put('/api/notifications/:job_id/read', async (req, res) => {
-  const { job_id } = req.params;
-  const userId = req.session.user.user_id;
+app.post('/api/notifications/mark-as-viewed', async (req, res) => {
+  const { jobIds } = req.body;
+  const userIdFromSession = req.session.user?.user_id; // Optional chaining to avoid crashes
 
-  if (!userId) {
+  // Check if the user is authenticated
+  if (!userIdFromSession) {
     return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
   }
 
+  // Check if any job IDs are provided
+  if (!jobIds || jobIds.length === 0) {
+    return res.status(400).json({ error: 'No job IDs provided' });
+  }
+
   try {
-    // Mark notification as 'viewed'
+    // Update applications where job_id is in the list and status is 'new'
     await pool.query(
       `UPDATE applications
        SET status = 'viewed'
-       WHERE job_id = $1 AND status = 'new';`,
-      [job_id]
+       WHERE job_id = ANY($1) AND status = 'new';`,
+      [jobIds]
     );
 
-    res.status(200).json({ message: 'Notification marked as read' });
+    res.status(200).json({ message: 'Notifications marked as viewed' });
   } catch (error) {
-    console.error('Error marking notification as read:', error);
+    console.error('Error marking notifications as viewed:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 });
+
+
 
 
 app.get('/api/jsnotifications', async (req, res) => {

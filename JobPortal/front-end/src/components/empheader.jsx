@@ -9,12 +9,11 @@ function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notificationCount, setNotificationCount] = useState(0);
-  const [viewedNotifications, setViewedNotifications] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const userId = sessionStorage.getItem('user_id');
 
-  // Fetch user full name
+  // Fetch company info
   useEffect(() => {
     const fetchCompanyInfo = async () => {
       try {
@@ -63,7 +62,7 @@ function Header() {
 
   const fetchNotifications = async () => {
     if (!userId) return;
-
+  
     try {
       const response = await fetch(`http://localhost:5000/api/notifications`, {
         method: 'GET',
@@ -72,14 +71,14 @@ function Header() {
           'Content-Type': 'application/json',
         },
       });
-
+  
       if (response.ok) {
         const data = await response.json();
-        const newNotifications = data.notifications.filter(
-          (notif) => !viewedNotifications.includes(notif.job_id)
-        );
-        setNotifications(newNotifications);
-        setNotificationCount(newNotifications.length);
+  
+        // Filter notifications that are still marked as 'new'
+        const newNotifications = data.notifications.filter((notif) => notif.status === 'new');
+        setNotifications(data.notifications); // Set all notifications, both new and viewed
+        setNotificationCount(newNotifications.length); // Count only new notifications
       } else {
         console.error('Failed to fetch notifications:', response.statusText);
       }
@@ -88,41 +87,40 @@ function Header() {
     }
   };
 
+  const toggleNotifications = async () => {
+    setShowNotifications((prev) => !prev); // Toggle the dropdown state
+  
+    if (!showNotifications) { // Only mark notifications as viewed when opening the dropdown
+      const newJobIds = notifications.filter((n) => n.status === 'new').map((n) => n.job_id);
+  
+      if (newJobIds.length > 0) {
+        try {
+          const response = await fetch('http://localhost:5000/api/notifications/mark-as-viewed', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ jobIds: newJobIds }),
+          });
+  
+          if (response.ok) {
+            await fetchNotifications(); // Re-fetch notifications after marking them as viewed
+            setNotificationCount(0); // Clear the notification count
+          } else {
+            console.error('Failed to mark notifications as viewed:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error marking notifications as viewed:', error);
+        }
+      }
+    }
+  };
+  
+
   const getNavLinkClass = (path) => {
     return location.pathname === path ? 'nav-link active' : 'nav-link';
   };
-
-  const toggleNotifications = () => {
-    setShowNotifications(!showNotifications);
-    if (!showNotifications) {
-      fetchNotifications();
-      setNotificationCount(0); // Reset notification count when opening
-    }
-  };
-
-  const handleNotificationClick = async (job_id) => {
-    // Mark the notification as viewed and update server
-    try {
-      const response = await fetch(`http://localhost:5000/api/notifications/${job_id}/read`, {
-        method: 'PUT',  // Change to PUT
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      if (response.ok) {
-        setViewedNotifications((prev) => [...prev, job_id]);
-        setNotifications((prev) => prev.filter((n) => n.job_id !== job_id));
-        setNotificationCount((prevCount) => prevCount - 1); // Decrease count
-      } else {
-        console.error('Failed to mark notification as read:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
-  };
-  
 
   const handleProfileClick = () => {
     navigate('/emp_myprofile');
@@ -188,8 +186,8 @@ function Header() {
                 )}
               </button>
               {showNotifications && (
-                <div 
-                  className="position-absolute bg-white border rounded shadow p-2" 
+                <div
+                  className="position-absolute bg-white border rounded shadow p-2"
                   style={{ top: '100%', right: '0', width: '250px', zIndex: 1050 }}
                 >
                   <h6 className="mb-2 text-center">Notifications</h6>
@@ -197,21 +195,12 @@ function Header() {
                     notifications.slice(0, 7).map((notification, index) => (
                       <div key={index} className="d-flex justify-content-between">
                         <p>{notification.message}</p>
-                        <button
-                          className="btn btn-link"
-                          onClick={() => handleNotificationClick(notification.job_id)}
-                        >
-                          <i className="fas fa-check"></i>
-                        </button>
                       </div>
                     ))
                   ) : (
                     <p>No new notifications</p>
                   )}
-                  <button
-                    className="btn btn-link mt-2"
-                    onClick={handleViewAllClick}
-                  >
+                  <button className="btn btn-link mt-2" onClick={handleViewAllClick}>
                     View All Notifications
                   </button>
                 </div>
