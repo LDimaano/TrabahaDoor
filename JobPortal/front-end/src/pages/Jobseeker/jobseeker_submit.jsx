@@ -4,6 +4,9 @@ import FormField from '../../components/formfield';
 import JobHeader from '../../components/submitheader';
 import AdditionalInfo from '../../components/jssubmitaddinfo';
 import Modal from '../../components/modal';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:5000'); // Initialize socket connection
 
 function SubmitApplication() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,6 +38,17 @@ function SubmitApplication() {
         if (jobId) {
             fetchJobDetails();
         }
+
+        // Listen for notifications
+        socket.on('new-application', (data) => {
+            console.log(data.message);
+            // You can also display a notification to the user here
+        });
+
+        // Clean up socket connection on unmount
+        return () => {
+            socket.off('new-application');
+        };
     }, [jobId]);
 
     const handleSubmit = async (e) => {
