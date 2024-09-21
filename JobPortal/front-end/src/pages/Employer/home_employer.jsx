@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Header from '../../components/empheader';
-import SearchForm from '../../components/searchform';
+import SearchForm from '../../components/searchform_emp';
 import CandidateList from '../../components/candidatelist';
 import Pagination from '../../components/pagination';
 

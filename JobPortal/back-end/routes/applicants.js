@@ -10,19 +10,23 @@ router.get('/applicantlist', async (req, res) => {
   try {
     let query = `
       SELECT
-        job_seekers.jsid,
-        job_seekers.user_id,
-        job_seekers.full_name,
-        users.email,
-        address.location,
-        job_titles.job_title,
-        pp.profile_picture_url
+          job_seekers.full_name,
+          users.email,
+          address.location,
+          MAX(job_titles.job_title) AS latest_job_title,  -- Example aggregation
+          pp.profile_picture_url
       FROM job_seekers
       JOIN users ON job_seekers.user_id = users.user_id
       JOIN address ON job_seekers.address_id = address.address_id
       JOIN job_experience ON job_seekers.user_id = job_experience.user_id
       JOIN job_titles ON job_experience.jobtitle_id = job_titles.jobtitle_id
-      JOIN profilepictures pp ON  job_seekers.user_id = pp.user_id
+      JOIN profilepictures pp ON job_seekers.user_id = pp.user_id
+      GROUP BY
+          job_seekers.full_name,
+          users.email,
+          address.location,
+          pp.profile_picture_url;
+
     `;
 
 

@@ -95,7 +95,15 @@ router.post('/login', async (req, res) => {
 
 
       console.log('Session created:', req.session); // Log the session
-      const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/home_employer';
+      const redirectUrl = (() => {
+        if (user.usertype === 'jobseeker') {
+            return '/home_jobseeker';
+        } else if (user.usertype === 'employer') {
+            return '/home_employer';
+        } else {
+            return '/admindashboard';
+        }
+    })();    
       res.json({
         redirectUrl,
         user: {
