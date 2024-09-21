@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { io } from 'socket.io-client'; // Import Socket.io client
 import '@fortawesome/fontawesome-free/css/all.min.css'; // Import Font Awesome
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function Header() {
   const [fullName, setFullName] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [notificationCount, setNotificationCount] = useState(0); // Count of notifications
   const navigate = useNavigate();
   const location = useLocation(); // To get the current path
+
 
   useEffect(() => {
     const fetchFullName = async () => {
@@ -20,6 +24,7 @@ function Header() {
             'Content-Type': 'application/json',
           },
         });
+
 
         if (response.ok) {
           const data = await response.json();
@@ -33,49 +38,74 @@ function Header() {
       }
     };
 
+
     fetchFullName();
   }, []);
 
+
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/notifications', {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+    const socket = io('http://localhost:5000', {
+      withCredentials: true
+    });
 
-        if (response.ok) {
-          const data = await response.json();
-          setNotifications(data.notifications || []);
-        } else {
-          console.error('Failed to fetch notifications:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
-      }
+
+    socket.on('newNotification', (notification) => {
+      setNotifications(prev => [...prev, notification]);
+      setNotificationCount(prevCount => prevCount + 1);
+    });
+
+
+    return () => {
+      socket.disconnect();
     };
-
-    fetchNotifications();
   }, []);
+
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/notifications', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data.notifications || []);
+      } else {
+        console.error('Failed to fetch notifications:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
 
   const getNavLinkClass = (path) => {
     return location.pathname === path ? 'nav-link active' : 'nav-link';
   };
 
+
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
+    if (!showNotifications) {
+      fetchNotifications(); // Fetch notifications when opened
+    }
   };
+
 
   const handleProfileClick = () => {
     navigate('/js_myprofile'); // Use absolute path
   };
 
+
   const handleViewAllClick = () => {
     navigate('/js_notifications'); // Navigate to notifications page
   };
+
 
   const handleLogout = async () => {
     try {
@@ -86,6 +116,7 @@ function Header() {
           'Content-Type': 'application/json',
         },
       });
+
 
       if (response.ok) {
         // Clear session data
@@ -100,6 +131,7 @@ function Header() {
     }
   };
 
+
   const activeBarStyle = {
     position: 'absolute',
     bottom: '-5px',
@@ -108,6 +140,7 @@ function Header() {
     height: '2px',
     backgroundColor: '#007bff', // Active bar color
   };
+
 
   return (
     <nav className="navbar navbar-expand-lg bg-transparent">
@@ -122,7 +155,7 @@ function Header() {
           />
           <span className="fw-bold">TrabahaDoor</span>
         </a>
-        <div className="mx-auto text-center"> {/* Center the welcome text */}
+        <div className="mx-auto text-center">
           <span className="navbar-text">
             Welcome, {fullName || 'Guest'}
           </span>
@@ -133,10 +166,10 @@ function Header() {
               <Link to="/js_joblistings" className={getNavLinkClass('/js_joblistings')}>
                 <i className="fas fa-briefcase fa-lg" style={{ color: '#6c757d' }}></i>
               </Link>
-            {location.pathname === '/js_joblistings' && (
-            <div style={activeBarStyle} />
-            )}
-          </li>
+              {location.pathname === '/js_joblistings' && (
+                <div style={activeBarStyle} />
+              )}
+            </li>
             <li className="nav-item mx-3 position-relative">
               <button
                 className="btn btn-link"
@@ -144,6 +177,9 @@ function Header() {
                 aria-expanded={showNotifications}
               >
                 <i className="fas fa-bell fa-lg" style={{ color: '#6c757d' }}></i>
+                {notificationCount > 0 && (
+                  <span className="badge bg-danger">{notificationCount}</span>
+                )}
               </button>
               {showNotifications && (
                 <div className="position-absolute bg-white border rounded shadow p-2" style={{ top: '100%', right: '0', width: '250px' }}>
@@ -171,7 +207,7 @@ function Header() {
             <li className="nav-item mx-3 position-relative">
               <button
                 className="btn btn-link"
-                onClick={handleProfileClick} // Handle profile click
+                onClick={handleProfileClick}
               >
                 <i className="fas fa-user fa-lg" style={{ color: '#6c757d' }}></i>
               </button>
@@ -182,7 +218,7 @@ function Header() {
             <li className="nav-item mx-3">
               <button
                 className="btn btn-link"
-                onClick={handleLogout} // Handle logout click
+                onClick={handleLogout}
               >
                 <i className="fas fa-sign-out-alt fa-lg" style={{ color: '#6c757d' }}></i>
               </button>
@@ -194,4 +230,7 @@ function Header() {
   );
 }
 
+
 export default Header;
+
+

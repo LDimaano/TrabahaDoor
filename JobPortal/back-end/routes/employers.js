@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
+
 router.post('/employer-profile', async (req, res) => {
   const {
     user_id,
@@ -17,13 +18,16 @@ router.post('/employer-profile', async (req, res) => {
     description,
   } = req.body;
 
+
   // Log the request body to verify data
   console.log('Request body:', req.body);
+
 
   // Check that user_id is provided
   if (!user_id) {
     return res.status(400).json({ error: 'User ID is required' });
   }
+
 
   try {
     // Insert the data into the profiles table and return the inserted row
@@ -49,6 +53,7 @@ router.post('/employer-profile', async (req, res) => {
       ]
     );
 
+
     // Send the newly created profile back as the response
     res.json(newEmpProfile.rows[0]);
   } catch (err) {
@@ -59,33 +64,41 @@ router.post('/employer-profile', async (req, res) => {
 
 
 
+
+
+
 router.get('/user-infoemp', async (req, res) => {
   console.log('Session data:', req.session);
+
 
   if (!req.session.user) {
     return res.status(403).json({ message: 'Not authenticated' });
   }
 
+
   const userId = req.session.user.user_id;
   console.log('User ID from session:', userId);
+
 
   try {
     // Use a join to fetch company_name from emp_profiles and email from users
     const result = await pool.query(
       `
-       SELECT emp_profiles.company_name, 
-	      users.email, 
-	      emp_profiles.contact_person,
-	      pp.profile_picture_url
-       FROM emp_profiles 
-       JOIN users ON emp_profiles.user_id = users.user_id 
-	     JOIN profilepictures pp ON users.user_id = pp.user_id
+       SELECT emp_profiles.company_name,
+        users.email,
+        emp_profiles.contact_person,
+        pp.profile_picture_url
+       FROM emp_profiles
+       JOIN users ON emp_profiles.user_id = users.user_id
+       JOIN profilepictures pp ON users.user_id = pp.user_id
        WHERE emp_profiles.user_id = $1
        `,
       [userId]
     );
 
+
     console.log('Database query result:', result.rows);
+
 
     if (result.rows.length > 0) {
       const { company_name, email, contact_person, profile_picture_url } = result.rows[0]; // Destructure company_name and email
@@ -99,12 +112,14 @@ router.get('/user-infoemp', async (req, res) => {
   }
 });
 
+
 router.get('/employerprofile/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
+
     const EmployerData = await pool.query(`
-      SELECT 
+      SELECT
         e.company_name,
         e.contact_person,
         e.contact_number,
@@ -122,10 +137,12 @@ router.get('/employerprofile/:userId', async (req, res) => {
       LEFT JOIN profilepictures pp ON e.user_id = pp.user_id
       WHERE e.user_id = $1
 
+
     `, [userId]);
 
+
     console.log('Fetched employer data:', EmployerData.rows);
-    
+   
     const employer = EmployerData.rows[0] || {};
    
     res.json({
@@ -150,37 +167,44 @@ router.get('/employerprofile/:userId', async (req, res) => {
 });
 
 
+
+
 //show joblisting
 router.get('/joblistings', async (req, res) => {
   console.log('Session data:', req.session);
+
 
   if (!req.session.user) {
     return res.status(403).json({ message: 'Not authenticated' });
   }
 
+
   const userId = req.session.user.user_id;
   console.log('User ID from session:', userId);
+
 
   try {
     const result = await pool.query(
       `
-      SELECT 
+      SELECT
           jl.datecreated,
           jt.job_title,
-		  jl.job_id
-       FROM 
+      jl.job_id
+       FROM
           joblistings jl
-       JOIN 
+       JOIN
           job_titles jt
-       ON 
+       ON
           jl.jobtitle_id = jt.jobtitle_id
-       WHERE 
+       WHERE
           jl.user_id = $1
           `,
       [userId]
     );
 
+
     console.log('Database query result:', result.rows);
+
 
     if (result.rows.length > 0) {
       res.json(result.rows);
@@ -193,8 +217,16 @@ router.get('/joblistings', async (req, res) => {
   }
 });
 
-router.get('/notifications/:userId', async (req, res) => {
-  const { userId } = req.params;
+
+router.get('/notifications', async (req, res) => {
+  const userId = req.session.userId; // Access userId from session storage
+
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
+  }
+
+
   try {
     const result = await pool.query(
       `SELECT a.full_name, jt.job_title, j.job_id, a.status
@@ -207,19 +239,18 @@ router.get('/notifications/:userId', async (req, res) => {
       [userId]
     );
 
-    console.log('Query Result:', result.rows); // Debugging: Check if query returns rows
 
-    // Create notifications with both new and viewed statuses
     const notifications = result.rows.map(row => ({
       message: `${row.full_name} has applied to be a ${row.job_title}`,
       job_id: row.job_id,
-      status: row.status, // Include the notification status
+      status: row.status,
     }));
 
-    console.log('Notifications:', notifications); // Debugging: Check if notifications are created
 
-    // Update the status of new notifications only
     const newJobIds = notifications.filter(n => n.status === 'new').map(n => n.job_id);
+    const newCount = newJobIds.length; // Count of new notifications
+
+
     if (newJobIds.length > 0) {
       const formattedJobIds = newJobIds.map(id => `'${id}'`).join(', ');
       await pool.query(
@@ -227,14 +258,20 @@ router.get('/notifications/:userId', async (req, res) => {
          SET status = 'viewed'
          WHERE status = 'new' AND job_id IN (${formattedJobIds})`
       );
+
+
+      // Emit real-time notifications to the employer's room
+      io.to(`user_${userId}`).emit('newNotification', { notifications, newCount });
     }
 
-    res.json({ notifications });
+
+    res.json({ notifications, newCount });
   } catch (error) {
     console.error('Error fetching notifications:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 });
+
 
 
 

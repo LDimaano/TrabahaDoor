@@ -1,23 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
-import Header from '../../components/empheader'; // Import Header component
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Header from '../../components/empheader';
+import { io } from 'socket.io-client';
+
 
 function EmpNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
+  const [notificationCount, setNotificationCount] = useState(0);
 
-  // Fetch userId from sessionStorage using the correct key (user_id)
+
+  // Initialize WebSocket connection
   useEffect(() => {
-    const userId = sessionStorage.getItem('user_id'); // Updated key
+    const userId = sessionStorage.getItem('user_id'); // Fetch userId from sessionStorage
+    const socket = io('http://localhost:5000', {
+      withCredentials: true,
+      transports: ['websocket'],
+    });
+
+
     if (userId) {
-      fetchNotifications(userId);
+      // Join the user's room for real-time notifications
+      socket.emit('joinRoom', userId);
     }
+
+
+    // Fetch initial notifications when the component mounts
+    fetchNotifications();
+
+
+    // Listen for new notifications in real-time
+    socket.on('newNotification', (newNotification) => {
+      console.log('Real-time notification received:', newNotification);
+      setNotifications((prevNotifications) => [newNotification, ...prevNotifications]);
+      setNotificationCount((prevCount) => prevCount + 1); // Increment the notification count
+    });
+
+
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket:', socket.id);
+    });
+
+
+    socket.on('connect_error', (err) => {
+      console.error('WebSocket connection error:', err);
+    });
+
+
+    // Cleanup when the component unmounts
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
-  // Function to fetch notifications
-  const fetchNotifications = async (userId) => {
+
+  // Function to fetch notifications from the backend
+  const fetchNotifications = async () => {
+    const userId = sessionStorage.getItem('user_id'); // Fetch userId from sessionStorage
+    if (!userId) return;
+
+
     try {
-      const response = await fetch(`http://localhost:5000/api/employers/notifications/${userId}`, {
+      const response = await fetch(`http://localhost:5000/api/notifications`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -25,32 +69,34 @@ function EmpNotifications() {
         },
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch notifications: ${response.statusText}`);
-      }
 
-      const data = await response.json();
-      setNotifications(data.notifications || []);
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data.notifications || []);
+      } else {
+        console.error('Failed to fetch notifications:', response.statusText);
+      }
     } catch (error) {
       setError(`Error fetching notifications: ${error.message}`);
     }
   };
 
+
   return (
     <div>
-      <Header /> {/* Render the Header component */}
+      <Header />
       <div className="container mt-4">
         <h1 className="mb-4">Notifications</h1>
-        {error && <div className="alert alert-danger" role="alert">{error}</div>} {/* Display error message */}
+        {error && <div className="alert alert-danger" role="alert">{error}</div>}
         {notifications.length > 0 ? (
           <div className="list-group">
             {notifications.map((notification, index) => (
               <div
-                key={index}
+                key={notification.id || index} // Use a unique key if available
                 className={`list-group-item d-flex flex-column justify-content-start align-items-start mb-3 py-3 ${
                   notification.status === 'new' ? 'bg-light border-primary' : 'bg-white'
                 }`}
-                style={{ height: 'auto' }} // Adjust height if necessary
+                style={{ height: 'auto' }}
               >
                 <div className="ms-2 me-auto">
                   <div className="fw-bold">
@@ -70,5 +116,6 @@ function EmpNotifications() {
     </div>
   );
 }
+
 
 export default EmpNotifications;

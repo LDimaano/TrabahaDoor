@@ -6,21 +6,23 @@ import EmpHeader from '../../components/emp_header'; // Import the EmpHeader com
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import Select from 'react-select'; // Import react-select
 
+
 const JobPosting = () => {
   const [responsibilities, setResponsibilities] = useState("");
   const [jobDescription, setJobDescription] = useState(""); // Updated from requirements
   const [qualifications, setQualifications] = useState("");
-  const [jobTitle, setJobTitle] = useState(''); // Changed to null initially
+  const [jobTitle, setJobTitle] = useState(null); // Changed to null initially
   const [industry, setIndustry] = useState(null);
-  const [industryOptions, setIndustryOptions] = useState([]); 
+  const [industryOptions, setIndustryOptions] = useState([]);
   const [salaryRange, setSalaryRange] = useState("");
   const [skills, setSkills] = useState([]); // Changed to an empty array initially
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]); // New state for job titles
   const [jobType, setJobType] = useState("");
   const [error, setError] = useState(''); // New state for job type
-  
+ 
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchSkills = async () => {
@@ -40,6 +42,7 @@ const JobPosting = () => {
       }
     };
 
+
     const fetchJobTitles = async () => {
       try {
         const response = await fetch('http://localhost:5000/api/jobtitles'); // Ensure this URL is correct
@@ -57,6 +60,7 @@ const JobPosting = () => {
       }
     };    
 
+
     const fetchIndustries = async () => {
       try {
         const response = await fetch('http://localhost:5000/api/industries');
@@ -73,10 +77,12 @@ const JobPosting = () => {
       }
     };
 
+
     fetchSkills();
     fetchJobTitles();
     fetchIndustries();
   }, []);
+
 
   const handleSkillChange = (index, selectedOption) => {
     const newSkills = [...skills];
@@ -84,53 +90,58 @@ const JobPosting = () => {
     setSkills(newSkills);
   };
 
+
   const handleAddSkill = () => {
     setSkills([...skills, null]); // Add an empty skill object
   };
+
 
   const handleRemoveSkill = (index) => {
     const newSkills = skills.filter((_, i) => i !== index);
     setSkills(newSkills);
   };
 
+
   const handleJobTitleChange = (selectedOption) => {
     setJobTitle(selectedOption); // Set the selected job title object
   };
+
 
   // Function to handle the back button click
   const handleBack = () => {
     navigate(-1); // Navigate back
   };
 
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+ 
     // Attempt to retrieve user_id from session storage
     const user_id = sessionStorage.getItem('user_id');
-  
+ 
     // Log the user_id value for debugging purposes
     console.log('Retrieved user_id:', user_id);
-  
+ 
     // Check if user_id is null or undefined
     if (!user_id) {
       alert('User ID not found. Please log in again.');
       return; // Exit the function if user_id is not found
     }
-  
+ 
     // Construct the jobData object with user_id and other form fields
     const jobData = {
       user_id: user_id,
       jobtitle_id: jobTitle?.value || '', // Get the value from the selected job title object
       industry_id: industry?.value || '',
       SalaryRange: salaryRange,
-      skills: skills.map(skill => skill?.value || ''), 
+      skills: skills.map(skill => skill?.value || ''),
       Responsibilities: responsibilities,
       JobDescription: jobDescription, // Updated from requirements
       Qualifications: qualifications,
       JobType: jobType // New field
     };
-  
+ 
     try {
       // Send a POST request to the server with jobData
       const response = await fetch('http://localhost:5000/api/jobs/joblistings', {
@@ -140,7 +151,7 @@ const JobPosting = () => {
         },
         body: JSON.stringify(jobData),
       });
-  
+ 
       // Check if the response is successful
       if (response.ok) {
         alert('Job posted successfully!');
@@ -156,10 +167,12 @@ const JobPosting = () => {
     }
   };
 
+
   return (
     <div className="container mt-4"> {/* Added margin top here */}
       {/* Top Navigation */}
       <EmpHeader /> {/* Use EmpHeader component */}
+
 
       {/* Post Job Header */}
       <section className="d-flex align-items-center mb-4">
@@ -168,6 +181,7 @@ const JobPosting = () => {
         </button>
         <h2 className="h4">Post a Job</h2>
       </section>
+
 
       {/* Job Posting Form */}
       <form className="p-4" onSubmit={handleSubmit}>
@@ -230,6 +244,7 @@ const JobPosting = () => {
           </div>
         </section>
 
+
         <section className="mb-4">
           <h3 className="h5">Job Description</h3>
           <p>Provide details about the job responsibilities and requirements.</p>
@@ -267,6 +282,7 @@ const JobPosting = () => {
           </div>
         </section>
 
+
         <section className="mb-4">
           <h3 className="h5">Qualifications</h3>
           <p>List the qualifications and requirements for this job.</p>
@@ -279,6 +295,7 @@ const JobPosting = () => {
             onChange={(e) => setQualifications(e.target.value)}
           />
         </section>
+
 
         {/* Skills Section Moved to End */}
         <section className="mb-4">
@@ -314,6 +331,7 @@ const JobPosting = () => {
           </button>
         </section>
 
+
         <div className="d-flex justify-content-end">
           <button type="submit" className="btn btn-primary">
             Post Job
@@ -324,4 +342,8 @@ const JobPosting = () => {
   );
 };
 
+
 export default JobPosting;
+
+
+
