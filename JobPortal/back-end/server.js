@@ -159,7 +159,8 @@ app.get('/api/allnotifications', async (req, res) => {
 // Endpoint to mark a notification as read
 app.post('/api/notifications/mark-as-viewed', async (req, res) => {
   const { jobIds } = req.body;
-  const userIdFromSession = req.session.user?.user_id; // Optional chaining to avoid crashes
+  const userIdFromSession = req.session.user?.user_id; 
+  // Optional chaining to avoid crashes
 
   // Check if the user is authenticated
   if (!userIdFromSession) {
@@ -198,11 +199,11 @@ app.get('/api/jsnotifications', async (req, res) => {
   try {
     // Fetch notifications for job seeker
     const result = await pool.query(
-      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied, a.notif_status
+      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied, a.notif_status, a.application_id
        FROM applications a
        JOIN joblistings j ON a.job_id = j.job_id
        JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
-       WHERE a.user_id = $1 AND a.notif_status = 'new'
+       WHERE a.user_id = $1 
        ORDER BY a.date_applied DESC;`,
       [userId]
     );
@@ -210,9 +211,12 @@ app.get('/api/jsnotifications', async (req, res) => {
     const notifications = result.rows.map(row => ({
       message: `Your application for ${row.job_title} has been updated to ${row.status}`,
       job_id: row.job_id,
-      status: row.status,
+      application_id: row.application_id,
+      notif_status: row.notif_status,
       date_applied: row.date_applied,
     }));
+    console.log('Database result:', result.rows);
+
 
     res.json({ notifications });
   } catch (error) {
@@ -221,29 +225,37 @@ app.get('/api/jsnotifications', async (req, res) => {
   }
 });
 
-app.patch('/api/jsnotifications/:job_id/read', async (req, res) => {
-  const { job_id } = req.params;
-  const userId = req.session.user.user_id;
+app.patch('/api/jsnotifications/mark-as-viewed', async (req, res) => {
+  const { applicationIds } = req.body; // Update the variable name to applicationIds
+  const userIdFromSession = req.session.user?.user_id;
 
-  if (!userId) {
+  // Check for user authentication
+  if (!userIdFromSession) {
     return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
   }
 
+  // Validate that application IDs are provided
+  if (!applicationIds || applicationIds.length === 0) {
+    return res.status(400).json({ error: 'No application IDs provided' });
+  }
+
   try {
-    // Mark notification as 'read'
+    // Update applications based on application IDs
     await pool.query(
       `UPDATE applications
        SET notif_status = 'read'
-       WHERE job_id = $1 AND user_id = $2;`,
-      [job_id, userId]
+       WHERE application_id = ANY($1) AND user_id = $2 AND notif_status = 'new';`, // Filtering by user_id too
+      [applicationIds, userIdFromSession]
     );
-
-    res.status(200).json({ message: 'Notification marked as read' });
+    console.log('Rows affected:', result.rowCount);
+    console.log('User ID from session:', userIdFromSession);
+    res.status(200).json({ message: 'Notifications marked as viewed' });
   } catch (error) {
-    console.error('Error marking notification as read:', error);
+    console.error('Error marking notifications as viewed:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 });
+
 
 app.get('/api/alljsnotifications', async (req, res) => {
   const userId = req.session.user.user_id;

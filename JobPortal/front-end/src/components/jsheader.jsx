@@ -9,10 +9,12 @@ function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notificationCount, setNotificationCount] = useState(0);
-  const [viewedNotifications, setViewedNotifications] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const userId = sessionStorage.getItem('user_id');
+  console.log('User ID from sessionStorage:', userId);
+
+
 
   // Fetch user full name
   useEffect(() => {
@@ -60,7 +62,7 @@ function Header() {
 
   const fetchNotifications = async () => {
     if (!userId) return;
-
+  
     try {
       const response = await fetch(`http://localhost:5000/api/jsnotifications`, {
         method: 'GET',
@@ -69,14 +71,12 @@ function Header() {
           'Content-Type': 'application/json',
         },
       });
-
+  
       if (response.ok) {
         const data = await response.json();
-        const newNotifications = data.notifications.filter(
-          (notif) => !viewedNotifications.includes(notif.job_id)
-        );
-        setNotifications(newNotifications);
-        setNotificationCount(newNotifications.length);
+        console.log('Fetched notifications:', data.notifications);
+        setNotifications(data.notifications);
+        setNotificationCount(data.notifications.filter((notif) => notif.notif_status === 'new').length);
       } else {
         console.error('Failed to fetch notifications:', response.statusText);
       }
@@ -84,43 +84,43 @@ function Header() {
       console.error('Error fetching notifications:', error);
     }
   };
+  
+  const toggleNotifications = async () => {
+    setShowNotifications((prev) => !prev);
+  
+    if (!showNotifications) {
+      console.log('Current Notifications:', notifications);
+      const newApplicationIds = notifications.filter((n) => n.notif_status === 'new').map((n) => n.application_id);
+      console.log('New Application IDs:', newApplicationIds); 
+      if (newApplicationIds.length > 0) {
+        try {
+          const response = await fetch('http://localhost:5000/api/jsnotifications/mark-as-viewed', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ applicationIds: newApplicationIds }),
+          });
+  
+          if (response.ok) {
+            await fetchNotifications(); // Re-fetch notifications after marking them as viewed
+            setNotificationCount(0); // Reset the count after marking as viewed
+          } else {
+            const errorData = await response.json();
+            console.error('Failed to mark notifications as viewed:', response.statusText, errorData);
+          }
+        } catch (error) {
+          console.error('Error marking notifications as viewed:', error);
+        }
+      }
+    }
+  };
 
+  
   const getNavLinkClass = (path) => {
     return location.pathname === path ? 'nav-link active' : 'nav-link';
   };
-
-  const toggleNotifications = () => {
-    setShowNotifications(!showNotifications);
-    if (!showNotifications) {
-      fetchNotifications();
-      setNotificationCount(0); // Reset notification count when opening
-    }
-  };
-
-  const handleNotificationClick = async (job_id) => {
-    // Mark the notification as viewed and update server
-    try {
-      const response = await fetch(`http://localhost:5000/api/jsnotifications/${job_id}/read`, { 
-        method: 'PATCH',  // Changed to PATCH to match the backend
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      if (response.ok) {
-        // Update state to reflect the notification was viewed
-        setViewedNotifications((prev) => [...prev, job_id]);
-        setNotifications((prev) => prev.filter((n) => n.job_id !== job_id));
-        setNotificationCount((prevCount) => prevCount - 1); // Decrease count
-      } else {
-        console.error('Failed to mark notification as read:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
-  };
-  
 
   const handleProfileClick = () => {
     navigate('/js_myprofile');
@@ -195,12 +195,6 @@ function Header() {
                     notifications.slice(0, 7).map((notification, index) => (
                       <div key={index} className="d-flex justify-content-between">
                         <p>{notification.message}</p>
-                        <button
-                          className="btn btn-link"
-                          onClick={() => handleNotificationClick(notification.job_id)}
-                        >
-                          <i className="fas fa-check"></i>
-                        </button>
                       </div>
                     ))
                   ) : (
@@ -216,7 +210,7 @@ function Header() {
               )}
             </li>
             <li className="nav-item mx-3 position-relative">
-              <button className="btn btn-link" onClick={handleProfileClick}>
+            <button className="btn btn-link" onClick={handleProfileClick}>
                 <i className="fas fa-user fa-lg" style={{ color: '#6c757d' }}></i>
               </button>
             </li>
