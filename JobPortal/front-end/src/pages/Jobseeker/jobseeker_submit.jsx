@@ -103,7 +103,7 @@ function SubmitApplication() {
         <div className="container">
             <section className="mb-4">
                 <JobHeader
-                    logo={jobDetails.logo || 'default-logo-url'}
+                    logo={jobDetails.profile_picture_url || 'default-logo-url'}
                     title={jobDetails.job_title || 'Job Title'}
                     company={jobDetails.company_name || 'Company Name'}
                 />
