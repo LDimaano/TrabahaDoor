@@ -132,12 +132,14 @@ const jobSeekerRoutes = require('./routes/jobseekers');
 const employerRoutes = require('./routes/employers');
 const jobRoutes = require('./routes/jobs');
 const applicantsRoutes = require('./routes/applicants');
+const adminRoutes = require('./routes/admin');
 
 app.use('/api/users', userRoutes);
 app.use('/api/jobseekers', jobSeekerRoutes);
 app.use('/api/employers', employerRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applicants', applicantsRoutes);
+app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

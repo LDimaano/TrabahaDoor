@@ -7,10 +7,6 @@ import ContactItem from './contactitem';
 const ApplicantCard = ({ applicant }) => {
   const navigate = useNavigate(); // Initialize useNavigate
 
-  const handleSeeJobListing = () => {
-    navigate('/applicantlist'); // Navigate to applicantlist page
-  };
-
   return (
     <aside className="bg-white p-4 border rounded">
       <header className="d-flex align-items-center mb-3">
@@ -31,12 +27,6 @@ const ApplicantCard = ({ applicant }) => {
         <ContactItem icon={<FontAwesomeIcon icon={faEnvelope} />} label="Email" value={applicant.email} />
         <ContactItem icon={<FontAwesomeIcon icon={faPhone} />} label="Phone" value={applicant.phone} />
         <ContactItem icon={<FontAwesomeIcon icon={faLink} />} label="Website" value={applicant.website} />
-        <button 
-          className="btn btn-primary mt-3" 
-          onClick={handleSeeJobListing} 
-        >
-          See Job Listing
-        </button>
       </section>
     </aside>
   );

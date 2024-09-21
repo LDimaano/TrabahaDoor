@@ -1,27 +1,74 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons'; // Import the faBuilding icon for All Employers
+import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
 
 const SideBar = () => {
+  const [email, setEmail] = useState('');
   const menuItems = [
-    { icon: faTachometerAlt, caption: "Dashboard", link: "/admin_dashboard" },
-    { icon: faBuilding, caption: "All Employers", link: "/admin_employers" }, // Updated link for All Employers
+    { icon: faTachometerAlt, caption: "Dashboard", link: "/admindashboard" },
+    { icon: faBuilding, caption: "All Employers", link: "/admin_employers" },
     { icon: faUsers, caption: "All Applicants", link: "/admin_applicants", active: true },
-    { icon: faBriefcase, caption: "Job Listing", link: "/admin_joblistings" }, // Updated link for Job Listings
-    { icon: faUser, caption: "All Users", link: "/admin_users" } // Updated link for All Users
+    { icon: faBriefcase, caption: "Job Listing", link: "/admin_joblistings" },
+    { icon: faUser, caption: "All Users", link: "/admin_users" }
   ];
 
-  const handleLogout = () => {
-    // Logic for logout
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/users/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        window.sessionStorage.clear();
+        window.location.href = '/';
+      } else {
+        console.error('Failed to log out:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   };
 
+  useEffect(() => {
+    const fetchCompanyInfo = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/admin/infoadmin', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setEmail(data.email || '');
+        } else {
+          console.error('Failed to fetch company information:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching company information:', error);
+      }
+    };
+
+    fetchCompanyInfo();
+  }, []);
+
   return (
-    <aside className="p-3 d-flex flex-column" style={{ 
-      backgroundColor: '#044474', 
-      width: '250px', 
-      height: '100vh', 
-      position: 'fixed'  // Ensure sidebar stays fixed
-    }}>
+    <aside 
+      className="p-3 d-flex flex-column"
+      style={{
+        backgroundColor: '#044474',
+        width: '250px',
+        height: '100vh',
+        position: 'sticky',
+        top: 0,
+      }}
+    >
       <div className="d-flex align-items-center justify-content-center mb-4">
         <img
           src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
@@ -45,14 +92,14 @@ const SideBar = () => {
       </nav>
       <div className="mt-4 text-center text-white" style={{ position: 'absolute', bottom: '80px', left: '0', right: '0' }}>
         <img
-          src={`${process.env.PUBLIC_URL}/assets/profile.png`}
+          src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
           alt="User Avatar"
-          className="img-fluid rounded-circle"
-          style={{ width: '50px', borderRadius: '50%' }}
+          className="img-fluid"
+          style={{ width: '50px', borderRadius: '0%' }} 
         />
         <div className="mt-2">
           <p className="mb-0">TrabahaDoor</p>
-          <small>trabahadoor@gmail.com</small>
+          <small>{email}</small>
         </div>
       </div>
       <button 

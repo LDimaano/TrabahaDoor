@@ -35,6 +35,11 @@ import AdminApplicants from './pages/Admin/admin_applicants';
 import AdminJobs from './pages/Admin/admin_joblistings';
 import AdminUsers from './pages/Admin/admin_users';
 
+import UserProfileJs from './pages/Admin/userjs_profile'; 
+import UserProfileEmp from './pages/Admin/useremp_profile';
+import SeeJobListing from './pages/Admin/seejoblisting';
+import SeeApplicantList from './pages/Admin/seeapplicantlist'; 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
@@ -52,8 +57,11 @@ root.render(
         <Route path="/jobdescription/:jobId" element={<Jobdescription />} />
         <Route path="/emp_jobdescription/:jobId" element={<EmpJobdescription />} />
         <Route path="/js_myprofile" element={<MyProfile />} />
+        <Route path="/userjs_profile/:user_id" element={<UserProfileJs />} />
+        <Route path="/useremp_profile/:user_id" element={<UserProfileEmp />} />  
         <Route path="/js_joblistings" element={<JobseekerJobListing />} />
         <Route path="/applicantlist/:jobId" element={<ApplicantList />} />
+        <Route path="/seeapplicantlist/:jobId" element={<SeeApplicantList />} />
         <Route path="/appdetails" element={<Applicantdetails />} /> 
         <Route path="/home_employer" element={<HomeEmployer />} /> 
         <Route path="/js_notifications" element={<Notifications />} /> 
@@ -64,6 +72,7 @@ root.render(
         <Route path="/admin_employers" element={<AdminEmployer />} /> 
         <Route path="/admin_applicants" element={<AdminApplicants />} /> 
         <Route path="/admin_joblistings" element={<AdminJobs />} /> 
+        <Route path="/seejoblisting/:jobId" element={<SeeJobListing/>} />
         <Route path="/admin_users" element={<AdminUsers />} /> 
         <Route path="/emp_notifications" element={<EmpNotifications />} /> 
         <Route path="/emp_myprofile" element={<EmpMyProfile />} /> 

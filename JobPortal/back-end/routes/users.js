@@ -53,8 +53,19 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ message: 'Session save error' });
       }
 
+      // Determine the redirect URL
+      let redirectUrl;
+      if (user.usertype === 'jobseeker') {
+        redirectUrl = '/home_jobseeker';
+      } else if (user.usertype === 'employer') {
+        redirectUrl = '/home_employer';
+      } else if (user.usertype === 'admin') {
+        redirectUrl = '/admindashboard';
+      } else {
+        redirectUrl = '/'; // Fallback case, you can customize this
+      }
+
       // Send the user data along with the redirect URL
-      const redirectUrl = user.usertype === 'jobseeker' ? '/home_jobseeker' : '/home_employer';
       res.json({ 
         redirectUrl,
         user: {
@@ -69,6 +80,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 // Logout endpoint
 router.post('/logout', (req, res) => {

@@ -144,9 +144,9 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
   if (!req.session.user) {
     return res.status(403).json({ message: 'Not authenticated' });
   }
-  
+
   const jobId = req.params.jobId;
-  
+
   try {
     const result = await pool.query(
       `SELECT 
@@ -169,11 +169,7 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
       [jobId]
     );
 
-    if (result.rows.length > 0) {
-      res.json(result.rows);
-    } else {
-      res.status(404).json({ message: 'No Applicants found for this job listing' });
-    }
+    res.json(result.rows);  // Always return the rows, even if it's an empty array.
   } catch (error) {
     console.error('Error fetching applicants:', error);
     res.status(500).json({ message: 'Server error' });

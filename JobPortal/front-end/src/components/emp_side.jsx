@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faUserFriends, faClipboardList, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faClipboardList, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
   const [company_name, setCompanyName] = useState('');
