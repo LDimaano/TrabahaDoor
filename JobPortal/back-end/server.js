@@ -140,7 +140,40 @@ app.get('/api/notifications', async (req, res) => {
   }
 });
 
-  app.post('/api/applications/:applicationId/status', async (req, res) => {
+app.get('/api/jsnotifications', async (req, res) => {
+  const userId = req.session.user.user_id;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
+  }
+
+  try {
+    // Fetch notifications for job seeker
+    const result = await pool.query(
+      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied
+       FROM applications a
+       JOIN joblistings j ON a.job_id = j.job_id
+       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
+       WHERE a.user_id = $1
+       ORDER BY a.date_applied DESC;`,
+      [userId]
+    );
+
+    const notifications = result.rows.map(row => ({
+      message: `Your application for ${row.job_title} has been updated to ${row.status}`,
+      job_id: row.job_id,
+      status: row.status,
+      date_applied: row.date_applied,
+    }));
+
+    res.json({ notifications });
+  } catch (error) {
+    console.error('Error fetching notifications for job seeker:', error);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+app.post('/api/applications/:applicationId/status', async (req, res) => {
       const applicationId = req.params.applicationId;
       const { status } = req.body; // e.g., 'in review', 'interview', 'hired', etc.
       const userId = req.session.user.user_id;

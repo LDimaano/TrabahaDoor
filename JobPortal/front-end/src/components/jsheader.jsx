@@ -59,7 +59,7 @@ function Header() {
     if (!userId) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/notifications`, {
+      const response = await fetch(`http://localhost:5000/api/jsnotifications`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -87,7 +87,7 @@ function Header() {
     setShowNotifications(!showNotifications);
     if (!showNotifications) {
       fetchNotifications();
-      setNotificationCount(0);
+      setNotificationCount(0); // Reset notification count when opening
     }
   };
 

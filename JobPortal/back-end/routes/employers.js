@@ -218,61 +218,54 @@ router.get('/joblistings', async (req, res) => {
 });
 
 
-router.get('/notifications', async (req, res) => {
-  const userId = req.session.userId; // Access userId from session storage
-
-
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
-  }
-
+// Endpoint to update application status
+router.put('/applications/:userId/:jobId', async (req, res) => {
+  const { userId, jobId } = req.params;
+  const { hiringStage } = req.body;
 
   try {
     const result = await pool.query(
-      `SELECT a.full_name, jt.job_title, j.job_id, a.status
-       FROM applications a
-       JOIN joblistings j ON a.job_id = j.job_id
-       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
-       JOIN users u ON j.user_id = u.user_id
-       WHERE u.user_id = $1
-       ORDER BY a.date_applied DESC;`,
-      [userId]
+      `UPDATE applications
+       SET status = $1
+       WHERE user_id = $2 AND job_id = $3
+       RETURNING *`,
+      [hiringStage, userId, jobId]
     );
 
-
-    const notifications = result.rows.map(row => ({
-      message: `${row.full_name} has applied to be a ${row.job_title}`,
-      job_id: row.job_id,
-      status: row.status,
-    }));
-
-
-    const newJobIds = notifications.filter(n => n.status === 'new').map(n => n.job_id);
-    const newCount = newJobIds.length; // Count of new notifications
-
-
-    if (newJobIds.length > 0) {
-      const formattedJobIds = newJobIds.map(id => `'${id}'`).join(', ');
-      await pool.query(
-        `UPDATE applications
-         SET status = 'viewed'
-         WHERE status = 'new' AND job_id IN (${formattedJobIds})`
-      );
-
-
-      // Emit real-time notifications to the employer's room
-      io.to(`user_${userId}`).emit('newNotification', { notifications, newCount });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Application not found' });
     }
 
+    // Emit notification to job seeker
+    const application = result.rows[0];
+    const jobSeekerId = application.user_id; // This should be the job seeker's user ID
 
-    res.json({ notifications, newCount });
+    // Fetch job title for notification
+    const jobResult = await pool.query(
+      `SELECT jt.job_title, u.full_name 
+       FROM joblistings j 
+       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id 
+       JOIN users u ON j.user_id = u.user_id 
+       WHERE j.job_id = $1`,
+      [jobId]
+    );
+
+    const jobTitle = jobResult.rows[0]?.job_title || 'your application';
+    const fullName = jobResult.rows[0]?.full_name || 'Employer';
+
+    // Emit notification to the job seeker
+    io.to(`user_${jobSeekerId}`).emit('applicationUpdate', {
+      message: `${fullName} has updated the status of your application for the position of ${jobTitle}.`,
+      status: hiringStage,
+      job_id: jobId,
+    });
+
+    res.json({ message: 'Application status updated', application });
   } catch (error) {
-    console.error('Error fetching notifications:', error);
+    console.error('Error updating application status:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 });
-
-
 
 
 module.exports = router;
