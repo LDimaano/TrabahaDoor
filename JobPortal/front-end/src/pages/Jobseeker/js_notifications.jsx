@@ -1,45 +1,102 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Header from '../../components/empheader'; // Add the Header component
+import { io } from 'socket.io-client';
 
 const Notifications = () => {
-  const [notifications] = useState([
-    { id: 1, message: 'New job application received', time: '2 mins ago' },
-    { id: 2, message: 'Your profile was viewed by a recruiter', time: '1 hour ago' },
-    { id: 3, message: 'New message from employer', time: '3 hours ago' },
-    // Add more notifications as needed
-  ]);
-  const [showAll, setShowAll] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [error, setError] = useState(null);
+  const [notificationCount, setNotificationCount] = useState(0);
 
-  const handleToggle = () => {
-    setShowAll(!showAll);
+  // Initialize WebSocket connection
+  useEffect(() => {
+    const userId = sessionStorage.getItem('user_id');
+    const socket = io('http://localhost:5000', {
+      withCredentials: true,
+      transports: ['websocket'],
+    });
+
+    if (userId) {
+      socket.emit('joinRoom', userId);
+    }
+
+    fetchNotifications();
+
+    socket.on('newNotification', (newNotification) => {
+      setNotifications((prevNotifications) => [newNotification, ...prevNotifications]);
+      setNotificationCount((prevCount) => prevCount + 1);
+    });
+
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket:', socket.id);
+    });
+
+    socket.on('connect_error', (err) => {
+      console.error('WebSocket connection error:', err);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // Function to fetch notifications from the backend
+  const fetchNotifications = async () => {
+    const userId = sessionStorage.getItem('user_id');
+    if (!userId) return;
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/notifications`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data.notifications || []);
+      } else {
+        console.error('Failed to fetch notifications:', response.statusText);
+      }
+    } catch (error) {
+      setError(`Error fetching notifications: ${error.message}`);
+    }
   };
 
   return (
-    <div className="container mt-4">
-      <h3>Notifications</h3>
-      <ul className="list-group">
-        {notifications.length === 0 ? (
-          <li className="list-group-item">No notifications</li>
-        ) : (
-          notifications.slice(0, showAll ? notifications.length : 5).map((notification) => (
-            <li className="list-group-item" key={notification.id}>
-              <div className="d-flex justify-content-between align-items-center">
-                <span>{notification.message}</span>
-                <span className="badge bg-secondary">{notification.time}</span>
+    <div>
+      <Header />
+      <div className="container mt-4">
+        <h1 className="mb-4">Notifications</h1>
+        {error && <div className="alert alert-danger" role="alert">{error}</div>}
+        {notifications.length > 0 ? (
+          <div className="list-group">
+            {notifications.map((notification) => (
+              <div
+                key={notification.id}
+                className={`list-group-item d-flex justify-content-between align-items-start mb-3 p-3 ${
+                  notification.status === 'new' ? 'bg-light border border-primary' : 'bg-white'
+                }`}
+                style={{ borderRadius: '0.5rem', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}
+              >
+                <div className="ms-2 me-auto">
+                  <div className="fw-bold">{notification.message}</div>
+                  <small className="text-muted">
+                    {notification.date_applied ? new Date(notification.date_applied).toLocaleString() : 'Unknown date'}
+                  </small>
+                </div>
+                {notification.status === 'new' && (
+                  <span className="badge bg-primary rounded-pill">New</span>
+                )}
               </div>
-            </li>
-          ))
+            ))}
+          </div>
+        ) : (
+          <div className="alert alert-info">No notifications available.</div>
         )}
-      </ul>
-      {notifications.length > 5 && (
-        <div className="mt-3 text-center">
-          <button
-            className="btn btn-link"
-            onClick={handleToggle}
-          >
-            {showAll ? 'Show Less' : 'View All Notifications'}
-          </button>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
