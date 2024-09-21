@@ -9,8 +9,9 @@ router.get('/applicantlist', async (req, res) => {
 
   try {
     let query = `
-      SELECT
+       SELECT
           job_seekers.full_name,
+		  job_seekers.user_id,
           users.email,
           address.location,
           MAX(job_titles.job_title) AS latest_job_title,  -- Example aggregation
@@ -25,7 +26,8 @@ router.get('/applicantlist', async (req, res) => {
           job_seekers.full_name,
           users.email,
           address.location,
-          pp.profile_picture_url;
+          pp.profile_picture_url,
+		  job_seekers.user_id;
 
     `;
 
