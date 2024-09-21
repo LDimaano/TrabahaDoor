@@ -208,27 +208,31 @@ function Header() {
                                 )}
                             </button>
                             {showNotifications && (
-                                <div
-                                    className="position-absolute bg-white border rounded shadow p-2"
-                                    style={notificationDropdownStyle}
+                        <div
+                            className="position-absolute bg-white border rounded shadow p-2"
+                            style={notificationDropdownStyle}
+                        >
+                            <h6 className="mb-2 text-center">Notifications</h6> {/* Title added here */}
+                            <div className="notifications-list">
+                                {notifications.length > 0 ? (
+                                    notifications.slice(0, 7).map((notification, index) => (
+                                        <p key={index} className="mb-1" style={{ borderBottom: '1px solid #e9ecef', padding: '5px 0' }}>
+                                            {notification.message}
+                                        </p>
+                                    ))
+                                ) : (
+                                    <p>No new notifications</p>
+                                )}
+                                <button
+                                    className="btn btn-link mt-2"
+                                    onClick={handleViewAllClick}
                                 >
-                                    <div className="notifications-list">
-                                        {notifications.length > 0 ? (
-                                            notifications.map((notification, index) => (
-                                                <p key={index}>{notification.message}</p>
-                                            ))
-                                        ) : (
-                                            <p>No new notifications</p>
-                                        )}
-                                        <button
-                                            className="btn btn-link mt-2"
-                                            onClick={handleViewAllClick}
-                                        >
-                                            View All Notifications
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
+                                    View All Notifications
+                                </button>
+                            </div>
+                        </div>
+                          )}
+   
                         </li>
                         <li className="nav-item mx-3 position-relative">
                             <button className="btn btn-link" onClick={handleProfileClick}>

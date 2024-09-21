@@ -95,7 +95,7 @@ app.get('/api/notifications', async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT a.full_name, jt.job_title, j.job_id, a.status
+      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied
        FROM applications a
        JOIN joblistings j ON a.job_id = j.job_id
        JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
@@ -108,7 +108,8 @@ app.get('/api/notifications', async (req, res) => {
     const notifications = result.rows.map(row => ({
       message: `${row.full_name} has applied to be a ${row.job_title}`,
       job_id: row.job_id,
-      status: row.status
+      status: row.status,
+      date_applied: row.date_applied // Make sure to include this
     }));
 
     // Update status of 'new' notifications
@@ -132,6 +133,7 @@ app.get('/api/notifications', async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 });
+
 
 // Handle new application submissions
 app.post('/api/apply', async (req, res) => {
