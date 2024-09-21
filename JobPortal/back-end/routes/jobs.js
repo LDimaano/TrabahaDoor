@@ -2,6 +2,13 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
+// Method to set io instance
+let io; // Declare io variable outside to be accessible
+
+router.setIo = (_io) => {
+  io = _io; // Set the io instance
+};
+
 router.post('/joblistings', async (req, res) => {
   const {
     user_id,
@@ -62,6 +69,12 @@ router.post('/applications', async (req, res) => {
     );
 
     if (result.rowCount === 1) {
+      // Emit new application notification if io is set
+      if (io) {
+        io.emit('new-application', {
+          message: `${fullName} has applied for job ID ${jobId}`
+        });
+      }
       res.status(201).json({ message: 'Application submitted successfully!' });
     } else {
       res.status(500).json({ error: 'Failed to submit application' });
@@ -72,33 +85,7 @@ router.post('/applications', async (req, res) => {
   }
 });
 
-// Method to set io instance
-router.setIo = (io) => {
-  router.post('/applications', async (req, res) => {
-    const { jobId, user_id, fullName, email, phoneNumber, additionalInfo } = req.body;
-
-    try {
-      const result = await pool.query(
-        `INSERT INTO applications (job_id, user_id, full_name, email, phone_number, additional_info, status)
-        VALUES ($1, $2, $3, $4, $5, $6, 'new')`, // Set status to 'new'
-        [jobId, user_id, fullName, email, phoneNumber, additionalInfo]
-      );
-
-      if (result.rowCount === 1) {
-        io.emit('new-application', {
-          message: `${fullName} has applied for job ID ${jobId}`
-        });
-        res.status(201).json({ message: 'Application submitted successfully!' });
-      } else {
-        res.status(500).json({ error: 'Failed to submit application' });
-      }
-    } catch (error) {
-      console.error('Error submitting application:', error);
-      res.status(500).json({ error: 'An error occurred while submitting the application', details: error.message });
-    }
-  });
-};
-
+// Fetch posted jobs
 router.get('/postedjobs', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -122,6 +109,7 @@ router.get('/postedjobs', async (req, res) => {
   }
 });
 
+// Get job details by job ID
 router.get('/joblistings/:jobId', async (req, res) => {
   const { jobId } = req.params;
   console.log(`Fetching job details for Job ID: ${jobId}`);

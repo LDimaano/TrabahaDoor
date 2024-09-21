@@ -46,10 +46,8 @@ function Header() {
     }
 
     socket.on('newNotification', (notification) => {
-      if (notification.status === "new") {
-        setNotificationCount((prevCount) => prevCount + 1);
-      }
       setNotifications((prev) => [...prev, notification]);
+      setNotificationCount((prevCount) => prevCount + 1);
     });
 
     return () => {
@@ -72,6 +70,7 @@ function Header() {
       if (response.ok) {
         const data = await response.json();
         setNotifications(data.notifications || []);
+        setNotificationCount(data.notifications.length);
       } else {
         console.error('Failed to fetch notifications:', response.statusText);
       }

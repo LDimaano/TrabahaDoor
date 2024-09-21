@@ -94,6 +94,7 @@ app.get('/api/notifications', async (req, res) => {
   }
 
   try {
+    // Fetch notifications
     const result = await pool.query(
       `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied
        FROM applications a
@@ -109,12 +110,12 @@ app.get('/api/notifications', async (req, res) => {
       message: `${row.full_name} has applied to be a ${row.job_title}`,
       job_id: row.job_id,
       status: row.status,
-      date_applied: row.date_applied // Make sure to include this
+      date_applied: row.date_applied, // Ensure this is included
     }));
 
     // Update status of 'new' notifications
     const newJobIds = notifications.filter(n => n.status === 'new').map(n => n.job_id);
-   
+
     if (newJobIds.length > 0) {
       await pool.query(
         `UPDATE applications
@@ -122,10 +123,15 @@ app.get('/api/notifications', async (req, res) => {
          WHERE status = 'new' AND job_id = ANY($1::int[])`,
         [newJobIds]
       );
-    }
 
-    // Emit the notifications to the client in real-time
-    io.to(userId).emit('notifications', notifications);
+      // Emit real-time updates to job seekers when their application status changes
+      for (const jobId of newJobIds) {
+        io.to(userId).emit('newNotification', {
+          message: `Your application for job ID ${jobId} has been updated to 'viewed'`,
+          job_id: jobId,
+        });
+      }
+    }
 
     res.json({ notifications });
   } catch (error) {
@@ -134,30 +140,53 @@ app.get('/api/notifications', async (req, res) => {
   }
 });
 
-
-// Handle new application submissions
-app.post('/api/apply', async (req, res) => {
-  const { userId, jobId, fullName } = req.body;
-  try {
-    const result = await pool.query(
-      `INSERT INTO applications (user_id, job_id, full_name, status) VALUES ($1, $2, $3, 'new')`,
-      [userId, jobId, fullName]
-    );
-
-    if (result.rowCount === 1) {
-      io.emit('new-application', {
-        message: `${fullName} has applied for job ID ${jobId}`
-      });
-      res.status(200).json({ message: 'Application submitted successfully' });
-    } else {
-      res.status(500).json({ error: 'Failed to submit application' });
-    }
-  } catch (error) {
-    console.error('Error applying for job:', error);
-    res.status(500).json({ error: 'Server Error' });
-  }
-});
-
+  app.post('/api/applications/:applicationId/status', async (req, res) => {
+      const applicationId = req.params.applicationId;
+      const { status } = req.body; // e.g., 'in review', 'interview', 'hired', etc.
+      const userId = req.session.user.user_id;
+    
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
+      }
+    
+      try {
+        // Update the application status
+        const result = await pool.query(
+          `UPDATE applications
+           SET status = $1
+           WHERE application_id = $2 AND job_id IN (SELECT job_id FROM joblistings WHERE user_id = $3)`,
+          [status, applicationId, userId]
+        );
+    
+        if (result.rowCount === 0) {
+          return res.status(404).json({ error: 'Application not found or unauthorized' });
+        }
+    
+        // Fetch the job seeker’s user ID
+        const appResult = await pool.query(
+          `SELECT user_id FROM applications WHERE application_id = $1`,
+          [applicationId]
+        );
+    
+        if (appResult.rowCount > 0) {
+          const jobSeekerId = appResult.rows[0].user_id;
+    
+          // Emit notification to the job seeker
+          const notification = {
+            message: `Your application has been updated to ${status}`,
+            application_id: applicationId,
+            status,
+          };
+          io.to(jobSeekerId).emit('newNotification', notification);
+        }
+    
+        res.json({ message: 'Application status updated successfully' });
+      } catch (error) {
+        console.error('Error updating application status:', error);
+        res.status(500).json({ error: 'Server Error' });
+      }
+    });
+    
 // Profile picture upload endpoint
 app.post('/api/upload-profile-picture/:userId', upload.single('profilePicture'), async (req, res) => {
   console.log('Request received to upload profile picture');

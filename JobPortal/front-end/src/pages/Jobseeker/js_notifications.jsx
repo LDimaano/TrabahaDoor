@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Header from '../../components/empheader'; // Add the Header component
+import Header from '../../components/jsheader'; // Add the Header component
 import { io } from 'socket.io-client';
 
 const Notifications = () => {
