@@ -188,8 +188,6 @@ app.post('/api/notifications/mark-as-viewed', async (req, res) => {
 });
 
 
-
-
 app.get('/api/jsnotifications', async (req, res) => {
   const userId = req.session.user.user_id;
 
@@ -200,7 +198,64 @@ app.get('/api/jsnotifications', async (req, res) => {
   try {
     // Fetch notifications for job seeker
     const result = await pool.query(
-      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied
+      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied, a.notif_status
+       FROM applications a
+       JOIN joblistings j ON a.job_id = j.job_id
+       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
+       WHERE a.user_id = $1 AND a.notif_status = 'new'
+       ORDER BY a.date_applied DESC;`,
+      [userId]
+    );
+
+    const notifications = result.rows.map(row => ({
+      message: `Your application for ${row.job_title} has been updated to ${row.status}`,
+      job_id: row.job_id,
+      status: row.status,
+      date_applied: row.date_applied,
+    }));
+
+    res.json({ notifications });
+  } catch (error) {
+    console.error('Error fetching notifications for job seeker:', error);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+app.patch('/api/jsnotifications/:job_id/read', async (req, res) => {
+  const { job_id } = req.params;
+  const userId = req.session.user.user_id;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
+  }
+
+  try {
+    // Mark notification as 'read'
+    await pool.query(
+      `UPDATE applications
+       SET notif_status = 'read'
+       WHERE job_id = $1 AND user_id = $2;`,
+      [job_id, userId]
+    );
+
+    res.status(200).json({ message: 'Notification marked as read' });
+  } catch (error) {
+    console.error('Error marking notification as read:', error);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+app.get('/api/alljsnotifications', async (req, res) => {
+  const userId = req.session.user.user_id;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
+  }
+
+  try {
+    // Fetch notifications for job seeker
+    const result = await pool.query(
+      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied, a.notif_status
        FROM applications a
        JOIN joblistings j ON a.job_id = j.job_id
        JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
@@ -222,6 +277,58 @@ app.get('/api/jsnotifications', async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 });
+
+
+
+app.post('/api/applications/:applicationId/status', async (req, res) => {
+      const applicationId = req.params.applicationId;
+      const { status } = req.body; // e.g., 'in review', 'interview', 'hired', etc.
+      const userId = req.session.user.user_id;
+    
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
+      }
+    
+      try {
+        // Update the application status
+        const result = await pool.query(
+          `UPDATE applications
+           SET status = $1
+           WHERE application_id = $2 AND job_id IN (SELECT job_id FROM joblistings WHERE user_id = $3)`,
+          [status, applicationId, userId]
+        );
+    
+        if (result.rowCount === 0) {
+          return res.status(404).json({ error: 'Application not found or unauthorized' });
+        }
+    
+        // Fetch the job seeker’s user ID
+        const appResult = await pool.query(
+          `SELECT user_id FROM applications WHERE application_id = $1`,
+          [applicationId]
+        );
+    
+        if (appResult.rowCount > 0) {
+          const jobSeekerId = appResult.rows[0].user_id;
+    
+          // Emit notification to the job seeker
+          const notification = {
+            message: `Your application has been updated to ${status}`,
+            application_id: applicationId,
+            status,
+          };
+          io.to(jobSeekerId).emit('newNotification', notification);
+        }
+    
+        res.json({ message: 'Application status updated successfully' });
+      } catch (error) {
+        console.error('Error updating application status:', error);
+        res.status(500).json({ error: 'Server Error' });
+      }
+    });
+
+
+
 
 app.post('/api/applications/:applicationId/status', async (req, res) => {
       const applicationId = req.params.applicationId;

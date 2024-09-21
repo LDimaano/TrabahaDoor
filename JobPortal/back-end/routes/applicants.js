@@ -190,26 +190,34 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
   const allowedStages = ['Received', 'In review', 'For interview', 'Filled'];
 
   try {
+    // Check for invalid input
     if (!userId || !hiringStage || !jobId) {
       return res.status(400).json({ error: 'Invalid input: userId, jobId, and hiringStage are required.' });
     }
 
+    // Validate the hiring stage
     if (!allowedStages.includes(hiringStage)) {
       return res.status(400).json({ error: `Invalid hiring stage: ${hiringStage}. Must be one of ${allowedStages.join(', ')}.` });
     }
 
+    // Update both status and notif_status
     const result = await pool.query(
-      'UPDATE applications SET status = $1 WHERE user_id = $2 AND job_id = $3',
-      [hiringStage, userId, jobId]
+      'UPDATE applications SET status = $1, notif_status = $2 WHERE user_id = $3 AND job_id = $4',
+      [hiringStage, 'new', userId, jobId]
     );
 
+    // Check if the record exists
     if (result.rowCount === 0) {
       return res.status(404).json({ error: `User with ID ${userId} or Job ID ${jobId} not found.` });
     }
 
-    res.status(200).json({ message: 'Hiring stage updated successfully.' });
+    // Log the updated values for debugging
+    console.log(`Updated: status = ${hiringStage}, notif_status = 'new' for userId: ${userId}, jobId: ${jobId}`);
+
+    // Send success response
+    res.status(200).json({ message: 'Hiring stage and notification status updated successfully.' });
   } catch (error) {
-    console.error('Error updating hiring stage:', error.message);
+    console.error('Error updating hiring stage and notification status:', error.message);
     res.status(500).json({ error: 'Failed to update hiring stage. Please try again later.' });
   }
 });
