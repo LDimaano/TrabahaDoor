@@ -169,7 +169,7 @@ const handleViewAllClick = () => {
                 >
                   <h6 className="mb-2 text-center">Notifications</h6>
                   {notifications.length > 0 ? (
-                    notifications.map((notification, index) => (
+                    notifications.slice(0, 7).map((notification, index) => (
                       <p key={index}>{notification.message}</p>
                     ))
                   ) : (
