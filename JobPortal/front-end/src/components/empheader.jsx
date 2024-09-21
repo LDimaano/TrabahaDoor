@@ -5,13 +5,11 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Header() {
-  const [companyInfo, setCompanyInfo] = useState({
-    companyName: '',
-    contactPerson: ''
-});
+  const [companyInfo, setCompanyInfo] = useState({ companyName: '', contactPerson: '' });
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notificationCount, setNotificationCount] = useState(0);
+  const [viewedNotifications, setViewedNotifications] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const userId = sessionStorage.getItem('user_id');
@@ -19,32 +17,31 @@ function Header() {
   // Fetch user full name
   useEffect(() => {
     const fetchCompanyInfo = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/employers/user-infoemp', {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+      try {
+        const response = await fetch('http://localhost:5000/api/employers/user-infoemp', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log('API response data:', data);
-                setCompanyInfo({
-                    companyName: data.company_name || '',
-                    contactPerson: data.contact_person || ''
-                });
-            } else {
-                console.error('Failed to fetch company info:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error fetching company info:', error);
+        if (response.ok) {
+          const data = await response.json();
+          setCompanyInfo({
+            companyName: data.company_name || '',
+            contactPerson: data.contact_person || '',
+          });
+        } else {
+          console.error('Failed to fetch company info:', response.statusText);
         }
+      } catch (error) {
+        console.error('Error fetching company info:', error);
+      }
     };
 
     fetchCompanyInfo();
-}, []);
+  }, []);
 
   useEffect(() => {
     const socket = io('http://localhost:5000', { withCredentials: true });
@@ -57,7 +54,6 @@ function Header() {
     socket.on('newNotification', (notification) => {
       setNotifications((prev) => [...prev, notification]);
       setNotificationCount((prevCount) => prevCount + 1);
-      
     });
 
     return () => {
@@ -79,8 +75,11 @@ function Header() {
 
       if (response.ok) {
         const data = await response.json();
-        setNotifications(data.notifications || []);
-        setNotificationCount(data.notifications.length);
+        const newNotifications = data.notifications.filter(
+          (notif) => !viewedNotifications.includes(notif.job_id)
+        );
+        setNotifications(newNotifications);
+        setNotificationCount(newNotifications.length);
       } else {
         console.error('Failed to fetch notifications:', response.statusText);
       }
@@ -101,13 +100,37 @@ function Header() {
     }
   };
 
+  const handleNotificationClick = async (job_id) => {
+    // Mark the notification as viewed and update server
+    try {
+      const response = await fetch(`http://localhost:5000/api/notifications/${job_id}/read`, {
+        method: 'PUT',  // Change to PUT
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.ok) {
+        setViewedNotifications((prev) => [...prev, job_id]);
+        setNotifications((prev) => prev.filter((n) => n.job_id !== job_id));
+        setNotificationCount((prevCount) => prevCount - 1); // Decrease count
+      } else {
+        console.error('Failed to mark notification as read:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+  
+
   const handleProfileClick = () => {
     navigate('/emp_myprofile');
-};
+  };
 
-const handleViewAllClick = () => {
+  const handleViewAllClick = () => {
     navigate('/emp_notifications');
-};
+  };
 
   const handleLogout = async () => {
     try {
@@ -172,7 +195,15 @@ const handleViewAllClick = () => {
                   <h6 className="mb-2 text-center">Notifications</h6>
                   {notifications.length > 0 ? (
                     notifications.slice(0, 7).map((notification, index) => (
-                      <p key={index}>{notification.message}</p>
+                      <div key={index} className="d-flex justify-content-between">
+                        <p>{notification.message}</p>
+                        <button
+                          className="btn btn-link"
+                          onClick={() => handleNotificationClick(notification.job_id)}
+                        >
+                          <i className="fas fa-check"></i>
+                        </button>
+                      </div>
                     ))
                   ) : (
                     <p>No new notifications</p>
