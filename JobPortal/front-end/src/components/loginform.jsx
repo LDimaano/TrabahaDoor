@@ -44,11 +44,11 @@ function LoginForm() {
     <form className="col-lg-6 d-flex align-items-center" onSubmit={handleClick}>
       <div className="card p-5 shadow-lg w-100">
         <h2 className="text-center mb-4">Log in</h2>
-        <div className="text-center mb-4">
-          <hr className="w-25 d-inline-block" />
-          <span className="mx-2">Log in with email</span>
-          <hr className="w-25 d-inline-block" />
-        </div>
+        <div className="text-center mb-4 d-flex align-items-center justify-content-center">
+        <hr className="w-25" />
+        <span className="mx-2">Log in with email</span>
+        <hr className="w-25" />
+      </div>
         {error && <div className="alert alert-danger">{error}</div>}
         <div className="mb-3">
           <label htmlFor="emailInput" className="form-label">Email Address</label>

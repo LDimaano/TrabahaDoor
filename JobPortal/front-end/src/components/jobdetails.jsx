@@ -34,7 +34,7 @@ const JobDetails = ({ jobInfo, skills }) => {
           </div>
         ))}
       </section>
-      <hr />
+     
       <section>
         <h2>Required Skills</h2>
         <div className="d-flex flex-wrap">

@@ -107,7 +107,7 @@ const JobseekerDashboard = () => {
                 }}>
                 <FontAwesomeIcon icon={faArrowLeft} />
               </button>
-              <h3>Job Listings: {filteredListings.length}</h3>
+              <h3 style={{ marginTop: '20px' }}>Job Listings: {filteredListings.length}</h3> {/* Add top margin here */}
             </div>
             <div className="input-group" style={{ maxWidth: '300px' }}>
               <input
@@ -122,23 +122,30 @@ const JobseekerDashboard = () => {
               </button>
             </div>
           </div>
-
-          <JobseekerJoblist 
-            currentListings={currentListings}
-            hiringStages={hiringStages}
-            onHiringStageChange={handleHiringStageChange}
-          />
-
-          <Pagination 
-            listingsPerPage={listingsPerPage} 
-            totalListings={filteredListings.length} 
-            paginate={paginate} 
-            currentPage={currentPage} 
-          />
+  
+          <div style={{ 
+            marginTop: '40px',  // Add top margin for job listings
+            marginLeft: '40px', // Add left margin
+            marginRight: '40px', // Add right margin
+          }}> 
+            <JobseekerJoblist 
+              currentListings={currentListings}
+              hiringStages={hiringStages}
+              onHiringStageChange={handleHiringStageChange}
+            />
+  
+            <Pagination 
+              listingsPerPage={listingsPerPage} 
+              totalListings={filteredListings.length} 
+              paginate={paginate} 
+              currentPage={currentPage} 
+            />
+          </div>
         </section>
       </main>
     </div>
   );
+  
 };
 
 export default JobseekerDashboard;
