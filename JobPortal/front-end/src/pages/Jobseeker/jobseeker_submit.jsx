@@ -15,6 +15,7 @@ function SubmitApplication() {
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [additionalInfo, setAdditionalInfo] = useState('');
+    const [hasApplied, setHasApplied] = useState(false); // New state to track if user has already applied
     const { jobId } = useParams();
     const user_id = sessionStorage.getItem('user_id');
 
@@ -35,21 +36,52 @@ function SubmitApplication() {
             }
         };
 
-        if (jobId) {
+        const checkIfApplied = async () => {
+            try {
+                // Debugging logs to check if the values are fetched correctly
+                console.log('Checking application status');
+                console.log('jobId:', jobId);
+                console.log('user_id:', user_id);
+        
+                const response = await fetch(`http://localhost:5000/api/jobs//applications/check`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ jobId, user_id }), // Send both jobId and user_id
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to check application status');
+                }
+        
+                const data = await response.json();
+                console.log('Response from server:', data);
+        
+                if (data.applied) {
+                    setHasApplied(true); // Set state if user has already applied
+                }
+            } catch (error) {
+                console.error('Error checking application status:', error);
+            }
+        };
+        
+
+        if (jobId && user_id) {
             fetchJobDetails();
+            checkIfApplied(); // Check if the user already applied
         }
 
         // Listen for notifications
         socket.on('new-application', (data) => {
             console.log(data.message);
-            // You can also display a notification to the user here
         });
 
         // Clean up socket connection on unmount
         return () => {
             socket.off('new-application');
         };
-    }, [jobId]);
+    }, [jobId, user_id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -156,7 +188,13 @@ function SubmitApplication() {
 
     return (
         <>
-            <button onClick={openModal} className="btn btn-primary">Apply Now</button>
+            <button
+                onClick={openModal}
+                className={`btn ${hasApplied ? 'btn-secondary' : 'btn-primary'}`}
+                disabled={hasApplied} // Disable button if user has already applied
+            >
+                {hasApplied ? 'Already Applied' : 'Apply Now'}
+            </button>
             <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent} />
         </>
     );

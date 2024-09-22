@@ -85,6 +85,46 @@ router.post('/applications', async (req, res) => {
   }
 });
 
+//check if applicant already applied
+
+router.post('/applications/check', async (req, res) => {
+  const { user_id, jobId } = req.body;
+
+  // Debugging logs to check values
+  console.log('Received request to check application status');
+  console.log('user_id:', user_id);
+  console.log('jobId:', jobId);
+
+  if (!user_id || !jobId) {
+      console.error('Missing required parameters');
+      return res.status(400).json({ message: 'Missing required parameters' });
+  }
+
+  try {
+      // Query the database to check if the user has already applied for this job
+      const result = await pool.query(
+          'SELECT * FROM applications WHERE user_id = $1 AND job_id = $2',
+          [user_id, jobId]
+      );
+
+      // Log the result of the query
+      console.log('Query result:', result.rows);
+
+      if (result.rows.length > 0) {
+          // If the result contains any rows, it means the user has already applied
+          console.log('User has already applied');
+          return res.json({ applied: true });
+      }
+
+      // No application found, so the user has not applied yet
+      console.log('User has not applied yet');
+      res.json({ applied: false });
+  } catch (error) {
+      console.error('Error checking application status:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Fetch posted jobs
 router.get('/postedjobs', async (req, res) => {
   try {
