@@ -94,14 +94,13 @@ app.get('/api/notifications', async (req, res) => {
   }
 
   try {
-    // Fetch all notifications (both 'new' and 'viewed')
     const result = await pool.query(
       `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied
        FROM applications a
        JOIN joblistings j ON a.job_id = j.job_id
        JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
        JOIN users u ON j.user_id = u.user_id
-       WHERE u.user_id = $1
+       WHERE u.user_id = $1 AND a.status = 'new'
        ORDER BY a.date_applied DESC;`,
       [userId]
     );
@@ -130,11 +129,12 @@ app.get('/api/allnotifications', async (req, res) => {
   try {
     // Fetch only new notifications
     const result = await pool.query(
-      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied
+      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied, pp.profile_picture_url
       FROM applications a
       JOIN joblistings j ON a.job_id = j.job_id
       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
       JOIN users u ON j.user_id = u.user_id
+      JOIN profilepictures pp ON a.user_id = pp.user_id
       WHERE u.user_id = $1 
       ORDER BY a.date_applied DESC;`,
       [userId]
@@ -145,6 +145,7 @@ app.get('/api/allnotifications', async (req, res) => {
       job_id: row.job_id,
       status: row.status,
       date_applied: row.date_applied,
+      profile_picture: row.profile_picture_url
     }));
 
     // Return all notifications (can filter or paginate in the frontend)
@@ -203,7 +204,7 @@ app.get('/api/jsnotifications', async (req, res) => {
        FROM applications a
        JOIN joblistings j ON a.job_id = j.job_id
        JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
-       WHERE a.user_id = $1 
+       WHERE a.user_id = $1 AND a.notif_status = 'new'
        ORDER BY a.date_applied DESC;`,
       [userId]
     );
@@ -267,10 +268,11 @@ app.get('/api/alljsnotifications', async (req, res) => {
   try {
     // Fetch notifications for job seeker
     const result = await pool.query(
-      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied, a.notif_status
+      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied, a.notif_status, pp.profile_picture_url
        FROM applications a
        JOIN joblistings j ON a.job_id = j.job_id
        JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
+       JOIN profilepictures pp ON j.user_id = pp.user_id
        WHERE a.user_id = $1
        ORDER BY a.date_applied DESC;`,
       [userId]
@@ -281,6 +283,7 @@ app.get('/api/alljsnotifications', async (req, res) => {
       job_id: row.job_id,
       status: row.status,
       date_applied: row.date_applied,
+      profile_picture: row.profile_picture_url
     }));
 
     res.json({ notifications });
@@ -464,6 +467,8 @@ app.get('/api/industries', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch industries' });
   }
 });
+
+
 
 // Use routes
 const userRoutes = require('./routes/users');

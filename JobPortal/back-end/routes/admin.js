@@ -503,6 +503,37 @@ router.get('/topcompanies', async (req, res) => {
     }
 });
 
+router.get('/dashboard-data', async (req, res) => {
+  console.log('Session data:', req.session);
+
+  try {
+    // Query the count of job seekers
+    const jobSeekerCountQuery = 'SELECT COUNT(*) as count FROM job_seekers';
+    const jobSeekerResult = await pool.query(jobSeekerCountQuery);
+    console.log('Job Seeker Result:', jobSeekerResult.rows);
+
+    // Query the count of employers
+    const employerCountQuery = 'SELECT COUNT(*) as count FROM emp_profiles';
+    const employerResult = await pool.query(employerCountQuery);
+    console.log('Employer Result:', employerResult.rows);
+
+    // Query the count of job listings
+    const jobListingCountQuery = 'SELECT COUNT(*) as count FROM joblistings';
+    const jobListingResult = await pool.query(jobListingCountQuery);
+    console.log('Job Listing Result:', jobListingResult.rows);
+
+    // Send the result back as JSON
+    res.json({
+      jobSeekerCount: jobSeekerResult.rows[0].count,
+      employerCount: employerResult.rows[0].count,
+      jobListingCount: jobListingResult.rows[0].count,
+    });
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 
