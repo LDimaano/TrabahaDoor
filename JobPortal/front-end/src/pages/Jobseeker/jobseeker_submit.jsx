@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import FormField from '../../components/formfield';
-import JobHeader from '../../components/submitheader';
 import AdditionalInfo from '../../components/jssubmitaddinfo';
+import JobHeader from '../../components/submitheader';
 import Modal from '../../components/modal';
 import { io } from 'socket.io-client';
 
@@ -11,9 +10,6 @@ const socket = io('http://localhost:5000'); // Initialize socket connection
 function SubmitApplication() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [jobDetails, setJobDetails] = useState({});
-    const [fullName, setFullName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
     const [additionalInfo, setAdditionalInfo] = useState('');
     const [hasApplied, setHasApplied] = useState(false);
     const { jobId } = useParams();
@@ -41,7 +37,7 @@ function SubmitApplication() {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ jobId, user_id }), // Send both jobId and user_id
+                    body: JSON.stringify({ jobId, user_id }),
                 });
                 
                 if (!response.ok) throw new Error('Failed to check application status');
@@ -80,9 +76,6 @@ function SubmitApplication() {
                 body: JSON.stringify({
                     jobId,
                     user_id,
-                    fullName,
-                    email,
-                    phoneNumber,
                     additionalInfo,
                 }),
             });
@@ -120,34 +113,10 @@ function SubmitApplication() {
                 <hr />
                 <div className="mb-4 text-start">
                     <h2 className="h4">Submit your application</h2>
-                    <p>The following is required and will only be shared with Nomad</p>
+                    <p> Applying will share your information, such as <strong>email</strong> and <strong>phone number</strong>, with the employer.</p>
+
                 </div>
                 <form onSubmit={handleSubmit}>
-                    <FormField
-                        label="Full name"
-                        type="text"
-                        placeholder="Enter your full name"
-                        id="fullName"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                    />
-                    <FormField
-                        label="Email address"
-                        type="email"
-                        placeholder="Enter your email address"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <FormField
-                        label="Phone number"
-                        type="tel"
-                        placeholder="Enter your phone number"
-                        id="phoneNumber"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                    />
-                    <hr />
                     <AdditionalInfo
                         value={additionalInfo}
                         onChange={(e) => setAdditionalInfo(e.target.value)}
