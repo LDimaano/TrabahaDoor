@@ -81,11 +81,14 @@ const Notifications = () => {
                 }`}
                 style={{ borderRadius: '0.5rem', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}
               >
-                <div className="ms-2 me-auto">
-                  <div className="fw-bold">{notification.message}</div>
-                  <small className="text-muted">
-                    {notification.date_applied ? new Date(notification.date_applied).toLocaleString() : 'Unknown date'}
-                  </small>
+               <div className="d-flex align-items-center ms-2 me-auto">
+                  <img src={notification.profile_picture} alt="Profile" className="rounded-circle me-2" style={{ width: '40px', height: '40px' }} />
+                  <div>
+                    <div className="fw-bold">{notification.message}</div>
+                    <small className="text-muted">
+                      {notification.date_applied ? new Date(notification.date_applied).toLocaleString() : 'Unknown date'}
+                    </small>
+                  </div>
                 </div>
                 {notification.status === 'new' && (
                   <span className="badge bg-primary rounded-pill">New</span>

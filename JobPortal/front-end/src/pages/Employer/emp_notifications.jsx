@@ -81,16 +81,17 @@ function EmpNotifications() {
                 }`}
                 style={{ borderRadius: '0.5rem', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}
               >
-                <div className="ms-2 me-auto">
-                  <div className="fw-bold">
-                    {notification.message.split(':').map((part, idx) => (
-                      idx === 0 ? <span key={idx}>{part}</span> : <span key={idx} className="fw-bold">{part}</span>
-                    ))}
+                <div className="ms-2 me-auto d-flex align-items-center">
+                    <img src={notification.profile_picture} alt="Profile" className="rounded-circle me-2" style={{ width: '40px', height: '40px' }} />
+                    <div className="fw-bold">
+                      {notification.message.split(':').map((part, idx) => (
+                        idx === 0 ? <span key={idx}>{part}</span> : <span key={idx} className="fw-bold">{part}</span>
+                      ))}
+                    </div>
+                    <small className="text-muted">
+                      {notification.date_applied ? new Date(notification.date_applied).toLocaleString() : 'Unknown date'}
+                    </small>
                   </div>
-                  <small className="text-muted">
-                    {notification.date_applied ? new Date(notification.date_applied).toLocaleString() : 'Unknown date'}
-                  </small>
-                </div>
                 {notification.status === 'new' && (
                   <span className="badge bg-primary rounded-pill">New</span>
                 )}
