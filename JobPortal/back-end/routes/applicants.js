@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const { sendStatusUpdateEmail } = require('../mailer');
 
 
 router.get('/applicantlist', async (req, res) => {
@@ -183,6 +184,7 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
 });
 
 
+// API to update application hiring stage and send notification
 router.put('/applications/:userId/:jobId', async (req, res) => {
   const { userId, jobId } = req.params;
   const { hiringStage } = req.body;
@@ -190,36 +192,71 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
   const allowedStages = ['Received', 'In review', 'For interview', 'Filled'];
 
   try {
-    // Check for invalid input
+    // Step 1: Validate input
     if (!userId || !hiringStage || !jobId) {
       return res.status(400).json({ error: 'Invalid input: userId, jobId, and hiringStage are required.' });
     }
 
-    // Validate the hiring stage
+    // Validate hiring stage
     if (!allowedStages.includes(hiringStage)) {
       return res.status(400).json({ error: `Invalid hiring stage: ${hiringStage}. Must be one of ${allowedStages.join(', ')}.` });
     }
 
-    // Update both status and notif_status
+    // Step 2: Update status and notif_status in the database
     const result = await pool.query(
       'UPDATE applications SET status = $1, notif_status = $2 WHERE user_id = $3 AND job_id = $4',
       [hiringStage, 'new', userId, jobId]
     );
 
-    // Check if the record exists
+    // Check if the record was updated
     if (result.rowCount === 0) {
-      return res.status(404).json({ error: `User with ID ${userId} or Job ID ${jobId} not found.` });
+      return res.status(404).json({ error: `No record found for userId ${userId} and jobId ${jobId}.` });
     }
 
-    // Log the updated values for debugging
-    console.log(`Updated: status = ${hiringStage}, notif_status = 'new' for userId: ${userId}, jobId: ${jobId}`);
+    // Step 3: Fetch job seeker email, name, and job title for the application
+    const appResult = await pool.query(
+      `SELECT u.email, js.full_name, jt.job_title
+       FROM users u
+       JOIN applications a ON u.user_id = a.user_id
+       JOIN joblistings jl ON jl.job_id = a.job_id
+       JOIN job_titles jt ON jt.jobtitle_id = jl.jobtitle_id
+       JOIN job_seekers js ON js.user_id = u.user_id
+       WHERE a.user_id = $1 AND a.job_id = $2`,
+      [userId, jobId]
+    );
 
-    // Send success response
-    res.status(200).json({ message: 'Hiring stage and notification status updated successfully.' });
+    // Ensure the user and job were found
+    if (appResult.rowCount === 0) {
+      return res.status(404).json({ error: 'Job seeker or job details not found.' });
+    }
+
+    const jobSeekerEmail = appResult.rows[0].email;
+    const jobSeekerName = appResult.rows[0].full_name;
+    const jobTitle = appResult.rows[0].job_title;
+
+    // Step 4: Send email notification to the job seeker
+    await sendStatusUpdateEmail(jobSeekerEmail, jobSeekerName, jobTitle, hiringStage);
+
+    // Step 5: Emit real-time notification via Socket.io if user is connected
+    const notification = {
+      message: `Your application for ${jobTitle} has been updated to ${hiringStage}`,
+      job_id: jobId,
+      status: hiringStage
+    };
+    
+    if (io.sockets.sockets.has(userId)) {
+      io.to(userId).emit('newNotification', notification);
+    }
+
+    // Step 6: Send success response
+    res.status(200).json({ message: 'Hiring stage updated, email sent, and notification sent successfully.' });
+
   } catch (error) {
-    console.error('Error updating hiring stage and notification status:', error.message);
+    // Log the error and send a server error response
+    console.error('Error updating hiring stage and sending notifications:', error);
     res.status(500).json({ error: 'Failed to update hiring stage. Please try again later.' });
   }
 });
+
 
 module.exports = router;

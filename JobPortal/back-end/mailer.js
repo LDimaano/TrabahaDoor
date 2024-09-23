@@ -56,14 +56,14 @@ const generateEmailContent = (type, data) => {
         case 'status_update':
             return {
                 subject: 'Your Application Status Has Been Updated',
-                text: `Your application status has been updated to: ${data.status}`,
-                html: `<p>Your application status has been updated to: <strong>${data.status}</strong></p>`,
+                text: `Hello ${data.jobSeekerName}, your application status for ${data.job_title} has been updated to: ${data.status}`,
+                html: `<p>Hello ${data.jobSeekerName},</p>
+                       <p>Your application status for <strong>${data.job_title}</strong> has been updated to: <strong>${data.status}</strong>.</p>`,
             };
         default:
             return {};
     }
 };
-
 const sendApplicationEmail = async (employerEmail, fullName, jobTitle) => {
     // Create the data object with both full_name and job_title
     const data = {
@@ -85,8 +85,10 @@ const sendApplicationEmail = async (employerEmail, fullName, jobTitle) => {
 };
 
 
-const sendStatusUpdateEmail = async (jobSeekerEmail, status) => {
-    const emailContent = generateEmailContent('status_update', { status });
+const sendStatusUpdateEmail = async (jobSeekerEmail, jobSeekerName, jobTitle, status) => {
+    // Customize the email content to include the job seeker's name and the job title
+    const emailContent = generateEmailContent('status_update', { jobSeekerName, job_title: jobTitle, status });
+    
     await transporter.sendMail({
         from: process.env.EMAIL_USER,
         to: jobSeekerEmail,

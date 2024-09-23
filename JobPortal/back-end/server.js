@@ -294,103 +294,72 @@ app.get('/api/alljsnotifications', async (req, res) => {
 });
 
 
-
+// API endpoint to update application status
 app.post('/api/applications/:applicationId/status', async (req, res) => {
-      const applicationId = req.params.applicationId;
-      const { status } = req.body; // e.g., 'in review', 'interview', 'hired', etc.
-      const userId = req.session.user.user_id;
-    
-      if (!userId) {
-        return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
-      }
-    
-      try {
-        // Update the application status
-        const result = await pool.query(
+  const applicationId = req.params.applicationId;
+  const { status } = req.body; // e.g., 'in review', 'interview', 'hired', etc.
+  const userId = req.session.user.user_id; // Fetch the employer's user ID from the session
+
+  // Check if the employer's user ID is available in the session
+  if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
+  }
+
+  try {
+      // Step 1: Update the application status
+      const result = await pool.query(
           `UPDATE applications
            SET status = $1
            WHERE application_id = $2 AND job_id IN (SELECT job_id FROM joblistings WHERE user_id = $3)`,
           [status, applicationId, userId]
-        );
-    
-        if (result.rowCount === 0) {
+      );
+
+      // If no rows were updated, the application might not exist or be unauthorized
+      if (result.rowCount === 0) {
           return res.status(404).json({ error: 'Application not found or unauthorized' });
-        }
-    
-        // Fetch the job seeker’s user ID
-        const appResult = await pool.query(
-          `SELECT user_id FROM applications WHERE application_id = $1`,
+      }
+
+      // Step 2: Fetch the job seeker’s user ID, email, job title, and full name
+      const appResult = await pool.query(
+          `SELECT u.user_id, u.email, js.full_name, jt.job_title
+           FROM users u
+           JOIN applications a ON u.user_id = a.user_id
+           JOIN joblistings jl ON jl.job_id = a.job_id
+           JOIN job_titles jt ON jt.jobtitle_id = jl.jobtitle_id
+           JOIN job_seekers js ON js.user_id = u.user_id
+           WHERE a.application_id = $1`,
           [applicationId]
-        );
-    
-        if (appResult.rowCount > 0) {
-          const jobSeekerId = appResult.rows[0].user_id;
-    
-          // Emit notification to the job seeker
+      );
+
+      // Ensure the application and user were found
+      if (appResult.rowCount > 0) {
+          const jobSeekerId = appResult.rows[0].user_id; // The job seeker's user ID
+          const jobSeekerEmail = appResult.rows[0].email; // The job seeker's email
+          const jobSeekerName = appResult.rows[0].full_name; // The job seeker's full name
+          const jobTitle = appResult.rows[0].job_title; // The job title they applied for
+
+          // Step 3: Emit notification to the job seeker using Socket.io
           const notification = {
-            message: `Your application has been updated to ${status}`,
-            application_id: applicationId,
-            status,
+              message: `${jobSeekerName}, Your application for ${jobTitle} has been updated to ${status}`,
+              application_id: applicationId,
+              status,
           };
           io.to(jobSeekerId).emit('newNotification', notification);
-        }
-    
-        res.json({ message: 'Application status updated successfully' });
-      } catch (error) {
-        console.error('Error updating application status:', error);
-        res.status(500).json({ error: 'Server Error' });
+
+          // Step 4: Send an email notification to the job seeker
+          await sendStatusUpdateEmail(jobSeekerEmail, jobSeekerName, jobTitle, status);
       }
-    });
+
+      // Respond with success message
+      res.json({ message: 'Application status updated and notification sent successfully' });
+  } catch (error) {
+      // Catch any errors and respond with a server error message
+      console.error('Error updating application status:', error);
+      res.status(500).json({ error: 'Server Error' });
+  }
+});
 
 
-
-
-app.post('/api/applications/:applicationId/status', async (req, res) => {
-      const applicationId = req.params.applicationId;
-      const { status } = req.body; // e.g., 'in review', 'interview', 'hired', etc.
-      const userId = req.session.user.user_id;
-    
-      if (!userId) {
-        return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
-      }
-    
-      try {
-        // Update the application status
-        const result = await pool.query(
-          `UPDATE applications
-           SET status = $1
-           WHERE application_id = $2 AND job_id IN (SELECT job_id FROM joblistings WHERE user_id = $3)`,
-          [status, applicationId, userId]
-        );
-    
-        if (result.rowCount === 0) {
-          return res.status(404).json({ error: 'Application not found or unauthorized' });
-        }
-    
-        // Fetch the job seeker’s user ID
-        const appResult = await pool.query(
-          `SELECT user_id FROM applications WHERE application_id = $1`,
-          [applicationId]
-        );
-    
-        if (appResult.rowCount > 0) {
-          const jobSeekerId = appResult.rows[0].user_id;
-    
-          // Emit notification to the job seeker
-          const notification = {
-            message: `Your application has been updated to ${status}`,
-            application_id: applicationId,
-            status,
-          };
-          io.to(jobSeekerId).emit('newNotification', notification);
-        }
-    
-        res.json({ message: 'Application status updated successfully' });
-      } catch (error) {
-        console.error('Error updating application status:', error);
-        res.status(500).json({ error: 'Server Error' });
-      }
-    });
     
 // Profile picture upload endpoint
 app.post('/api/upload-profile-picture/:userId', upload.single('profilePicture'), async (req, res) => {
