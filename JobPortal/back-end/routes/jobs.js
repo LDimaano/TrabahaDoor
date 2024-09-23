@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const { sendApplicationEmail } = require('../mailer');
 
 // Method to set io instance
 let io; // Declare io variable outside to be accessible
-
+32
 router.setIo = (_io) => {
   io = _io; // Set the io instance
 };
@@ -57,7 +58,26 @@ router.post('/joblistings', async (req, res) => {
   }
 });
 
-// Define applications route
+const getEmployerEmailByJobId = async (jobId) => {
+  const result = await pool.query(
+      `SELECT
+        u.email,
+        jl.job_id,
+        jl.user_id AS emp_id,
+        jt.job_title,
+        a.full_name
+      FROM joblistings jl
+      JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
+      JOIN applications a ON jl.job_id = a.job_id
+      JOIN users u ON jl.user_id = u.user_id  -- Assuming users table has the email
+      WHERE jl.job_id = $1`,
+      [jobId]
+  );
+
+  return result.rows[0]; // Return the entire row (email, job_title, full_name)
+};
+
+
 router.post('/applications', async (req, res) => {
   const { jobId, user_id, fullName, email, phoneNumber, additionalInfo } = req.body;
 
@@ -69,12 +89,26 @@ router.post('/applications', async (req, res) => {
     );
 
     if (result.rowCount === 1) {
-      // Emit new application notification if io is set
       if (io) {
         io.emit('new-application', {
-          message: `${fullName} has applied for job ID ${jobId}`
+          message: `${fullName} has applied for job ID ${jobId}`,
         });
       }
+
+      // Fetch employer's email and job_title from the database
+      const employerData = await getEmployerEmailByJobId(jobId);
+      
+      if (employerData) {
+        // Send the email notification with full_name and job_title
+        const applicationData = {
+          full_name: fullName,
+          job_title: employerData.job_title,
+        };
+        
+        // Correct the function call by passing full_name and job_title separately
+        await sendApplicationEmail(employerData.email, applicationData.full_name, applicationData.job_title);
+      }
+
       res.status(201).json({ message: 'Application submitted successfully!' });
     } else {
       res.status(500).json({ error: 'Failed to submit application' });

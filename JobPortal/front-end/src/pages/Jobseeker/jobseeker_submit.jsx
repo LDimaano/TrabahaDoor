@@ -15,7 +15,7 @@ function SubmitApplication() {
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [additionalInfo, setAdditionalInfo] = useState('');
-    const [hasApplied, setHasApplied] = useState(false); // New state to track if user has already applied
+    const [hasApplied, setHasApplied] = useState(false);
     const { jobId } = useParams();
     const user_id = sessionStorage.getItem('user_id');
 
@@ -26,9 +26,7 @@ function SubmitApplication() {
         const fetchJobDetails = async () => {
             try {
                 const response = await fetch(`http://localhost:5000/api/jobs/joblistings/${jobId}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch job details');
-                }
+                if (!response.ok) throw new Error('Failed to fetch job details');
                 const data = await response.json();
                 setJobDetails(data);
             } catch (error) {
@@ -38,12 +36,7 @@ function SubmitApplication() {
 
         const checkIfApplied = async () => {
             try {
-                // Debugging logs to check if the values are fetched correctly
-                console.log('Checking application status');
-                console.log('jobId:', jobId);
-                console.log('user_id:', user_id);
-        
-                const response = await fetch(`http://localhost:5000/api/jobs//applications/check`, {
+                const response = await fetch(`http://localhost:5000/api/jobs/applications/check`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -51,25 +44,18 @@ function SubmitApplication() {
                     body: JSON.stringify({ jobId, user_id }), // Send both jobId and user_id
                 });
                 
-                if (!response.ok) {
-                    throw new Error('Failed to check application status');
-                }
-        
+                if (!response.ok) throw new Error('Failed to check application status');
+
                 const data = await response.json();
-                console.log('Response from server:', data);
-        
-                if (data.applied) {
-                    setHasApplied(true); // Set state if user has already applied
-                }
+                if (data.applied) setHasApplied(true);
             } catch (error) {
                 console.error('Error checking application status:', error);
             }
         };
-        
 
         if (jobId && user_id) {
             fetchJobDetails();
-            checkIfApplied(); // Check if the user already applied
+            checkIfApplied();
         }
 
         // Listen for notifications
@@ -77,7 +63,6 @@ function SubmitApplication() {
             console.log(data.message);
         });
 
-        // Clean up socket connection on unmount
         return () => {
             socket.off('new-application');
         };
@@ -85,14 +70,6 @@ function SubmitApplication() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log({
-            jobId,
-            user_id,
-            fullName,
-            email,
-            phoneNumber,
-            additionalInfo,
-        });
 
         try {
             const response = await fetch('http://localhost:5000/api/jobs/applications', {
@@ -125,6 +102,7 @@ function SubmitApplication() {
             const result = await response.json();
             alert(result.message || 'Application submitted successfully!');
             closeModal();
+            setHasApplied(true); // Update state to indicate application submitted
         } catch (error) {
             console.error('Error submitting application:', error);
             alert(error.message || 'Failed to submit the application. Please try again later.');
@@ -175,7 +153,9 @@ function SubmitApplication() {
                         onChange={(e) => setAdditionalInfo(e.target.value)}
                     />
                     <hr />
-                    <button type="submit" className="btn btn-primary">Submit Application</button>
+                    <button type="submit" className="btn btn-primary" disabled={hasApplied}>
+                        Submit Application
+                    </button>
                     <p className="mt-3 text-start">
                         By sending the request you confirm that you accept our{" "}
                         <a href="#terms" className="link-primary">Terms of Service</a> and{" "}

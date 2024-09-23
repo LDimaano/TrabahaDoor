@@ -7,7 +7,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const pool = require('./db');
-require('dotenv').config();
+
 
 const app = express();
 const server = http.createServer(app);
