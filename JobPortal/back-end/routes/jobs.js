@@ -161,21 +161,38 @@ router.post('/applications/check', async (req, res) => {
 
 // Fetch posted jobs
 router.get('/postedjobs', async (req, res) => {
+  const { jobTitle, selectedIndustry } = req.query;
+
   try {
-    const result = await pool.query(`
+    let query = `
       SELECT
         joblistings.job_id,
         job_titles.job_title,
         industries.industry_name,
         joblistings.salaryrange,
         joblistings.jobtype,
-        pp.profile_picture_url
+        pp.profile_picture_url,
+        industries.industry_id
       FROM joblistings
       JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
       JOIN industries ON joblistings.industry_id = industries.industry_id
       JOIN profilepictures pp ON joblistings.user_id = pp.user_id
-    `);
-   
+      WHERE 1=1
+    `;
+
+    const values = [];
+
+    if (jobTitle) {
+      query += ` AND (job_titles.job_title ILIKE $${values.length + 1} OR industries.industry_name ILIKE $${values.length + 1});`;
+      values.push(`%${jobTitle}%`);
+    }
+
+    if (selectedIndustry) {
+      query += ` AND joblistings.industry_id = $${values.length + 1};`;
+      values.push(selectedIndustry);
+    }
+
+    const result = await pool.query(query, values);
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching job listings:', error);

@@ -8,7 +8,8 @@ import Pagination from '../../components/pagination';
 function HomeJobSeeker() {
   const [filters, setFilters] = useState({
     employmentTypes: [],
-    salaryRanges: []
+    salaryRanges: [],
+    industry: '' // Add industry to the initial state
   });
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -21,8 +22,9 @@ function HomeJobSeeker() {
 
   const handleSearchChange = (searchData) => {
     setSearchQuery(searchData.jobTitle);
-    // Optionally handle selectedIndustry if needed
-    console.log(searchData.selectedIndustry);
+    if (searchData.selectedIndustry) {
+      setFilters((prevFilters) => ({ ...prevFilters, industry: searchData.selectedIndustry }));
+    }
   };
 
   // Inline styles for the title

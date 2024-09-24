@@ -5,18 +5,39 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/jobs/postedjobs')
-      .then((response) => {
+    const fetchJobs = async () => {
+      let url = `http://localhost:5000/api/jobs/postedjobs`;
+
+      // Append query parameters if searchQuery or filters are present
+      const params = new URLSearchParams();
+      if (searchQuery) {
+        params.append('jobTitle', searchQuery); // Add jobTitle parameter
+      }
+
+      // Append industry selection (if it's a feature you're using)
+      if (filters.selectedIndustry) {
+        params.append('selectedIndustry', filters.selectedIndustry);
+      }
+
+      // Attach params to the URL
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+
+      try {
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.json();
-      })
-      .then((data) => {
+        const data = await response.json();
         setJobs(data);
-      })
-      .catch((error) => console.error('Error fetching job listings:', error));
-  }, []);
+      } catch (error) {
+        console.error('Error fetching job listings:', error);
+      }
+    };
+
+    fetchJobs();
+  }, [searchQuery, filters]);
 
   const applyFilters = (jobs) => {
     const { employmentTypes, salaryRanges } = filters;
@@ -33,7 +54,6 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       );
     });
   };
-
   const applySearch = (jobs) => {
     if (!searchQuery) return jobs;
     return jobs.filter(job =>
@@ -41,17 +61,18 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       (job.industry_name && job.industry_name.toLowerCase().includes(searchQuery.toLowerCase()))
     );
   };
-
+  
   const filteredJobs = applyFilters(jobs);
-  const searchedJobs = applySearch(filteredJobs);
+  const searchedJobs = applySearch(filteredJobs, searchQuery); // Pass searchQuery prop to applySearch function
+
 
   return (
     <div>
-      {searchedJobs.length === 0 ? (
+      {filteredJobs.length === 0 ? (
         <p>No jobs available</p>
       ) : (
         <ul className="list-group">
-          {searchedJobs.map((job) => (
+          {filteredJobs.map((job) => (
             <JobListItem key={job.job_id} job={job} />
           ))}
         </ul>

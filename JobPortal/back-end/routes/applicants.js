@@ -7,43 +7,54 @@ const { sendStatusUpdateEmail } = require('../mailer');
 router.get('/applicantlist', async (req, res) => {
   const { jobTitle, selectedIndustry } = req.query; // Get query parameters
 
-
   try {
+    // Base query with initial SELECT statement
     let query = `
-       SELECT
-          job_seekers.full_name,
-		  job_seekers.user_id,
-          users.email,
-          address.location,
-          MAX(job_titles.job_title) AS latest_job_title,  -- Example aggregation
-          pp.profile_picture_url
+      SELECT
+        job_seekers.full_name,
+        job_seekers.user_id,
+        users.email,
+        address.location,
+        MAX(job_titles.job_title) AS latest_job_title,
+        pp.profile_picture_url
       FROM job_seekers
       JOIN users ON job_seekers.user_id = users.user_id
       JOIN address ON job_seekers.address_id = address.address_id
       JOIN job_experience ON job_seekers.user_id = job_experience.user_id
       JOIN job_titles ON job_experience.jobtitle_id = job_titles.jobtitle_id
       JOIN profilepictures pp ON job_seekers.user_id = pp.user_id
-      GROUP BY
-          job_seekers.full_name,
-          users.email,
-          address.location,
-          pp.profile_picture_url,
-		  job_seekers.user_id;
-
     `;
 
-
-    // Add filters based on search parameters
+    // Initialize an array to hold values for prepared statements
     const values = [];
+    let whereClauses = []; // Array to hold WHERE clauses
+
+    // Check if jobTitle is provided and add to query
     if (jobTitle) {
-      query += ` AND job_titles.job_title ILIKE $${values.length + 1}`;
+      whereClauses.push(`job_titles.job_title ILIKE $${values.length + 1}`);
       values.push(`%${jobTitle}%`);
     }
+
+    // Check if selectedIndustry is provided and add to query
     if (selectedIndustry) {
-      query += ` AND job_seekers.industry_id = $${values.length + 1}`;
+      whereClauses.push(`job_seekers.industry_id = $${values.length + 1}`);
       values.push(selectedIndustry);
     }
 
+    // If there are any WHERE clauses, add them to the query
+    if (whereClauses.length > 0) {
+      query += ' WHERE ' + whereClauses.join(' AND ');
+    }
+
+    // Grouping remains as it is
+    query += `
+      GROUP BY
+        job_seekers.full_name,
+        users.email,
+        address.location,
+        pp.profile_picture_url,
+        job_seekers.user_id;
+    `;
 
     const result = await pool.query(query, values);
     res.json(result.rows);
@@ -52,7 +63,6 @@ router.get('/applicantlist', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 router.get('/applicantprofile/:user_id', async (req, res) => {
   try {
