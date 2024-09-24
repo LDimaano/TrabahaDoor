@@ -157,22 +157,24 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT 
-        a.application_id,
-        a.job_id,
-        a.user_id,
-        a.full_name,
-        a.email,
-        a.phone_number,
-        a.additional_info,
-        a.status AS hiring_stage,
-        a.date_applied,
-        pp.profile_picture_url,
-        j.job_title
+              a.application_id,
+              a.job_id,
+              a.user_id,
+              js.full_name,
+              u.email,
+              js.phone_number,
+              a.additional_info,
+              a.status AS hiring_stage,
+              a.date_applied,
+              pp.profile_picture_url,
+              j.job_title
       FROM applications a
-      JOIN profilepictures pp ON a.user_id = pp.user_id
+      JOIN users u ON a.user_id = u.user_id
+      JOIN job_seekers js ON u.user_id = js.user_id
+      LEFT JOIN profilepictures pp ON a.user_id = pp.user_id
       JOIN joblistings jl ON a.job_id = jl.job_id
       JOIN job_titles j ON jl.jobtitle_id = j.jobtitle_id
-      WHERE a.job_id = $1`,
+      WHERE a.job_id = $1;`,
       [jobId]
     );
 

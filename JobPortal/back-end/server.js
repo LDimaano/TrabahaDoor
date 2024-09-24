@@ -95,13 +95,21 @@ app.get('/api/notifications', async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied
-       FROM applications a
-       JOIN joblistings j ON a.job_id = j.job_id
-       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
-       JOIN users u ON j.user_id = u.user_id
-       WHERE u.user_id = $1 AND a.status = 'new'
-       ORDER BY a.date_applied DESC;`,
+      `
+    SELECT 
+        js.full_name, 
+        jt.job_title, 
+        j.job_id, 
+        a.status, 
+        a.date_applied
+    FROM applications a
+    JOIN joblistings j ON a.job_id = j.job_id
+    JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
+    JOIN users u ON j.user_id = u.user_id
+    JOIN job_seekers js ON a.user_id = js.user_id
+    WHERE u.user_id = $1 AND a.status = 'new'
+    ORDER BY a.date_applied DESC;
+      `,
       [userId]
     );
 
@@ -129,14 +137,23 @@ app.get('/api/allnotifications', async (req, res) => {
   try {
     // Fetch only new notifications
     const result = await pool.query(
-      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied, pp.profile_picture_url
+      `
+      SELECT 
+          js.full_name, 
+          jt.job_title, 
+          j.job_id, 
+          a.status, 
+          a.date_applied,
+          pp.profile_picture_url
       FROM applications a
       JOIN joblistings j ON a.job_id = j.job_id
       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
       JOIN users u ON j.user_id = u.user_id
-      JOIN profilepictures pp ON a.user_id = pp.user_id
+      JOIN job_seekers js ON a.user_id = js.user_id
+      Join profilepictures pp ON js.user_id = pp.user_id
       WHERE u.user_id = $1 
-      ORDER BY a.date_applied DESC;`,
+      ORDER BY a.date_applied DESC;
+        `,
       [userId]
     );
 
@@ -200,12 +217,22 @@ app.get('/api/jsnotifications', async (req, res) => {
   try {
     // Fetch notifications for job seeker
     const result = await pool.query(
-      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied, a.notif_status, a.application_id
-       FROM applications a
-       JOIN joblistings j ON a.job_id = j.job_id
-       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
-       WHERE a.user_id = $1 AND a.notif_status = 'new'
-       ORDER BY a.date_applied DESC;`,
+      `
+      SELECT 
+          js.full_name, 
+          jt.job_title, 
+          j.job_id, 
+          a.status, 
+          a.date_applied, 
+          a.notif_status, 
+          a.application_id
+      FROM applications a
+      JOIN joblistings j ON a.job_id = j.job_id
+      JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
+      JOIN job_seekers js ON a.user_id = js.user_id
+      WHERE a.user_id = $1 AND a.notif_status = 'new'
+      ORDER BY a.date_applied DESC;
+      `,
       [userId]
     );
 
@@ -268,13 +295,23 @@ app.get('/api/alljsnotifications', async (req, res) => {
   try {
     // Fetch notifications for job seeker
     const result = await pool.query(
-      `SELECT a.full_name, jt.job_title, j.job_id, a.status, a.date_applied, a.notif_status, pp.profile_picture_url
-       FROM applications a
-       JOIN joblistings j ON a.job_id = j.job_id
-       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
-       JOIN profilepictures pp ON j.user_id = pp.user_id
-       WHERE a.user_id = $1
-       ORDER BY a.date_applied DESC;`,
+     `SELECT 
+          js.full_name, 
+          jt.job_title, 
+          j.job_id, 
+          a.status, 
+          a.date_applied, 
+          a.notif_status, 
+          a.application_id,
+		  pp.profile_picture_url
+      FROM applications a
+      JOIN joblistings j ON a.job_id = j.job_id
+      JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
+      JOIN job_seekers js ON a.user_id = js.user_id
+	  JOIN profilepictures pp ON j.user_id = pp.user_id
+      WHERE a.user_id = $1 
+      ORDER BY a.date_applied DESC;
+      `,
       [userId]
     );
 

@@ -83,6 +83,7 @@ function EmpNotifications() {
               >
                 <div className="ms-2 me-auto d-flex align-items-center">
                     <img src={notification.profile_picture} alt="Profile" className="rounded-circle me-2" style={{ width: '40px', height: '40px' }} />
+                    <div className="d-flex flex-column">
                     <div className="fw-bold">
                       {notification.message.split(':').map((part, idx) => (
                         idx === 0 ? <span key={idx}>{part}</span> : <span key={idx} className="fw-bold">{part}</span>
@@ -91,6 +92,7 @@ function EmpNotifications() {
                     <small className="text-muted">
                       {notification.date_applied ? new Date(notification.date_applied).toLocaleString() : 'Unknown date'}
                     </small>
+                    </div>
                   </div>
                 {notification.status === 'new' && (
                   <span className="badge bg-primary rounded-pill">New</span>
