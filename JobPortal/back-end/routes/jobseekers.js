@@ -7,7 +7,6 @@ router.post('/profile', async (req, res) => {
     user_id, // This should be the user_id from the users table
     fullName,
     phoneNumber,
-    email,
     dateOfBirth,
     gender,
     address_id, 
@@ -31,11 +30,11 @@ router.post('/profile', async (req, res) => {
     // Insert the profile data into the job_seekers table
     const newProfileResult = await pool.query(
       `INSERT INTO job_seekers (
-        user_id, full_name, phone_number, email, date_of_birth, gender, address_id, industry_id
+        user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING jsid`,
-      [user_id, fullName, phoneNumber, email, dateOfBirth, gender, address_id, industry_id]
+      [user_id, fullName, phoneNumber, dateOfBirth, gender, address_id, industry_id]
     );
 
     const profileId = newProfileResult.rows[0].jsid;

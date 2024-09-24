@@ -8,7 +8,6 @@ function ProfileCreation() {
 
   const [fullName, setFullName] = useState('Juan A. Dela Cruz');
   const [phoneNumber, setPhoneNumber] = useState('+44 1245 572 135');
-  const [email, setEmail] = useState('juandelacruz@gmail.com');
   const [dateOfBirth, setDateOfBirth] = useState('1997-08-09');
   const [gender, setGender] = useState('Male');
   const [address, setAddress] = useState(null);
@@ -148,7 +147,6 @@ function ProfileCreation() {
       user_id,
       fullName,
       phoneNumber,
-      email,
       dateOfBirth,
       gender,
       address_id: address?.value || '',
@@ -302,17 +300,6 @@ function ProfileCreation() {
                 id="phoneNumber"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="email" className="form-label">Email Address *</label>
-              <input
-                type="email"
-                className="form-control"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>

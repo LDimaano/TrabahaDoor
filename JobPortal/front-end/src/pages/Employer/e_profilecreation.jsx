@@ -9,7 +9,6 @@ function EmployerProfileCreation() {
   const [companyName, setCompanyName] = useState('Tech Innovations Ltd');
   const [contactPerson, setContactPerson] = useState('Jane Doe');
   const [contactNumber, setContactNumber] = useState('+44 1245 678 901');
-  const [email, setEmail] = useState('contact@techinnovations.com');
   const [website, setWebsite] = useState('http://www.techinnovations.com');
   const [industry, setIndustry] = useState(null);
   const [industryOptions, setIndustryOptions] = useState([]);
@@ -77,7 +76,6 @@ function EmployerProfileCreation() {
       companyName,
       contactPerson,
       contactNumber,
-      email,
       website,
       industry_id: industry?.value || '',
       companyAddress,
@@ -188,17 +186,6 @@ function EmployerProfileCreation() {
           </div>
         </div>
         <div className="row mb-3">
-          <div className="col-md-6">
-            <label htmlFor="email" className="form-label">Email <span className="text-danger">*</span></label>
-            <input
-              type="email"
-              id="email"
-              className="form-control"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
           <div className="col-md-6">
             <label htmlFor="website" className="form-label">Website <span className="text-danger">*</span></label>
             <input
