@@ -214,18 +214,30 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
       return res.status(400).json({ error: `Invalid hiring stage: ${hiringStage}. Must be one of ${allowedStages.join(', ')}.` });
     }
 
-    // Step 2: Update status and notif_status in the database
-    const result = await pool.query(
-      'UPDATE applications SET status = $1, notif_status = $2 WHERE user_id = $3 AND job_id = $4',
-      [hiringStage, 'new', userId, jobId]
-    );
+    // Step 2: Update status and notif_status in the applications table
+    let updateAppQuery = `
+      UPDATE applications 
+      SET status = $1, notif_status = $2 
+      WHERE user_id = $3 AND job_id = $4
+    `;
+    
+    const queryParams = [hiringStage, 'new', userId, jobId];
+    const result = await pool.query(updateAppQuery, queryParams);
 
     // Check if the record was updated
     if (result.rowCount === 0) {
       return res.status(404).json({ error: `No record found for userId ${userId} and jobId ${jobId}.` });
     }
 
-    // Step 3: Fetch job seeker email, name, and job title for the application
+    // Step 3: If hiring stage is "Filled", update the datefilled in the joblistings table
+    if (hiringStage === 'Filled') {
+      await pool.query(
+        'UPDATE joblistings SET datefilled = CURRENT_DATE WHERE job_id = $1',
+        [jobId]
+      );
+    }
+
+    // Step 4: Fetch job seeker email, name, and job title for the application
     const appResult = await pool.query(
       `SELECT u.email, js.full_name, jt.job_title
        FROM users u
@@ -246,21 +258,21 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
     const jobSeekerName = appResult.rows[0].full_name;
     const jobTitle = appResult.rows[0].job_title;
 
-    // Step 4: Send email notification to the job seeker
+    // Step 5: Send email notification to the job seeker
     await sendStatusUpdateEmail(jobSeekerEmail, jobSeekerName, jobTitle, hiringStage);
 
-    // Step 5: Emit real-time notification via Socket.io if user is connected
+    // Step 6: Emit real-time notification via Socket.io if user is connected
     const notification = {
       message: `Your application for ${jobTitle} has been updated to ${hiringStage}`,
       job_id: jobId,
       status: hiringStage
     };
-    
+
     if (io.sockets.sockets.has(userId)) {
       io.to(userId).emit('newNotification', notification);
     }
 
-    // Step 6: Send success response
+    // Step 7: Send success response
     res.status(200).json({ message: 'Hiring stage updated, email sent, and notification sent successfully.' });
 
   } catch (error) {
@@ -269,6 +281,7 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
     res.status(500).json({ error: 'Failed to update hiring stage. Please try again later.' });
   }
 });
+
 
 
 module.exports = router;
