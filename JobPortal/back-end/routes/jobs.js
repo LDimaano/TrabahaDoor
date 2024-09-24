@@ -60,16 +60,15 @@ router.post('/joblistings', async (req, res) => {
 
 const getEmployerEmailByJobId = async (jobId) => {
   const result = await pool.query(
-      `SELECT
-        u.email,
-        jl.job_id,
-        jl.user_id AS emp_id,
+      ` SELECT
+		     u.email,
         jt.job_title,
-        a.full_name
+        js.full_name
       FROM joblistings jl
       JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
       JOIN applications a ON jl.job_id = a.job_id
-      JOIN users u ON jl.user_id = u.user_id  -- Assuming users table has the email
+      JOIN users u ON jl.user_id = u.user_id  
+	    JOIN job_seekers js ON a.user_id = js.user_id 
       WHERE jl.job_id = $1`,
       [jobId]
   );
@@ -79,33 +78,33 @@ const getEmployerEmailByJobId = async (jobId) => {
 
 
 router.post('/applications', async (req, res) => {
-  const { jobId, user_id, fullName, email, phoneNumber, additionalInfo } = req.body;
+  const { jobId, user_id, additionalInfo } = req.body;
 
   try {
     const result = await pool.query(
-      `INSERT INTO applications (job_id, user_id, full_name, email, phone_number, additional_info, status)
-      VALUES ($1, $2, $3, $4, $5, $6, 'new')`, // Set status to 'new'
-      [jobId, user_id, fullName, email, phoneNumber, additionalInfo]
+      `INSERT INTO applications (job_id, user_id, additional_info, status)
+      VALUES ($1, $2, $3, 'new')`,
+      [jobId, user_id, additionalInfo]
     );
 
     if (result.rowCount === 1) {
       if (io) {
         io.emit('new-application', {
-          message: `${fullName} has applied for job ID ${jobId}`,
+          message: `A new application has been submitted for job ID ${jobId}`,
         });
       }
 
-      // Fetch employer's email and job_title from the database
+      // Fetch employer's email, job_title, and applicant's full name from the database
       const employerData = await getEmployerEmailByJobId(jobId);
-      
+
       if (employerData) {
-        // Send the email notification with full_name and job_title
+        // Send the email notification
         const applicationData = {
-          full_name: fullName,
           job_title: employerData.job_title,
+          full_name: employerData.full_name, // Job seeker's full name
         };
         
-        // Correct the function call by passing full_name and job_title separately
+        // Pass employerEmail, fullName, and jobTitle to the email sending function
         await sendApplicationEmail(employerData.email, applicationData.full_name, applicationData.job_title);
       }
 
@@ -118,6 +117,7 @@ router.post('/applications', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while submitting the application', details: error.message });
   }
 });
+
 
 //check if applicant already applied
 

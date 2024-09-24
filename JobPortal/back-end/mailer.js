@@ -84,7 +84,6 @@ const sendApplicationEmail = async (employerEmail, fullName, jobTitle) => {
     });
 };
 
-
 const sendStatusUpdateEmail = async (jobSeekerEmail, jobSeekerName, jobTitle, status) => {
     // Customize the email content to include the job seeker's name and the job title
     const emailContent = generateEmailContent('status_update', { jobSeekerName, job_title: jobTitle, status });
