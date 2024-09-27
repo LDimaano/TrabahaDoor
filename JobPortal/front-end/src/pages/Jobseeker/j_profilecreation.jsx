@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
+import { Modal, Button } from 'react-bootstrap';
+
 
 function ProfileCreation() {
   const navigate = useNavigate();
@@ -124,10 +126,32 @@ function ProfileCreation() {
       console.error('Error uploading profile picture:', error);
     }
   };
+
+  // State for controlling the modal visibility
+const [showModal, setShowModal] = useState(false);
+
+// Function to handle modal submit
+const handleModalSubmit = () => {
+  setShowModal(false); // Close modal
+  handleSubmit(); // Call the original submit function
+};
+
+
+// Function to handle modal cancel
+const handleModalCancel = () => {
+  setShowModal(false); // Close modal
+};
+
+
+  // Modify your existing form's onSubmit to show the modal first
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setShowModal(true); // Show confirmation modal
+};
+
   
   
   const handleSubmit = async (e) => {
-    e.preventDefault();
   
     // Ensure user ID is available
     const user_id = sessionStorage.getItem('userId');
@@ -501,14 +525,31 @@ function ProfileCreation() {
             {error}
           </div>
         )}
-
         <div className="d-grid gap-2">
-          <button type="submit" className="btn btn-success">Submit Profile</button>
-        </div>
+        <button type="button" className="btn btn-success" onClick={handleFormSubmit}>Submit Profile</button>
+      </div>
       </form>
-    </div>
+      <Modal show={showModal} onHide={handleModalCancel}>
+      <Modal.Header closeButton>
+        <Modal.Title>Confirm Profile Submission</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        Are you sure you want to submit your profile?
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleModalCancel}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={handleModalSubmit}>
+          Submit
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  </div>
+    
   );
 }
+
 
 export default ProfileCreation;
 
