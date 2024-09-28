@@ -21,6 +21,9 @@ def recommend_jobs(job_data, skills):
                 'industry_name': job.get('industry_name', 'Unknown Industry'),
                 'match_count': match_count,
                 'job_id': job.get('job_id'),
+                'salaryrange': job.get('salaryrange', 'Unknown Salary Range'),
+                'jobtype': job.get('jobtype', 'Unknown Job Type'),
+                'profile_picture_url': job.get('profile_picture_url', 'Unknown picture')
             })
 
     recommendations.sort(key=lambda x: x['match_count'], reverse=True)

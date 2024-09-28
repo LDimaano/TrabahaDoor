@@ -136,17 +136,21 @@ const getJobData = async () => {
         job_titles.job_title,
         industries.industry_name,
         job_skills.skill_id,
-        skills.skill_name
+        skills.skill_name,
+        joblistings.salaryrange,
+        joblistings.jobtype,
+        pp.profile_picture_url
       FROM joblistings
       JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
       JOIN industries ON joblistings.industry_id = industries.industry_id
       JOIN job_skills ON joblistings.job_id = job_skills.job_id
-      JOIN skills ON job_skills.skill_id = skills.skill_id;
+      JOIN skills ON job_skills.skill_id = skills.skill_id
+	  JOIN profilepictures pp ON joblistings.user_id = pp.user_id;
     `);
 
     // Transform job data to include only the necessary information
     const jobData = res.rows.reduce((acc, row) => {
-      const { job_id, job_title, industry_name, skill_name } = row;
+      const { job_id, job_title, industry_name, skill_name, salaryrange, jobtype, profile_picture_url } = row;
 
       // Create a job object if it doesn't already exist
       if (!acc[job_id]) {
@@ -154,7 +158,10 @@ const getJobData = async () => {
           job_id,
           job_title,
           industry_name,
-          required_skills: []  // Initialize an array for skills
+          required_skills: [],// Initialize an array for skills
+          salaryrange,
+          jobtype,
+          profile_picture_url  
         };
       }
 
