@@ -135,23 +135,18 @@ const getJobData = async () => {
         joblistings.job_id,
         job_titles.job_title,
         industries.industry_name,
-        joblistings.salaryrange,
-        joblistings.jobtype,
-        pp.profile_picture_url,
-        industries.industry_id,
         job_skills.skill_id,
         skills.skill_name
       FROM joblistings
       JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
       JOIN industries ON joblistings.industry_id = industries.industry_id
       JOIN job_skills ON joblistings.job_id = job_skills.job_id
-      JOIN skills ON job_skills.skill_id = skills.skill_id
-      JOIN profilepictures pp ON joblistings.user_id = pp.user_id;
+      JOIN skills ON job_skills.skill_id = skills.skill_id;
     `);
 
-    // Transform job data to include required skills as a list
+    // Transform job data to include only the necessary information
     const jobData = res.rows.reduce((acc, row) => {
-      const { job_id, job_title, industry_name, salaryrange, jobtype, profile_picture_url, skill_name } = row;
+      const { job_id, job_title, industry_name, skill_name } = row;
 
       // Create a job object if it doesn't already exist
       if (!acc[job_id]) {
@@ -159,9 +154,6 @@ const getJobData = async () => {
           job_id,
           job_title,
           industry_name,
-          salaryrange,
-          jobtype,
-          profile_picture_url,
           required_skills: []  // Initialize an array for skills
         };
       }
@@ -173,6 +165,9 @@ const getJobData = async () => {
 
       return acc;
     }, {});
+
+    // Log the filtered job data for debugging
+    console.log('Fetched Job Data for Algorithm:', JSON.stringify(Object.values(jobData), null, 2));
 
     return Object.values(jobData);  // Return as an array
   } catch (err) {
@@ -191,6 +186,9 @@ app.get('/api/getskills/:userId', async (req, res) => {
       JOIN skills ON js_skills.skill_id = skills.skill_id
       WHERE js_skills.user_id = $1`, [userId]); // Use parameterized query
 
+    // Log the retrieved skills for debugging
+    console.log('Retrieved Skills for User:', userId, JSON.stringify(skills.rows, null, 2));
+
     res.json(skills.rows); // Respond with the retrieved skills
   } catch (err) {
     console.error('Error fetching skills:', err);
@@ -198,8 +196,8 @@ app.get('/api/getskills/:userId', async (req, res) => {
   }
 });
 
-
 app.post('/api/recommend', async (req, res) => {
+  // Check for valid skills input
   if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
     return res.status(400).json({ error: 'Skills must be a non-empty array.' });
   }
@@ -207,13 +205,19 @@ app.post('/api/recommend', async (req, res) => {
   const jobSeekerSkills = req.body.skills;
 
   try {
+    // Fetch job data
     const jobData = await getJobData(); 
-    console.log('Job Data:', jobData); // Log job data for debugging
 
+    // Log job data and skills for debugging
+    console.log('Job Data:', JSON.stringify(jobData, null, 2)); // Pretty-print job data
+    console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2)); // Pretty-print skills
+
+    // Spawn the Python process to generate recommendations
     const pythonProcess = spawn('python', ['python_scripts/recommendations.py', JSON.stringify(jobData), JSON.stringify(jobSeekerSkills)]);
 
     let pythonOutput = '';
     
+    // Log output from Python process
     pythonProcess.stdout.on('data', (data) => {
       pythonOutput += data.toString();
     });
@@ -224,6 +228,7 @@ app.post('/api/recommend', async (req, res) => {
 
     pythonProcess.on('close', (code) => {
       if (code !== 0) {
+        console.error('Python process exited with code:', code);
         return res.status(500).send('An error occurred while processing your request.');
       }
       try {
@@ -231,12 +236,12 @@ app.post('/api/recommend', async (req, res) => {
         res.json({ recommendations });
       } catch (parseError) {
         console.error('Error parsing Python output:', parseError);
-        res.status(500).send('Error processing recommendations.');
+        return res.status(500).send('Error processing recommendations.');
       }
     });
   } catch (error) {
     console.error('Error fetching job data:', error);
-    res.status(500).send('An error occurred while fetching job data.');
+    return res.status(500).send('An error occurred while fetching job data.');
   }
 });
 

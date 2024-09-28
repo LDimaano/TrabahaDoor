@@ -46,7 +46,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       try {
         const response = await fetch(`http://localhost:5000/api/getskills/${userId}`);
         if (!response.ok) {
-          const errorDetails = await response.text(); // Get the error details
+          const errorDetails = await response.text();
           throw new Error(`Failed to fetch user skills: ${errorDetails}`);
         }
         const skills = await response.json();
@@ -72,16 +72,16 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ skills: userSkills }), 
-            // Pass the user skills for recommendations
           });
-      
+
           if (!response.ok) {
-            const errorDetails = await response.text(); // Get the response error message
+            const errorDetails = await response.text();
             throw new Error(`Failed to fetch recommended jobs: ${errorDetails}`);
           }
-      
+
           const recommendedJobsData = await response.json();
-          setRecommendedJobs(recommendedJobsData);
+          console.log('Recommended Jobs Data:', recommendedJobsData); // Log the response
+          setRecommendedJobs(recommendedJobsData.recommendations); // Access the recommendations array
         } catch (error) {
           console.error('Error fetching recommended jobs:', error);
         }

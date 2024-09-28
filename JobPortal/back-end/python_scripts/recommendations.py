@@ -3,7 +3,7 @@ import json
 
 def recommend_jobs(job_data, skills):
     recommendations = []
-    skills_set = set(skills)
+    skills_set = {skill['skill_name'] for skill in skills}  # Create a set of skill names
 
     for job in job_data:
         job_skills = set(job.get('required_skills', []))  # Get required skills from job
