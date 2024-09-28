@@ -35,8 +35,7 @@ router.post('/employer-profile', async (req, res) => {
         user_id, company_name, contact_person, contact_number, website, industry_id,
         company_address, company_size, founded_year, description
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-      RETURNING *`,
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)     RETURNING *`,
       [
         user_id,
         companyName,

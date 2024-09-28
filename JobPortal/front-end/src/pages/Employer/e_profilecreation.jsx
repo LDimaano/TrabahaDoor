@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
+import { Modal, Button } from 'react-bootstrap'; // Importing Bootstrap Modal and Button
 
 function EmployerProfileCreation() {
   const navigate = useNavigate();
@@ -16,8 +17,10 @@ function EmployerProfileCreation() {
   const [companySize, setCompanySize] = useState('500-1000 employees');
   const [foundedYear, setFoundedYear] = useState('2000');
   const [description, setDescription] = useState('Tech Innovations Ltd is a leading IT solutions provider specializing in software development and consulting.');
-  const [photo, setPhoto] = useState(null); // Add photo state
+  const [photo, setPhoto] = useState(null);
   const [error, setError] = useState('');
+  
+  const [showModal, setShowModal] = useState(false); // For controlling the modal visibility
 
   useEffect(() => {
     fetchIndustries();
@@ -49,19 +52,16 @@ function EmployerProfileCreation() {
 
       const data = await response.json();
       console.log('Uploaded image data:', data);
-      setPhoto(data.profilePictureUrl); // Set the photo URL in state
+      setPhoto(data.profilePictureUrl);
     } catch (error) {
       console.error('Error uploading profile picture:', error);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     const user_id = sessionStorage.getItem('userId');
     console.log('Retrieved user_id:', user_id);
 
-    // If photo is not set, attempt to upload and wait
     if (!photo) {
       await handleFileChange({ target: { files: [document.getElementById('photo').files[0]] } });
     }
@@ -103,10 +103,9 @@ function EmployerProfileCreation() {
       const data = await response.json();
       console.log('Profile created successfully:', data);
 
-      // Navigate to login page after a delay
       setTimeout(() => {
         navigate('/login');
-      }, 3000); // Adjust the delay as needed
+      }, 3000);
     } catch (err) {
       console.error('Submission failed:', err);
       setError('Failed to submit the profile. Please try again.');
@@ -129,6 +128,20 @@ function EmployerProfileCreation() {
     }
   };
 
+  const handleShowModal = (e) => {
+    e.preventDefault();
+    setShowModal(true); // Show the modal
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false); // Hide the modal
+  };
+
+  const handleConfirmSubmit = () => {
+    setShowModal(false); // Hide modal and submit the form
+    handleSubmit();
+  };
+
   return (
     <main className="container mt-4">
       <div className="mb-4">
@@ -136,7 +149,7 @@ function EmployerProfileCreation() {
         <h5 className="text-center">Let us know more about your company</h5>
       </div>
       <h3>Company Details</h3>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleShowModal}>
         <div className="mb-4 border p-4">
           <h3>Profile Photo</h3>
           <div className="mb-3">
@@ -261,6 +274,22 @@ function EmployerProfileCreation() {
         </div>
       </form>
       {error && <div className="alert alert-danger mt-3">{error}</div>}
+
+      {/* Modal */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Submission</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to submit your profile?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleConfirmSubmit}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </main>
   );
 }
