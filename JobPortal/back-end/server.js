@@ -138,51 +138,90 @@ const getJobData = async () => {
         joblistings.salaryrange,
         joblistings.jobtype,
         pp.profile_picture_url,
-        industries.industry_id
+        industries.industry_id,
+        job_skills.skill_id,
+        skills.skill_name
       FROM joblistings
       JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
       JOIN industries ON joblistings.industry_id = industries.industry_id
-      JOIN profilepictures pp ON joblistings.user_id = pp.user_id
-    `); // Fetch all jobs
-    return res.rows; // Return the rows from the query result
+      JOIN job_skills ON joblistings.job_id = job_skills.job_id
+      JOIN skills ON job_skills.skill_id = skills.skill_id
+      JOIN profilepictures pp ON joblistings.user_id = pp.user_id;
+    `);
+
+    // Transform job data to include required skills as a list
+    const jobData = res.rows.reduce((acc, row) => {
+      const { job_id, job_title, industry_name, salaryrange, jobtype, profile_picture_url, skill_name } = row;
+
+      // Create a job object if it doesn't already exist
+      if (!acc[job_id]) {
+        acc[job_id] = {
+          job_id,
+          job_title,
+          industry_name,
+          salaryrange,
+          jobtype,
+          profile_picture_url,
+          required_skills: []  // Initialize an array for skills
+        };
+      }
+
+      // Add skill to the job's required skills
+      if (skill_name) {
+        acc[job_id].required_skills.push(skill_name);
+      }
+
+      return acc;
+    }, {});
+
+    return Object.values(jobData);  // Return as an array
   } catch (err) {
     console.error('Error fetching job data:', err);
-    throw err; // Throw the error to be handled later
+    throw err;
   }
 };
 
-
 app.post('/api/recommend', async (req, res) => {
-  // Check if skills is present in the request body
-  if (!req.body.skills) {
-    return res.status(400).json({ error: 'Skills are required.' });
-  }
-
-  if (!Array.isArray(req.body.skills) || req.body.skills.length === 0) {
+  if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
     return res.status(400).json({ error: 'Skills must be a non-empty array.' });
   }
 
-  const jobSeekerSkills = req.body.skills; // Get skills from request body
+  const jobSeekerSkills = req.body.skills;
 
   try {
-    const jobData = await getJobData(); // Fetch job data from the database
+    const jobData = await getJobData(); 
+    console.log('Job Data:', jobData); // Log job data for debugging
 
-    // Spawn the Python process and pass job data and skills
-    const pythonProcess = spawn('python', ['python_scripts/recommendation.py', JSON.stringify(jobData), JSON.stringify(jobSeekerSkills)]);
+    const pythonProcess = spawn('python', ['python_scripts/recommendations.py', JSON.stringify(jobData), JSON.stringify(jobSeekerSkills)]);
 
+    let pythonOutput = '';
+    
     pythonProcess.stdout.on('data', (data) => {
-      res.json({ recommendations: JSON.parse(data.toString()) });
+      pythonOutput += data.toString();
     });
 
     pythonProcess.stderr.on('data', (data) => {
-      console.error(data.toString());
-      res.status(500).send('An error occurred while processing your request.');
+      console.error('Python error:', data.toString());
+    });
+
+    pythonProcess.on('close', (code) => {
+      if (code !== 0) {
+        return res.status(500).send('An error occurred while processing your request.');
+      }
+      try {
+        const recommendations = JSON.parse(pythonOutput);
+        res.json({ recommendations });
+      } catch (parseError) {
+        console.error('Error parsing Python output:', parseError);
+        res.status(500).send('Error processing recommendations.');
+      }
     });
   } catch (error) {
     console.error('Error fetching job data:', error);
     res.status(500).send('An error occurred while fetching job data.');
   }
 });
+
 
 
 

@@ -227,6 +227,4 @@ router.get('/getUserJobListings', async (req, res) => {
 });
 
 
-
-
 module.exports = router;

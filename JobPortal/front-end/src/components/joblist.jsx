@@ -6,6 +6,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   const [recommendedJobs, setRecommendedJobs] = useState([]); // State for recommended jobs
   const [userSkills, setUserSkills] = useState([]); // State for user skills
 
+  // Fetch jobs and user skills when the component mounts or filters change
   useEffect(() => {
     const fetchJobs = async () => {
       let url = `http://localhost:5000/api/jobs/postedjobs`;
@@ -36,37 +37,61 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
     };
 
     const fetchUserSkills = async () => {
-      // Fetch user skills using a valid API endpoint
-      const userId = sessionStorage.getItem('user_id'); // Ensure user_id is stored in session storage
-      const response = await fetch(`http://localhost:5000/api/jobseekers/skills/${userId}`); // Pass user_id
-      if (!response.ok) {
-        console.error('Failed to fetch user skills:', response.status);
+      const userId = sessionStorage.getItem('user_id');
+      if (!userId) {
+        console.error('No user_id found in sessionStorage');
         return;
       }
-      const skills = await response.json();
-      setUserSkills(skills);
 
-      // Now call the recommendation API with the skills
-      const recommendResponse = await fetch('http://localhost:5000/api/recommend', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ skills }), // Send user skills
-      });
-
-      if (recommendResponse.ok) {
-        const recommendations = await recommendResponse.json();
-        setRecommendedJobs(recommendations);
-      } else {
-        console.error('Error fetching recommendations:', recommendResponse.status);
+      try {
+        const response = await fetch(`http://localhost:5000/api/skills/${userId}`);
+        if (!response.ok) {
+          const errorDetails = await response.text(); // Get the error details
+          throw new Error(`Failed to fetch user skills: ${errorDetails}`);
+        }
+        const skills = await response.json();
+        setUserSkills(skills);
+      } catch (error) {
+        console.error('Error fetching user skills:', error);
       }
     };
 
     fetchJobs();
-    fetchUserSkills(); // Fetch skills when the component mounts
+    fetchUserSkills();
   }, [searchQuery, filters]);
 
+  // Fetch recommended jobs if needed
+  useEffect(() => {
+    if (isRecommended && userSkills.length > 0) {
+      const fetchRecommendedJobs = async () => {
+        console.log('User Skills:', userSkills); 
+        try {
+          const response = await fetch(`http://localhost:5000/api/recommend`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ skills: userSkills }), 
+            // Pass the user skills for recommendations
+          });
+      
+          if (!response.ok) {
+            const errorDetails = await response.text(); // Get the response error message
+            throw new Error(`Failed to fetch recommended jobs: ${errorDetails}`);
+          }
+      
+          const recommendedJobsData = await response.json();
+          setRecommendedJobs(recommendedJobsData);
+        } catch (error) {
+          console.error('Error fetching recommended jobs:', error);
+        }
+      };
+      
+      fetchRecommendedJobs();
+    }
+  }, [isRecommended, userSkills]);
+
+  // Apply filters to all jobs
   const applyFilters = (jobs) => {
     const { employmentTypes, salaryRanges } = filters;
     const employmentTypesLower = employmentTypes.map(type => type.toLowerCase());
@@ -83,6 +108,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
     });
   };
 
+  // Apply search filter to jobs
   const applySearch = (jobs) => {
     if (!searchQuery) return jobs;
     return jobs.filter(job =>
@@ -91,6 +117,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
     );
   };
 
+  // Apply filters and search to jobs
   const filteredJobs = applyFilters(jobs);
   const searchedJobs = applySearch(filteredJobs);
 
