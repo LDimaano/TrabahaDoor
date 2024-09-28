@@ -9,6 +9,11 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
   const [localHiringStages, setLocalHiringStages] = useState(hiringStages);
+  
+  // For the confirmation modal
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [newStage, setNewStage] = useState('');
 
   useEffect(() => {
     // Sync local state with prop changes
@@ -26,6 +31,32 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
 
   const closeModal = () => setIsModalOpen(false);
 
+  const openConfirmModal = (userId, stage) => {
+    setSelectedUser(userId);
+    setNewStage(stage);
+    setIsConfirmModalOpen(true);
+  };
+
+  const closeConfirmModal = () => {
+    setIsConfirmModalOpen(false);
+    setSelectedUser(null);
+    setNewStage('');
+  };
+
+  const confirmStageChange = () => {
+    if (selectedUser && newStage) {
+      // Optimistically update the state before the API call
+      setLocalHiringStages((prevStages) => ({
+        ...prevStages,
+        [selectedUser]: newStage,
+      }));
+
+      // Call the function to make the API request
+      handleStageChangeInJoblist(selectedUser, newStage);
+      closeConfirmModal();
+    }
+  };
+
   const handleStageChangeInJoblist = async (userId, newStage) => {
     try {
       const response = await fetch(`http://localhost:5000/api/applicants/applications/${userId}/${jobId}`, {
@@ -41,12 +72,6 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
 
       // Notify the parent (ApplicantDashboard) that the hiring stage has changed
       onStageChange(userId, newStage);
-      
-      // Update local state to reflect the new hiring stage
-      setLocalHiringStages(prevStages => ({
-        ...prevStages,
-        [userId]: newStage
-      }));
     } catch (error) {
       console.error('Error updating hiring stage:', error.message);
     }
@@ -95,7 +120,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
                       <li key={stage}>
                         <button
                           className="dropdown-item"
-                          onClick={() => handleStageChangeInJoblist(listing.user_id, stage)}
+                          onClick={() => openConfirmModal(listing.user_id, stage)}
                         >
                           {stage}
                         </button>
@@ -144,6 +169,27 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
               </div>
               <div className="modal-footer">
                 <button className="btn btn-secondary" onClick={closeModal}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {isConfirmModalOpen && (
+        <div className="modal fade show" style={{ display: 'block' }} role="dialog">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Stage Change</h5>
+                <button type="button" className="btn-close" onClick={closeConfirmModal}></button>
+              </div>
+              <div className="modal-body">
+                <p>Are you sure you want to change the hiring stage to <strong>{newStage}</strong>?</p>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={closeConfirmModal}>Cancel</button>
+                <button className="btn btn-primary" onClick={confirmStageChange}>Confirm</button>
               </div>
             </div>
           </div>
