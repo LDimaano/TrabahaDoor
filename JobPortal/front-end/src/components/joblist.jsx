@@ -44,7 +44,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/api/skills/${userId}`);
+        const response = await fetch(`http://localhost:5000/api/getskills/${userId}`);
         if (!response.ok) {
           const errorDetails = await response.text(); // Get the error details
           throw new Error(`Failed to fetch user skills: ${errorDetails}`);

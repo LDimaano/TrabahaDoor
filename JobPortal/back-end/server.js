@@ -181,6 +181,24 @@ const getJobData = async () => {
   }
 };
 
+app.get('/api/getskills/:userId', async (req, res) => {
+  const { userId } = req.params; // Get userId from request parameters
+
+  try {
+    const skills = await pool.query(`
+      SELECT skills.skill_name, js_skills.skill_id
+      FROM js_skills
+      JOIN skills ON js_skills.skill_id = skills.skill_id
+      WHERE js_skills.user_id = $1`, [userId]); // Use parameterized query
+
+    res.json(skills.rows); // Respond with the retrieved skills
+  } catch (err) {
+    console.error('Error fetching skills:', err);
+    res.status(500).json({ error: 'Error fetching skills' });
+  }
+});
+
+
 app.post('/api/recommend', async (req, res) => {
   if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
     return res.status(400).json({ error: 'Skills must be a non-empty array.' });
