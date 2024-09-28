@@ -182,13 +182,15 @@ router.get('/postedjobs', async (req, res) => {
 
     const values = [];
 
+    // Filter by job title (or industry name if needed)
     if (jobTitle) {
-      query += ` AND (job_titles.job_title ILIKE $${values.length + 1} OR industries.industry_name ILIKE $${values.length + 1});`;
-      values.push(`%${jobTitle}%`);
+      query += ` AND (job_titles.job_title ILIKE $${values.length + 1})`; // Filter by job title
+      values.push(`%${jobTitle}%`); // Use ILIKE for case-insensitive matching
     }
 
+    // Filter by selected industry
     if (selectedIndustry) {
-      query += ` AND joblistings.industry_id = $${values.length + 1};`;
+      query += ` AND joblistings.industry_id = $${values.length + 1}`;
       values.push(selectedIndustry);
     }
 

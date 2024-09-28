@@ -26,6 +26,7 @@ function HomeJobSeeker() {
       setFilters((prevFilters) => ({ ...prevFilters, industry: searchData.selectedIndustry }));
     }
   };
+  
 
   // Inline styles for the title
   const titleStyle = {

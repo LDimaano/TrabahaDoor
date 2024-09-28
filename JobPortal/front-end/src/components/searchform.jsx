@@ -22,11 +22,11 @@ function SearchForm({ onSearch }) {
     fetchIndustries();
   }, []);
 
-  // Handle form submission and pass search data to parent
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSearch({ jobTitle, selectedIndustry });
-  };
+  
+const handleSubmit = (e) => {
+  e.preventDefault();
+  onSearch({ jobTitle, selectedIndustry }); // Pass the job title and selected industry to the parent
+};
 
   // Handle clearing filters for job title
   const handleClearJobTitle = () => {
@@ -35,10 +35,12 @@ function SearchForm({ onSearch }) {
   };
 
   // Handle clearing filters for selected industry
-  const handleClearIndustry = () => {
-    setSelectedIndustry(''); // Reset selected industry
-    onSearch({ jobTitle, selectedIndustry: '' }); // Pass empty parameters to reset search
-  };
+  // Handle clearing filters for selected industry
+const handleClearIndustry = () => {
+  setSelectedIndustry(''); // Reset selected industry
+  onSearch({ jobTitle, selectedIndustry: '' }); // Pass empty industry to parent
+};
+
 
   // Determine if the job title field has a value
   const isJobTitleActive = jobTitle !== '';
