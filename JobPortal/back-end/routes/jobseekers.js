@@ -2,71 +2,17 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-router.post('/profile', async (req, res) => {
-  const {
-    user_id, // This should be the user_id from the users table
-    fullName,
-    phoneNumber,
-    dateOfBirth,
-    gender,
-    address_id, 
-    industry_id,
-    experience, // Array of experience objects
-    skills // Array of skill IDs or skill objects containing skill_id
-  } = req.body;
 
-  // Log the request body to verify data
-  console.log('Received request body:', req.body);
-
-  // Check that user_id and address_id are provided
-  if (!user_id) {
-    return res.status(400).json({ error: 'User ID is required' });
-  }
-  if (!address_id) {
-    return res.status(400).json({ error: 'Address ID is required' });
-  }
+router.get('/user/skills/:userId', async (req, res) => {
+  const { userId } = req.params;
 
   try {
-    // Insert the profile data into the job_seekers table
-    const newProfileResult = await pool.query(
-      `INSERT INTO job_seekers (
-        user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING jsid`,
-      [user_id, fullName, phoneNumber, dateOfBirth, gender, address_id, industry_id]
-    );
-
-    const profileId = newProfileResult.rows[0].jsid;
-
-    // Insert experience data
-    for (const exp of experience) {
-      await pool.query(
-        `INSERT INTO job_experience (
-          user_id, jobtitle_id, salary, company, location, start_date, end_date, description
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [user_id, exp.jobTitle, exp.salary, exp.company, exp.location, exp.startDate, exp.endDate, exp.description]
-      );
-    }
-
-    // Insert skills data - assuming skills array contains skill_id directly
-    for (const skill_id of skills) {
-      await pool.query(
-        `INSERT INTO js_skills (
-          user_id, skill_id
-        )
-        VALUES ($1, $2)`,
-        [user_id, skill_id]
-      );
-    }
-
-    // Send a successful response
-    res.json({ message: 'Profile created successfully', profileId });
+    const result = await pool.query('SELECT skill_id FROM js_skills WHERE user_id = $1', [userId]);
+    const skills = result.rows.map(row => row.skill_id);
+    res.json(skills);
   } catch (err) {
-    // Log error message
-    console.error('Error inserting profile:', err.message);
-    res.status(500).send('Server Error');
+    console.error('Error fetching skills:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 

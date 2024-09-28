@@ -7,7 +7,8 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const pool = require('./db');
-
+const { spawn } = require('child_process');
+const bodyParser = require('body-parser');
 
 const app = express();
 const server = http.createServer(app);
@@ -30,7 +31,7 @@ io = require('socket.io')(server, {
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(cookieParser());
-
+app.use(bodyParser.json());
 // Session configuration
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET || 'a2f4b9c0e5d',
@@ -126,6 +127,64 @@ app.get('/api/notifications', async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 });
+
+const getJobData = async () => {
+  try {
+    const res = await pool.query(`
+      SELECT
+        joblistings.job_id,
+        job_titles.job_title,
+        industries.industry_name,
+        joblistings.salaryrange,
+        joblistings.jobtype,
+        pp.profile_picture_url,
+        industries.industry_id
+      FROM joblistings
+      JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
+      JOIN industries ON joblistings.industry_id = industries.industry_id
+      JOIN profilepictures pp ON joblistings.user_id = pp.user_id
+    `); // Fetch all jobs
+    return res.rows; // Return the rows from the query result
+  } catch (err) {
+    console.error('Error fetching job data:', err);
+    throw err; // Throw the error to be handled later
+  }
+};
+
+
+app.post('/api/recommend', async (req, res) => {
+  // Check if skills is present in the request body
+  if (!req.body.skills) {
+    return res.status(400).json({ error: 'Skills are required.' });
+  }
+
+  if (!Array.isArray(req.body.skills) || req.body.skills.length === 0) {
+    return res.status(400).json({ error: 'Skills must be a non-empty array.' });
+  }
+
+  const jobSeekerSkills = req.body.skills; // Get skills from request body
+
+  try {
+    const jobData = await getJobData(); // Fetch job data from the database
+
+    // Spawn the Python process and pass job data and skills
+    const pythonProcess = spawn('python', ['python_scripts/recommendation.py', JSON.stringify(jobData), JSON.stringify(jobSeekerSkills)]);
+
+    pythonProcess.stdout.on('data', (data) => {
+      res.json({ recommendations: JSON.parse(data.toString()) });
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      console.error(data.toString());
+      res.status(500).send('An error occurred while processing your request.');
+    });
+  } catch (error) {
+    console.error('Error fetching job data:', error);
+    res.status(500).send('An error occurred while fetching job data.');
+  }
+});
+
+
 
 app.get('/api/allnotifications', async (req, res) => {
   const userId = req.session.user.user_id;

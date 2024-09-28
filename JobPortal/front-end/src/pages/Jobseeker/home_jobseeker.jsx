@@ -12,6 +12,8 @@ function HomeJobSeeker() {
     industry: '' // Add industry to the initial state
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [userSkills, setUserSkills] = useState([]);
+  const [activeTab, setActiveTab] = useState('all'); // New state for active tab
 
   const handleFilterChange = (filterType, selectedItems) => {
     setFilters(prevFilters => ({
@@ -26,7 +28,6 @@ function HomeJobSeeker() {
       setFilters((prevFilters) => ({ ...prevFilters, industry: searchData.selectedIndustry }));
     }
   };
-  
 
   // Inline styles for the title
   const titleStyle = {
@@ -61,7 +62,24 @@ function HomeJobSeeker() {
           </div>
           {/* Job List (taking 9 columns, entire remaining width) */}
           <div className="col-md-9">
-            <JobList filters={filters} searchQuery={searchQuery} />
+            {/* Tab Interface */}
+            <div className="nav nav-tabs mb-3">
+              <button 
+                className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`} 
+                onClick={() => setActiveTab('recommended')}
+              >
+                Recommended Jobs
+              </button>
+              <button 
+                className={`nav-link ${activeTab === 'all' ? 'active' : ''}`} 
+                onClick={() => setActiveTab('all')}
+              >
+                All Jobs
+              </button>
+            </div>
+
+            {/* Conditional Rendering of Job Lists */}
+            <JobList filters={filters} searchQuery={searchQuery} userSkills={userSkills} isRecommended={activeTab === 'recommended'} />
           </div>
         </div>
         <Pagination />
