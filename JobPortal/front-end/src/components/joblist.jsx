@@ -42,19 +42,23 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         console.error('No user_id found in sessionStorage');
         return;
       }
-
+    
       try {
         const response = await fetch(`http://localhost:5000/api/getskills/${userId}`);
         if (!response.ok) {
-          const errorDetails = await response.text();
+          const errorDetails = await response.text(); // Get the error details
           throw new Error(`Failed to fetch user skills: ${errorDetails}`);
         }
         const skills = await response.json();
-        setUserSkills(skills);
+        
+        // Extract skill names only
+        const skillNames = skills.map(skill => skill.skill_name); // This creates an array of skill names
+        setUserSkills(skillNames); // Store only the skill names
       } catch (error) {
         console.error('Error fetching user skills:', error);
       }
     };
+    
 
     fetchJobs();
     fetchUserSkills();

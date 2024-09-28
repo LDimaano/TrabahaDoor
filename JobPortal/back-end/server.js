@@ -209,8 +209,8 @@ app.post('/api/recommend', async (req, res) => {
     const jobData = await getJobData(); 
 
     // Log job data and skills for debugging
-    console.log('Job Data:', JSON.stringify(jobData, null, 2)); // Pretty-print job data
-    console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2)); // Pretty-print skills
+    console.log('Job Data:', JSON.stringify(jobData, null, 2));
+    console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
 
     // Spawn the Python process to generate recommendations
     const pythonProcess = spawn('python', ['python_scripts/recommendations.py', JSON.stringify(jobData), JSON.stringify(jobSeekerSkills)]);
@@ -232,10 +232,11 @@ app.post('/api/recommend', async (req, res) => {
         return res.status(500).send('An error occurred while processing your request.');
       }
       try {
+        // Attempt to parse the Python output
         const recommendations = JSON.parse(pythonOutput);
         res.json({ recommendations });
       } catch (parseError) {
-        console.error('Error parsing Python output:', parseError);
+        console.error('Error parsing Python output:', parseError, 'Output:', pythonOutput);
         return res.status(500).send('Error processing recommendations.');
       }
     });
