@@ -26,7 +26,7 @@ function ApplicantListItem({ applicant }) {
       />
         <div>
           <h5>{applicant.full_name}</h5>
-          <p>{applicant.latest_job_title || 'Job title not available'}</p> {/* Correct field access */}
+          <p>{applicant.latest_job_title || applicant.job_title || 'Job title not available'}</p> 
         </div>
       </div>
       <button className="btn btn-primary" onClick={handleViewDetailsClick}>
