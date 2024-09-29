@@ -253,6 +253,174 @@ app.post('/api/recommend', async (req, res) => {
   }
 });
 
+// Function to get job postings
+// Function to get job postings for a user
+const getJobPostings = async (userId) => {
+  const query = `
+    SELECT 
+        joblistings.job_id,
+        job_titles.job_title,
+        industries.industry_name,
+        joblistings.salaryrange,
+        joblistings.jobtype,
+        skills.skill_name,
+        pp.profile_picture_url
+    FROM joblistings
+    JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
+    JOIN industries ON joblistings.industry_id = industries.industry_id
+    JOIN job_skills ON joblistings.job_id = job_skills.job_id
+    JOIN skills ON job_skills.skill_id = skills.skill_id
+    JOIN profilepictures pp ON joblistings.user_id = pp.user_id
+    WHERE joblistings.user_id = $1;
+  `;
+
+  const { rows } = await pool.query(query, [userId]);
+
+  if (rows.length === 0) {
+    console.log(`No job postings found for user ${userId}`);
+    return [];
+  }
+
+  // Transform job data to include only the necessary information
+  const joblistingData = rows.reduce((acc, row) => {
+    const { job_id, job_title, industry_name, skill_name, salaryrange, jobtype, profile_picture_url } = row;
+
+    // Create a job object if it doesn't already exist
+    if (!acc[job_id]) {
+      acc[job_id] = {
+        job_id,
+        job_title,
+        industry_name,
+        required_skills: [], // Initialize an array for skills
+        salaryrange,
+        jobtype,
+        profile_picture_url
+      };
+    }
+
+    // Add skill to the job's required skills
+    if (skill_name) {
+      acc[job_id].required_skills.push(skill_name);
+    }
+
+    return acc;
+  }, {});
+
+  console.log(`Retrieved ${Object.keys(joblistingData).length} job postings for user ${userId}`);
+  return Object.values(joblistingData); // Return as an array
+};
+
+// Function to get applicants
+const getApplicants = async () => {
+  const query = `
+    SELECT
+        js.full_name,
+        js.user_id,
+        u.email,
+        a.location,
+        ARRAY_AGG(DISTINCT jt.job_title) AS job_titles,
+        ARRAY_AGG(DISTINCT s.skill_name) AS skills,
+        pp.profile_picture_url
+    FROM job_seekers js
+    JOIN users u ON js.user_id = u.user_id
+    JOIN address a ON js.address_id = a.address_id
+    JOIN job_experience je ON js.user_id = je.user_id
+    JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
+    JOIN profilepictures pp ON js.user_id = pp.user_id
+    JOIN js_skills jk ON js.user_id = jk.user_id
+    JOIN skills s ON jk.skill_id = s.skill_id
+    GROUP BY 
+        js.full_name,
+        js.user_id,
+        u.email,
+        a.location,
+        pp.profile_picture_url;`;
+    
+  const { rows } = await pool.query(query); // Execute the query
+  return rows; // Return the retrieved applicants
+};
+
+// Define the endpoint to recommend candidates
+app.post('/api/recommend-candidates', async (req, res) => {
+  // Retrieve userId from request body
+  const userId = req.body.userId; 
+
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required.' });
+  }
+
+  try {
+    const jobPostings = await getJobPostings(userId); // Fetch job postings for the user
+    const applicants = await getApplicants(); // Fetch applicants
+
+    // Log the job postings and applicants for debugging
+    console.log('Job Postings:', jobPostings);
+    console.log('Applicants:', applicants);
+
+    // Check if either job postings or applicants are empty
+    if (jobPostings.length === 0 || applicants.length === 0) {
+      return res.status(404).json({ error: 'No job postings or applicants found.' });
+    }
+
+    // Spawn Python process
+    const pythonProcess = spawn('python', ['python_scripts/recommend_candidates.py']);
+
+    // Send job postings and applicants as JSON
+    const dataToSend = JSON.stringify({ job_postings: jobPostings, applicants: applicants });
+    console.log('Data sent to Python:', dataToSend);
+     // Log the data being sent
+    pythonProcess.stdin.write(dataToSend + '\n');
+    pythonProcess.stdin.end();
+
+    // Capture output from Python script
+    pythonProcess.stdout.on('data', (data) => {
+      console.log('Output from Python:', data.toString()); // Log output from Python
+      try {
+          const recommendations = JSON.parse(data.toString().trim()); // Trim the data before parsing
+          res.json({ recommendations }); // Respond with recommendations
+      } catch (error) {
+          console.error('Error parsing recommendations:', error);
+          res.status(500).json({ error: 'Error parsing recommendations.' });
+      }
+  });
+  
+
+    pythonProcess.stderr.on('data', (error) => {
+      console.error(`Python error: ${error.toString()}`);
+      res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
+    });
+    
+
+    pythonProcess.on('exit', (code) => {
+      if (code !== 0) {
+        console.error(`Python process exited with code ${code}`);
+        res.status(500).json({ error: 'Internal Server Error', details: 'Python script failed' });
+      }
+    });
+
+  } catch (error) {
+    console.error('Error generating recommendations:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// Define the endpoint to retrieve job postings for a specific user
+// app.get('/api/job-postings/:userId', async (req, res) => {
+//   const userId = req.params.userId;
+
+//   if (!userId) {
+//     return res.status(401).json({ error: 'User not authenticated' });
+//   }
+
+//   try {
+//     const jobPostings = await getJobPostings(userId); // Fetch job postings for the user
+//     res.json(jobPostings); // Return the job postings
+//   } catch (error) {
+//     console.error(`Error fetching job postings for user ${userId}: ${err}`);
+//     res.status(500).json({ error: 'Error fetching job postings' });
+//   }
+// });
 
 
 

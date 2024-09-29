@@ -5,11 +5,12 @@ import CandidateList from '../../components/candidatelist';
 import Pagination from '../../components/pagination';
 
 function HomeEmployer() {
-  const [searchParams, setSearchParams] = useState({}); // State to store search criteria
+  const [searchParams, setSearchParams] = useState({});
+  const [activeTab, setActiveTab] = useState('all'); // State to manage the active tab
 
   // Handle search and update state with search parameters from SearchForm
   const handleSearch = (params) => {
-    setSearchParams(params); // Update search params (job title and selected industry)
+    setSearchParams(params);
   };
 
   // Inline styles for the title
@@ -38,11 +39,27 @@ function HomeEmployer() {
           <div style={subtitleStyle}>Find the best candidates for your roles</div>
         </div>
         {/* Pass the handleSearch function to SearchForm */}
-        <SearchForm onSearch={handleSearch} /> 
+        <SearchForm onSearch={handleSearch} />
         <div className="row mt-3">
           <div className="col-md-12">
-            {/* Pass searchParams to CandidateList to fetch filtered job seekers */}
-            <CandidateList searchParams={searchParams} /> 
+            {/* Tab Interface */}
+            <div className="nav nav-tabs mb-3">
+              <button
+                className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`}
+                onClick={() => setActiveTab('recommended')}
+              >
+                Recommended Candidates
+              </button>
+              <button
+                className={`nav-link ${activeTab === 'all' ? 'active' : ''}`}
+                onClick={() => setActiveTab('all')}
+              >
+                All Candidates
+              </button>
+            </div>
+
+            {/* Conditional Rendering of Candidate Lists */}
+            <CandidateList searchParams={searchParams} isRecommended={activeTab === 'recommended'} />
           </div>
         </div>
         {/* Placeholder for pagination component */}

@@ -1,2 +1,5 @@
 node_modules/
 .env
+JobPortal/back-end/server.js
+venv/
+
