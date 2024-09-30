@@ -10,6 +10,7 @@ const pool = require('./db');
 const { spawn } = require('child_process');
 const bodyParser = require('body-parser');
 
+
 const app = express();
 const server = http.createServer(app);
 
@@ -437,6 +438,54 @@ app.post('/api/recommend-candidates', async (req, res) => {
 //     res.status(500).json({ error: 'Error fetching job postings' });
 //   }
 // });
+
+
+//time to fill analysis
+
+app.get('/api/timetofill', async (req, res) => {
+  try {
+    // SQL query to join joblistings and industries and retrieve industry_name, datecreated, and datefilled
+    const jobListings = await pool.query(`
+      SELECT
+        i.industry_name, 
+        jl.datecreated::date AS datecreated, 
+        jl.datefilled::date AS datefilled
+      FROM joblistings jl
+      JOIN industries i ON i.industry_id = jl.industry_id
+      WHERE jl.datefilled IS NOT NULL
+    `);
+
+    // Log the job listings to console to verify the dates
+    console.log('Job Listings:', jobListings.rows); // Log the output
+
+    const python = spawn('python', ['python_scripts/time_to_fill_analysis.py']);
+
+    // Send data to Python script
+    python.stdin.write(JSON.stringify(jobListings.rows));
+    python.stdin.end();
+
+    // Capture output from Python
+    let dataToSend = '';
+    python.stdout.on('data', (data) => {
+      dataToSend += data.toString();
+    });
+
+    python.on('close', (code) => {
+      // Log the output from Python before sending the response
+      console.log('Output from Python script:', dataToSend); // Log Python output
+      try {
+        const result = JSON.parse(dataToSend); // Try parsing the Python output
+        res.json(result); // Send the parsed result to the client
+      } catch (error) {
+        console.error('Failed to parse Python output as JSON', error);
+        res.status(500).json({ error: 'Failed to process the data' });
+      }
+    });
+  } catch (err) {
+    console.error('Error fetching job listings:', err.message); // Log error messages
+    res.status(500).send('Server Error');
+  }
+});
 
 
 
