@@ -204,31 +204,45 @@ app.get('/api/getskills/:userId', async (req, res) => {
 });
 
 app.post('/api/recommend', async (req, res) => {
-  // Check for valid skills input
+  // Validate the required skills input
   if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
     return res.status(400).json({ error: 'Skills must be a non-empty array.' });
   }
 
+  // Validate the jobseeker's industry
+  if (!req.body.industry) {
+    return res.status(400).json({ error: 'Industry is required.' });
+  }
+
   const jobSeekerSkills = req.body.skills;
+  const jobSeekerIndustry = req.body.industry;  // Use jobseeker's industry
 
   try {
     // Fetch job data
     const jobData = await getJobData(); 
 
-    // Log job data and skills for debugging
+    // Log job data and jobseeker details for debugging
     console.log('Job Data:', JSON.stringify(jobData, null, 2));
     console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
+    console.log('Job Seeker Industry:', jobSeekerIndustry);
 
     // Spawn the Python process to generate recommendations
-    const pythonProcess = spawn('python', ['python_scripts/recommendations.py', JSON.stringify(jobData), JSON.stringify(jobSeekerSkills)]);
+    const pythonProcess = spawn('python', [
+      'python_scripts/recommendations.py', 
+      JSON.stringify(jobData), 
+      JSON.stringify(jobSeekerSkills), 
+      jobSeekerIndustry  // Pass jobseeker's industry to Python
+      // Removed salary range from Python invocation
+    ]);
 
     let pythonOutput = '';
     
-    // Log output from Python process
+    // Collect output from Python process
     pythonProcess.stdout.on('data', (data) => {
       pythonOutput += data.toString();
     });
 
+    // Log any errors from Python process
     pythonProcess.stderr.on('data', (data) => {
       console.error('Python error:', data.toString());
     });
@@ -239,7 +253,7 @@ app.post('/api/recommend', async (req, res) => {
         return res.status(500).send('An error occurred while processing your request.');
       }
       try {
-        // Attempt to parse the Python output
+        // Parse the Python output
         const recommendations = JSON.parse(pythonOutput);
         res.json({ recommendations });
       } catch (parseError) {
@@ -252,6 +266,8 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(500).send('An error occurred while fetching job data.');
   }
 });
+
+  
 
 // Function to get job postings
 // Function to get job postings for a user

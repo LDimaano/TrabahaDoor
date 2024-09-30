@@ -3,10 +3,11 @@ import JobListItem from './joblistitem';
 
 function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQuery, isRecommended }) {
   const [jobs, setJobs] = useState([]);
-  const [recommendedJobs, setRecommendedJobs] = useState([]); // State for recommended jobs
-  const [userSkills, setUserSkills] = useState([]); // State for user skills
+  const [recommendedJobs, setRecommendedJobs] = useState([]);
+  const [userSkills, setUserSkills] = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
 
-  // Fetch jobs and user skills when the component mounts or filters change
+  // Fetch jobs when the component mounts or filters/searchQuery change
   useEffect(() => {
     const fetchJobs = async () => {
       let url = `http://localhost:5000/api/jobs/postedjobs`;
@@ -36,46 +37,82 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       }
     };
 
+    fetchJobs();
+  }, [searchQuery, filters]);
+
+  // Fetch user skills and profile when the component mounts
+  useEffect(() => {
     const fetchUserSkills = async () => {
       const userId = sessionStorage.getItem('user_id');
       if (!userId) {
         console.error('No user_id found in sessionStorage');
         return;
       }
-    
+
       try {
         const response = await fetch(`http://localhost:5000/api/getskills/${userId}`);
         if (!response.ok) {
-          const errorDetails = await response.text(); // Get the error details
+          const errorDetails = await response.text();
           throw new Error(`Failed to fetch user skills: ${errorDetails}`);
         }
         const skills = await response.json();
-        
-        // Extract skill names only
-        const skillNames = skills.map(skill => skill.skill_name); // This creates an array of skill names
-        setUserSkills(skillNames); // Store only the skill names
+        const skillNames = skills.map(skill => skill.skill_name);
+        setUserSkills(skillNames);
       } catch (error) {
         console.error('Error fetching user skills:', error);
       }
     };
-    
 
-    fetchJobs();
+    const fetchUserProfile = async () => {
+      const userId = sessionStorage.getItem('user_id');
+      if (!userId) {
+        console.error('No user_id found in sessionStorage');
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/jobseekers/user-info`, {
+          method: 'GET',
+          credentials: 'include'
+        });
+
+        if (!response.ok) {
+          const errorDetails = await response.text();
+          throw new Error(`Failed to fetch user profile: ${errorDetails}`);
+        }
+
+        const profile = await response.json();
+        setUserProfile(profile);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
     fetchUserSkills();
-  }, [searchQuery, filters]);
+    fetchUserProfile();
+  }, []);
 
   // Fetch recommended jobs if needed
   useEffect(() => {
-    if (isRecommended && userSkills.length > 0) {
+    console.log('isRecommended:', isRecommended);
+    console.log('userSkills:', userSkills);
+    console.log('userProfile:', userProfile);
+
+    if (isRecommended && userSkills.length > 0 && userProfile && userProfile.industryName) {
       const fetchRecommendedJobs = async () => {
-        console.log('User Skills:', userSkills); 
+        console.log('Fetching recommended jobs...');
+
         try {
           const response = await fetch(`http://localhost:5000/api/recommend`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ skills: userSkills }), 
+            body: JSON.stringify({
+              skills: userSkills,
+              industry: userProfile.industryName,
+              salaryRange: userProfile.salaryRange || null,
+            }),
           });
 
           if (!response.ok) {
@@ -84,16 +121,22 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
           }
 
           const recommendedJobsData = await response.json();
-          console.log('Recommended Jobs Data:', recommendedJobsData); // Log the response
-          setRecommendedJobs(recommendedJobsData.recommendations); // Access the recommendations array
+          console.log('Recommended Jobs Data:', recommendedJobsData);
+          setRecommendedJobs(recommendedJobsData.recommendations || []);
         } catch (error) {
           console.error('Error fetching recommended jobs:', error);
         }
       };
-      
+
       fetchRecommendedJobs();
+    } else {
+      console.log('Skipping recommended jobs fetch:', {
+        isRecommended,
+        userSkillsLength: userSkills.length,
+        userProfile,
+      });
     }
-  }, [isRecommended, userSkills]);
+  }, [isRecommended, userSkills, userProfile]);
 
   // Apply filters to all jobs
   const applyFilters = (jobs) => {

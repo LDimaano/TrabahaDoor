@@ -97,23 +97,38 @@ router.get('/user-info', async (req, res) => {
 
   try {
     const result = await pool.query(
-      'SELECT full_name FROM job_seekers WHERE user_id = $1',
-      [userId]
+        `SELECT 
+            js.full_name,
+            js.user_id,
+            js.industry_id,
+            i.industry_name,
+            je.salary
+        FROM job_seekers js
+        JOIN job_experience je ON js.user_id = je.user_id
+        JOIN industries i ON js.industry_id = i.industry_id
+        WHERE js.user_id = $1`,
+        [userId]
     );
 
     console.log('Database query result:', result.rows);
 
     if (result.rows.length > 0) {
-      const fullName = result.rows[0].full_name;
-      res.json({ fullName });
+      const userInfo = result.rows[0]; // Fetching the first result
+      const response = {
+        fullName: userInfo.full_name,
+        industryName: userInfo.industry_name,
+        salary: userInfo.salary,
+      };
+      res.json(response);
     } else {
       res.status(404).json({ message: 'User not found' });
     }
   } catch (error) {
-    console.error('Error fetching full name:', error);
+    console.error('Error fetching user info:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 router.get('/job-seeker/:userId', async (req, res) => {
   try {
