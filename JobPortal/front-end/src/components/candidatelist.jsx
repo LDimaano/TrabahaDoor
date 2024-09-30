@@ -39,13 +39,6 @@ function CandidateList({ searchParams = {}, isRecommended }) {
       console.log('User ID for recommendations:', userId); // Log the user ID
   
       try {
-        // // Fetch job postings first
-        // const jobPostingsResponse = await fetch(`http://localhost:5000/api/job-postings/${userId}`);
-        // if (!jobPostingsResponse.ok) {
-        //   throw new Error(`Failed to fetch job postings: ${jobPostingsResponse.status}`);
-        // }
-        // const jobPostings = await jobPostingsResponse.json();
-        // console.log('Job Postings:', jobPostings); // Log job postings
   
         // Fetch recommended candidates
         const response = await fetch('http://localhost:5000/api/recommend-candidates', {

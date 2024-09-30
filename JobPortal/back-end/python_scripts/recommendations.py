@@ -34,9 +34,8 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None):
     # Sort by match count (skills) first and then industry match
     recommendations.sort(key=lambda x: (x['match_count'], x['industry_match']), reverse=True)
 
-    # Return the top 5 recommendations
-    top_n = 5
-    return recommendations[:top_n]
+    # Return all recommendations without limiting to top 5
+    return recommendations
 
 if __name__ == '__main__':
     try:
@@ -46,12 +45,7 @@ if __name__ == '__main__':
 
         # Only output the recommendations as JSON
         recommended_jobs = recommend_jobs(job_data, skills, jobseeker_industry)
-        print(json.dumps(recommended_jobs))  # Ensure this is the only output
-        sys.exit(0)
+        print(json.dumps(recommended_jobs))
 
-    except json.JSONDecodeError as e:
-        print(f'JSON decoding error: {str(e)}', file=sys.stderr)
-        sys.exit(1)
     except Exception as e:
-        print(f'Unexpected error occurred: {str(e)}', file=sys.stderr)
-        sys.exit(1)
+        print(f"Error: {str(e)}", file=sys.stderr)

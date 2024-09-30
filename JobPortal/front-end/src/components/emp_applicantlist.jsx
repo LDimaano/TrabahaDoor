@@ -9,17 +9,38 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
   const [localHiringStages, setLocalHiringStages] = useState(hiringStages);
-  
-  // For the confirmation modal
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [newStage, setNewStage] = useState('');
+  const [activeTab, setActiveTab] = useState('applicants');
+  const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
-    // Sync local state with prop changes
     setLocalHiringStages(hiringStages);
   }, [hiringStages]);
 
+  const fetchRecommendations = async () => {
+    const userId = sessionStorage.getItem('user_id');
+    if (userId) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/applicants/recommend-candidates/${jobId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId }),
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Fetched recommendations:', data);
+        const recommendations = data.recommendations.recommendations; // Access the nested recommendations array
+        setRecommendations(recommendations);
+      } catch (error) {
+        console.error('Error fetching recommendations:', error);
+      }
+    }
+  };
+  
   const handleSeeApplication = (userId) => {
     navigate(`/applicant_profile/${userId}`);
   };
@@ -45,13 +66,10 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
 
   const confirmStageChange = () => {
     if (selectedUser && newStage) {
-      // Optimistically update the state before the API call
       setLocalHiringStages((prevStages) => ({
         ...prevStages,
         [selectedUser]: newStage,
       }));
-
-      // Call the function to make the API request
       handleStageChangeInJoblist(selectedUser, newStage);
       closeConfirmModal();
     }
@@ -69,89 +87,140 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
         const errorData = await response.text();
         throw new Error(errorData || 'Failed to update hiring stage');
       }
-
-      // Notify the parent (ApplicantDashboard) that the hiring stage has changed
       onStageChange(userId, newStage);
     } catch (error) {
       console.error('Error updating hiring stage:', error.message);
     }
   };
 
+  const renderApplicantRows = (listings) => {
+    return listings.map((listing) => (
+      <tr key={listing.user_id}>
+        <td>
+          <img
+            src={listing.profile_picture_url}
+            alt={'avatar'}
+            className="me-2"
+            style={{ width: '50px', borderRadius: '50%' }}
+          />
+          {listing.full_name}
+        </td>
+        <td>
+          <div className="dropdown">
+            <button
+              className="btn btn-secondary dropdown-toggle"
+              type="button"
+              id={`dropdownMenuButton-${listing.user_id}`}
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              {listing.status || 'Received'}
+            </button>
+            <ul className="dropdown-menu" aria-labelledby={`dropdownMenuButton-${listing.user_id}`}>
+              {['Received', 'In review', 'For interview', 'Filled'].map((stage) => (
+                <li key={stage}>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => openConfirmModal(listing.user_id, stage)}
+                  >
+                    {stage}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </td>
+        <td>{new Date(listing.date_applied).toLocaleDateString()}</td>
+        <td>
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => openModal(listing)}
+          >
+            <FontAwesomeIcon icon={faEye} /> View
+          </button>
+        </td>
+        <td>
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => handleSeeApplication(listing.user_id)}
+          >
+            <FontAwesomeIcon icon={faEye} /> View
+          </button>
+        </td>
+      </tr>
+    ));
+  };
+
+  const filteredCurrentListings = activeTab === 'recommended'
+    ? currentListings.filter(listing => 
+        recommendations.some(recommendation => recommendation.user_id === listing.user_id)
+      )
+    : currentListings;
+
   return (
     <div className="table-responsive">
-      <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>Full Name</th>
-            <th>Hiring Stage</th>
-            <th>Applied Date</th>
-            <th>Application</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentListings.map((listing) => (
-            <tr key={listing.user_id}>
-              <td>
-                <img
-                  src={listing.profile_picture_url}
-                  alt={`${listing.full_name}'s avatar`}
-                  className="me-2"
-                  style={{ width: '50px', borderRadius: '50%' }}
-                />
-                {listing.full_name}
-              </td>
-              <td>
-                <div className="dropdown">
-                  <button
-                    className="btn btn-secondary dropdown-toggle"
-                    type="button"
-                    id={`dropdownMenuButton-${listing.user_id}`}
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    {localHiringStages[listing.user_id] || 'Received'}
-                  </button>
-                  <ul
-                    className="dropdown-menu"
-                    aria-labelledby={`dropdownMenuButton-${listing.user_id}`}
-                  >
-                    {['Received', 'In review', 'For interview', 'Filled'].map((stage) => (
-                      <li key={stage}>
-                        <button
-                          className="dropdown-item"
-                          onClick={() => openConfirmModal(listing.user_id, stage)}
-                        >
-                          {stage}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </td>
-              <td>{new Date(listing.date_applied).toLocaleDateString()}</td>
-              <td>
-                <button
-                  className="btn btn-outline-primary"
-                  onClick={() => openModal(listing)}
-                >
-                  <FontAwesomeIcon icon={faEye} /> View
-                </button>
-              </td>
-              <td>
-                <button
-                  className="btn btn-outline-primary"
-                  onClick={() => handleSeeApplication(listing.user_id)}
-                >
-                  <FontAwesomeIcon icon={faEye} /> View
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Modal */}
+      <ul className="nav nav-tabs">
+        <li className="nav-item">
+          <a 
+            className={`nav-link ${activeTab === 'applicants' ? 'active' : ''}`} 
+            href="#" 
+            onClick={() => setActiveTab('applicants')}
+          >
+            Applicants
+          </a>
+        </li>
+        <li className="nav-item">
+          <a 
+            className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`} 
+            href="#" 
+            onClick={() => {
+              setActiveTab('recommended');
+              fetchRecommendations();
+            }}
+          >
+            Recommended Applicants
+          </a>
+        </li>
+      </ul>
+  
+      <div className="tab-content">
+        <div className={`tab-pane ${activeTab === 'applicants' ? 'active' : ''}`} id="applicants">
+          <table className="table table-bordered">
+            <thead>
+              <tr>
+                <th>Full Name</th>
+                <th>Hiring Stage</th>
+                <th>Applied Date</th>
+                <th>Application</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {renderApplicantRows(filteredCurrentListings)}
+            </tbody>
+          </table>
+        </div>
+  
+        <div className={`tab-pane ${activeTab === 'recommended' ? 'active' : ''}`} id="recommended-applicants">
+          <h4>Recommended Applicants</h4>
+          <table className="table table-bordered">
+            <thead>
+              <tr>
+                <th>Full Name</th>
+                <th>Hiring Stage</th>
+                <th>Applied Date</th>
+                <th>Application</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {renderApplicantRows(recommendations)}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      {/* Modal for Application Details */}
       {isModalOpen && (
         <div className="modal fade show" style={{ display: 'block' }} role="dialog">
           <div className="modal-dialog" role="document">
@@ -175,7 +244,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
         </div>
       )}
 
-      {/* Confirmation Modal */}
+      {/* Confirm Modal for Hiring Stage Change */}
       {isConfirmModalOpen && (
         <div className="modal fade show" style={{ display: 'block' }} role="dialog">
           <div className="modal-dialog" role="document">
@@ -185,7 +254,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
                 <button type="button" className="btn-close" onClick={closeConfirmModal}></button>
               </div>
               <div className="modal-body">
-                <p>Are you sure you want to change the hiring stage to <strong>{newStage}</strong>?</p>
+                <p>Are you sure you want to change the hiring stage to <strong>{newStage}</strong> for this applicant?</p>
               </div>
               <div className="modal-footer">
                 <button className="btn btn-secondary" onClick={closeConfirmModal}>Cancel</button>
