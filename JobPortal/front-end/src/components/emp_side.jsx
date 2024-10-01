@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faClipboardList, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faClipboardList, faSignOutAlt, faHourglassStart } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
   const [company_name, setCompanyName] = useState('');
@@ -83,6 +83,12 @@ const Sidebar = () => {
               <FontAwesomeIcon icon={faClipboardList} className="me-2" />
               Job Listing
             </a>
+          </li>
+          <li className="nav-item">
+          <a href="/emp_timetofill" className="nav-link text-white">
+            <FontAwesomeIcon icon={faHourglassStart} className="me-2" />
+            Time to fill
+          </a>
           </li>
         </ul>
       </nav>

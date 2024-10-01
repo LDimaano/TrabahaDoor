@@ -28,6 +28,7 @@ import ApplicantProfile from './pages/Employer/applicant_profile';
 
 import EmpNotifications from './pages/Employer/emp_notifications';
 import EmpMyProfile from './pages/Employer/emp_myprofile';
+import EmpTimeToFill from './pages/Employer/emp_timetofill';
 
 import DashboardAnalytics from './pages/Admin/admindashboard';
 import AdminEmployer from './pages/Admin/admin_employers';
@@ -76,6 +77,7 @@ root.render(
         <Route path="/admin_users" element={<AdminUsers />} /> 
         <Route path="/emp_notifications" element={<EmpNotifications />} /> 
         <Route path="/emp_myprofile" element={<EmpMyProfile />} /> 
+        <Route path="/emp_timetofill" element={<EmpTimeToFill />} /> 
       </Routes>
     </Router>
   </React.StrictMode>

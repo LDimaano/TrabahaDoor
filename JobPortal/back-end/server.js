@@ -441,7 +441,6 @@ app.post('/api/recommend-candidates', async (req, res) => {
 
 
 //time to fill analysis
-
 app.get('/api/timetofill', async (req, res) => {
   try {
     // SQL query to join joblistings and industries and retrieve industry_name, datecreated, and datefilled
@@ -487,7 +486,58 @@ app.get('/api/timetofill', async (req, res) => {
   }
 });
 
+//time to fill analysis-emp side
+app.get('/api/timetofillemp', async (req, res) => {
+  console.log('Session data time to fill:', req.session);
+  if (!req.session.user) {
+    return res.status(403).json({ message: 'Not authenticated' });
+  }
+  const userId = req.session.user.user_id;
+  console.log('User ID for time to fill:', userId);
 
+  try {
+    // SQL query to join joblistings and industries and retrieve industry_name, datecreated, and datefilled
+    const jobListings = await pool.query(`
+      SELECT
+        i.industry_name, 
+        jl.datecreated::date AS datecreated, 
+        jl.datefilled::date AS datefilled
+      FROM joblistings jl
+      JOIN industries i ON i.industry_id = jl.industry_id
+      WHERE jl.user_id = $1 AND jl.datefilled IS NOT NULL
+    `, [userId]);
+
+    // Log the job listings to console to verify the dates
+    console.log('Job Listings:', jobListings.rows);
+
+    const python = spawn('python', ['python_scripts/time_to_fill_analysis.py']);
+
+    // Send data to Python script
+    python.stdin.write(JSON.stringify(jobListings.rows));
+    python.stdin.end();
+
+    // Capture output from Python
+    let dataToSend = '';
+    python.stdout.on('data', (data) => {
+      dataToSend += data.toString();
+    });
+
+    python.on('close', (code) => {
+      // Log the output from Python before sending the response
+      console.log('Output from Python script:', dataToSend);
+      try {
+        const result = JSON.parse(dataToSend); // Try parsing the Python output
+        res.json(result); // Send the parsed result to the client
+      } catch (error) {
+        console.error('Failed to parse Python output as JSON', error);
+        res.status(500).json({ error: 'Failed to process the data' });
+      }
+    });
+  } catch (err) {
+    console.error('Error fetching job listings:', err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
 app.get('/api/allnotifications', async (req, res) => {
   const userId = req.session.user.user_id;
