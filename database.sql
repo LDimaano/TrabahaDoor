@@ -143,3 +143,13 @@ CREATE TABLE profilepictures (
     profile_picture_url VARCHAR(255) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
+CREATE TABLE emp_contact (
+    contact_id SERIAL PRIMARY KEY,
+    js_user_id INT NOT NULL,
+    emp_user_id INT NOT NULL,
+	notifstatus VARCHAR(4) CHECK (notifstatus IN ('new', 'read')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (js_user_id) REFERENCES users(user_id),
+    FOREIGN KEY (emp_user_id) REFERENCES users(user_id)
+);

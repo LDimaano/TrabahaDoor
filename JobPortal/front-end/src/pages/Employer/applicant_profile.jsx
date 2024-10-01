@@ -25,12 +25,30 @@ const MyProfile = () => {
     navigate(-1); 
   };
 
-  // Function to handle the hire button click
-  const handleHire = () => {
-    // Add logic to handle hiring the applicant
-    console.log("Hire button clicked. Proceed with hiring logic here.");
+  // Function to handle the contact action
+  const handleContact = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/applicants/contact/${user_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include session information (if any)
+      });
+  
+      // Check if the response is OK (status 2xx)
+      if (!response.ok) {
+        const errorText = await response.text(); // Get response as text (to catch HTML)
+        throw new Error(`Failed to contact applicant: ${errorText}`);
+      }
+  
+      const data = await response.json(); // Parse JSON data
+      console.log('Contact successful:', data);
+    } catch (error) {
+      console.error('Error contacting applicant:', error.message);
+    }
   };
-
+  
   useEffect(() => {
     const fetchApplicantData = async () => {
       try {
@@ -108,8 +126,8 @@ const MyProfile = () => {
               </button>
               <h3 className="mb-0">Applicant's Profile</h3>
             </div>
-            <button className="btn btn-primary" onClick={handleHire}>
-              Hire
+            <button className="btn btn-primary" onClick={handleContact}>
+              Contact
             </button>
           </div>
           <div className="d-flex">

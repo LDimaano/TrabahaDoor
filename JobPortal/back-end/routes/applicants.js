@@ -446,5 +446,38 @@ router.post('/recommend-candidates/:jobId', async (req, res) => {
   }
 });
 
+router.post('/contact/:user_id', async (req, res) => {
+  // Extract js_user_id from the request parameters
+  const { user_id: js_user_id } = req.params;
+  
+  // Extract emp_user_id from the session (ensure session middleware is being used)
+  const emp_user_id = req.session.user.user_id;
+
+  // Log both IDs for debugging
+  console.log('Jobseeker ID (js_user_id):', js_user_id);
+  console.log('Employer ID (emp_user_id):', emp_user_id);
+
+  try {
+    // Check if both js_user_id and emp_user_id are available
+    if (!js_user_id || !emp_user_id) {
+      return res.status(400).json({ message: "Missing user IDs." });
+    }
+
+    // Insert a new record into the emp_contact table
+    const newContact = await pool.query(
+      `INSERT INTO emp_contact (js_user_id, emp_user_id) 
+       VALUES ($1, $2) 
+       RETURNING *`,
+      [js_user_id, emp_user_id]
+    );
+
+    // Send the newly created contact as a response
+    res.status(201).json(newContact.rows[0]);
+  } catch (err) {
+    console.error('Error while inserting contact:', err.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 module.exports = router;

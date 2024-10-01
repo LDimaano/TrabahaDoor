@@ -14,8 +14,6 @@ function Header() {
   const userId = sessionStorage.getItem('user_id');
   console.log('User ID from sessionStorage:', userId);
 
-
-
   // Fetch user full name
   useEffect(() => {
     const fetchFullName = async () => {
@@ -62,7 +60,7 @@ function Header() {
 
   const fetchNotifications = async () => {
     if (!userId) return;
-  
+
     try {
       const response = await fetch(`http://localhost:5000/api/jsnotifications`, {
         method: 'GET',
@@ -71,7 +69,7 @@ function Header() {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         console.log('Fetched notifications:', data.notifications);
@@ -84,40 +82,37 @@ function Header() {
       console.error('Error fetching notifications:', error);
     }
   };
-  
-  const toggleNotifications = async () => {
+
+  const toggleNotifications = () => {
     setShowNotifications((prev) => !prev);
-  
-    if (!showNotifications) {
-      console.log('Current Notifications:', notifications);
-      const newApplicationIds = notifications.filter((n) => n.notif_status === 'new').map((n) => n.application_id);
-      console.log('New Application IDs:', newApplicationIds); 
-      if (newApplicationIds.length > 0) {
-        try {
-          const response = await fetch('http://localhost:5000/api/jsnotifications/mark-as-viewed', {
-            method: 'PATCH',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ applicationIds: newApplicationIds }),
-          });
-  
-          if (response.ok) {
-            await fetchNotifications(); // Re-fetch notifications after marking them as viewed
-            setNotificationCount(0); // Reset the count after marking as viewed
-          } else {
-            const errorData = await response.json();
-            console.error('Failed to mark notifications as viewed:', response.statusText, errorData);
-          }
-        } catch (error) {
-          console.error('Error marking notifications as viewed:', error);
+  };
+
+  const markNotificationsAsViewed = async () => {
+    const newApplicationIds = notifications.filter((n) => n.notif_status === 'new').map((n) => n.application_id);
+    if (newApplicationIds.length > 0) {
+      try {
+        const response = await fetch('http://localhost:5000/api/jsnotifications/mark-as-viewed', {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ applicationIds: newApplicationIds }),
+        });
+
+        if (response.ok) {
+          await fetchNotifications(); // Re-fetch notifications after marking them as viewed
+          setNotificationCount(0); // Reset the count after marking as viewed
+        } else {
+          const errorData = await response.json();
+          console.error('Failed to mark notifications as viewed:', response.statusText, errorData);
         }
+      } catch (error) {
+        console.error('Error marking notifications as viewed:', error);
       }
     }
   };
 
-  
   const getNavLinkClass = (path) => {
     return location.pathname === path ? 'nav-link active' : 'nav-link';
   };
@@ -189,6 +184,10 @@ function Header() {
                 <div 
                   className="position-absolute bg-white border rounded shadow p-2" 
                   style={{ top: '100%', right: '0', width: '250px', zIndex: 1050 }}
+                  onMouseLeave={() => {
+                    markNotificationsAsViewed();
+                    setShowNotifications(false);
+                  }}
                 >
                   <h6 className="mb-2 text-center">Notifications</h6>
                   {notifications.length > 0 ? (
@@ -210,7 +209,7 @@ function Header() {
               )}
             </li>
             <li className="nav-item mx-3 position-relative">
-            <button className="btn btn-link" onClick={handleProfileClick}>
+              <button className="btn btn-link" onClick={handleProfileClick}>
                 <i className="fas fa-user fa-lg" style={{ color: '#6c757d' }}></i>
               </button>
             </li>

@@ -627,8 +627,8 @@ app.get('/api/jsnotifications', async (req, res) => {
   }
 
   try {
-    // Fetch notifications for job seeker
-    const result = await pool.query(
+    // Fetch application-related notifications
+    const applicationResult = pool.query(
       `
       SELECT 
           js.full_name, 
@@ -648,25 +648,60 @@ app.get('/api/jsnotifications', async (req, res) => {
       [userId]
     );
 
-    const notifications = result.rows.map(row => ({
+    // Fetch employer contact notifications
+    const contactResult = pool.query(
+      `
+      SELECT
+          c.contact_id, 
+          e.company_name, 
+          c.created_at,
+          c.notifstatus
+      FROM emp_contact c
+      JOIN emp_profiles e ON c.emp_user_id = e.user_id
+      WHERE c.js_user_id = $1 AND c.notifstatus = 'new' 
+      ORDER BY c.created_at DESC;
+      `,
+      [userId]
+    );
+
+    // Wait for both queries to complete
+    const [applicationResultData, contactResultData] = await Promise.all([applicationResult, contactResult]);
+
+    // Format application notifications
+    const applicationNotifications = applicationResultData.rows.map(row => ({
       message: `Your application for ${row.job_title} has been updated to ${row.status}`,
       job_id: row.job_id,
       application_id: row.application_id,
       notif_status: row.notif_status,
       date_applied: row.date_applied,
     }));
-    console.log('Database result:', result.rows);
 
+    // Format employer contact notifications
+    const contactNotifications = contactResultData.rows.map(row => ({
+      message: `${row.company_name} wants to connect with you`,
+      contact_id: row.contact_id,
+      notif_status: row.notifstatus,
+      created_at: row.created_at,
+    }));
 
+    // Combine both notification types
+    const notifications = [...applicationNotifications, ...contactNotifications];
+
+    // Log the fetched notifications
+    console.log('Fetched notifications:', notifications);
+
+    // Return all notifications
     res.json({ notifications });
+
   } catch (error) {
     console.error('Error fetching notifications for job seeker:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 });
 
+
 app.patch('/api/jsnotifications/mark-as-viewed', async (req, res) => {
-  const { applicationIds } = req.body; // Update the variable name to applicationIds
+  const { applicationIds, contactIds } = req.body; // Update to include contactIds
   const userIdFromSession = req.session.user?.user_id;
 
   // Check for user authentication
@@ -681,20 +716,34 @@ app.patch('/api/jsnotifications/mark-as-viewed', async (req, res) => {
 
   try {
     // Update applications based on application IDs
-    await pool.query(
+    const applicationResult = await pool.query(
       `UPDATE applications
        SET notif_status = 'read'
-       WHERE application_id = ANY($1) AND user_id = $2 AND notif_status = 'new';`, // Filtering by user_id too
+       WHERE application_id = ANY($1) AND user_id = $2 AND notif_status = 'new';`,
       [applicationIds, userIdFromSession]
     );
-    console.log('Rows affected:', result.rowCount);
+
+    console.log('Rows affected in applications:', applicationResult.rowCount);
     console.log('User ID from session:', userIdFromSession);
+
+    // Check if contactIds are provided and update emp_contact notifications as well
+      const contactResult = await pool.query(
+        `UPDATE emp_contact
+         SET notifstatus = 'read'
+         WHERE js_user_id = $1 AND notifstatus = 'new';`,
+        [userIdFromSession] // Use the contactIds parameter
+      );
+
+      console.log('Rows affected in emp_contact:', contactResult.rowCount);
+    
+
     res.status(200).json({ message: 'Notifications marked as viewed' });
   } catch (error) {
     console.error('Error marking notifications as viewed:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 });
+
 
 
 app.get('/api/alljsnotifications', async (req, res) => {
@@ -705,9 +754,10 @@ app.get('/api/alljsnotifications', async (req, res) => {
   }
 
   try {
-    // Fetch notifications for job seeker
-    const result = await pool.query(
-     `SELECT 
+    // Fetch application-related notifications
+    const applicationResult = pool.query(
+      `
+      SELECT 
           js.full_name, 
           jt.job_title, 
           j.job_id, 
@@ -715,33 +765,72 @@ app.get('/api/alljsnotifications', async (req, res) => {
           a.date_applied, 
           a.notif_status, 
           a.application_id,
-		  pp.profile_picture_url
+          pp.profile_picture_url
       FROM applications a
       JOIN joblistings j ON a.job_id = j.job_id
       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
       JOIN job_seekers js ON a.user_id = js.user_id
-	  JOIN profilepictures pp ON j.user_id = pp.user_id
-      WHERE a.user_id = $1 
+      JOIN profilepictures pp ON j.user_id = pp.user_id
+      WHERE a.user_id = $1
       ORDER BY a.date_applied DESC;
       `,
       [userId]
     );
 
-    const notifications = result.rows.map(row => ({
+    // Fetch employer contact notifications
+    const contactResult = pool.query(
+      `
+      SELECT
+          c.contact_id, 
+          e.company_name, 
+          c.created_at,
+          c.notifstatus,
+          pp.profile_picture_url
+      FROM emp_contact c
+      JOIN emp_profiles e ON c.emp_user_id = e.user_id
+      JOIN profilepictures pp ON c.emp_user_id = pp.user_id
+      WHERE c.js_user_id = $1 
+      ORDER BY c.created_at DESC;
+      `,
+      [userId]
+    );
+
+    // Wait for both queries to complete
+    const [applicationResultData, contactResultData] = await Promise.all([applicationResult, contactResult]);
+
+    // Format application notifications
+    const applicationNotifications = applicationResultData.rows.map(row => ({
       message: `Your application for ${row.job_title} has been updated to ${row.status}`,
       job_id: row.job_id,
-      status: row.status,
+      application_id: row.application_id,
+      notif_status: row.notif_status,
       date_applied: row.date_applied,
       profile_picture: row.profile_picture_url
     }));
 
+    // Format employer contact notifications
+    const contactNotifications = contactResultData.rows.map(row => ({
+      message: `${row.company_name} wants to connect with you`,
+      contact_id: row.contact_id,
+      notif_status: row.notifstatus,
+      date_applied: row.created_at,
+      profile_picture: row.profile_picture_url
+    }));
+
+    // Combine both notification types
+    const notifications = [...applicationNotifications, ...contactNotifications];
+
+    // Log the fetched notifications
+    console.log('Fetched notifications:', notifications);
+
+    // Return all notifications
     res.json({ notifications });
+
   } catch (error) {
     console.error('Error fetching notifications for job seeker:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 });
-
 
 // API endpoint to update application status
 app.post('/api/applications/:applicationId/status', async (req, res) => {
