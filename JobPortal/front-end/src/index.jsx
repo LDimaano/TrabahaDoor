@@ -40,6 +40,8 @@ import UserProfileJs from './pages/Admin/userjs_profile';
 import UserProfileEmp from './pages/Admin/useremp_profile';
 import SeeJobListing from './pages/Admin/seejoblisting';
 import SeeApplicantList from './pages/Admin/seeapplicantlist'; 
+import JsEmpProfile from './pages/Jobseeker/js_empprofile';
+import JsEmpJobListings from './pages/Jobseeker/js_empjoblisting';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -78,6 +80,8 @@ root.render(
         <Route path="/emp_notifications" element={<EmpNotifications />} /> 
         <Route path="/emp_myprofile" element={<EmpMyProfile />} /> 
         <Route path="/emp_timetofill" element={<EmpTimeToFill />} /> 
+        <Route path="/js_empprofile/:userId" element={<JsEmpProfile />} />
+        <Route path="/js_empjoblisting/:userId" element={<JsEmpJobListings />} />
       </Routes>
     </Router>
   </React.StrictMode>

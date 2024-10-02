@@ -264,5 +264,59 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
   }
 });
 
+router.get('/jsemployerprofile/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  // Log the entire request object to debug why userId is undefined
+  console.log('Request Params:', req.params);
+  console.log('Received userId from params:', userId);
+  
+  try {
+    const EmployerData = await pool.query(`
+      SELECT
+        e.company_name,
+        e.contact_person,
+        e.contact_number,
+        u.email,
+        e.website,
+        i.industry_name,
+        e.company_address,
+        e.company_size,
+        e.founded_year,
+        e.description,
+        pp.profile_picture_url
+      FROM emp_profiles e
+      LEFT JOIN users u ON e.user_id = u.user_id
+      LEFT JOIN industries i ON e.industry_id = i.industry_id
+      LEFT JOIN profilepictures pp ON e.user_id = pp.user_id
+      WHERE e.user_id = $1
+    `, [userId]);
+
+    console.log('Fetched employer data:', EmployerData.rows);
+
+    const employer = EmployerData.rows[0] || {};
+
+    res.json({
+      employer: {
+        company_name: employer.company_name || 'Not Provided',
+        contact_person: employer.contact_person || 'Not Provided',
+        contact_number: employer.contact_number || 'Not Provided',
+        email: employer.email || 'Not Provided',
+        website: employer.website || 'Not Provided',
+        industry: employer.industry_name || 'Not Provided',
+        company_address: employer.company_address || 'Not Provided',
+        company_size: employer.company_size || 'Not Provided',
+        foundedYear: employer.founded_year || 'Not Provided',
+        description: employer.description || 'Not Provided',
+        profilePicture: employer.profile_picture_url || 'No Image',
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching employer data:', error.message);
+    res.status(500).send('Server error');
+  }
+});
+
+
 
 module.exports = router;

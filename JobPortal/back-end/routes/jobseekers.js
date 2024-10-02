@@ -241,5 +241,35 @@ router.get('/getUserJobListings', async (req, res) => {
   }
 });
 
+//get emp joblistings
+router.get('/jsempjoblistings/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  console.log('Request Params:', req.params);
+  console.log('Received userId from params:', userId);
+
+  try {
+    const EmpJoblisting = await pool.query(`
+      SELECT 
+        jl.job_id,
+        jl.jobtitle_id,
+        jt.job_title,
+        pp.profile_picture_url
+      FROM joblistings jl
+      JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
+      JOIN profilepictures pp ON jl.user_id = pp.user_id
+      WHERE jl.user_id = $1
+    `, [userId]);
+
+    console.log('Fetched job listing data:', EmpJoblisting.rows);
+
+    res.status(200).json(EmpJoblisting.rows);
+  } catch (error) {
+    console.error('Error fetching job listings:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 
 module.exports = router;

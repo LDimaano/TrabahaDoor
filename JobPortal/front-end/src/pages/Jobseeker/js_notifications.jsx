@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../../components/jsheader'; // Add the Header component
 import { io } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
   const [notificationCount, setNotificationCount] = useState(0);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Initialize WebSocket connection
   useEffect(() => {
@@ -65,6 +67,19 @@ const Notifications = () => {
     }
   };
 
+  // Function to handle notification click and navigate based on message content
+  const handleNotificationClick = (notification) => {
+    const hiringStatusPattern = /Your application for (.+) has been updated to (.+)/;
+    const employerContactPattern = /(.+) wants to connect with you/;
+  
+    if (hiringStatusPattern.test(notification.message)) {
+      navigate('/js_joblistings'); // Redirect to job listings page
+    } else if (employerContactPattern.test(notification.message)) {
+      navigate(`/js_empprofile/${notification.userId}`); // Redirect to employer profile page with user_id
+    }
+  };
+  
+
   return (
     <div>
       <Header />
@@ -76,12 +91,13 @@ const Notifications = () => {
             {notifications.map((notification) => (
               <div
                 key={notification.id}
+                onClick={() => handleNotificationClick(notification)} // Make notification clickable
                 className={`list-group-item d-flex justify-content-between align-items-start mb-3 p-3 ${
                   notification.status === 'new' ? 'bg-light border border-primary' : 'bg-white'
                 }`}
-                style={{ borderRadius: '0.5rem', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}
+                style={{ borderRadius: '0.5rem', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', cursor: 'pointer' }} // Added cursor pointer for clickable effect
               >
-               <div className="d-flex align-items-center ms-2 me-auto">
+                <div className="d-flex align-items-center ms-2 me-auto">
                   <img src={notification.profile_picture} alt="Profile" className="rounded-circle me-2" style={{ width: '40px', height: '40px' }} />
                   <div>
                     <div className="fw-bold">{notification.message}</div>
