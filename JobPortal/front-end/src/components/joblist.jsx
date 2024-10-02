@@ -57,6 +57,8 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         }
         const skills = await response.json();
         const skillNames = skills.map(skill => skill.skill_name);
+        // const skillIds = skills.map(skill => skill.skill_id); // Add skill_id if needed for backend
+
         setUserSkills(skillNames);
       } catch (error) {
         console.error('Error fetching user skills:', error);

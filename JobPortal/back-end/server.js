@@ -204,40 +204,118 @@ app.get('/api/getskills/:userId', async (req, res) => {
   }
 });
 
+const getSimilarJobSeekers = async (jobSeekerSkills) => {
+  try {
+    // Debugging log
+    console.log('Received Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
+
+    // Extract skill names from jobSeekerSkills
+    const skillNames = Array.isArray(jobSeekerSkills)
+      ? jobSeekerSkills.map(skill => (typeof skill === 'string' ? skill.trim() : skill.skill_name?.trim()))
+      : [];
+
+    // Filter out null or empty skill names
+    const filteredSkillNames = skillNames.filter(name => name);
+
+    console.log('Skill Names:', filteredSkillNames); // Debugging log
+
+    // Fetch job seekers who have similar skills and their applied jobs
+    const res = await pool.query(`
+              SELECT 
+            js.user_id, 
+            STRING_AGG(DISTINCT skills.skill_name, ', ') AS skill_names,  -- Aggregating all skills into a single field
+            STRING_AGG(DISTINCT applications.job_id::text, ', ') AS job_ids 
+        FROM 
+            js_skills 
+        JOIN 
+            job_seekers js ON js_skills.user_id = js.user_id
+        JOIN 
+            skills ON js_skills.skill_id = skills.skill_id
+        LEFT JOIN 
+            applications ON js.user_id = applications.user_id  -- Change to LEFT JOIN to include all job seekers with skills
+        WHERE 
+            skills.skill_name ILIKE ANY($1::text[])
+        GROUP BY 
+            js.user_id;
+    `, [filteredSkillNames]);
+
+    console.log('Query Result:', res.rows); // Log query result for debugging
+
+    // Process results and group similar job seekers with their applied jobs
+    const similarJobSeekers = res.rows.reduce((acc, row) => {
+      const { user_id, skill_name, job_ids } = row;
+
+      // Create a user entry if it doesn't exist
+      if (!acc[user_id]) {
+        acc[user_id] = {
+          user_id,
+          applied_jobs: [],
+          skills: []
+        };
+      }
+
+      // Add the skill name to the user's list of skills
+      if (!acc[user_id].skills.includes(skill_name)) {
+        acc[user_id].skills.push(skill_name);
+      }
+
+      // Add the applied jobs to the user's list if they exist
+      if (job_ids) {
+        const jobIdArray = job_ids.split(', ').map(id => ({ job_id: id }));
+        acc[user_id].applied_jobs.push(...jobIdArray); // Spread operator to add multiple jobs
+      }
+
+      return acc;
+    }, {});
+
+    // Convert the object to an array of similar job seekers
+    const similarJobSeekersArray = Object.values(similarJobSeekers);
+
+    console.log('Similar Job Seekers:', JSON.stringify(similarJobSeekersArray, null, 2)); // Debugging output
+    return similarJobSeekersArray;
+  } catch (err) {
+    console.error('Error fetching similar job seekers:', err);
+    throw err;
+  }
+};
+
+
 app.post('/api/recommend', async (req, res) => {
-  // Validate the required skills input
   if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
     return res.status(400).json({ error: 'Skills must be a non-empty array.' });
   }
 
-  // Validate the jobseeker's industry
   if (!req.body.industry) {
     return res.status(400).json({ error: 'Industry is required.' });
   }
 
   const jobSeekerSkills = req.body.skills;
-  const jobSeekerIndustry = req.body.industry;  // Use jobseeker's industry
+  const jobSeekerIndustry = req.body.industry;
 
   try {
     // Fetch job data
-    const jobData = await getJobData(); 
+    const jobData = await getJobData();
 
-    // Log job data and jobseeker details for debugging
+    // Fetch similar job seekers based on the job seeker's skills
+    const similarJobSeekers = await getSimilarJobSeekers(jobSeekerSkills);
+
+    // Log job data, job seeker details, and similar job seekers for debugging
     console.log('Job Data:', JSON.stringify(jobData, null, 2));
     console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
     console.log('Job Seeker Industry:', jobSeekerIndustry);
+    console.log('Similar Job Seekers:', JSON.stringify(similarJobSeekers, null, 2));
 
     // Spawn the Python process to generate recommendations
     const pythonProcess = spawn('python', [
       'python_scripts/recommendations.py', 
       JSON.stringify(jobData), 
       JSON.stringify(jobSeekerSkills), 
-      jobSeekerIndustry  // Pass jobseeker's industry to Python
-      // Removed salary range from Python invocation
+      jobSeekerIndustry,
+      JSON.stringify(similarJobSeekers) // Pass similar job seekers to Python
     ]);
 
     let pythonOutput = '';
-    
+
     // Collect output from Python process
     pythonProcess.stdout.on('data', (data) => {
       pythonOutput += data.toString();
@@ -267,8 +345,6 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(500).send('An error occurred while fetching job data.');
   }
 });
-
-  
 
 // Function to get job postings
 // Function to get job postings for a user
