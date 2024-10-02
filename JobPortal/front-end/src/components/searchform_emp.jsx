@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 function SearchForm({ onSearch }) {
   const [industryOptions, setIndustryOptions] = useState([]);
   const [error, setError] = useState(null);
-  const [jobTitle, setJobTitle] = useState(''); // State for job title/keyword
+  const [searchQuery, setSearchQuery] = useState(''); // Unified state for both job title/keyword and full name
   const [selectedIndustry, setSelectedIndustry] = useState(''); // State for selected industry
 
   const fetchIndustries = async () => {
@@ -25,23 +25,23 @@ function SearchForm({ onSearch }) {
   // Handle form submission and pass search data to parent
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch({ jobTitle, selectedIndustry }); // Pass the parameters back to HomeEmployer
+    onSearch({ searchQuery, selectedIndustry }); // Pass the parameters back to parent
   };
 
-  // Handle clearing filters for job title
-  const handleClearJobTitle = () => {
-    setJobTitle(''); // Reset job title
-    onSearch({ jobTitle: '', selectedIndustry }); // Pass empty parameters to reset search
+  // Handle clearing filters for search query
+  const handleClearSearchQuery = () => {
+    setSearchQuery(''); // Reset search query
+    onSearch({ searchQuery: '', selectedIndustry }); // Pass empty parameters to reset search
   };
 
   // Handle clearing filters for selected industry
   const handleClearIndustry = () => {
     setSelectedIndustry(''); // Reset selected industry
-    onSearch({ jobTitle, selectedIndustry: '' }); // Pass empty parameters to reset search
+    onSearch({ searchQuery, selectedIndustry: '' }); // Pass empty parameters to reset search
   };
 
-  // Determine if the job title field has a value
-  const isJobTitleActive = jobTitle !== '';
+  // Determine if the search query field has a value
+  const isSearchQueryActive = searchQuery !== '';
   // Determine if the industry dropdown has a value
   const isIndustryActive = selectedIndustry !== '';
 
@@ -49,13 +49,13 @@ function SearchForm({ onSearch }) {
     <section className="container my-4">
       <form className="row g-3" onSubmit={handleSubmit}>
         <div className="col-md-6 position-relative">
-          {/* Clear Filters button shown if job title field is active */}
-          {isJobTitleActive && (
+          {/* Clear Filters button shown if search query field is active */}
+          {isSearchQueryActive && (
             <button
               type="button"
               className="btn position-absolute"
-              onClick={handleClearJobTitle}
-              aria-label="Clear Job Title Filter"
+              onClick={handleClearSearchQuery}
+              aria-label="Clear Search Query Filter"
               style={{
                 width: '30px',
                 height: '30px',
@@ -79,12 +79,12 @@ function SearchForm({ onSearch }) {
           <input
             type="text"
             className="form-control"
-            placeholder="Job title or keyword"
-            value={jobTitle}
-            onChange={(e) => setJobTitle(e.target.value)} // Update job title state
+            placeholder="Job title or Name"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)} // Update search query state
             aria-label="Job title or keyword"
             style={{
-              paddingLeft: isJobTitleActive ? '40px' : '10px', // Add padding to avoid overlap with the X icon
+              paddingLeft: isSearchQueryActive ? '40px' : '10px', // Add padding to avoid overlap with the X icon
             }}
           />
         </div>

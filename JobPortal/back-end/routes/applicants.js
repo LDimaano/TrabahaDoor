@@ -7,7 +7,7 @@ const { spawn } = require('child_process');
 
 
 router.get('/applicantlist', async (req, res) => {
-  const { jobTitle, selectedIndustry } = req.query; // Get query parameters
+  const { searchQuery, selectedIndustry } = req.query; // Unified search query
 
   try {
     // Base query with initial SELECT statement
@@ -27,14 +27,13 @@ router.get('/applicantlist', async (req, res) => {
       JOIN profilepictures pp ON job_seekers.user_id = pp.user_id
     `;
 
-    // Initialize an array to hold values for prepared statements
     const values = [];
-    let whereClauses = []; // Array to hold WHERE clauses
+    let whereClauses = [];
 
-    // Check if jobTitle is provided and add to query
-    if (jobTitle) {
-      whereClauses.push(`job_titles.job_title ILIKE $${values.length + 1}`);
-      values.push(`%${jobTitle}%`);
+    // Search by full name or job title using a single searchQuery
+    if (searchQuery) {
+      whereClauses.push(`(job_seekers.full_name ILIKE $${values.length + 1} OR job_titles.job_title ILIKE $${values.length + 1})`);
+      values.push(`%${searchQuery}%`); // Case-insensitive search using ILIKE
     }
 
     // Check if selectedIndustry is provided and add to query
