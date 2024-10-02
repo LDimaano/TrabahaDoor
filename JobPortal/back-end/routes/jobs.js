@@ -161,13 +161,14 @@ router.post('/applications/check', async (req, res) => {
 
 // Fetch posted jobs
 router.get('/postedjobs', async (req, res) => {
-  const { jobTitle, selectedIndustry } = req.query;
+  const { searchQuery, selectedIndustry } = req.query;
 
   try {
     let query = `
       SELECT
         joblistings.job_id,
         job_titles.job_title,
+        emp_profiles.company_name,
         industries.industry_name,
         joblistings.salaryrange,
         joblistings.jobtype,
@@ -176,16 +177,17 @@ router.get('/postedjobs', async (req, res) => {
       FROM joblistings
       JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
       JOIN industries ON joblistings.industry_id = industries.industry_id
+      JOIN emp_profiles ON joblistings.user_id = emp_profiles.user_id
       JOIN profilepictures pp ON joblistings.user_id = pp.user_id
       WHERE 1=1
     `;
 
     const values = [];
 
-    // Filter by job title (or industry name if needed)
-    if (jobTitle) {
-      query += ` AND (job_titles.job_title ILIKE $${values.length + 1})`; // Filter by job title
-      values.push(`%${jobTitle}%`); // Use ILIKE for case-insensitive matching
+    // Search by either job title or company name using a single searchQuery
+    if (searchQuery) {
+      query += ` AND (job_titles.job_title ILIKE $${values.length + 1} OR emp_profiles.company_name ILIKE $${values.length + 1})`; 
+      values.push(`%${searchQuery}%`); // Use ILIKE for case-insensitive matching
     }
 
     // Filter by selected industry

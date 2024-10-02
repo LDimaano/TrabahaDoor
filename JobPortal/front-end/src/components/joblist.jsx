@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import JobListItem from './joblistitem';
 
-function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQuery, isRecommended }) {
+function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQuery, searchType, isRecommended }) {
   const [jobs, setJobs] = useState([]);
   const [recommendedJobs, setRecommendedJobs] = useState([]);
   const [userSkills, setUserSkills] = useState([]);
@@ -11,34 +11,40 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   useEffect(() => {
     const fetchJobs = async () => {
       let url = `http://localhost:5000/api/jobs/postedjobs`;
-
+  
       const params = new URLSearchParams();
       if (searchQuery) {
-        params.append('jobTitle', searchQuery);
+          // Use the same searchQuery for both jobTitle and companyName
+          params.append('searchQuery', searchQuery);
       }
 
-      if (filters.industry) {
+  
+      if (filters && filters.industry) {
         params.append('selectedIndustry', filters.industry);
       }
-
+  
       if (params.toString()) {
         url += `?${params.toString()}`;
       }
-
+  
+      console.log('Fetching jobs with URL:', url); // Debugging
+  
       try {
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setJobs(data);
+        setJobs(data || []); // Ensure data is an array
       } catch (error) {
         console.error('Error fetching job listings:', error);
       }
     };
-
+  
+    // Call fetchJobs function inside useEffect
     fetchJobs();
-  }, [searchQuery, filters]);
+  }, [searchQuery, searchType, filters]);
+  
 
   // Fetch user skills and profile when the component mounts
   useEffect(() => {
@@ -57,9 +63,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         }
         const skills = await response.json();
         const skillNames = skills.map(skill => skill.skill_name);
-        // const skillIds = skills.map(skill => skill.skill_id); // Add skill_id if needed for backend
-
-        setUserSkills(skillNames);
+        setUserSkills(skillNames || []); // Ensure skillNames is an array
       } catch (error) {
         console.error('Error fetching user skills:', error);
       }
@@ -75,7 +79,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       try {
         const response = await fetch(`http://localhost:5000/api/jobseekers/user-info`, {
           method: 'GET',
-          credentials: 'include'
+          credentials: 'include',
         });
 
         if (!response.ok) {
@@ -84,7 +88,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         }
 
         const profile = await response.json();
-        setUserProfile(profile);
+        setUserProfile(profile || null); // Ensure profile is not null
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
@@ -96,14 +100,8 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
 
   // Fetch recommended jobs if needed
   useEffect(() => {
-    console.log('isRecommended:', isRecommended);
-    console.log('userSkills:', userSkills);
-    console.log('userProfile:', userProfile);
-
     if (isRecommended && userSkills.length > 0 && userProfile && userProfile.industryName) {
       const fetchRecommendedJobs = async () => {
-        console.log('Fetching recommended jobs...');
-
         try {
           const response = await fetch(`http://localhost:5000/api/recommend`, {
             method: 'POST',
@@ -123,28 +121,23 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
           }
 
           const recommendedJobsData = await response.json();
-          console.log('Recommended Jobs Data:', recommendedJobsData);
-          setRecommendedJobs(recommendedJobsData.recommendations || []);
+          setRecommendedJobs(recommendedJobsData.recommendations || []); // Ensure recommendations is an array
         } catch (error) {
           console.error('Error fetching recommended jobs:', error);
         }
       };
 
       fetchRecommendedJobs();
-    } else {
-      console.log('Skipping recommended jobs fetch:', {
-        isRecommended,
-        userSkillsLength: userSkills.length,
-        userProfile,
-      });
     }
   }, [isRecommended, userSkills, userProfile]);
 
   // Apply filters to all jobs
   const applyFilters = (jobs) => {
+    if (!jobs || jobs.length === 0) return []; // Ensure jobs is an array
+
     const { employmentTypes, salaryRanges } = filters;
-    const employmentTypesLower = employmentTypes.map(type => type.toLowerCase());
-    const salaryRangesLower = salaryRanges.map(range => range.toLowerCase());
+    const employmentTypesLower = (employmentTypes || []).map(type => type.toLowerCase());
+    const salaryRangesLower = (salaryRanges || []).map(range => range.toLowerCase());
 
     return jobs.filter(job => {
       const jobType = job.jobtype ? job.jobtype.toLowerCase() : '';
@@ -159,11 +152,18 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
 
   // Apply search filter to jobs
   const applySearch = (jobs) => {
-    if (!searchQuery) return jobs;
-    return jobs.filter(job =>
-      (job.job_title && job.job_title.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (job.industry_name && job.industry_name.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    if (!jobs || jobs.length === 0 || !searchQuery) return jobs;
+
+    if (searchType === "jobTitle") {
+      return jobs.filter(job =>
+        job.job_title && job.job_title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    } else if (searchType === "companyName") {
+      return jobs.filter(job =>
+        job.company_name && job.company_name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    return jobs;
   };
 
   // Apply filters and search to jobs

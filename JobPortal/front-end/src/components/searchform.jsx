@@ -22,11 +22,11 @@ function SearchForm({ onSearch }) {
     fetchIndustries();
   }, []);
 
-  
-const handleSubmit = (e) => {
-  e.preventDefault();
-  onSearch({ jobTitle, selectedIndustry }); // Pass the job title and selected industry to the parent
-};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const searchType = jobTitle ? "jobTitle" : "companyName"; // Determine search type based on job title input
+    onSearch({ jobTitle, selectedIndustry, searchType }); // Pass search type to parent
+  };
 
   // Handle clearing filters for job title
   const handleClearJobTitle = () => {
@@ -35,12 +35,10 @@ const handleSubmit = (e) => {
   };
 
   // Handle clearing filters for selected industry
-  // Handle clearing filters for selected industry
-const handleClearIndustry = () => {
-  setSelectedIndustry(''); // Reset selected industry
-  onSearch({ jobTitle, selectedIndustry: '' }); // Pass empty industry to parent
-};
-
+  const handleClearIndustry = () => {
+    setSelectedIndustry(''); // Reset selected industry
+    onSearch({ jobTitle, selectedIndustry: '' }); // Pass empty industry to parent
+  };
 
   // Determine if the job title field has a value
   const isJobTitleActive = jobTitle !== '';
@@ -81,7 +79,7 @@ const handleClearIndustry = () => {
           <input
             type="text"
             className="form-control"
-            placeholder="Job title or keyword"
+            placeholder="Job title or Company name"
             value={jobTitle}
             onChange={(e) => setJobTitle(e.target.value)} // Update job title state
             aria-label="Job title or keyword"

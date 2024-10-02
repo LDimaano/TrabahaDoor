@@ -25,6 +25,7 @@ function JobListItem({ job }) {
         />
         <div>
           <h5 style={itemStyle}>{job.job_title}</h5>
+          <h6 style={itemStyle}>{job.company_name}</h6> 
           <p style={itemStyle}>{job.industry_name}</p>
           <p style={itemStyle}>{job.salaryrange}</p> 
           <Tag>{job.jobtype}</Tag> {/* Use the Tag component for jobtype */}
