@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../../components/empheader';
 import { io } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function EmpNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
   const [notificationCount, setNotificationCount] = useState(0);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Initialize WebSocket connection
   useEffect(() => {
@@ -65,6 +67,11 @@ function EmpNotifications() {
     }
   };
 
+  // Function to handle notification click and navigate to applicant list
+  const handleNotificationClick = (jobId) => {
+    navigate(`/applicantlist/${jobId}`);
+  };
+
   return (
     <div>
       <Header />
@@ -76,14 +83,15 @@ function EmpNotifications() {
             {notifications.map((notification, index) => (
               <div
                 key={notification.id || index}
+                onClick={() => handleNotificationClick(notification.job_id)} // Navigate on click
                 className={`list-group-item d-flex justify-content-between align-items-start mb-3 p-3 ${
                   notification.status === 'new' ? 'bg-light border border-primary' : 'bg-white'
                 }`}
-                style={{ borderRadius: '0.5rem', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}
+                style={{ borderRadius: '0.5rem', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', cursor: 'pointer' }} // Add pointer cursor
               >
                 <div className="ms-2 me-auto d-flex align-items-center">
-                    <img src={notification.profile_picture} alt="Profile" className="rounded-circle me-2" style={{ width: '40px', height: '40px' }} />
-                    <div className="d-flex flex-column">
+                  <img src={notification.profile_picture} alt="Profile" className="rounded-circle me-2" style={{ width: '40px', height: '40px' }} />
+                  <div className="d-flex flex-column">
                     <div className="fw-bold">
                       {notification.message.split(':').map((part, idx) => (
                         idx === 0 ? <span key={idx}>{part}</span> : <span key={idx} className="fw-bold">{part}</span>
@@ -92,8 +100,8 @@ function EmpNotifications() {
                     <small className="text-muted">
                       {notification.date_applied ? new Date(notification.date_applied).toLocaleString() : 'Unknown date'}
                     </small>
-                    </div>
                   </div>
+                </div>
                 {notification.status === 'new' && (
                   <span className="badge bg-primary rounded-pill">New</span>
                 )}

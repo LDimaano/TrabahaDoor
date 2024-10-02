@@ -154,7 +154,7 @@ function Header() {
   return (
     <nav className="navbar navbar-expand-lg bg-transparent">
       <div className="container d-flex justify-content-between align-items-center">
-        <a className="navbar-brand d-flex align-items-center" href="#">
+        <a className="navbar-brand d-flex align-items-center" href="/home_employer">
           <img
             src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
             alt="TrabahaDoor Logo"

@@ -572,6 +572,7 @@ app.get('/api/allnotifications', async (req, res) => {
     const notifications = result.rows.map(row => ({
       message: `${row.full_name} has applied to be a ${row.job_title}`,
       job_id: row.job_id,
+      jobId: row.job_id,
       status: row.status,
       date_applied: row.date_applied,
       profile_picture: row.profile_picture_url
