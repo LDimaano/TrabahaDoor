@@ -357,9 +357,33 @@ const getApplicants = async () => {
   return rows; // Return the retrieved applicants
 };
 
-// Define the endpoint to recommend candidates
+const getContactHistory = async (empUserId) => {
+  const query = `
+        SELECT 
+        ec.js_user_id, 
+        ec.emp_user_id, 
+        js.full_name, 
+        u.email, 
+        ARRAY_AGG(DISTINCT s.skill_name) AS skills, 
+        jt.job_title, 
+        pp.profile_picture_url
+    FROM emp_contact ec
+    JOIN users u ON ec.js_user_id = u.user_id
+    JOIN js_skills jk ON u.user_id = jk.user_id
+    JOIN job_seekers js ON u.user_id = js.user_id
+    JOIN skills s ON jk.skill_id = s.skill_id
+    JOIN job_titles jt ON jt.jobtitle_id = (SELECT jobtitle_id FROM job_experience WHERE user_id = u.user_id LIMIT 1)
+    JOIN profilepictures pp ON pp.user_id = u.user_id
+    WHERE ec.emp_user_id != $1 -- Fetching contacts from similar employers
+    GROUP BY ec.js_user_id, js.full_name, u.email, jt.job_title, pp.profile_picture_url, ec.emp_user_id;
+      `;
+
+  const { rows } = await pool.query(query, [empUserId]);
+  return rows;
+};
+
+
 app.post('/api/recommend-candidates', async (req, res) => {
-  // Retrieve userId from request body
   const userId = req.body.userId; 
 
   if (!userId) {
@@ -369,44 +393,41 @@ app.post('/api/recommend-candidates', async (req, res) => {
   try {
     const jobPostings = await getJobPostings(userId); // Fetch job postings for the user
     const applicants = await getApplicants(); // Fetch applicants
+    const contactHistory = await getContactHistory(userId); // Fetch contact history from other employers
 
-    // Log the job postings and applicants for debugging
     console.log('Job Postings:', jobPostings);
     console.log('Applicants:', applicants);
+    console.log('Contact History:', contactHistory); // Debugging contact history
 
-    // Check if either job postings or applicants are empty
     if (jobPostings.length === 0 || applicants.length === 0) {
       return res.status(404).json({ error: 'No job postings or applicants found.' });
     }
 
-    // Spawn Python process
     const pythonProcess = spawn('python', ['python_scripts/recommend_candidates.py']);
 
-    // Send job postings and applicants as JSON
-    const dataToSend = JSON.stringify({ job_postings: jobPostings, applicants: applicants });
-    console.log('Data sent to Python:', dataToSend);
-     // Log the data being sent
+    const dataToSend = JSON.stringify({
+      job_postings: jobPostings,
+      applicants: applicants,
+      contact_history: contactHistory
+    });
+
     pythonProcess.stdin.write(dataToSend + '\n');
     pythonProcess.stdin.end();
 
-    // Capture output from Python script
     pythonProcess.stdout.on('data', (data) => {
-      console.log('Output from Python:', data.toString()); // Log output from Python
       try {
-          const recommendations = JSON.parse(data.toString().trim()); // Trim the data before parsing
-          res.json({ recommendations }); // Respond with recommendations
+        const recommendations = JSON.parse(data.toString().trim());
+        res.json({ recommendations });
       } catch (error) {
-          console.error('Error parsing recommendations:', error);
-          res.status(500).json({ error: 'Error parsing recommendations.' });
+        console.error('Error parsing recommendations:', error);
+        res.status(500).json({ error: 'Error parsing recommendations.' });
       }
-  });
-  
+    });
 
     pythonProcess.stderr.on('data', (error) => {
       console.error(`Python error: ${error.toString()}`);
       res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
     });
-    
 
     pythonProcess.on('exit', (code) => {
       if (code !== 0) {
@@ -420,6 +441,7 @@ app.post('/api/recommend-candidates', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 // Define the endpoint to retrieve job postings for a specific user
