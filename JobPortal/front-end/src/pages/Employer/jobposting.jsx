@@ -5,6 +5,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import EmpHeader from '../../components/emp_header'; // Import the EmpHeader component
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import Select from 'react-select'; // Import react-select
+import { Modal, Button } from 'react-bootstrap';
 
 
 const JobPosting = () => {
@@ -20,6 +21,7 @@ const JobPosting = () => {
   const [availableJobTitles, setAvailableJobTitles] = useState([]); // New state for job titles
   const [jobType, setJobType] = useState("");
   const [error, setError] = useState(''); // New state for job type
+  const [showModal, setShowModal] = useState(false); // Modal visibility state
  
   const navigate = useNavigate();
 
@@ -115,7 +117,6 @@ const JobPosting = () => {
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
  
     // Attempt to retrieve user_id from session storage
     const user_id = sessionStorage.getItem('user_id');
@@ -165,6 +166,21 @@ const JobPosting = () => {
       console.error('Error posting job:', error);
       alert('An error occurred. Please try again.');
     }
+  };
+
+  // Function to handle modal confirmation
+  const handleConfirmPost = (e) => {
+    e.preventDefault();  // Prevent form submission immediately
+    setShowModal(true);  // Show confirmation modal
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false); // Close modal
+  };
+
+  const handleModalConfirm = () => {
+    handleSubmit();  // Do not pass any event here since it's handled internally
+    setShowModal(false);
   };
 
 
@@ -333,14 +349,32 @@ const JobPosting = () => {
 
 
         <div className="d-flex justify-content-end">
-          <button type="submit" className="btn btn-primary">
-            Post Job
-          </button>
-        </div>
-      </form>
-    </div>
+  <button type="button" className="btn btn-primary" onClick={handleConfirmPost}>
+    Post Job
+  </button>
+</div>
+</form>
+
+{/* Confirmation Modal */}
+<Modal show={showModal} onHide={() => setShowModal(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Confirm Job Posting</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>Are you sure you want to post this job?</Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowModal(false)}>
+      Cancel
+    </Button>
+    <Button variant="primary" onClick={handleModalConfirm}>
+      Confirm
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+</div>
   );
 };
+
 
 
 export default JobPosting;

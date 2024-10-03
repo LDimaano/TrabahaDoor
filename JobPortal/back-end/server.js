@@ -828,7 +828,7 @@ app.get('/api/alljsnotifications', async (req, res) => {
       job_id: row.job_id,
       application_id: row.application_id,
       notif_status: row.notif_status,
-      date_applied: row.date_applied,
+      date_applied: row.date_applied, // This is the date field for applications
       profile_picture: row.profile_picture_url
     }));
 
@@ -838,24 +838,28 @@ app.get('/api/alljsnotifications', async (req, res) => {
       contact_id: row.contact_id,
       userId: row.emp_user_id,
       notif_status: row.notifstatus,
-      date_applied: row.created_at,
+      date_applied: row.created_at, // Rename 'created_at' to 'date_applied' for consistency
       profile_picture: row.profile_picture_url
     }));
 
     // Combine both notification types
     const notifications = [...applicationNotifications, ...contactNotifications];
 
+    // Sort notifications by date_applied in descending order
+    const sortedNotifications = notifications.sort((a, b) => new Date(b.date_applied) - new Date(a.date_applied));
+
     // Log the fetched notifications
-    console.log('Fetched notifications:', notifications);
+    console.log('Fetched notifications:', sortedNotifications);
 
     // Return all notifications
-    res.json({ notifications });
+    res.json({ notifications: sortedNotifications });
 
   } catch (error) {
     console.error('Error fetching notifications for job seeker:', error);
     res.status(500).json({ error: 'Server Error' });
   }
 });
+
 
 // API endpoint to update application status
 app.post('/api/applications/:applicationId/status', async (req, res) => {
