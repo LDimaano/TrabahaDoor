@@ -326,18 +326,14 @@ const getJobPostings = async (userId) => {
     return [];
   }
 
-  // Transform job data to include only the necessary information
-  const joblistingData = rows.map(row => ({
+  return rows.map(row => ({
     job_id: row.job_id,
     job_title: row.job_title,
     industry_name: row.industry_name,
     salaryrange: row.salaryrange,
     jobtype: row.jobtype,
-    required_skills: row.required_skills || [] // Ensure skills is an array
+    required_skills: row.required_skills || []
   }));
-
-  console.log(`Retrieved ${joblistingData.length} job postings for user ${userId}`);
-  return joblistingData; // Return as an array
 };
 
 const getApplicantsForJob = async (jobId) => {
@@ -386,74 +382,156 @@ const getApplicantsForJob = async (jobId) => {
   try {
     const { rows } = await pool.query(query, [jobId]);
 
-    // Extract relevant data for the algorithm
-    const relevantData = rows.map(row => ({
+    return rows.map(row => ({
       user_id: row.user_id,
       email: row.email || '',
       job_titles: row.job_titles || [],
       skills: row.skills || [],
       industry: row.industry_id,
-      full_name: row.full_name || 'No Name Provided', // Include full_name for matching
+      full_name: row.full_name || 'No Name Provided',
       phone_number: row.phone_number || '',
       status: row.status || '',
       date_applied: row.date_applied || '',
       application_id: row.application_id || ''
     }));
-
-    return relevantData;
   } catch (error) {
     console.error("Error fetching applicants for job:", error);
     throw error;
   }
 };
 
+const getSimilarApplicants = async (empUserId, jobId) => {
+  const query = `
+      SELECT 
+          ec.js_user_id, 
+          ec.emp_user_id, 
+          js.full_name, 
+          u.email, 
+          ARRAY_AGG(DISTINCT s.skill_name) AS skills, 
+          jt.job_title, 
+          pp.profile_picture_url,
+          jl.industry_id,
+          jl.job_id
+      FROM emp_contact ec
+      JOIN users u ON ec.js_user_id = u.user_id
+      JOIN js_skills jk ON u.user_id = jk.user_id
+      JOIN job_seekers js ON u.user_id = js.user_id
+      JOIN skills s ON jk.skill_id = s.skill_id
+      JOIN job_titles jt ON jt.jobtitle_id = (
+          SELECT jobtitle_id 
+          FROM job_experience 
+          WHERE user_id = u.user_id 
+          LIMIT 1
+      )
+      JOIN profilepictures pp ON pp.user_id = u.user_id
+      JOIN joblistings jl ON jl.job_id = $2
+      WHERE 
+          ec.emp_user_id != $1
+          AND s.skill_name IN (
+              SELECT skill_name 
+              FROM job_skills 
+              WHERE job_id = $2
+          )
+      GROUP BY ec.js_user_id, js.full_name, u.email, jt.job_title, pp.profile_picture_url, ec.emp_user_id, jl.industry_id, jl.job_id;
+  `;
+
+  const { rows } = await pool.query(query, [empUserId, jobId]);
+  return rows;
+};
+
 // New endpoint for recommending candidates based on jobId
 router.post('/recommend-candidates/:jobId', async (req, res) => {
   const { jobId } = req.params;
-  const userId = req.body.userId; 
+  const userId = req.body.userId;
+  console.log(`Request received for jobId: ${jobId}, userId: ${userId}`); // Debugging line
 
+  // Validate required parameters
   if (!userId || !jobId) {
+    console.log("Missing userId or jobId"); // Debugging line
     return res.status(400).json({ error: 'User ID and Job ID are required.' });
   }
+
+  let responseSent = false; // Flag to track if response has been sent
 
   try {
     const jobPostings = await getJobPostings(userId);
     const applicants = await getApplicantsForJob(jobId);
+    
+    // Get similar applicants for the specified job ID
+    const similarApplicants = await getSimilarApplicants(userId, jobId);
 
-    if (jobPostings.length === 0 || applicants.length === 0) {
-      return res.status(404).json({ error: 'No job postings or applicants found.' });
+    // Check if there are no job postings or applicants
+    if (jobPostings.length === 0) {
+      if (!responseSent) {
+        responseSent = true;
+        return res.status(404).json({ error: 'No job postings found.' });
+      }
+    }
+    if (applicants.length === 0) {
+      if (!responseSent) {
+        responseSent = true;
+        return res.status(404).json({ error: 'No applicants found.' });
+      }
     }
 
-    const pythonProcess = spawn('python', ['python_scripts/recos_per_job.py']);
-    const dataToSend = JSON.stringify({ job_postings: jobPostings, applicants: applicants });
+    // Prepare data to send
+    const dataToSend = JSON.stringify({
+      job_postings: jobPostings,
+      applicants: applicants,
+      similar_applicants: similarApplicants,
+      employer_id: userId
+    });
 
-    pythonProcess.stdin.write(dataToSend + '\n');
-    pythonProcess.stdin.end();
+    // Write to a temporary file and spawn Python process
+    const fs = require('fs');
+    const tmpFilePath = './temp_input.json';
+
+    fs.writeFileSync(tmpFilePath, dataToSend); // Write data to a temporary file
+    const pythonProcess = spawn('python', ['python_scripts/recos_per_job.py', tmpFilePath]);
+
+    console.log("Data sent to Python:", dataToSend);  // Debugging line
 
     pythonProcess.stdout.on('data', (data) => {
+      console.log("Python Output:", data.toString()); // Debugging line
       try {
         const recommendations = JSON.parse(data.toString().trim());
-        res.json({ recommendations });
+        if (!responseSent) {
+          responseSent = true;
+          res.json({ recommendations, similar_applicants });
+        }
       } catch (error) {
-        res.status(500).json({ error: 'Error parsing recommendations.' });
+        if (!responseSent) {
+          responseSent = true;
+          res.status(500).json({ error: 'Error parsing recommendations.' });
+        }
       }
     });
 
     pythonProcess.stderr.on('data', (error) => {
-      res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
+      console.error("Python Error Output:", error.toString()); // Debugging line
+      if (!responseSent) {
+        responseSent = true;
+        res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
+      }
     });
 
     pythonProcess.on('exit', (code) => {
-      if (code !== 0) {
+      console.log(`Python process exited with code: ${code}`); // Debugging line
+      if (code !== 0 && !responseSent) {
+        responseSent = true;
         res.status(500).json({ error: 'Internal Server Error', details: 'Python script failed' });
       }
     });
 
   } catch (error) {
     console.error('Error generating recommendations:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    if (!responseSent) {
+      responseSent = true;
+      res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
   }
 });
+
 
 router.post('/contact/:user_id', async (req, res) => {
   const { user_id: js_user_id } = req.params;
