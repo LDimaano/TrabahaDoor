@@ -202,6 +202,11 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
   const { userId, jobId } = req.params;
   const { hiringStage } = req.body;
 
+  console.log('Received request to update application:');
+  console.log('User ID:', userId);
+  console.log('Job ID:', jobId);
+  console.log('Hiring Stage:', hiringStage);
+
   const allowedStages = ['Received', 'In review', 'For interview', 'Filled'];
 
   try {
@@ -215,20 +220,24 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
       return res.status(400).json({ error: `Invalid hiring stage: ${hiringStage}. Must be one of ${allowedStages.join(', ')}.` });
     }
 
-    // Step 2: Update status and notif_status in the applications table
-    let updateAppQuery = `
+   // Step 2: Update status and notif_status in the applications table
+      let updateAppQuery = `
       UPDATE applications 
       SET status = $1, notif_status = $2 
       WHERE user_id = $3 AND job_id = $4
-    `;
-    
-    const queryParams = [hiringStage, 'new', userId, jobId];
-    const result = await pool.query(updateAppQuery, queryParams);
+      `;
 
-    // Check if the record was updated
-    if (result.rowCount === 0) {
+      const queryParams = [hiringStage, 'new', userId, jobId];
+      const result = await pool.query(updateAppQuery, queryParams);
+
+      // Log the parameters and the result
+      console.log(`Updating application for userId: ${userId}, jobId: ${jobId}. Result: ${result.rowCount} rows affected.`);
+
+      // Check if the record was updated
+      if (result.rowCount === 0) {
       return res.status(404).json({ error: `No record found for userId ${userId} and jobId ${jobId}.` });
-    }
+      }
+
 
     // Step 3: If hiring stage is "Filled", update the datefilled in the joblistings table
     if (hiringStage === 'Filled') {

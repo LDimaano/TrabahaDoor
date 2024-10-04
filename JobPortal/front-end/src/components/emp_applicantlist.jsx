@@ -64,30 +64,48 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   };
 
   const confirmStageChange = () => {
-    if (selectedUser  && newStage) {
-      handleStageChangeInJoblist(selectedUser , newStage);
+    if (selectedUser && newStage) {
+      // Update local state immediately after confirming the stage change
+      setLocalHiringStages((prevStages) => ({
+        ...prevStages,
+        [selectedUser]: newStage,
+      }));
+  
+      // Then update the backend
+      handleStageChangeInJoblist(selectedUser, newStage);
       closeConfirmModal();
     }
   };
 
   const handleStageChangeInJoblist = async (userId, newStage) => {
     try {
+      // Log the request details
+      console.log(`Updating hiring stage for userId: ${userId}, jobId: ${jobId}, newStage: ${newStage}`);
+  
       const response = await fetch(`http://localhost:5000/api/applicants/applications/${userId}/${jobId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ hiringStage: newStage }),
       });
-
+  
+      // Log the response status and response body
+      console.log('Response status:', response.status);
+  
       if (!response.ok) {
         const errorData = await response.text();
+        console.error('Error response:', errorData);
         throw new Error(errorData || 'Failed to update hiring stage');
       }
-
+  
+      console.log('Hiring stage updated successfully on the server');
+  
+      // Call the parent component’s onStageChange to update UI state globally if needed
       onStageChange(userId, newStage);
     } catch (error) {
       console.error('Error updating hiring stage:', error.message);
     }
   };
+  
 
   const renderApplicantRows = (listings) => {
     return listings.map((listing) => (
