@@ -21,30 +21,6 @@ const transporter = nodemailer.createTransport({
   dns: { preferIPv4: true }, 
 });
 
-// transporter.verify((error, success) => {
-//   if (error) {
-//     console.error('Error connecting to the email service:', error);
-//   } else {
-//     console.log('Email service is ready to send messages:', success);
-//   }
-// });
-
-// const mailOptions = {
-//   from: 'trabahadoor.sanjose@gmail.com',
-//   to: 'carlafrancescadimaandal29@gmail.com',
-//   subject: 'Test Email',
-//   text: 'This is a test email sent using Nodemailer.',
-// };
-
-// transporter.sendMail(mailOptions, (error, info) => {
-//   if (error) {
-//     console.error('Error sending email:', error);
-//   } else {
-//     console.log('Email sent successfully:', info.response);
-//   }
-// });
-
-
 const generateEmailContent = (type, data) => {
     switch (type) {
         case 'application':
@@ -59,6 +35,13 @@ const generateEmailContent = (type, data) => {
                 text: `Hello ${data.jobSeekerName}, your application status for ${data.job_title} has been updated to: ${data.status}`,
                 html: `<p>Hello ${data.jobSeekerName},</p>
                        <p>Your application status for <strong>${data.job_title}</strong> has been updated to: <strong>${data.status}</strong>.</p>`,
+            };
+        case 'contact_notification': 
+            return {
+                subject: 'An Employer Wants to Connect With You',
+                text: `Hello ${data.jobSeekerName}, ${data.companyName} is interested in connecting with you. Please log in to view more details.`,
+                html: `<p>Hello ${data.jobSeekerName},</p>
+                       <p><strong>${data.companyName}</strong> is interested in connecting with you. Please log in to view more details.</p>`,
             };
         default:
             return {};
@@ -97,7 +80,20 @@ const sendStatusUpdateEmail = async (jobSeekerEmail, jobSeekerName, jobTitle, st
     });
 };
 
+const sendContactNotificationEmail = async (jobSeekerEmail, jobSeekerName, companyName) => {
+    const emailContent = generateEmailContent('contact_notification', { jobSeekerName, companyName });
+    
+    await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: jobSeekerEmail,
+        subject: emailContent.subject,
+        text: emailContent.text,
+        html: emailContent.html,
+    });
+};
+
 module.exports = {
     sendApplicationEmail,
     sendStatusUpdateEmail,
+    sendContactNotificationEmail
 };

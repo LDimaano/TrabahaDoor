@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { sendStatusUpdateEmail } = require('../mailer');
+const { sendContactNotificationEmail } = require('../mailer.js');
 const { spawn } = require('child_process');
 
 
@@ -455,18 +456,10 @@ router.post('/recommend-candidates/:jobId', async (req, res) => {
 });
 
 router.post('/contact/:user_id', async (req, res) => {
-  // Extract js_user_id from the request parameters
   const { user_id: js_user_id } = req.params;
-  
-  // Extract emp_user_id from the session (ensure session middleware is being used)
   const emp_user_id = req.session.user.user_id;
 
-  // Log both IDs for debugging
-  console.log('Jobseeker ID (js_user_id):', js_user_id);
-  console.log('Employer ID (emp_user_id):', emp_user_id);
-
   try {
-    // Check if both js_user_id and emp_user_id are available
     if (!js_user_id || !emp_user_id) {
       return res.status(400).json({ message: "Missing user IDs." });
     }
@@ -479,13 +472,39 @@ router.post('/contact/:user_id', async (req, res) => {
       [js_user_id, emp_user_id]
     );
 
+    // Fetch jobseeker email and name from the database
+    const jobseeker = await pool.query(
+      `SELECT 
+	      u.email, 
+	      js.full_name 
+      FROM job_seekers js
+      JOIN users u ON js.user_id = u.user_id
+      WHERE js.user_id = $1`,
+      [js_user_id]
+    );
+
+    // Fetch employer name from the database
+    const employer = await pool.query(
+      `SELECT company_name FROM emp_profiles WHERE user_id = $1`,
+      [emp_user_id]
+    );
+
+    if (jobseeker.rows.length > 0 && employer.rows.length > 0) {
+      const js_email = jobseeker.rows[0].email;
+      const js_name = jobseeker.rows[0].full_name;
+      const company_name = employer.rows[0].company_name;
+
+      // Send an email to the jobseeker
+      await sendContactNotificationEmail(js_email, js_name, company_name);
+    }
+
     // Send the newly created contact as a response
     res.status(201).json(newContact.rows[0]);
+    
   } catch (err) {
-    console.error('Error while inserting contact:', err.message);
+    console.error('Error while inserting contact or sending email:', err.message);
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 module.exports = router;
