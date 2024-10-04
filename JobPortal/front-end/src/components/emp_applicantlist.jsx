@@ -5,12 +5,12 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const navigate = useNavigate();
-  const { jobId } = useParams();
+  const jobId = useParams().jobId;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
-  const [localHiringStages, setLocalHiringStages] = useState(hiringStages);
+  const [localHiringStages, setLocalHiringStages] = useState({});
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser , setSelectedUser ] = useState(null);
   const [newStage, setNewStage] = useState('');
   const [activeTab, setActiveTab] = useState('applicants');
   const [recommendations, setRecommendations] = useState([]);
@@ -32,15 +32,14 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log('Fetched recommendations:', data);
-        const recommendations = data.recommendations.recommendations; // Access the nested recommendations array
+        const recommendations = data.recommendations.recommendations; 
         setRecommendations(recommendations);
       } catch (error) {
         console.error('Error fetching recommendations:', error);
       }
     }
   };
-  
+
   const handleSeeApplication = (userId) => {
     navigate(`/applicant_profile/${userId}`);
   };
@@ -53,24 +52,20 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const closeModal = () => setIsModalOpen(false);
 
   const openConfirmModal = (userId, stage) => {
-    setSelectedUser(userId);
+    setSelectedUser (userId);
     setNewStage(stage);
     setIsConfirmModalOpen(true);
   };
 
   const closeConfirmModal = () => {
     setIsConfirmModalOpen(false);
-    setSelectedUser(null);
+    setSelectedUser (null);
     setNewStage('');
   };
 
   const confirmStageChange = () => {
-    if (selectedUser && newStage) {
-      setLocalHiringStages((prevStages) => ({
-        ...prevStages,
-        [selectedUser]: newStage,
-      }));
-      handleStageChangeInJoblist(selectedUser, newStage);
+    if (selectedUser  && newStage) {
+      handleStageChangeInJoblist(selectedUser , newStage);
       closeConfirmModal();
     }
   };
@@ -87,6 +82,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
         const errorData = await response.text();
         throw new Error(errorData || 'Failed to update hiring stage');
       }
+
       onStageChange(userId, newStage);
     } catch (error) {
       console.error('Error updating hiring stage:', error.message);
@@ -114,7 +110,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              {listing.status || 'Received'}
+              {localHiringStages[listing.user_id] || 'Received'} 
             </button>
             <ul className="dropdown-menu" aria-labelledby={`dropdownMenuButton-${listing.user_id}`}>
               {['Received', 'In review', 'For interview', 'Filled'].map((stage) => (
@@ -139,7 +135,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
             <FontAwesomeIcon icon={faEye} /> View
           </button>
         </td>
-        <td>
+ <td>
           <button
             className="btn btn-outline-primary"
             onClick={() => handleSeeApplication(listing.user_id)}
@@ -152,7 +148,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   };
 
   const filteredCurrentListings = activeTab === 'recommended'
-    ? currentListings.filter(listing => 
+    ? currentListings.filter(listing =>
         recommendations.some(recommendation => recommendation.user_id === listing.user_id)
       )
     : currentListings;
@@ -161,18 +157,18 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
     <div className="table-responsive">
       <ul className="nav nav-tabs">
         <li className="nav-item">
-          <a 
-            className={`nav-link ${activeTab === 'applicants' ? 'active' : ''}`} 
-            href="#" 
+          <a
+            className={`nav-link ${activeTab === 'applicants' ? 'active' : ''}`}
+            href="#"
             onClick={() => setActiveTab('applicants')}
           >
             Applicants
           </a>
         </li>
         <li className="nav-item">
-          <a 
-            className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`} 
-            href="#" 
+          <a
+            className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`}
+            href="#"
             onClick={() => {
               setActiveTab('recommended');
               fetchRecommendations();
@@ -182,7 +178,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
           </a>
         </li>
       </ul>
-  
+
       <div className="tab-content">
         <div className={`tab-pane ${activeTab === 'applicants' ? 'active' : ''}`} id="applicants">
           <table className="table table-bordered">
@@ -200,7 +196,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
             </tbody>
           </table>
         </div>
-  
+
         <div className={`tab-pane ${activeTab === 'recommended' ? 'active' : ''}`} id="recommended-applicants">
           <h4>Recommended Applicants</h4>
           <table className="table table-bordered">
@@ -219,7 +215,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
           </table>
         </div>
       </div>
-      
+
       {/* Modal for Application Details */}
       {isModalOpen && (
         <div className="modal fade show" style={{ display: 'block' }} role="dialog">
@@ -245,27 +241,27 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
       )}
 
       {/* Confirm Modal for Hiring Stage Change */}
-      {isConfirmModalOpen && (
+      {isConfirmModalOpen &&
         <div className="modal fade show" style={{ display: 'block' }} role="dialog">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Confirm Stage Change</h5>
-                <button type="button" className="btn-close" onClick={closeConfirmModal}></button>
-              </div>
-              <div className="modal-body">
-                <p>Are you sure you want to change the hiring stage to <strong>{newStage}</strong> for this applicant?</p>
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={closeConfirmModal}>Cancel</button>
-                <button className="btn btn-primary" onClick={confirmStageChange}>Confirm</button>
-              </div>
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Confirm Hiring Stage Change</h5>
+              <button type="button" className="btn-close" onClick={closeConfirmModal}></button>
+            </div>
+            <div className="modal-body">
+              <p>Are you sure you want to change the hiring stage for this applicant to <strong>{newStage}</strong>?</p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={closeConfirmModal}>Cancel</button>
+              <button className="btn btn-primary" onClick={confirmStageChange}>Confirm</button>
             </div>
           </div>
         </div>
-      )}
-    </div>
-  );
+      </div>
+    }
+  </div>
+);
 }
 
 export default ApplicantJoblist;

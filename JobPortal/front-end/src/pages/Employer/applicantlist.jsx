@@ -10,12 +10,13 @@ import ApplicantJoblist from '../../components/emp_applicantlist';
 const ApplicantDashboard = () => {
   const navigate = useNavigate();
   const { jobId } = useParams();
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState([]); // List of all applicants
+  const [recommendedJobs, setRecommendedJobs] = useState([]); // Recommended applicants
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [listingsPerPage] = useState(10);
   const [error, setError] = useState(null);
-  const [hiringStages, setHiringStages] = useState({});
+  const [hiringStages, setHiringStages] = useState({}); // Hiring stages for applicants
 
   useEffect(() => {
     if (jobId) {
@@ -41,7 +42,7 @@ const ApplicantDashboard = () => {
 
       // Initialize hiringStages with fetched data
       const initialStages = data.reduce((acc, applicant) => {
-        acc[applicant.user_id] = applicant.hiring_stage || 'Received'; // Assuming status is used
+        acc[applicant.user_id] = applicant.hiring_stage || 'Received'; // Assuming hiring_stage is used
         return acc;
       }, {});
       setHiringStages(initialStages);
@@ -64,8 +65,26 @@ const ApplicantDashboard = () => {
         throw new Error(errorData || 'Failed to update hiring stage');
       }
 
-      // Optionally refetch applicants to ensure the state is synchronized
-      await fetchApplicants();
+      // Update the hiring stage in both jobs and hiringStages state
+      setJobs(prevJobs =>
+        prevJobs.map(job =>
+          job.user_id === userId ? { ...job, hiring_stage: newStage } : job
+        )
+      );
+
+      // Update hiring stages for both jobs and recommended jobs
+      setHiringStages(prevStages => ({
+        ...prevStages,
+        [userId]: newStage,
+      }));
+
+      // Update recommended jobs if they share the same state
+      setRecommendedJobs(prevRecommended =>
+        prevRecommended.map(recJob =>
+          recJob.user_id === userId ? { ...recJob, hiring_stage: newStage } : recJob
+        )
+      );
+
     } catch (error) {
       console.error('Error updating hiring stage:', error.message);
     }
@@ -103,7 +122,7 @@ const ApplicantDashboard = () => {
         <section>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="d-flex align-items-center">
-              <button 
+              <button
                 className="btn p-0 me-3"
                 onClick={handleBack}
                 style={{
@@ -131,12 +150,12 @@ const ApplicantDashboard = () => {
               </button>
             </div>
           </div>
-          <ApplicantJoblist 
+          <ApplicantJoblist
             currentListings={currentListings}
             hiringStages={hiringStages}
             onStageChange={handleStageChangeInDashboard}
           />
-          <Pagination 
+          <Pagination
             listingsPerPage={listingsPerPage}
             totalListings={filteredListings.length}
             paginate={paginate}
