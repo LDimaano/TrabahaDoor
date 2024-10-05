@@ -150,25 +150,48 @@ function ProfileEditForm() {
   };
    // Fetch profile data when component mounts
   useEffect(() => {
+    // Example of how to access experiences and skills
     const fetchProfileData = async () => {
       try {
         const response = await fetch(`http://localhost:5000/api/jobseekers/fetchjobseeker-profile/${userId}`);
         if (!response.ok) throw new Error('Failed to fetch profile data');
         const data = await response.json();
-        
+    
         setFullName(data.jobSeeker.fullName || '');
         setPhoneNumber(data.jobSeeker.phoneNumber || '');
-        setDateOfBirth(data.jobSeeker.dateOfBirth || '');
+    
+        // Format date properly
+        const date = new Date(data.jobSeeker.dateOfBirth);
+        setDateOfBirth(date.toISOString().split('T')[0]);
+    
         setGender(data.jobSeeker.gender || '');
         setAddress(data.jobSeeker.address_id ? { value: data.jobSeeker.address_id, label: data.jobSeeker.location } : null);
-        setIndustry({ value: data.jobSeeker.industry, label: data.jobSeeker.industryname });
-        setExperience(data.jobSeeker.experiences || []); // Ensure it's an array
-        setSkills(data.jobSeeker.skills.map(skill => ({ value: skill.skill_id, label: skill.skill_name })) || []); // Ensure it's an array
+        
+        // Set industry
+        setIndustry({ value: data.jobSeeker.industry, label: data.jobSeeker.industry_name });
+    
+        // Set experiences as an array of values
+        const experiencesArray = data.jobSeeker.experiences.map(exp => ({
+          jobTitle: exp.jobtitle_id,
+          salary: exp.salary,
+          company: exp.company,
+          location: exp.location,
+          startDate: exp.start_date,
+          endDate: exp.end_date,
+          description: exp.description
+        })) || [];
+        
+        setExperience(experiencesArray);
+    
+        // Set skills as an array of skill names or objects
+        const skillsArray = data.jobSeeker.skills.map(skill => ({ value: skill.skillId, label: skill.skillId })) || [];
+        setSkills(skillsArray);
+        
       } catch (error) {
         console.error('Error fetching profile data:', error);
         setError('Failed to load profile data.');
       }
-    };
+    };    
 
     const fetchSkills = async () => {
       try {

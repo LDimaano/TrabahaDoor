@@ -129,7 +129,6 @@ router.get('/user-info', async (req, res) => {
   }
 });
 
-// Fetch job seeker profile including skills and job experience
 router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
@@ -162,6 +161,21 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
 
     const jobSeeker = jobSeekerData.rows[0] || {};
 
+    // Process the experiences and skills to make them more accessible
+    const experiences = jobSeeker.experiences.map(exp => ({
+      jobTitle: exp.jobtitle_id,
+      salary: exp.salary,
+      company: exp.company,
+      location: exp.location,
+      startDate: exp.start_date,
+      endDate: exp.end_date,
+      description: exp.description
+    })) || [];
+
+    const skills = jobSeeker.skills.map(skill => ({
+      skillId: skill.skill_name // Assuming you want the name
+    })) || [];
+
     res.json({
       jobSeeker: {
         fullName: jobSeeker.full_name || 'Not Provided',
@@ -169,8 +183,8 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
         dateOfBirth: jobSeeker.date_of_birth || 'Not Provided',
         gender: jobSeeker.gender || 'Not Provided',
         industry: jobSeeker.industry_id || 'Not Provided',
-        experiences: jobSeeker.experiences || [],
-        skills: jobSeeker.skills || [],
+        experiences, // Structured array
+        skills, // Structured array
       },
     });
   } catch (error) {
@@ -178,7 +192,6 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 
 router.get('/job-seeker/:userId', async (req, res) => {
