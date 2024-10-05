@@ -20,6 +20,7 @@ import ApplicantList from './pages/Employer/applicantlist';
 import Applicantdetails from './pages/Employer/appdetails';
 import HomeEmployer from './pages/Employer/home_employer';
 import MyProfile from './pages/Jobseeker/js_myprofile'; 
+import ProfileEditForm from './pages/Jobseeker/js_profile_edit'; 
 import JobseekerJobListing from './pages/Jobseeker/js_joblistings'; 
 import Notifications from './pages/Jobseeker/js_notifications'; 
 import EmpProfile from './pages/Employer/emp_profile'; 
@@ -82,6 +83,7 @@ root.render(
         <Route path="/emp_timetofill" element={<EmpTimeToFill />} /> 
         <Route path="/js_empprofile/:userId" element={<JsEmpProfile />} />
         <Route path="/js_empjoblisting/:userId" element={<JsEmpJobListings />} />
+        <Route path="/js_profile_edit" element={<ProfileEditForm />} />
       </Routes>
     </Router>
   </React.StrictMode>
