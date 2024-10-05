@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faPhone, faLink } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faPhone, faPen} from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import ContactItem from './contactitem';
+import ProfilePictureModal from './profilepicturemodal';
 
 const ApplicantCard = ({ applicant }) => {
   const navigate = useNavigate(); // Initialize useNavigate
+  const [currentPhoto, setCurrentPhoto] = useState(applicant.image); // State to hold the current profile picture
+  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+ 
 
   const handleProfileUpdate = () => {
     const userId = sessionStorage.getItem('user_id'); // Retrieve userId from sessionStorage
@@ -16,15 +20,38 @@ const ApplicantCard = ({ applicant }) => {
     }
   };
 
+  // Callback to update the profile picture
+  const handleUpdatePhoto = (newPhotoUrl) => {
+    setCurrentPhoto(newPhotoUrl); // Update the current photo state
+    setShowModal(false); // Close the modal
+  };
+
   return (
     <aside className="bg-white p-4 border rounded">
       <header className="d-flex align-items-center mb-3">
-        <img
-          src={applicant.image}
-          alt="Profile"
-          className="img-fluid rounded-circle me-3"
-          style={{ width: '150px', height: '150px' }}
-        />
+      <div style={{ position: 'relative' }}>
+      <img
+            src={currentPhoto} // Use the current photo state
+            alt="Profile"
+            className="img-fluid rounded-circle"
+            style={{ width: '150px', height: '150px' }}
+          />
+          <button 
+            className="btn btn-light"
+            style={{
+              position: 'absolute',
+              bottom: '5px',
+              right: '5px',
+              borderRadius: '50%',
+              width: '30px',
+              height: '30px',
+              padding: '0',
+            }}
+            onClick={() => setShowModal(true)} // Open modal on button click
+          >
+            <FontAwesomeIcon icon={faPen} size="sm" /> {/* Use a pencil icon */}
+          </button>
+      </div>
         <div>
           <h2 className="mb-0">{applicant.companyname}</h2>
           <p className="text-muted">{applicant.contactperson}</p>
@@ -42,6 +69,7 @@ const ApplicantCard = ({ applicant }) => {
           Update Profile
         </button>
       </section>
+      {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
     </aside>
   );
 };
