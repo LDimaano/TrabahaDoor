@@ -91,14 +91,7 @@ const MyProfile = () => {
         <section>
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h3>My Profile</h3>
-            {/* Edit Profile Button with Pencil Icon */}
-            <button
-              className="btn btn-light border"
-              onClick={handleEditProfile} // Navigate to the register form with data
-              style={{ position: 'relative', top: '-10px' }}
-            >
-              <i className="fas fa-pencil-alt"></i> {/* Pencil Icon */}
-            </button>
+        
           </div>
 
           <div className="d-flex">

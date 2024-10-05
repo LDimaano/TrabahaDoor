@@ -129,6 +129,57 @@ router.get('/user-info', async (req, res) => {
   }
 });
 
+// Fetch job seeker profile including skills and job experience
+router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    console.log('Received userId:', userId);
+
+    // Validate userId
+    if (!userId || isNaN(parseInt(userId))) {
+      return res.status(400).json({ error: 'Invalid or missing userId' });
+    }
+
+    // Query to fetch job seeker profile data, skills, and job experiences
+    const jobSeekerData = await pool.query(`
+      SELECT 
+        js.*, 
+        i.industry_name, 
+        a.location,
+        COALESCE(json_agg(DISTINCT je) FILTER (WHERE je IS NOT NULL), '[]') AS experiences,
+        COALESCE(json_agg(DISTINCT s.skill_name) FILTER (WHERE s IS NOT NULL), '[]') AS skills
+      FROM job_seekers js
+      JOIN industries i ON js.industry_id = i.industry_id
+      JOIN address a ON js.address_id = a.address_id
+      LEFT JOIN job_experience je ON js.user_id = je.user_id
+      LEFT JOIN js_skills jsk ON js.user_id = jsk.user_id
+      LEFT JOIN skills s ON jsk.skill_id = s.skill_id 
+      WHERE js.user_id = $1
+      GROUP BY js.jsid, i.industry_name, a.location
+    `, [userId]);
+
+    console.log('Fetched job seeker data:', jobSeekerData.rows);
+
+    const jobSeeker = jobSeekerData.rows[0] || {};
+
+    res.json({
+      jobSeeker: {
+        fullName: jobSeeker.full_name || 'Not Provided',
+        phoneNumber: jobSeeker.phone_number || 'Not Provided',
+        dateOfBirth: jobSeeker.date_of_birth || 'Not Provided',
+        gender: jobSeeker.gender || 'Not Provided',
+        industry: jobSeeker.industry_id || 'Not Provided',
+        experiences: jobSeeker.experiences || [],
+        skills: jobSeeker.skills || [],
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching job seeker data:', error.message);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 
 router.get('/job-seeker/:userId', async (req, res) => {
   try {

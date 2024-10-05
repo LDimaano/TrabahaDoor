@@ -5,8 +5,6 @@ import './css/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-
-
 import Login from './pages/Auth/login';
 import Signup from './pages/Auth/signup';
 import LandingPage from './pages/landing';
@@ -84,7 +82,7 @@ root.render(
         <Route path="/emp_timetofill" element={<EmpTimeToFill />} /> 
         <Route path="/js_empprofile/:userId" element={<JsEmpProfile />} />
         <Route path="/js_empjoblisting/:userId" element={<JsEmpJobListings />} />
-        <Route path="/js_profile_edit" element={<ProfileEditForm />} />
+        <Route path="/js_profile_edit/:userId" element={<ProfileEditForm />} />
         <Route path="/e_profileupdate/:userId" element={<UpdateEmpProfile />} />
       </Routes>
     </Router>
