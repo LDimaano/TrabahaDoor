@@ -4,8 +4,20 @@ import { faEnvelope, faPhone, faLink } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import ContactItem from './contactitem';
 
+
+
 const ApplicantCard = ({ applicant }) => {
   const navigate = useNavigate(); // Initialize useNavigate
+
+  const handleProfileUpdate = () => {
+    const userId = sessionStorage.getItem('user_id'); // Retrieve the userId from sessionStorage
+    if (userId) {
+        navigate(`/e_profileupdate/${userId}`); // Use template literal to include userId in the URL
+    } else {
+        console.error('User ID not found in session storage'); // Handle the case where userId is not found
+    }
+};
+
 
   return (
     <aside className="bg-white p-4 border rounded">
@@ -27,6 +39,12 @@ const ApplicantCard = ({ applicant }) => {
         <ContactItem icon={<FontAwesomeIcon icon={faEnvelope} />} label="Email" value={applicant.email} />
         <ContactItem icon={<FontAwesomeIcon icon={faPhone} />} label="Phone" value={applicant.phone} />
         <ContactItem icon={<FontAwesomeIcon icon={faLink} />} label="Website" value={applicant.website} />
+        <button 
+          className="btn btn-primary mt-3" 
+          onClick={handleProfileUpdate}
+        >
+          Update Profile
+        </button>
       </section>
     </aside>
   );
