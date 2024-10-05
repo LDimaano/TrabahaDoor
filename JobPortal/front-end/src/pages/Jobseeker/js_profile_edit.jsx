@@ -11,7 +11,7 @@ function ProfileEditForm() {
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-  const [gender, setGender] = useState('');
+  const [gender, setGender] = useState(null);
   const [address, setAddress] = useState(null);
   const [addressOptions, setAddressOptions] = useState([]);
   const [industry, setIndustry] = useState(null);
@@ -32,6 +32,13 @@ function ProfileEditForm() {
   ]);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
+
+  const options = [
+    { value: '', label: 'Choose...' },
+    { value: 'male', label: 'Male' },
+    { value: 'female', label: 'Female' },
+    { value: 'other', label: 'Other' },
+  ];
 
   const handleSkillChange = (index, selectedOption) => {
     const newSkills = [...skills];
@@ -164,24 +171,15 @@ function ProfileEditForm() {
         const date = new Date(data.jobSeeker.dateOfBirth);
         setDateOfBirth(date.toISOString().split('T')[0]);
     
-        setGender(data.jobSeeker.gender || '');
-        setAddress(data.jobSeeker.address_id ? { value: data.jobSeeker.address_id, label: data.jobSeeker.location } : null);
+        setGender({ value: data.jobSeeker.gender, label: data.jobSeeker.gender });
+        setAddress({ value: data.jobSeeker.address, label: data.jobSeeker.addressName });
         
         // Set industry
-        setIndustry({ value: data.jobSeeker.industry, label: data.jobSeeker.industry_name });
-    
-        // Set experiences as an array of values
-        const experiencesArray = data.jobSeeker.experiences.map(exp => ({
-          jobTitle: exp.jobtitle_id,
-          salary: exp.salary,
-          company: exp.company,
-          location: exp.location,
-          startDate: exp.start_date,
-          endDate: exp.end_date,
-          description: exp.description
-        })) || [];
+        setIndustry({ value: data.jobSeeker.industry, label: data.jobSeeker.industryName });
+
+        setExperience(data.jobSeeker.experiences || []);
+
         
-        setExperience(experiencesArray);
     
         // Set skills as an array of skill names or objects
         const skillsArray = data.jobSeeker.skills.map(skill => ({ value: skill.skillId, label: skill.skillId })) || [];
@@ -306,18 +304,13 @@ function ProfileEditForm() {
           </div>
           <div className="mb-3">
             <label htmlFor="gender" className="form-label">Gender</label>
-            <select
-              className="form-select"
+            <Select
               id="gender"
               value={gender}
-              onChange={e => setGender(e.target.value)}
+              onChange={setGender}
+              options={options}
               required
-            >
-              <option value="">Choose...</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
+            />
           </div>
           <div className="mb-3">
             <label htmlFor="address" className="form-label">Address</label>

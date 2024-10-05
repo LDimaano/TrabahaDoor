@@ -144,38 +144,40 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
       SELECT 
         js.*, 
         i.industry_name, 
-        a.location,
-        COALESCE(json_agg(DISTINCT je) FILTER (WHERE je IS NOT NULL), '[]') AS experiences,
-        COALESCE(json_agg(DISTINCT s.skill_name) FILTER (WHERE s IS NOT NULL), '[]') AS skills
+        a.location
       FROM job_seekers js
       JOIN industries i ON js.industry_id = i.industry_id
       JOIN address a ON js.address_id = a.address_id
-      LEFT JOIN job_experience je ON js.user_id = je.user_id
-      LEFT JOIN js_skills jsk ON js.user_id = jsk.user_id
-      LEFT JOIN skills s ON jsk.skill_id = s.skill_id 
       WHERE js.user_id = $1
-      GROUP BY js.jsid, i.industry_name, a.location
     `, [userId]);
 
     console.log('Fetched job seeker data:', jobSeekerData.rows);
 
     const jobSeeker = jobSeekerData.rows[0] || {};
 
-    // Process the experiences and skills to make them more accessible
-    const experiences = jobSeeker.experiences.map(exp => ({
-      jobTitle: exp.jobtitle_id,
-      salary: exp.salary,
-      company: exp.company,
-      location: exp.location,
-      startDate: exp.start_date,
-      endDate: exp.end_date,
-      description: exp.description
-    })) || [];
+    // Query to fetch job experiences
+    const jobExperienceData = await pool.query(`
+      SELECT
+        je.*,
+        jt.job_title
+      FROM job_experience je
+      JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
+      WHERE je.user_id = $1
+    `, [userId]);
 
-    const skills = jobSeeker.skills.map(skill => ({
-      skillId: skill.skill_name // Assuming you want the name
-    })) || [];
+    console.log('Fetched job experience data:', jobExperienceData.rows);
 
+    const jobExperiences = jobExperienceData.rows.map(exp => ({
+      jobTitleId: exp.jobtitle_id || 'Not Provided',
+      jobTitleName: exp.job_title || 'Not Provided',
+      salary: exp.salary  || 'Not Provided',
+      companyName: exp.company || 'Not Provided',
+      location: exp.location  || 'Not Provided',
+      startDate: exp.start_date || 'Not Provided',
+      endDate: exp.end_date || 'Not Provided',
+      description: exp.description || 'Not Provided',
+    }));
+    console.log('Mapped job experiences:', jobExperiences);
     res.json({
       jobSeeker: {
         fullName: jobSeeker.full_name || 'Not Provided',
@@ -183,8 +185,10 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
         dateOfBirth: jobSeeker.date_of_birth || 'Not Provided',
         gender: jobSeeker.gender || 'Not Provided',
         industry: jobSeeker.industry_id || 'Not Provided',
-        experiences, // Structured array
-        skills, // Structured array
+        industryName: jobSeeker.industry_name || 'Not Provided',
+        address: jobSeeker.address_id || 'Not Provided',
+        addressName: jobSeeker.location || 'Not Provided',
+        experiences: jobExperiences
       },
     });
   } catch (error) {
