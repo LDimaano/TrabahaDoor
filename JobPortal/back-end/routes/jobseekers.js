@@ -177,7 +177,24 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
       endDate: exp.end_date || 'Not Provided',
       description: exp.description || 'Not Provided',
     }));
-    console.log('Mapped job experiences:', jobExperiences);
+
+    // Query to fetch job seeker skills
+    const skillData = await pool.query(`
+      SELECT
+        s.skill_id, 
+        s.skill_name 
+        FROM js_skills jss
+        JOIN skills s ON jss.skill_id = s.skill_id
+      WHERE jss.user_id = $1
+    `, [userId]);
+
+    const skills = skillData.rows.map(skill => ({
+      skillId: skill.skill_id || 'Not Provided',
+      skillName: skill.skill_name || 'Not Provided',
+    }));
+
+    console.log('Fetched skills:', skills);
+
     res.json({
       jobSeeker: {
         fullName: jobSeeker.full_name || 'Not Provided',
@@ -188,7 +205,8 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
         industryName: jobSeeker.industry_name || 'Not Provided',
         address: jobSeeker.address_id || 'Not Provided',
         addressName: jobSeeker.location || 'Not Provided',
-        experiences: jobExperiences
+        experiences: jobExperiences,
+        skills: skills, // Include skills in the response
       },
     });
   } catch (error) {

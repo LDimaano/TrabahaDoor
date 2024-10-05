@@ -157,7 +157,6 @@ function ProfileEditForm() {
   };
    // Fetch profile data when component mounts
   useEffect(() => {
-    // Example of how to access experiences and skills
     const fetchProfileData = async () => {
       try {
         const response = await fetch(`http://localhost:5000/api/jobseekers/fetchjobseeker-profile/${userId}`);
@@ -176,20 +175,35 @@ function ProfileEditForm() {
         
         // Set industry
         setIndustry({ value: data.jobSeeker.industry, label: data.jobSeeker.industryName });
+    
 
-        setExperience(data.jobSeeker.experiences || []);
+      
+        const formattedExperiences = data.jobSeeker.experiences.map(exp => ({
+          jobTitle: { value: exp.jobTitleId, label: exp.jobTitleName },
+          salaryRange: { value: exp.salary, label: exp.salary },
+          company: exp.companyName || '',
+          location: exp.location || '',
+          startDate: new Date(exp.startDate).toISOString().split('T')[0],
+          endDate: new Date(exp.endDate).toISOString().split('T')[0],
+          description: exp.description || '',
+        }));
 
+        setExperience(formattedExperiences);
         
     
-        // Set skills as an array of skill names or objects
-        const skillsArray = data.jobSeeker.skills.map(skill => ({ value: skill.skillId, label: skill.skillId })) || [];
+        const skillsArray = data.jobSeeker.skills.map(skill => ({
+          value: skill.skillId, 
+          label: skill.skillName 
+        })) || [];
+        
         setSkills(skillsArray);
         
       } catch (error) {
         console.error('Error fetching profile data:', error);
         setError('Failed to load profile data.');
       }
-    };    
+    };
+    
 
     const fetchSkills = async () => {
       try {
@@ -421,24 +435,28 @@ function ProfileEditForm() {
           ))}
           <button type="button" className="btn btn-primary" onClick={handleAddExperience}>Add Experience</button>
         </div>
-  
+
         <div className="mb-4 border p-4">
-          <h3>Skills</h3>
-          {skills.map((skill, index) => (
-            <div key={index} className="d-flex align-items-center mb-2">
-              <Select
-                options={availableSkills}
-                value={skill}
-                onChange={selectedOption => handleSkillChange(index, selectedOption)}
-                className="me-2"
-                required
-              />
-              <button type="button" className="btn btn-danger" onClick={() => handleRemoveSkill(index)}>Remove</button>
-            </div>
-          ))}
-          <button type="button" className="btn btn-primary" onClick={handleAddSkill}>Add Skill</button>
-        </div>
-  
+        <h3>Skills</h3>
+        {skills.map((skill, index) => (
+          <div key={index} className="d-flex align-items-center mb-2">
+            <input
+              type="text"
+              value={skill.label || ''} // Access skill.label for the input value
+              onChange={e => handleSkillChange(index, e.target.value)} // Update skill on change
+              className="form-control me-2"
+              required
+            />
+            <button type="button" className="btn btn-danger" onClick={() => handleRemoveSkill(index)}>
+              Remove
+            </button>
+          </div>
+        ))}
+        <button type="button" className="btn btn-primary" onClick={handleAddSkill}>
+          Add Skill
+        </button>
+      </div>
+
         {error && <div className="alert alert-danger">{error}</div>}
         <button type="submit" className="btn btn-success">Submit</button>
       </form>
