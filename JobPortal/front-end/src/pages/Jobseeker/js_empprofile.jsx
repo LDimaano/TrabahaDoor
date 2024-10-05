@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Header from '../../components/jsheader';
 import EmployerProfile from '../../components/emp_profile';
-import EmployerCard from '../../components/emp_card';
+import EmployerCard from '../../components/emp_cardjs';
 
 const MyProfile = () => {
   const navigate = useNavigate();

@@ -3,62 +3,6 @@ const router = express.Router();
 const pool = require('../db');
 
 
-router.post('/employer-profile', async (req, res) => {
-  const {
-    user_id,
-    companyName,
-    contactPerson,
-    contactNumber,
-    website,
-    industry_id,
-    companyAddress,
-    companySize,
-    foundedYear,
-    description,
-  } = req.body;
-
-
-  // Log the request body to verify data
-  console.log('Request body:', req.body);
-
-
-  // Check that user_id is provided
-  if (!user_id) {
-    return res.status(400).json({ error: 'User ID is required' });
-  }
-
-
-  try {
-    // Insert the data into the profiles table and return the inserted row
-    const newEmpProfile = await pool.query(
-      `INSERT INTO emp_profiles (
-        user_id, company_name, contact_person, contact_number, website, industry_id,
-        company_address, company_size, founded_year, description
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)     RETURNING *`,
-      [
-        user_id,
-        companyName,
-        contactPerson,
-        contactNumber,
-        website,
-        industry_id,
-        companyAddress,
-        companySize,
-        foundedYear,
-        description,
-      ]
-    );
-
-
-    // Send the newly created profile back as the response
-    res.json(newEmpProfile.rows[0]);
-  } catch (err) {
-    console.error('Error inserting profile:', err.message);
-    res.status(500).send('Server Error');
-  }
-});
-
 router.get('/user-infoemp', async (req, res) => {
   console.log('Session data:', req.session);
 
@@ -104,7 +48,8 @@ router.get('/user-infoemp', async (req, res) => {
   }
 });
 
-//update
+
+//fetch info for update
 router.get('/fetchemployer-profile/:userId', async (req, res) => {
   try {
     // Log the userId to see if it's being passed correctly
@@ -153,6 +98,71 @@ router.get('/fetchemployer-profile/:userId', async (req, res) => {
   }
 });
 
+//update profile
+router.put('/employer-profile/:userId', async (req, res) => {
+  const {
+    companyName,
+    contactPerson,
+    contactNumber,
+    website,
+    industry_id,
+    companyAddress,
+    companySize,
+    foundedYear,
+    description,
+  } = req.body;
+
+  const userId = req.params.userId;
+
+  // Log the request body to verify data
+  console.log('Request body for update:', req.body);
+
+  // Check that userId is provided
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  try {
+    // Update the data in the profiles table
+    const updatedEmpProfile = await pool.query(
+      `UPDATE emp_profiles SET
+        company_name = $1,
+        contact_person = $2,
+        contact_number = $3,
+        website = $4,
+        industry_id = $5,
+        company_address = $6,
+        company_size = $7,
+        founded_year = $8,
+        description = $9
+      WHERE user_id = $10
+      RETURNING *`,
+      [
+        companyName,
+        contactPerson,
+        contactNumber,
+        website,
+        industry_id,
+        companyAddress,
+        companySize,
+        foundedYear,
+        description,
+        userId
+      ]
+    );
+
+    // Check if the update was successful
+    if (updatedEmpProfile.rowCount === 0) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+
+    // Send the updated profile back as the response
+    res.json(updatedEmpProfile.rows[0]);
+  } catch (err) {
+    console.error('Error updating profile:', err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
 
 router.get('/employerprofile/:userId', async (req, res) => {

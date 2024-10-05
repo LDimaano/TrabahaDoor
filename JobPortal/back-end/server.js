@@ -87,6 +87,32 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+app.post('/api/update-profile-picture/:userId', upload.single('profilePicture'), (req, res) => {
+  const userId = req.params.userId;
+
+  // Check if a file was uploaded
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
+  // Construct the full URL for the uploaded file
+  const profilePictureUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+
+  // Update the database with the new profile picture URL
+  const query = 'UPDATE profilepictures SET profile_picture_url = $1 WHERE user_id = $2';
+  const values = [profilePictureUrl, userId];
+
+  pool.query(query, values)
+    .then(() => {
+      res.status(200).json({ profilePictureUrl });
+    })
+    .catch((error) => {
+      console.error('Error updating profile picture:', error);
+      res.status(500).json({ message: 'Error updating profile picture' });
+    });
+});
+
+
 // Real-time notification route
 app.get('/api/notifications', async (req, res) => {
   const userId = req.session.user.user_id;

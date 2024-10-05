@@ -53,42 +53,47 @@ function EmployerProfileCreation() {
 
   const handleUpdate = async () => {
     const profileData = {
-      user_id: userId,
-      companyName,
-      contactPerson,
-      contactNumber,
-      website,
-      industry_id: industry?.value || '',
-      companyAddress,
-      companySize,
-      foundedYear,
-      description,
+        user_id: userId, // Ensure userId is defined correctly in your component
+        companyName,
+        contactPerson,
+        contactNumber,
+        website,
+        industry_id: industry?.value || '', // Make sure industry is defined
+        companyAddress,
+        companySize,
+        foundedYear,
+        description,
     };
 
     try {
-      const response = await fetch(`http://localhost:5000/api/employers/employer-profile/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(profileData),
-      });
+        // Update request to the API
+        const response = await fetch(`http://localhost:5000/api/employers/employer-profile/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(profileData),
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+        // Check if the response is ok
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-      const data = await response.json();
-      console.log('Profile updated successfully:', data);
+        // Parse the response data
+        const data = await response.json();
+        console.log('Profile updated successfully:', data);
 
-      setTimeout(() => {
-        navigate('/employer-dashboard');
-      }, 3000);
+        setTimeout(() => {
+            navigate('/emp_myprofile');
+        }, 1000);
     } catch (err) {
-      console.error('Update failed:', err);
-      setError('Failed to update the profile. Please try again.');
+        console.error('Update failed:', err);
+        // Set error message in state to display to the user
+        setError('Failed to update the profile. Please try again.');
     }
-  };
+};
+
 
   const fetchIndustries = async () => {
     try {
