@@ -2,13 +2,12 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { sendStatusUpdateEmail } = require('../mailer');
-const { sendContactNotificationEmail } = require('../mailer.js');
 const { spawn } = require('child_process');
 
 
 
 router.get('/applicantlist', async (req, res) => {
-  const { searchQuery, selectedIndustry } = req.query; // Unified search query
+  const { jobTitle, selectedIndustry } = req.query; // Get query parameters
 
   try {
     // Base query with initial SELECT statement
@@ -28,13 +27,14 @@ router.get('/applicantlist', async (req, res) => {
       JOIN profilepictures pp ON job_seekers.user_id = pp.user_id
     `;
 
+    // Initialize an array to hold values for prepared statements
     const values = [];
-    let whereClauses = [];
+    let whereClauses = []; // Array to hold WHERE clauses
 
-    // Search by full name or job title using a single searchQuery
-    if (searchQuery) {
-      whereClauses.push(`(job_seekers.full_name ILIKE $${values.length + 1} OR job_titles.job_title ILIKE $${values.length + 1})`);
-      values.push(`%${searchQuery}%`); // Case-insensitive search using ILIKE
+    // Check if jobTitle is provided and add to query
+    if (jobTitle) {
+      whereClauses.push(`job_titles.job_title ILIKE $${values.length + 1}`);
+      values.push(`%${jobTitle}%`);
     }
 
     // Check if selectedIndustry is provided and add to query
@@ -203,11 +203,6 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
   const { userId, jobId } = req.params;
   const { hiringStage } = req.body;
 
-  console.log('Received request to update application:');
-  console.log('User ID:', userId);
-  console.log('Job ID:', jobId);
-  console.log('Hiring Stage:', hiringStage);
-
   const allowedStages = ['Received', 'In review', 'For interview', 'Filled'];
 
   try {
@@ -221,24 +216,20 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
       return res.status(400).json({ error: `Invalid hiring stage: ${hiringStage}. Must be one of ${allowedStages.join(', ')}.` });
     }
 
-   // Step 2: Update status and notif_status in the applications table
-      let updateAppQuery = `
+    // Step 2: Update status and notif_status in the applications table
+    let updateAppQuery = `
       UPDATE applications 
       SET status = $1, notif_status = $2 
       WHERE user_id = $3 AND job_id = $4
-      `;
+    `;
+    
+    const queryParams = [hiringStage, 'new', userId, jobId];
+    const result = await pool.query(updateAppQuery, queryParams);
 
-      const queryParams = [hiringStage, 'new', userId, jobId];
-      const result = await pool.query(updateAppQuery, queryParams);
-
-      // Log the parameters and the result
-      console.log(`Updating application for userId: ${userId}, jobId: ${jobId}. Result: ${result.rowCount} rows affected.`);
-
-      // Check if the record was updated
-      if (result.rowCount === 0) {
+    // Check if the record was updated
+    if (result.rowCount === 0) {
       return res.status(404).json({ error: `No record found for userId ${userId} and jobId ${jobId}.` });
-      }
-
+    }
 
     // Step 3: If hiring stage is "Filled", update the datefilled in the joblistings table
     if (hiringStage === 'Filled') {
@@ -326,14 +317,18 @@ const getJobPostings = async (userId) => {
     return [];
   }
 
-  return rows.map(row => ({
+  // Transform job data to include only the necessary information
+  const joblistingData = rows.map(row => ({
     job_id: row.job_id,
     job_title: row.job_title,
     industry_name: row.industry_name,
     salaryrange: row.salaryrange,
     jobtype: row.jobtype,
-    required_skills: row.required_skills || []
+    required_skills: row.required_skills || [] // Ensure skills is an array
   }));
+
+  console.log(`Retrieved ${joblistingData.length} job postings for user ${userId}`);
+  return joblistingData; // Return as an array
 };
 
 const getApplicantsForJob = async (jobId) => {
@@ -382,207 +377,74 @@ const getApplicantsForJob = async (jobId) => {
   try {
     const { rows } = await pool.query(query, [jobId]);
 
-    return rows.map(row => ({
+    // Extract relevant data for the algorithm
+    const relevantData = rows.map(row => ({
       user_id: row.user_id,
       email: row.email || '',
       job_titles: row.job_titles || [],
       skills: row.skills || [],
       industry: row.industry_id,
-      full_name: row.full_name || 'No Name Provided',
+      full_name: row.full_name || 'No Name Provided', // Include full_name for matching
       phone_number: row.phone_number || '',
       status: row.status || '',
       date_applied: row.date_applied || '',
       application_id: row.application_id || ''
     }));
+
+    return relevantData;
   } catch (error) {
     console.error("Error fetching applicants for job:", error);
     throw error;
   }
 };
 
-const getSimilarApplicants = async (empUserId, jobId) => {
-  const query = `
-      SELECT 
-          ec.js_user_id, 
-          ec.emp_user_id, 
-          js.full_name, 
-          u.email, 
-          ARRAY_AGG(DISTINCT s.skill_name) AS skills, 
-          jt.job_title, 
-          pp.profile_picture_url,
-          jl.industry_id,
-          jl.job_id
-      FROM emp_contact ec
-      JOIN users u ON ec.js_user_id = u.user_id
-      JOIN js_skills jk ON u.user_id = jk.user_id
-      JOIN job_seekers js ON u.user_id = js.user_id
-      JOIN skills s ON jk.skill_id = s.skill_id
-      JOIN job_titles jt ON jt.jobtitle_id = (
-          SELECT jobtitle_id 
-          FROM job_experience 
-          WHERE user_id = u.user_id 
-          LIMIT 1
-      )
-      JOIN profilepictures pp ON pp.user_id = u.user_id
-      JOIN joblistings jl ON jl.job_id = $2
-      WHERE 
-          ec.emp_user_id != $1
-          AND s.skill_name IN (
-              SELECT skill_name 
-              FROM job_skills 
-              WHERE job_id = $2
-          )
-      GROUP BY ec.js_user_id, js.full_name, u.email, jt.job_title, pp.profile_picture_url, ec.emp_user_id, jl.industry_id, jl.job_id;
-  `;
-
-  const { rows } = await pool.query(query, [empUserId, jobId]);
-  return rows;
-};
-
 // New endpoint for recommending candidates based on jobId
 router.post('/recommend-candidates/:jobId', async (req, res) => {
   const { jobId } = req.params;
-  const userId = req.body.userId;
-  console.log(`Request received for jobId: ${jobId}, userId: ${userId}`); // Debugging line
+  const userId = req.body.userId; 
 
-  // Validate required parameters
   if (!userId || !jobId) {
-    console.log("Missing userId or jobId"); // Debugging line
     return res.status(400).json({ error: 'User ID and Job ID are required.' });
   }
-
-  let responseSent = false; // Flag to track if response has been sent
 
   try {
     const jobPostings = await getJobPostings(userId);
     const applicants = await getApplicantsForJob(jobId);
-    
-    // Get similar applicants for the specified job ID
-    const similarApplicants = await getSimilarApplicants(userId, jobId);
 
-    // Check if there are no job postings or applicants
-    if (jobPostings.length === 0) {
-      if (!responseSent) {
-        responseSent = true;
-        return res.status(404).json({ error: 'No job postings found.' });
-      }
-    }
-    if (applicants.length === 0) {
-      if (!responseSent) {
-        responseSent = true;
-        return res.status(404).json({ error: 'No applicants found.' });
-      }
+    if (jobPostings.length === 0 || applicants.length === 0) {
+      return res.status(404).json({ error: 'No job postings or applicants found.' });
     }
 
-    // Prepare data to send
-    const dataToSend = JSON.stringify({
-      job_postings: jobPostings,
-      applicants: applicants,
-      similar_applicants: similarApplicants,
-      employer_id: userId
-    });
+    const pythonProcess = spawn('python', ['python_scripts/recos_per_job.py']);
+    const dataToSend = JSON.stringify({ job_postings: jobPostings, applicants: applicants });
 
-    // Write to a temporary file and spawn Python process
-    const fs = require('fs');
-    const tmpFilePath = './temp_input.json';
-
-    fs.writeFileSync(tmpFilePath, dataToSend); // Write data to a temporary file
-    const pythonProcess = spawn('python', ['python_scripts/recos_per_job.py', tmpFilePath]);
-
-    console.log("Data sent to Python:", dataToSend);  // Debugging line
+    pythonProcess.stdin.write(dataToSend + '\n');
+    pythonProcess.stdin.end();
 
     pythonProcess.stdout.on('data', (data) => {
-      console.log("Python Output:", data.toString()); // Debugging line
       try {
         const recommendations = JSON.parse(data.toString().trim());
-        if (!responseSent) {
-          responseSent = true;
-          res.json({ recommendations, similar_applicants });
-        }
+        res.json({ recommendations });
       } catch (error) {
-        if (!responseSent) {
-          responseSent = true;
-          res.status(500).json({ error: 'Error parsing recommendations.' });
-        }
+        res.status(500).json({ error: 'Error parsing recommendations.' });
       }
     });
 
     pythonProcess.stderr.on('data', (error) => {
-      console.error("Python Error Output:", error.toString()); // Debugging line
-      if (!responseSent) {
-        responseSent = true;
-        res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
-      }
+      res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
     });
 
     pythonProcess.on('exit', (code) => {
-      console.log(`Python process exited with code: ${code}`); // Debugging line
-      if (code !== 0 && !responseSent) {
-        responseSent = true;
+      if (code !== 0) {
         res.status(500).json({ error: 'Internal Server Error', details: 'Python script failed' });
       }
     });
 
   } catch (error) {
     console.error('Error generating recommendations:', error);
-    if (!responseSent) {
-      responseSent = true;
-      res.status(500).json({ error: 'Internal Server Error', details: error.message });
-    }
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-
-router.post('/contact/:user_id', async (req, res) => {
-  const { user_id: js_user_id } = req.params;
-  const emp_user_id = req.session.user.user_id;
-
-  try {
-    if (!js_user_id || !emp_user_id) {
-      return res.status(400).json({ message: "Missing user IDs." });
-    }
-
-    // Insert a new record into the emp_contact table
-    const newContact = await pool.query(
-      `INSERT INTO emp_contact (js_user_id, emp_user_id) 
-       VALUES ($1, $2) 
-       RETURNING *`,
-      [js_user_id, emp_user_id]
-    );
-
-    // Fetch jobseeker email and name from the database
-    const jobseeker = await pool.query(
-      `SELECT 
-	      u.email, 
-	      js.full_name 
-      FROM job_seekers js
-      JOIN users u ON js.user_id = u.user_id
-      WHERE js.user_id = $1`,
-      [js_user_id]
-    );
-
-    // Fetch employer name from the database
-    const employer = await pool.query(
-      `SELECT company_name FROM emp_profiles WHERE user_id = $1`,
-      [emp_user_id]
-    );
-
-    if (jobseeker.rows.length > 0 && employer.rows.length > 0) {
-      const js_email = jobseeker.rows[0].email;
-      const js_name = jobseeker.rows[0].full_name;
-      const company_name = employer.rows[0].company_name;
-
-      // Send an email to the jobseeker
-      await sendContactNotificationEmail(js_email, js_name, company_name);
-    }
-
-    // Send the newly created contact as a response
-    res.status(201).json(newContact.rows[0]);
-    
-  } catch (err) {
-    console.error('Error while inserting contact or sending email:', err.message);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 
 module.exports = router;
