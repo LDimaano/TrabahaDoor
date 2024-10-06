@@ -201,10 +201,10 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
         phoneNumber: jobSeeker.phone_number || 'Not Provided',
         dateOfBirth: jobSeeker.date_of_birth || 'Not Provided',
         gender: jobSeeker.gender || 'Not Provided',
-        industry: jobSeeker.industry_id || 'Not Provided',
-        industryName: jobSeeker.industry_name || 'Not Provided',
-        address: jobSeeker.address_id || 'Not Provided',
-        addressName: jobSeeker.location || 'Not Provided',
+        industry_id: jobSeeker.industry_id || 'Not Provided',
+        industry_name: jobSeeker.industry_name || 'Not Provided',
+        address_id: jobSeeker.address_id || 'Not Provided',
+        address_name: jobSeeker.location || 'Not Provided',
         experiences: jobExperiences,
         skills: skills, // Include skills in the response
       },
@@ -215,10 +215,93 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
   }
 });
 
+// Route to update job seeker profile, experiences, and skills
+router.put('/update-jobseeker-profile/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const {
+      fullName,
+      phoneNumber,
+      dateOfBirth,
+      gender, // Dropdown format
+      industry_id, // Dropdown format
+      address_id, // Dropdown format
+      experiences, // Array of experiences with dropdown jobTitle
+      skills // Array of skill IDs
+    } = req.body;
+
+    // Validate userId
+    if (!userId || isNaN(parseInt(userId))) {
+      return res.status(400).json({ error: 'Invalid or missing userId' });
+    }
+
+
+    // Update job seeker profile
+    await pool.query(`
+      UPDATE job_seekers
+      SET full_name = $1,
+          phone_number = $2,
+          date_of_birth = $3,
+          gender = $4,
+          industry_id = $5,
+          address_id = $6
+      WHERE user_id = $7
+    `, [fullName, phoneNumber, dateOfBirth, gender, industry_id, address_id, userId]);
+
+    // Update job experiences
+    if (experiences && Array.isArray(experiences)) {
+      for (const exp of experiences) {
+        const jobTitleValue = exp.jobTitleId?.value || null; // Extract job title value
+        if (exp.experienceId) {
+          // Update existing experience
+          await pool.query(`
+            UPDATE job_experience
+            SET jobtitle_id = $1,
+                salary = $2,
+                company = $3,
+                location = $4,
+                start_date = $5,
+                end_date = $6,
+                description = $7
+            WHERE experience_id = $8 AND user_id = $9
+          `, [jobTitleValue, exp.salary, exp.companyName, exp.location, exp.startDate, exp.endDate, exp.description, exp.experienceId, userId]);
+        } else {
+          // Insert new experience
+          await pool.query(`
+            INSERT INTO job_experience (user_id, jobtitle_id, salary, company, location, start_date, end_date, description)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+          `, [userId, jobTitleValue, exp.salary, exp.companyName, exp.location, exp.startDate, exp.endDate, exp.description]);
+        }
+      }
+    }
+
+    // Update skills
+    if (skills && Array.isArray(skills)) {
+      // Remove existing skills
+      await pool.query(`DELETE FROM js_skills WHERE user_id = $1`, [userId]);
+
+      // Insert new skills
+      for (const skillId of skills) {
+        await pool.query(`
+          INSERT INTO js_skills (user_id, skill_id)
+          VALUES ($1, $2)
+        `, [userId, skillId]);
+      }
+    }
+
+    res.json({ message: 'Job seeker profile updated successfully' });
+  } catch (error) {
+    console.error('Error updating job seeker profile:', error.message);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 router.get('/job-seeker/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
+    console.log(`userID for update: ${userId}`);
+
 
     // Query job seeker data with address location
     const jobSeekerData = await pool.query(`

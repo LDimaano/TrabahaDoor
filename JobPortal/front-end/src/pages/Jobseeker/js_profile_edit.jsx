@@ -11,7 +11,7 @@ function ProfileEditForm() {
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-  const [gender, setGender] = useState(null);
+  const [gender, setGender] = useState('');
   const [address, setAddress] = useState(null);
   const [addressOptions, setAddressOptions] = useState([]);
   const [industry, setIndustry] = useState(null);
@@ -33,177 +33,59 @@ function ProfileEditForm() {
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
 
-  const options = [
-    { value: '', label: 'Choose...' },
-    { value: 'male', label: 'Male' },
-    { value: 'female', label: 'Female' },
-    { value: 'other', label: 'Other' },
+  const genderOptions = [
+    { value: 'Male', label: 'Male' },
+    { value: 'Female', label: 'Female' },
+    { value: 'Other', label: 'Other' },
   ];
 
-  const handleSkillChange = (index, selectedOption) => {
-    const newSkills = [...skills];
-    newSkills[index] = selectedOption;
-    setSkills(newSkills);
-  };
-
-  const handleAddSkill = () => {
-    setSkills([...skills, null]);
-  };
-
-  const handleRemoveSkill = (index) => {
-    const newSkills = skills.filter((_, i) => i !== index);
-    setSkills(newSkills);
-  };
-
-  const handleExperienceChange = (index, event) => {
-    const { name, value } = event.target;
-    const newExperience = [...experience];
-    newExperience[index] = { ...newExperience[index], [name]: value };
-    setExperience(newExperience);
-  };
-
-  const handleExperienceJobTitleChange = (index, selectedOption) => {
-    const newExperience = [...experience];
-    newExperience[index] = { ...newExperience[index], jobTitle: selectedOption };
-    setExperience(newExperience);
-  };
-
-  const handleExperienceSalaryRangeChange = (index, selectedOption) => {
-    const newExperience = [...experience];
-    newExperience[index] = { ...newExperience[index], salaryRange: selectedOption };
-    setExperience(newExperience);
-  };
-
-  const handleAddExperience = () => {
-    setExperience([...experience, {
-      jobTitle: null,
-      salaryRange: '',
-      company: '',
-      location: '',
-      startDate: '',
-      endDate: '',
-      description: '',
-    }]);
-  };
-
-  const handleRemoveExperience = (index) => {
-    const newExperience = experience.filter((_, i) => i !== index);
-    setExperience(newExperience);
-  };
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    setShowModal(true); // Show confirmation modal
-  };
-
-  const handleModalSubmit = async () => {
-    setShowModal(false); // Close modal
-    await handleSubmit(); // Call the original submit function
-  };
-
-  const handleModalCancel = () => {
-    setShowModal(false); // Close modal
-  };
-
-  const handleSubmit = async () => {
-    // Ensure user ID is available
-    const user_id = userId;
-
-    // Continue with profile data submission
-    const profileData = {
-      user_id,
-      fullName,
-      phoneNumber,
-      dateOfBirth,
-      gender,
-      address_id: address?.value || '',
-      industry_id: industry?.value || '',
-      skills: skills.map(skill => skill?.value || ''),
-      experience: experience.map(exp => ({
-        jobTitle: exp.jobTitle?.value || '',
-        salary: exp.salaryRange?.value || '',
-        company: exp.company,
-        location: exp.location,
-        startDate: exp.startDate,
-        endDate: exp.endDate,
-        description: exp.description,
-      })),
-      profile_picture_url: '' // Remove photo handling
-    };
-
-    try {
-      const response = await fetch(`http://localhost:5000/api/jobseekers/profile/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(profileData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const responseBody = await response.json();
-      console.log('Profile updated successfully:', responseBody);
-
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-    } catch (err) {
-      console.error('Submission failed:', err);
-      setError('Failed to submit the profile. Please try again.');
-    }
-  };
-   // Fetch profile data when component mounts
   useEffect(() => {
+    if (!userId) return;
     const fetchProfileData = async () => {
       try {
         const response = await fetch(`http://localhost:5000/api/jobseekers/fetchjobseeker-profile/${userId}`);
         if (!response.ok) throw new Error('Failed to fetch profile data');
         const data = await response.json();
-    
-        setFullName(data.jobSeeker.fullName || '');
-        setPhoneNumber(data.jobSeeker.phoneNumber || '');
-    
-        // Format date properly
-        const date = new Date(data.jobSeeker.dateOfBirth);
-        setDateOfBirth(date.toISOString().split('T')[0]);
-    
-        setGender({ value: data.jobSeeker.gender, label: data.jobSeeker.gender });
-        setAddress({ value: data.jobSeeker.address, label: data.jobSeeker.addressName });
-        
-        // Set industry
-        setIndustry({ value: data.jobSeeker.industry, label: data.jobSeeker.industryName });
-    
 
-      
-        const formattedExperiences = data.jobSeeker.experiences.map(exp => ({
-          jobTitle: { value: exp.jobTitleId, label: exp.jobTitleName },
-          salaryRange: { value: exp.salary, label: exp.salary },
-          company: exp.companyName || '',
-          location: exp.location || '',
-          startDate: new Date(exp.startDate).toISOString().split('T')[0],
-          endDate: new Date(exp.endDate).toISOString().split('T')[0],
-          description: exp.description || '',
-        }));
+        if (data.jobSeeker) {
+          setFullName(data.jobSeeker.fullName || '');
+          setPhoneNumber(data.jobSeeker.phoneNumber || '');
+          const date = new Date(data.jobSeeker.dateOfBirth);
+          setDateOfBirth(date.toISOString().split('T')[0]);
+          setGender(data.jobSeeker.gender || ''); 
+          setAddress({ value: data.jobSeeker.address_id,
+            label: data.jobSeeker.address_name
+            
+          });
+          setIndustry({ value: data.jobSeeker.industry_id,
+            label: data.jobSeeker.industry_name
+           
+          });
 
-        setExperience(formattedExperiences);
-        
-    
-        const skillsArray = data.jobSeeker.skills.map(skill => ({
-          value: skill.skillId, 
-          label: skill.skillName 
-        })) || [];
-        
-        setSkills(skillsArray);
-        
+          const formattedExperiences = data.jobSeeker.experiences.map(exp => ({
+            jobTitle: { value: exp.jobTitleId, label: exp.jobTitleName },
+            salaryRange: { value: exp.salary, label: exp.salary },
+            company: exp.companyName || '',
+            location: exp.location || '',
+            startDate: new Date(exp.startDate).toISOString().split('T')[0],
+            endDate: new Date(exp.endDate).toISOString().split('T')[0],
+            description: exp.description || '',
+          }));
+          setExperience(formattedExperiences);
+
+          const skillsArray = data.jobSeeker.skills.map(skill => ({
+            value: skill.skillId,
+            label: skill.skillName,
+          })) || [];
+          setSkills(skillsArray);
+        } else {
+          setError('No profile data found.');
+        }
       } catch (error) {
         console.error('Error fetching profile data:', error);
         setError('Failed to load profile data.');
       }
     };
-    
 
     const fetchSkills = async () => {
       try {
@@ -276,209 +158,245 @@ function ProfileEditForm() {
     fetchIndustries();
   }, [userId]);
 
+  const handleSkillChange = (index, selectedOption) => {
+    const newSkills = [...skills];
+    newSkills[index] = selectedOption;
+    setSkills(newSkills);
+  };
+
+  const handleAddSkill = () => {
+    setSkills([...skills, { value: '', label: '' }]);
+  };
+
+  const handleRemoveSkill = (index) => {
+    const newSkills = skills.filter((_, i) => i !== index);
+    setSkills(newSkills);
+  };
+
+  const handleExperienceChange = (index, event) => {
+    const { name, value } = event.target;
+    const newExperience = [...experience];
+    newExperience[index] = { ...newExperience[index], [name]: value };
+    setExperience(newExperience);
+  };
+
+  const handleExperienceJobTitleChange = (index, selectedOption) => {
+    const newExperience = [...experience];
+    newExperience[index] = { ...newExperience[index], jobTitle: selectedOption };
+    setExperience(newExperience);
+  };
+
+  const handleExperienceSalaryRangeChange = (index, selectedOption) => {
+    const newExperience = [...experience];
+    newExperience[index] = { ...newExperience[index], salaryRange: selectedOption };
+    setExperience(newExperience);
+  };
+
+  const handleAddExperience = () => {
+    setExperience([...experience, {
+      jobTitle: null,
+      salaryRange: '',
+      company: '',
+      location: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+    }]);
+  };
+
+  const handleRemoveExperience = (index) => {
+    const newExperience = experience.filter((_, i) => i !== index);
+    setExperience(newExperience);
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setShowModal(true);
+  };
+
+  const handleModalSubmit = async () => {
+    setShowModal(false);
+    await handleSubmit();
+  };
+
+  const handleModalCancel = () => {
+    setShowModal(false);
+  };
+
+  const handleSubmit = async () => {
+    const user_id = sessionStorage.getItem('user_id');
+
+    const profileData = {
+      user_id,
+      fullName,
+      phoneNumber,
+      dateOfBirth,
+      gender,
+      address_id: address?.value || '',
+      industry_id: industry?.value || '',
+      skills: skills.map(skill => skill?.value || ''),
+      experience: experience.map(exp => ({
+        jobTitle: exp.jobTitle?.value || '',
+        salary: exp.salaryRange?.value || '',
+        company: exp.company,
+        location: exp.location,
+        startDate: exp.startDate,
+        endDate: exp.endDate,
+        description: exp.description,
+      })),
+      profile_picture_url: ''
+    };
+
+    console.log('Profile Data being sent:', profileData);
+      console.log('Address:', address);
+      console.log('Industry:', industry);
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/jobseekers/update-jobseeker-profile/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profileData),
+      });
+      if (!response.ok) throw new Error('Failed to update profile');
+      console.log('Profile updated successfully!');
+      navigate(`/js_myprofile`);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setError('Failed to update profile.');
+    }
+  };
+
   return (
-    <div className="container mt-4">
-      <h1 className="text-center">Update your Profile</h1>
-      <h5 className="text-center">Let us know more about you</h5>
+    <div className="container">
+      <h1>Edit Profile</h1>
+      {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleFormSubmit}>
-        <div className="mb-4 border p-4">
-          <h3>Personal Details</h3>
-          <div className="mb-3">
-            <label htmlFor="fullName" className="form-label">Full Name</label>
-            <input
-              type="text"
-              className="form-control"
-              id="fullName"
-              value={fullName}
-              onChange={e => setFullName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
-            <input
-              type="tel"
-              className="form-control"
-              id="phoneNumber"
-              value={phoneNumber}
-              onChange={e => setPhoneNumber(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="dateOfBirth" className="form-label">Date of Birth</label>
-            <input
-              type="date"
-              className="form-control"
-              id="dateOfBirth"
-              value={dateOfBirth}
-              onChange={e => setDateOfBirth(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="gender" className="form-label">Gender</label>
-            <Select
-              id="gender"
-              value={gender}
-              onChange={setGender}
-              options={options}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="address" className="form-label">Address</label>
-            <Select
-              id="address"
-              options={addressOptions}
-              value={address}
-              onChange={setAddress}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="industry" className="form-label">Industry</label>
-            <Select
-              id="industry"
-              options={industryOptions}
-              value={industry}
-              onChange={setIndustry}
-              required
-            />
-          </div>
+        <div className="mb-3">
+          <label className="form-label">Full Name</label>
+          <input type="text" className="form-control" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
         </div>
-  
-        <div className="mb-4 border p-4">
-          <h3>Experience</h3>
+        <div className="mb-3">
+          <label className="form-label">Phone Number</label>
+          <input type="tel" className="form-control" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Date of Birth</label>
+          <input type="date" className="form-control" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} required />
+        </div>
+        <div className="mb-3">
+            <label htmlFor="gender" className="form-label">Gender</label>
+            <select
+                id="gender"
+                className="form-select"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                required
+            >
+                <option value="" disabled>Select gender</option>
+                {genderOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                        {option.label}
+                    </option>
+                ))}
+            </select>
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Address</label>
+          <Select
+            id="address"
+            value={address}
+            onChange={setAddress}
+            options={addressOptions}
+            isClearable
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Industry</label>
+          <Select
+            id="industry"
+            options={industryOptions}
+            value={industry}
+            onChange={setIndustry}
+            placeholder="Select Industry"
+            isClearable
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <h4>Experience</h4>
           {experience.map((exp, index) => (
-            <div key={index} className="mb-3">
-              <h5>Experience {index + 1}</h5>
-              <div className="mb-2">
-                <label htmlFor={`jobTitle${index}`} className="form-label">Job Title</label>
-                <Select
-                  options={availableJobTitles}
-                  value={exp.jobTitle}
-                  onChange={selectedOption => handleExperienceJobTitleChange(index, selectedOption)}
-                  required
-                />
+            <div key={index} className="border p-3 mb-2">
+              <label>Job Title</label>
+              <Select
+                value={exp.jobTitle}
+                onChange={(selectedOption) => handleExperienceJobTitleChange(index, selectedOption)}
+                options={availableJobTitles}
+                required
+              />
+              <label>Salary Range</label>
+              <Select
+                value={exp.salaryRange}
+                onChange={(selectedOption) => handleExperienceSalaryRangeChange(index, selectedOption)}
+                options={salaryRanges}
+                required
+              />
+              <div className="mb-3">
+                <label>Company</label>
+                <input type="text" name="company" className="form-control" value={exp.company} onChange={(e) => handleExperienceChange(index, e)} required />
               </div>
-              <div className="mb-2">
-                <label htmlFor={`salaryRange${index}`} className="form-label">Salary Range</label>
-                <Select
-                  options={salaryRanges}
-                  value={exp.salaryRange}
-                  onChange={selectedOption => handleExperienceSalaryRangeChange(index, selectedOption)}
-                  required
-                />
+              <div className="mb-3">
+                <label>Location</label>
+                <input type="text" name="location" className="form-control" value={exp.location} onChange={(e) => handleExperienceChange(index, e)} required />
               </div>
-              <div className="mb-2">
-                <label htmlFor={`company${index}`} className="form-label">Company</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id={`company${index}`}
-                  name="company"
-                  value={exp.company}
-                  onChange={event => handleExperienceChange(index, event)}
-                  required
-                />
+              <div className="mb-3">
+                <label>Start Date</label>
+                <input type="date" name="startDate" className="form-control" value={exp.startDate} onChange={(e) => handleExperienceChange(index, e)} required />
               </div>
-              <div className="mb-2">
-                <label htmlFor={`location${index}`} className="form-label">Location</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id={`location${index}`}
-                  name="location"
-                  value={exp.location}
-                  onChange={event => handleExperienceChange(index, event)}
-                  required
-                />
+              <div className="mb-3">
+                <label>End Date</label>
+                <input type="date" name="endDate" className="form-control" value={exp.endDate} onChange={(e) => handleExperienceChange(index, e)} required />
               </div>
-              <div className="mb-2">
-                <label htmlFor={`startDate${index}`} className="form-label">Start Date</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id={`startDate${index}`}
-                  name="startDate"
-                  value={exp.startDate}
-                  onChange={event => handleExperienceChange(index, event)}
-                  required
-                />
-              </div>
-              <div className="mb-2">
-                <label htmlFor={`endDate${index}`} className="form-label">End Date</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id={`endDate${index}`}
-                  name="endDate"
-                  value={exp.endDate}
-                  onChange={event => handleExperienceChange(index, event)}
-                  required
-                />
-              </div>
-              <div className="mb-2">
-                <label htmlFor={`description${index}`} className="form-label">Description</label>
-                <textarea
-                  className="form-control"
-                  id={`description${index}`}
-                  name="description"
-                  value={exp.description}
-                  onChange={event => handleExperienceChange(index, event)}
-                  required
-                />
+              <div className="mb-3">
+                <label>Description</label>
+                <textarea name="description" className="form-control" value={exp.description} onChange={(e) => handleExperienceChange(index, e)} required />
               </div>
               <button type="button" className="btn btn-danger" onClick={() => handleRemoveExperience(index)}>Remove Experience</button>
             </div>
           ))}
           <button type="button" className="btn btn-primary" onClick={handleAddExperience}>Add Experience</button>
         </div>
-
-        <div className="mb-4 border p-4">
-        <h3>Skills</h3>
-        {skills.map((skill, index) => (
-          <div key={index} className="d-flex align-items-center mb-2">
-            <input
-              type="text"
-              value={skill.label || ''} // Access skill.label for the input value
-              onChange={e => handleSkillChange(index, e.target.value)} // Update skill on change
-              className="form-control me-2"
-              required
-            />
-            <button type="button" className="btn btn-danger" onClick={() => handleRemoveSkill(index)}>
-              Remove
-            </button>
-          </div>
-        ))}
-        <button type="button" className="btn btn-primary" onClick={handleAddSkill}>
-          Add Skill
-        </button>
-      </div>
-
-        {error && <div className="alert alert-danger">{error}</div>}
-        <button type="submit" className="btn btn-success">Submit</button>
+        <div className="mb-3">
+          <h4>Skills</h4>
+          {skills.map((skill, index) => (
+            <div key={index} className="border p-3 mb-2">
+              <Select
+                value={skill}
+                onChange={(selectedOption) => handleSkillChange(index, selectedOption)}
+                options={availableSkills}
+              />
+              <button type="button" className="btn btn-danger" onClick={() => handleRemoveSkill(index)}>Remove Skill</button>
+            </div>
+          ))}
+          <button type="button" className="btn btn-primary" onClick={handleAddSkill}>Add Skill</button>
+        </div>
+        <button type="submit" className="btn btn-success">Save Changes</button>
       </form>
-  
+
       <Modal show={showModal} onHide={handleModalCancel}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Submission</Modal.Title>
+          <Modal.Title>Confirm Changes</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <p>Are you sure you want to submit your profile?</p>
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to save the changes?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalCancel}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleModalSubmit}>
-            Confirm
-          </Button>
+          <Button variant="secondary" onClick={handleModalCancel}>Cancel</Button>
+          <Button variant="primary" onClick={handleModalSubmit}>Confirm</Button>
         </Modal.Footer>
       </Modal>
     </div>
   );
- }  
+}
 
 export default ProfileEditForm;
