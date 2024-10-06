@@ -76,6 +76,135 @@ const getEmployerEmailByJobId = async (jobId) => {
   return result.rows[0]; // Return the entire row (email, job_title, full_name)
 };
 
+//fetch jobinformation
+router.get('/fetch-jobinfo/:job_id', async (req, res) => {
+  try {
+    const { job_id } = req.params;
+    console.log('Received jobId:', job_id);
+
+    // Validate job_id
+    if (!job_id || isNaN(parseInt(job_id))) {
+      return res.status(400).json({ error: 'Invalid or missing job_id' });
+    }
+
+    const jobInfo = await pool.query(`
+      SELECT 
+        jl.*,
+        i.industry_name,
+        jt.job_title
+      FROM joblistings jl
+      JOIN industries i ON jl.industry_id = i.industry_id
+      JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
+      WHERE job_id = $1
+      `,[job_id]);
+
+    console.log('Fetched job info data:', jobInfo.rows);
+
+    const JobDescription = jobInfo.rows[0] || {};
+
+    // Query to fetch skills
+    const jobSkill = await pool.query(`
+      SELECT
+        js.skill_id,
+        s.skill_name
+      FROM job_skills js
+      JOIN skills s ON js.skill_id = s.skill_id
+      WHERE job_id = $1
+    `, [job_id]);
+
+    const skills = jobSkill.rows.map(skill => ({
+      skillId: skill.skill_id || 'Not Provided',
+      skillName: skill.skill_name || 'Not Provided',
+    }));
+    console.log('Fetched skills:', skills);
+
+    res.json({
+      JobDescription: {
+        job_id: JobDescription.job_id || 'Not Provided',
+        jobtitle_id: JobDescription.jobtitle_id  || 'Not Provided',
+        jobtitle_name:  JobDescription.job_title || 'Not Provided',
+        industry_id:  JobDescription.industry_id || 'Not Provided',
+        industry_name:   JobDescription.industry_name || 'Not Provided',
+        salary:   JobDescription.salaryrange || 'Not Provided',
+        jobtype:    JobDescription.jobtype || 'Not Provided',
+        responsibilities:  JobDescription.responsibilities || 'Not Provided',
+        description:   JobDescription.jobdescription || 'Not Provided',
+        qualifications:   JobDescription.qualifications || 'Not Provided',
+        skills: skills, 
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching jobInfo:', error.message);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+//update joblistings
+router.put('/updatejoblistings/:job_id', async (req, res) => {
+  const {
+    jobtitle_id,
+    industry_id,
+    SalaryRange,
+    skills,
+    Responsibilities,
+    JobDescription,
+    Qualifications,
+    JobType,
+    user_id
+  } = req.body;
+
+  const { job_id } = req.params;
+  console.log(`Job ID for update: ${job_id}`);
+
+  const userId = user_id
+  console.log(`userID for update: ${userId}`);
+
+  try {
+    // Update the job listing in the joblistings table
+    const updateJob = `
+      UPDATE joblistings 
+      SET jobtitle_id = $1, industry_id = $2, salaryrange = $3, responsibilities = $4, 
+      jobdescription = $5, qualifications = $6, jobtype = $7
+      WHERE job_id = $8 
+      RETURNING *;
+    `;
+
+    const jobResult = await pool.query(updateJob, [
+      jobtitle_id,
+      industry_id,
+      SalaryRange,
+      Responsibilities,
+      JobDescription,
+      Qualifications,
+      JobType,
+      job_id,
+    ]);
+
+    // If no rows are returned, job doesn't exist or user is not authorized
+    if (jobResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Job not found or unauthorized action.' });
+    }
+
+    // Update job skills if needed (assuming you have a separate job_skills table)
+    if (skills.length > 0) {
+      // First delete existing skills related to the job
+      await pool.query('DELETE FROM job_skills WHERE job_id = $1', [job_id]);
+
+      // Insert updated skills with user_id
+      const insertSkillsQuery = `
+        INSERT INTO job_skills (job_id, skill_id, user_id) 
+        SELECT $1, unnest($2::int[]), $3;
+      `;
+      await pool.query(insertSkillsQuery, [job_id, skills, userId]);
+    }
+
+    res.json({ message: 'Job updated successfully', job: jobResult.rows[0] });
+  } catch (error) {
+    console.error('Error updating job:', error);
+    res.status(500).json({ error: 'Failed to update job' });
+  }
+});
+
 
 router.post('/applications', async (req, res) => {
   const { jobId, user_id, additionalInfo } = req.body;
@@ -118,9 +247,7 @@ router.post('/applications', async (req, res) => {
   }
 });
 
-
 //check if applicant already applied
-
 router.post('/applications/check', async (req, res) => {
   const { user_id, jobId } = req.body;
 

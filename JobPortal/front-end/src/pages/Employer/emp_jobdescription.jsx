@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import Header from '../../components/emp_header';
 import JobContent from '../../components/jobcontent';
 import JobDetails from '../../components/jobdetails';
@@ -15,6 +15,10 @@ const JobDescription = () => {
 
   const handleBack = () => {
     navigate(-1); 
+  };
+
+  const handleUpdateClick = () => {
+    navigate(`/jobpostingupdate/${jobData.job_id}`);
   };
 
   useEffect(() => {
@@ -62,11 +66,22 @@ const JobDescription = () => {
             className="me-4"
           />
           <div>
-            <h1>{jobData.job_title}</h1>
-            <div className="d-flex flex-column">
-              <span className="text-muted">{jobData.company_name}</span>
-              <span>{jobData.industry}</span>
-              <span>{jobData.job_type}</span>
+            <div>
+              <div className="d-flex align-items-center">
+                <h1>{jobData.job_title}</h1>
+                <button 
+                  onClick={handleUpdateClick} 
+                  className="btn btn-link p-0 ms-3"
+                  aria-label="Update Job"
+                >
+                  <FontAwesomeIcon icon={faPencilAlt} />
+                </button>
+              </div>
+              <div className="d-flex flex-column">
+                <span className="text-muted">{jobData.company_name}</span>
+                <span>{jobData.industry}</span>
+                <span>{jobData.job_type}</span>
+              </div>
             </div>
           </div>
         </div>
