@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Header from '../../components/empheader';
 import SearchForm from '../../components/searchform_emp';
 import CandidateList from '../../components/candidatelist';
-import Pagination from '../../components/pagination';
 
 function HomeEmployer() {
   const [searchParams, setSearchParams] = useState({});
@@ -62,8 +61,6 @@ function HomeEmployer() {
             <CandidateList searchParams={searchParams} isRecommended={activeTab === 'recommended'} />
           </div>
         </div>
-        {/* Placeholder for pagination component */}
-        <Pagination />
       </main>
     </div>
   );

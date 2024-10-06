@@ -9,7 +9,7 @@ const ApplicantDashboard = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [listingsPerPage, setListingsPerPage] = useState(8); 
+  const [listingsPerPage, setListingsPerPage] = useState(5); 
   const [error, setError] = useState(null);
 
   useEffect(() => {

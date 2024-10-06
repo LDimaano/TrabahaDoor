@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/emp_side';
 import Header from '../../components/emp_header';
-import Pagination from '../../components/emp_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import ApplicantJoblist from '../../components/emp_joblist';
@@ -95,7 +94,6 @@ const ApplicantDashboard = () => {
             </div>
           </div>
           <ApplicantJoblist currentListings={currentListings} />
-          <Pagination listingsPerPage={listingsPerPage} totalListings={filteredListings.length} paginate={paginate} currentPage={currentPage} />
         </section>
       </main>
     </div>

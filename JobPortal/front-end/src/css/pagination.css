@@ -1,0 +1,29 @@
+/* Add this CSS to your stylesheet */
+.pagination-container {
+    margin-top: 20px; /* Add space between the table and pagination */
+    display: flex;
+    justify-content: center;
+  }
+  
+  .pagination .page-item.active .page-link {
+    background-color: #007bff; /* Blue background for active page */
+    border-color: #007bff;     /* Blue border for active page */
+    color: white;
+  }
+  
+  .pagination .page-link {
+    color: #007bff; /* Blue color for page numbers */
+  }
+  
+  .pagination .page-link:hover {
+    color: #0056b3; /* Darker blue on hover */
+  }
+  
+  .pagination .page-link {
+    padding: 0.5rem 0.75rem;
+    margin-left: 0.125rem;
+    margin-right: 0.125rem;
+    border-radius: 0.25rem;
+    border: 1px solid #dee2e6;
+  }
+  

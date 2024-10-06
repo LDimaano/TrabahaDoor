@@ -3,7 +3,6 @@ import Header from '../../components/jsheader';
 import SearchForm from '../../components/searchform';
 import FilterSection from '../../components/filtersection';
 import JobList from '../../components/joblist';
-import Pagination from '../../components/pagination';
 
 function HomeJobSeeker() {
   const [filters, setFilters] = useState({
@@ -82,7 +81,6 @@ function HomeJobSeeker() {
             <JobList filters={filters} searchQuery={searchQuery} userSkills={userSkills} isRecommended={activeTab === 'recommended'} />
           </div>
         </div>
-        <Pagination />
       </main>
     </div>
   );
