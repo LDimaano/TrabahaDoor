@@ -168,7 +168,6 @@ CREATE TABLE archived_joblistings (
     datecreated TIMESTAMP,
     datefilled TIMESTAMP,
     archived_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (jobtitle_id) REFERENCES job_titles(jobtitle_id) ON DELETE CASCADE,
     FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
 );
@@ -179,9 +178,8 @@ CREATE TABLE archived_job_skills (
     skill_id INTEGER,
     user_id INTEGER,
     archived_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (job_id) REFERENCES archived_joblistings(job_id) ON DELETE CASCADE,
-    FOREIGN KEY (skill_id) REFERENCES skills(skill_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+    FOREIGN KEY (job_id) REFERENCES archived_joblistings(job_id),
+    FOREIGN KEY (skill_id) REFERENCES skills(skill_id)
     );
 
 CREATE TABLE archived_job_seekers (
@@ -211,6 +209,7 @@ CREATE TABLE archived_job_experience (
     archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 CREATE TABLE archived_js_skills (
     id Serial PRIMARY KEY,
     skill_id INTEGER,
@@ -230,4 +229,20 @@ CREATE TABLE archived_profilepictures (
     user_id INTEGER NOT NULL,
     profile_picture_url VARCHAR(255) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES archived_users(user_id)
+);
+
+CREATE TABLE archived_emp_profiles (
+    empid SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    company_name VARCHAR(255) NOT NULL,
+    contact_person VARCHAR(255),
+    contact_number VARCHAR(20),
+    website VARCHAR(255),
+    industry_id INT,
+    company_address TEXT,
+    company_size VARCHAR(50),
+    founded_year INTEGER,
+    description TEXT,
+    archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
 );

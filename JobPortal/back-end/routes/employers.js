@@ -428,7 +428,6 @@ router.get('/jsemployerprofile/:userId', async (req, res) => {
 });
 
 //delete joblistings and put it to archive joblistings
-
 router.delete('/deljoblistings/:jobId', async (req, res) => {
   const { jobId } = req.params;
   console.log(`Deleting job with ID: ${jobId}`);
@@ -458,6 +457,102 @@ router.delete('/deljoblistings/:jobId', async (req, res) => {
   } catch (error) {
       console.error('Error archiving and deleting job listing:', error);
       res.status(500).json({ error: 'An error occurred while deleting the job listing' });
+  }
+});
+
+
+async function deleteUserAndArchive(userId, password) {
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    // Verify password
+    const res = await client.query('SELECT password FROM users WHERE user_id = $1', [userId]);
+    if (res.rows.length === 0 || res.rows[0].password !== password) {
+      throw new Error('Invalid password');
+    }
+
+    // Archive employer profiles data
+    await client.query(`
+      INSERT INTO archived_emp_profiles (user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description)
+      SELECT user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description
+      FROM emp_profiles
+      WHERE user_id = $1
+    `, [userId]);
+
+    // Archive users data
+    await client.query(`
+      INSERT INTO archived_users (user_id, email, password, usertype)
+      SELECT user_id, email, password, usertype
+      FROM users
+      WHERE user_id = $1
+    `, [userId]);
+
+    // Archive profile pictures data
+    await client.query(`
+      INSERT INTO archived_profilepictures (user_id, profile_picture_url)
+      SELECT user_id, profile_picture_url
+      FROM profilepictures
+      WHERE user_id = $1
+    `, [userId]);
+
+    // Archive existing Joblisting
+    await client.query(`
+      INSERT INTO archived_joblistings (job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled)
+      SELECT job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled
+      FROM joblistings
+      WHERE user_id = $1
+    `, [userId]);
+
+    // Archive existing job_skills
+    await client.query(`
+      INSERT INTO archived_job_skills (job_id, skill_id, user_id)
+      SELECT job_id, skill_id, user_id
+      FROM job_skills
+      WHERE user_id = $1
+    `, [userId]);
+
+    // Delete from dependent tables first
+    await client.query('DELETE FROM job_skills WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM joblistings WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM emp_profiles WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM profilepictures WHERE user_id = $1', [userId]);
+
+    // Delete from users table last
+    await client.query('DELETE FROM users WHERE user_id = $1', [userId]);
+
+    await client.query('COMMIT');
+    return { success: true };
+  } catch (err) {
+    await client.query('ROLLBACK');
+    return { success: false, error: err.message };
+  } finally {
+    client.release();
+  }
+}
+
+
+router.delete('/delete', async (req, res) => {
+  const { userId, password } = req.body;
+
+  console.log('User ID archive:', userId);
+  console.log('Password archive:', password);
+
+  if (!userId) {
+    return res.status(401).json({ message: 'User not logged in' });
+  }
+
+  if (!password) {
+    return res.status(400).json({ message: 'Password is required' });
+  }
+
+  const result = await deleteUserAndArchive(userId, password);
+
+  if (result.success) {
+    res.status(200).json({ message: 'Account deleted successfully.' });
+  } else {
+    res.status(400).json({ message: result.error });
   }
 });
 
