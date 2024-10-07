@@ -8,7 +8,10 @@ import ProfilePictureModal from './profilepicturemodal';
 const ApplicantCard = ({ applicant }) => {
   const navigate = useNavigate();
   const [currentPhoto, setCurrentPhoto] = useState(applicant.image); // State to hold the current profile picture
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // State to control delete confirmation modal visibility
+  const [password, setPassword] = useState(''); // State to hold the entered password
+  const [errorMessage, setErrorMessage] = useState('');  // State to hold error messages
 
   const handleProfileUpdate = () => {
     const userId = sessionStorage.getItem('user_id');
@@ -23,6 +26,37 @@ const ApplicantCard = ({ applicant }) => {
   const handleUpdatePhoto = (newPhotoUrl) => {
     setCurrentPhoto(newPhotoUrl); // Update the current photo state
     setShowModal(false); // Close the modal
+  };
+
+  // Handle account deletion with password confirmation
+  const handleDeleteAccount = () => {
+    const userId = sessionStorage.getItem('user_id');
+    if (!password) {
+      setErrorMessage('Password is required to delete the account.');
+      return;
+    }
+
+    if (userId) {
+      // Make API call to delete account with password verification
+      fetch(`/api/users/delete/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }), // Send password for confirmation
+      })
+        .then(response => {
+          if (response.ok) {
+            alert('Account deleted successfully.');
+            // Clear session and navigate to home or login
+            sessionStorage.clear();
+            navigate('/login');
+          } else {
+            response.json().then(data => setErrorMessage(data.message || 'Failed to delete account.'));
+          }
+        })
+        .catch(error => console.error('Error deleting account:', error));
+    }
   };
 
   return (
@@ -68,9 +102,79 @@ const ApplicantCard = ({ applicant }) => {
         >
           Update Profile
         </button>
+        <button 
+          className="btn btn-danger mt-3" 
+          onClick={() => setShowDeleteModal(true)} // Show the delete confirmation modal
+          style={{ width: '100%' }}
+        >
+          Delete Account
+        </button>
       </section>
+
       {/* Render the modal if showModal is true */}
       {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
+      
+      {showDeleteModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            right: '0',
+            bottom: '0',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: '9999',
+          }}
+        >
+          <div 
+            style={{
+              backgroundColor: 'white',
+              padding: '20px',
+              borderRadius: '8px',
+              width: '400px',
+              maxWidth: '90%',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <h4 className="mb-3">Confirm Account Deletion</h4>
+            <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+            <p>Please enter your password to confirm.</p>
+            <input
+              type="password"
+              className="form-control mb-3"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '4px',
+                border: '1px solid #ced4da',
+              }}
+            />
+            {errorMessage && <p className="text-danger">{errorMessage}</p>}
+            <div className="d-flex justify-content-end mt-4">
+              <button 
+                className="btn btn-secondary me-2" 
+                onClick={() => setShowDeleteModal(false)}
+                style={{ padding: '10px 20px' }}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-danger" 
+                onClick={handleDeleteAccount}
+                style={{ padding: '10px 20px' }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 };
