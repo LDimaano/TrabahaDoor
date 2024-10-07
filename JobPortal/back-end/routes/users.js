@@ -99,7 +99,7 @@ router.post('/login', async (req, res) => {
         if (user.usertype === 'jobseeker') {
             return '/home_jobseeker';
         } else if (user.usertype === 'employer') {
-            return '/home_employer';
+            return '/employer_files';
         } else {
             return '/admindashboard';
         }

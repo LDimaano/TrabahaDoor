@@ -104,7 +104,7 @@ function EmployerProfileCreation() {
       console.log('Profile created successfully:', data);
 
       setTimeout(() => {
-        navigate('/login');
+        navigate('/employerfiles');
       }, 3000);
     } catch (err) {
       console.error('Submission failed:', err);

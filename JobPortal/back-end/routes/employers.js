@@ -1,6 +1,95 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const multer = require('multer');
+const path = require('path');
+const baseURL = 'http://localhost:5000'; // Change this to your production URL when deploying
+
+// Assuming you're using pg for PostgreSQL
+router.use('/documents', express.static(path.join(__dirname, 'documents')));
+
+const documentStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './documents'); // Ensure the folder exists
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname); // Create a unique file name
+  }
+});
+
+const uploadDocuments = multer({
+  storage: documentStorage
+}).fields([
+  { name: 'sec_certificate', maxCount: 1 },
+  { name: 'business_permit', maxCount: 1 },
+  { name: 'bir_certificate', maxCount: 1 },
+  { name: 'poea_license', maxCount: 1 },
+  { name: 'private_recruitment_agency_license', maxCount: 1 },
+  { name: 'contract_sub_contractor_certificate', maxCount: 1 }
+]);
+
+// Define the routes
+router.post('/upload', uploadDocuments, async (req, res) => {
+  try {
+    const user_id = req.body.userId; // Change this line to match the frontend
+
+    if (!user_id) {
+      return res.status(400).send('User ID is required');
+    }
+
+    // Construct URLs for the uploaded files
+    const sec_certificate_url = req.files.sec_certificate
+      ? `${baseURL}/documents/${req.files.sec_certificate[0].filename}`
+      : null;
+
+    const business_permit_url = req.files.business_permit
+      ? `${baseURL}/documents/${req.files.business_permit[0].filename}`
+      : null;
+
+    const bir_certificate_url = req.files.bir_certificate
+      ? `${baseURL}/documents/${req.files.bir_certificate[0].filename}`
+      : null;
+
+    const poea_license_url = req.files.poea_license
+      ? `${baseURL}/documents/${req.files.poea_license[0].filename}`
+      : null;
+
+    const private_recruitment_agency_license_url = req.files.private_recruitment_agency_license
+      ? `${baseURL}/documents/${req.files.private_recruitment_agency_license[0].filename}`
+      : null;
+
+    const contract_sub_contractor_certificate_url = req.files.contract_sub_contractor_certificate
+      ? `${baseURL}/documents/${req.files.contract_sub_contractor_certificate[0].filename}`
+      : null;
+
+    // Insert the URLs and user_id into the database
+    const query = `
+      INSERT INTO documents 
+      (user_id, sec_certificate, business_permit, bir_certificate, poea_license, private_recruitment_agency_license, contract_sub_contractor_certificate)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *`;
+
+    const values = [
+      user_id,
+      sec_certificate_url,
+      business_permit_url,
+      bir_certificate_url,
+      poea_license_url,
+      private_recruitment_agency_license_url,
+      contract_sub_contractor_certificate_url
+    ];
+
+    const result = await pool.query(query, values);
+    console.log(result); // Log the result to check what is returned
+
+    res.status(200).send(`Documents uploaded successfully for user ID: ${user_id}. Record ID: ${result.rows[0].id}`);
+  } catch (error) {
+    console.error('Error saving to database:', error);
+    res.status(500).send('Server error');
+  }
+});
+
 
 router.post('/employer-profile', async (req, res) => {
   const {
@@ -16,16 +105,13 @@ router.post('/employer-profile', async (req, res) => {
     description,
   } = req.body;
 
-
   // Log the request body to verify data
   console.log('Request body:', req.body);
-
 
   // Check that user_id is provided
   if (!user_id) {
     return res.status(400).json({ error: 'User ID is required' });
   }
-
 
   try {
     // Insert the data into the profiles table and return the inserted row
@@ -34,7 +120,8 @@ router.post('/employer-profile', async (req, res) => {
         user_id, company_name, contact_person, contact_number, website, industry_id,
         company_address, company_size, founded_year, description
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)     RETURNING *`,
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING *`,
       [
         user_id,
         companyName,
@@ -49,6 +136,11 @@ router.post('/employer-profile', async (req, res) => {
       ]
     );
 
+    // Update the user's has_uploaded_documents flag to true
+    await pool.query(
+      `UPDATE users SET has_uploaded_documents = true WHERE user_id = $1`,
+      [user_id]
+    );
 
     // Send the newly created profile back as the response
     res.json(newEmpProfile.rows[0]);

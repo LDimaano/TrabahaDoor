@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button, Form } from 'react-bootstrap';
 
@@ -15,55 +15,67 @@ const UploadDocuments = () => {
     });
 
     const navigate = useNavigate();
-    const { id } = useParams(); // Example of how you might use useParams
+    const userId = sessionStorage.getItem('userId'); // Get user ID from session storage
 
+    // Handle file change event
     const handleFileChange = (e) => {
         setFormData({
             ...formData,
-            [e.target.name]: e.target.files[0] // Store the selected file
+            [e.target.name]: e.target.files[0] // Store selected file in state
         });
     };
 
+    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault(); // Prevent default form submission
         setShowModal(true); // Show the confirmation modal
     };
 
-    const handleConfirmSubmit = () => {
-        const form = new FormData();
-
-        // Append all files to the FormData
-        for (const key in formData) {
-            if (formData[key]) {
-                form.append(key, formData[key]);
+    const handleConfirmSubmit = async () => {
+        try {
+            const form = new FormData();
+    
+            // Append all files to the FormData
+            for (const key in formData) {
+                if (formData[key]) {
+                    form.append(key, formData[key]);
+                    console.log(`Appending file: ${key} -> ${formData[key].name}`); // Log file being appended
+                }
             }
-        }
-
-        // Send the form data to the server (replace '/api/upload' with your endpoint)
-        fetch('/api/upload', {
-            method: 'POST',
-            body: form
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.text();
-        })
-        .then(data => {
+    
+            // Append the user ID
+            form.append('userId', userId);
+            console.log(`User ID: ${userId}`); // Log the user ID
+    
+            // Send the form data to the server using await
+            const response = await fetch('http://localhost:5000/api/employers/upload', { // Full backend URL
+                method: 'POST',
+                body: form
+            });
+    
+            console.log('Response status:', response.status); // Log response status
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.text(); // Wait for the response data
+            console.log('Response data:', data); // Log the response data from the server
             alert(data); // Show success message
             setShowModal(false); // Close the modal
-            navigate(`/next-page/${id}`); // Navigate to another page if needed
-        })
-        .catch(error => {
-            console.error('Error:', error);
+            navigate('/login'); // Navigate to home_employer after submission
+        } catch (error) {
+            console.error('Error:', error); // Log the error
             alert('Upload failed. Please try again.');
             setShowModal(false); // Close the modal in case of error
-        });
+        }
     };
+    
 
     return (
         <div className="container mt-5">
-              <h1 className="text-center">Required Document Upload</h1>
-              <h5 className="text-center">Ensure compliance by providing all required documents.</h5>
+            <h1 className="text-center">Required Document Upload</h1>
+            <h5 className="text-center">Ensure compliance by providing all required documents.</h5>
             <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="sec_certificate">
                     <Form.Label>SEC Certificate:</Form.Label>
@@ -95,7 +107,7 @@ const UploadDocuments = () => {
                     <Form.Control type="file" name="contract_sub_contractor_certificate" onChange={handleFileChange} required />
                 </Form.Group>
 
-                {/* Submit Button at Lower Right */}
+                {/* Submit Button */}
                 <div className="d-flex justify-content-end mt-4">
                     <Button variant="primary" type="submit">Submit</Button>
                 </div>
