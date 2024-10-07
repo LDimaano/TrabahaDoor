@@ -2,6 +2,61 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
+router.post('/employer-profile', async (req, res) => {
+  const {
+    user_id,
+    companyName,
+    contactPerson,
+    contactNumber,
+    website,
+    industry_id,
+    companyAddress,
+    companySize,
+    foundedYear,
+    description,
+  } = req.body;
+
+
+  // Log the request body to verify data
+  console.log('Request body:', req.body);
+
+
+  // Check that user_id is provided
+  if (!user_id) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+
+  try {
+    // Insert the data into the profiles table and return the inserted row
+    const newEmpProfile = await pool.query(
+      `INSERT INTO emp_profiles (
+        user_id, company_name, contact_person, contact_number, website, industry_id,
+        company_address, company_size, founded_year, description
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)     RETURNING *`,
+      [
+        user_id,
+        companyName,
+        contactPerson,
+        contactNumber,
+        website,
+        industry_id,
+        companyAddress,
+        companySize,
+        foundedYear,
+        description,
+      ]
+    );
+
+
+    // Send the newly created profile back as the response
+    res.json(newEmpProfile.rows[0]);
+  } catch (err) {
+    console.error('Error inserting profile:', err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
 router.get('/user-infoemp', async (req, res) => {
   console.log('Session data:', req.session);
@@ -371,6 +426,44 @@ router.get('/jsemployerprofile/:userId', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+//delete joblistings and put it to archive joblistings
+
+router.delete('/deljoblistings/:jobId', async (req, res) => {
+  const { jobId } = req.params;
+  console.log(`Deleting job with ID: ${jobId}`);
+  try {
+      // Archive joblistings data
+      await pool.query(`
+          INSERT INTO archived_joblistings (job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled)
+          SELECT job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled
+          FROM joblistings
+          WHERE job_id = $1
+      `, [jobId]);
+
+      // Archive job_skills data
+      await pool.query(`
+          INSERT INTO archived_job_skills (job_id, skill_id, user_id)
+          SELECT job_id, skill_id, user_id
+          FROM job_skills
+          WHERE job_id = $1
+      `, [jobId]);
+
+      // Delete job_skills, applications, and joblistings data
+      await pool.query('DELETE FROM job_skills WHERE job_id = $1', [jobId]);
+      await pool.query('DELETE FROM applications WHERE job_id = $1', [jobId]);
+      await pool.query('DELETE FROM joblistings WHERE job_id = $1', [jobId]);
+
+      res.status(200).json({ message: 'Job listing archived and deleted successfully' });
+  } catch (error) {
+      console.error('Error archiving and deleting job listing:', error);
+      res.status(500).json({ error: 'An error occurred while deleting the job listing' });
+  }
+});
+
+
+
+
 
 
 

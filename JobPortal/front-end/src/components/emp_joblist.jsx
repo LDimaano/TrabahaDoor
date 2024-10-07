@@ -11,6 +11,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
   const [listingsPerPage] = useState(5); // Set the number of listings per page
   const [showDeleteModal, setShowDeleteModal] = useState(false); // Track modal visibility
   const [selectedJobId, setSelectedJobId] = useState(null); // Track which job to delete
+  const [successMessage, setSuccessMessage] = useState(''); 
 
   // Function to navigate to the job description page using jobId
   const handleApplyClick = (jobId) => {
@@ -26,22 +27,29 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
     setShowDeleteModal(true);
   };
 
+  const handleConfirmDeleteJob= () => {
+    handleDeleteJob();
+    setShowDeleteModal(false);
+  };
+
+
   // Function to handle job deletion
   const handleDeleteJob = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/employers/joblistings/${selectedJobId}`, {
+      const response = await fetch(`http://localhost:5000/api/employers/deljoblistings/${selectedJobId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include', // If you have cookies/sessions
       });
-
+  
       if (response.ok) {
-        // Remove the job from the state
-        const updatedListings = currentListings.filter(job => job.job_id !== selectedJobId);
-        setCurrentListings(updatedListings); // Use setter to update the job list
-        setShowDeleteModal(false); // Close the modal after deletion
+        setCurrentListings((prevListings) => prevListings.filter(listing => listing.job_id !== selectedJobId));
+        setSuccessMessage('Job deleted successfully!');
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 3000);
         console.log(`Job ${selectedJobId} deleted successfully.`);
       } else {
         console.error(`Failed to delete job ${selectedJobId}: ${response.statusText}`);
@@ -49,7 +57,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
     } catch (error) {
       console.error(`Error deleting job ${selectedJobId}:`, error);
     }
-  };
+  };  
 
   // Get current listings
   const indexOfLastListing = currentPage * listingsPerPage;
@@ -62,6 +70,11 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
 
   return (
     <div className="table-responsive">
+      {successMessage && (
+        <div className="alert alert-success text-center" role="alert">
+          {successMessage}
+        </div>
+      )}
       <table className="table table-bordered">
         <thead>
           <tr>
@@ -73,38 +86,36 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
           </tr>
         </thead>
         <tbody>
-          {currentPaginatedListings.map((listing) => {
-            return (
-              <tr key={listing.job_id || listing.jobId}>
-                <td>{listing.job_title}</td>
-                <td>{new Date(listing.datecreated).toLocaleDateString()}</td>
-                <td>
-                  <button 
-                    className="btn btn-primary" 
-                    onClick={() => handleSeeApplicants(listing.job_id || listing.jobId)}
-                  >
-                    <FontAwesomeIcon icon={faEye} />
-                  </button>
-                </td>
-                <td>
-                  <button 
-                    className="btn btn-primary" 
-                    onClick={() => handleApplyClick(listing.job_id || listing.jobId)}
-                  >
-                    <FontAwesomeIcon icon={faEye} />
-                  </button>
-                </td>
-                <td>
-                  <button 
-                    className="btn btn-danger" 
-                    onClick={() => showDeleteConfirmation(listing.job_id || listing.jobId)}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
+          {currentPaginatedListings.map((listing) => (
+            <tr key={listing.job_id || listing.jobId}>
+              <td>{listing.job_title}</td>
+              <td>{new Date(listing.datecreated).toLocaleDateString()}</td>
+              <td>
+                <button 
+                  className="btn btn-primary" 
+                  onClick={() => handleSeeApplicants(listing.job_id || listing.jobId)}
+                >
+                  <FontAwesomeIcon icon={faEye} />
+                </button>
+              </td>
+              <td>
+                <button 
+                  className="btn btn-primary" 
+                  onClick={() => handleApplyClick(listing.job_id || listing.jobId)}
+                >
+                  <FontAwesomeIcon icon={faEye} />
+                </button>
+              </td>
+              <td>
+                <button 
+                  className="btn btn-danger" 
+                  onClick={() => showDeleteConfirmation(listing.job_id || listing.jobId)}
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
       
@@ -154,7 +165,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
               </button>
               <button 
                 className="btn btn-danger" 
-                onClick={handleDeleteJob}
+                onClick={handleConfirmDeleteJob}
                 style={{ padding: '10px 20px' }}
               >
                 Delete

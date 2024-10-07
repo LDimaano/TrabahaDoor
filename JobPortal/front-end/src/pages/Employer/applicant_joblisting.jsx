@@ -20,37 +20,31 @@ const ApplicantDashboard = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'include', 
+          credentials: 'include',
         });
-  
+
         if (response.status === 404) {
-          // Handle 404 status differently (e.g., do nothing)
           console.log('No job listings found (404).');
           return;
         }
-  
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-  
+
         const data = await response.json();
-        
-        // Check if data is not empty
+
         if (data && data.length > 0) {
           setJobs(data);
         }
-        // If data is empty, do nothing and keep the current jobs state
-  
       } catch (error) {
         setError(error.message);
         console.error('Error fetching job listings:', error);
       }
     };
-  
+
     fetchJobs();
   }, []);
-  
-  
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -93,7 +87,8 @@ const ApplicantDashboard = () => {
               </button>
             </div>
           </div>
-          <ApplicantJoblist currentListings={currentListings} />
+          {/* Pass setJobs to the ApplicantJoblist component */}
+          <ApplicantJoblist currentListings={currentListings} setCurrentListings={setJobs} />
         </section>
       </main>
     </div>

@@ -153,3 +153,33 @@ CREATE TABLE emp_contact (
     FOREIGN KEY (js_user_id) REFERENCES users(user_id),
     FOREIGN KEY (emp_user_id) REFERENCES users(user_id)
 );
+
+CREATE TABLE archived_joblistings (
+    archive_id SERIAL PRIMARY KEY,
+    job_id INTEGER UNIQUE,  
+    user_id INTEGER,
+    jobtitle_id INTEGER,
+    industry_id INTEGER,
+    salaryrange VARCHAR(20),
+    jobtype VARCHAR(20),
+    responsibilities TEXT,
+    jobdescription TEXT,
+    qualifications TEXT,
+    datecreated TIMESTAMP,
+    datefilled TIMESTAMP,
+    archived_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (jobtitle_id) REFERENCES job_titles(jobtitle_id) ON DELETE CASCADE,
+    FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
+);
+
+CREATE TABLE archived_job_skills (
+    archive_id SERIAL PRIMARY KEY,
+    job_id INTEGER,
+    skill_id INTEGER,
+    user_id INTEGER,
+    archived_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (job_id) REFERENCES archived_joblistings(job_id) ON DELETE CASCADE,
+    FOREIGN KEY (skill_id) REFERENCES skills(skill_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+    );
