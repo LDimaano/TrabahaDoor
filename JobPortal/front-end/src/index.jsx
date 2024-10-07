@@ -43,6 +43,7 @@ import SeeApplicantList from './pages/Admin/seeapplicantlist';
 import JsEmpProfile from './pages/Jobseeker/js_empprofile';
 import JsEmpJobListings from './pages/Jobseeker/js_empjoblisting';
 import UpdateEmpjoblist from './pages/Employer/jobpostingupdate';
+import UploadDocuments from './pages/Employer/employerfiles';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -87,6 +88,7 @@ root.render(
         <Route path="/js_profile_edit/:userId" element={<ProfileEditForm />} />
         <Route path="/e_profileupdate/:userId" element={<UpdateEmpProfile />} />
         <Route path="/jobpostingupdate/:job_id" element={<UpdateEmpjoblist />} />
+        <Route path="/employerfiles" element={<UploadDocuments />} />
       </Routes>
     </Router>
   </React.StrictMode>
