@@ -11,6 +11,7 @@ const ApplicantCard = ({ applicant }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false); // State to control delete confirmation modal visibility
   const [password, setPassword] = useState(''); // State to hold the entered password
   const [errorMessage, setErrorMessage] = useState(''); // State to hold error messages
+  const [successMessage, setSuccessMessage] = useState(''); // State to hold success messages
 
   const handleProfileUpdate = () => {
     const userId = sessionStorage.getItem('user_id'); // Retrieve userId from sessionStorage
@@ -35,27 +36,25 @@ const ApplicantCard = ({ applicant }) => {
       return;
     }
 
-    if (userId) {
-      // Make API call to delete account with password verification
-      fetch(`/api/users/delete/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ password }), // Send password for confirmation
-      })
-        .then(response => {
-          if (response.ok) {
-            alert('Account deleted successfully.');
-            // Clear session and navigate to home or login
+    fetch(`http://localhost:5000/api/jobseekers/delete`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, password }), // Send userId and password for confirmation
+    })
+      .then(response => {
+        if (response.ok) {
+          setSuccessMessage('Account deleted successfully.'); // Set success message
+          setTimeout(() => {
             sessionStorage.clear();
-            navigate('/login');
-          } else {
-            response.json().then(data => setErrorMessage(data.message || 'Failed to delete account.'));
-          }
-        })
-        .catch(error => console.error('Error deleting account:', error));
-    }
+            navigate('/'); // Navigate after showing the success message
+          }, 2000); // Delay to show success message before redirecting
+        } else {
+          response.json().then(data => setErrorMessage(data.message || 'Failed to delete account.'));
+        }
+      })
+      .catch(error => console.error('Error deleting account:', error));
   };
 
   return (
@@ -163,6 +162,7 @@ const ApplicantCard = ({ applicant }) => {
               }}
             />
             {errorMessage && <p className="text-danger">{errorMessage}</p>}
+            {successMessage && <p className="text-success">{successMessage}</p>} {/* Display success message */}
             <div className="d-flex justify-content-end mt-4">
               <button 
                 className="btn btn-secondary me-2" 

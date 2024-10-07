@@ -440,5 +440,99 @@ router.get('/jsempjoblistings/:userId', async (req, res) => {
 });
 
 
+//archive jobseeker
+async function deleteUserAndArchive(userId, password) {
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    // Verify password
+    const res = await client.query('SELECT password FROM users WHERE user_id = $1', [userId]);
+    if (res.rows.length === 0 || res.rows[0].password !== password) {
+      throw new Error('Invalid password');
+    }
+
+    // Archive job seekers data
+    await client.query(`
+      INSERT INTO archived_job_seekers (user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id)
+      SELECT user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id
+      FROM job_seekers
+      WHERE user_id = $1
+    `, [userId]);
+
+    // Archive job experience data
+    await client.query(`
+      INSERT INTO archived_job_experience (user_id, jobtitle_id, salary, company, location, start_date, end_date, description)
+      SELECT user_id, jobtitle_id, salary, company, location, start_date, end_date, description
+      FROM job_experience
+      WHERE user_id = $1
+    `, [userId]);
+
+    // Archive job skills data
+    await client.query(`
+      INSERT INTO archived_js_skills (skill_id, user_id)
+      SELECT skill_id, user_id
+      FROM js_skills
+      WHERE user_id = $1
+    `, [userId]);
+
+    // Archive users data
+    await client.query(`
+      INSERT INTO archived_users (user_id, email, password, usertype)
+      SELECT user_id, email, password, usertype
+      FROM users
+      WHERE user_id = $1
+    `, [userId]);
+
+   // Archive profile pictures data
+   await client.query(`
+    INSERT INTO archived_profilepictures (user_id, profile_picture_url)
+    SELECT user_id, profile_picture_url
+    FROM profilepictures
+    WHERE user_id = $1
+  `, [userId]);
+
+    // Delete from original tables
+    await client.query('DELETE FROM job_seekers WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM job_experience WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM js_skills WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM profilepictures WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM users WHERE user_id = $1', [userId]);
+    
+
+    await client.query('COMMIT');
+    return { success: true };
+  } catch (err) {
+    await client.query('ROLLBACK');
+    return { success: false, error: err.message };
+  } finally {
+    client.release();
+  }
+}
+
+router.delete('/delete', async (req, res) => {
+  const { userId, password } = req.body;
+
+  console.log('User ID archive:', userId);
+  console.log('Password archive:', password);
+
+  if (!userId) {
+    return res.status(401).json({ message: 'User not logged in' });
+  }
+
+  if (!password) {
+    return res.status(400).json({ message: 'Password is required' });
+  }
+
+  const result = await deleteUserAndArchive(userId, password);
+
+  if (result.success) {
+    res.status(200).json({ message: 'Account deleted successfully.' });
+  } else {
+    res.status(400).json({ message: result.error });
+  }
+});
+
 
 module.exports = router;

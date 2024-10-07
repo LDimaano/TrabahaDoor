@@ -183,3 +183,51 @@ CREATE TABLE archived_job_skills (
     FOREIGN KEY (skill_id) REFERENCES skills(skill_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     );
+
+CREATE TABLE archived_job_seekers (
+  jsid SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  full_name VARCHAR(255),
+  phone_number VARCHAR(50),
+  date_of_birth DATE,
+  gender VARCHAR(50),
+  address_id INT,
+  industry_id INT,
+  archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (address_id) REFERENCES address(address_id) ON DELETE CASCADE,
+  FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
+);
+
+CREATE TABLE archived_job_experience (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    jobtitle_id INTEGER NOT NULL,
+    salary VARCHAR(50),
+    company VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    description TEXT,
+    archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE archived_js_skills (
+    id Serial PRIMARY KEY,
+    skill_id INTEGER,
+    user_id INTEGER,
+    archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE archived_users (
+  user_id SERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  usertype usertype_enum NOT NULL
+);
+
+CREATE TABLE archived_profilepictures (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    profile_picture_url VARCHAR(255) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES archived_users(user_id)
+);
