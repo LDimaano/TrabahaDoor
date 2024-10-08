@@ -242,6 +242,8 @@ router.get('/viewemployers', async (req, res) => {
                 pp.profile_picture_url
             FROM emp_profiles e
             JOIN profilepictures pp ON e.user_id = pp.user_id
+			      JOIN users u ON e.user_id = u.user_id
+			      WHERE u.approve='yes'
             `
         );
 
@@ -568,7 +570,65 @@ router.get('/viewarchivedusers', async (req, res) => {
   }
 });
 
+router.get('/viewunapprovedemp', async (req, res) => {
+  console.log('Session data:', req.session);
 
+  if (!req.session.user) {
+      return res.status(403).json({ message: 'Not authenticated' });
+  }
+
+  try {
+      const result = await pool.query(
+          `
+      SELECT 
+        d.user_id,
+        pp.profile_picture_url,
+        e.company_name,
+        d.sec_certificate,
+        d.business_permit,
+        d.bir_certificate,
+        d.poea_license,
+        d.private_recruitment_agency_license,
+        d.contract_sub_contractor_certificate
+      FROM documents d
+      JOIN emp_profiles e ON d.user_id = e.user_id
+      JOIN profilepictures pp ON d.user_id = pp.user_id
+      JOIN users u ON d.user_id = u.user_id
+      WHERE u.approve = 'no'
+          `
+      );
+
+      res.json(result.rows);
+  } catch (error) {
+      console.error('Error fetching unapproved emp:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.put('/approve/:userId', async (req, res) => {
+  console.log('approved Session data:', req.session);
+
+  const { userId } = req.params;
+  console.log(`Approved userId: ${userId}`);
+
+  try {
+      const result = await pool.query(
+          `UPDATE users SET approve = 'yes' WHERE user_id = $1 RETURNING *`,
+          [userId]
+      );
+
+      if (result.rows.length === 0) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      console.log('User approval result:', result.rows[0]);
+
+      res.status(200).json({ message: 'Employer approved successfully', user: result.rows[0] });
+  } catch (error) {
+      console.error('Error approving employer:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+});
 
 
 

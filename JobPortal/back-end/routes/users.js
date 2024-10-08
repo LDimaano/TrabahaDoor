@@ -56,35 +56,30 @@ router.post('/submit-form', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-
   try {
     // Check if user exists in the database
     const userQuery = 'SELECT * FROM users WHERE email = $1';
     const { rows } = await pool.query(userQuery, [email]);
-
 
     // If no user is found
     if (rows.length === 0) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-
     const user = rows[0];
-
 
     // Compare the passwords
     if (password !== user.password) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-
     // Set session data
     req.session.user = {
       user_id: user.user_id,
       email: user.email,
-      usertype: user.usertype
+      usertype: user.usertype,
+      approve: user.approve // Include approve in session data
     };
-
 
     // Save session and handle redirection
     await req.session.save(err => {
@@ -93,23 +88,25 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ message: 'Session save error' });
       }
 
-
       console.log('Session created:', req.session); // Log the session
       const redirectUrl = (() => {
         if (user.usertype === 'jobseeker') {
-            return '/home_jobseeker';
+          return '/home_jobseeker';
         } else if (user.usertype === 'employer') {
-            return '/employer_files';
+          // Check the approve status for employers
+          return user.approve === 'no' ? '/waitapproval' : '/home_employer';
         } else {
-            return '/admindashboard';
+          return '/admindashboard';
         }
-    })();    
+      })();    
+
       res.json({
         redirectUrl,
         user: {
           user_id: user.user_id,
           email: user.email,
-          usertype: user.usertype
+          usertype: user.usertype,
+          approve: user.approve // Include approve in response
         }
       });
     });
@@ -118,6 +115,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 
 // Logout endpoint

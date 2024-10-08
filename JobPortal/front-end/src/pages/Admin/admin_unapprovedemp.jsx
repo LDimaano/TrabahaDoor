@@ -3,59 +3,56 @@ import Sidebar from '../../components/admin_sidepanel';
 import Pagination from '../../components/admin_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
-import Employerlist from '../../components/admin_viewemployers';
+import Userlist from '../../components/admin_viewunapprovedemp';
 
 const ApplicantDashboard = () => {
-  const [employers, setEmployers] = useState([]);
+  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [listingsPerPage, setListingsPerPage] = useState(5);
+  const [listingsPerPage, setListingsPerPage] = useState(5); 
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchEmployers = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/admin/viewemployers', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        });
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/admin/viewunapprovedemp', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        
-        // Check if data is not empty
-        if (data && data.length > 0) {
-          setEmployers(data);
-        }
-        // If data is empty, do nothing and keep the current employers state
-
-      } catch (error) {
-        setError(error.message);
-        console.error('Error fetching employers:', error);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
 
-    fetchEmployers();
+      const data = await response.json();
+
+      if (data && data.length > 0) {
+        setUsers(data); // Set users state directly
+      }
+    } catch (error) {
+      setError(error.message);
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers(); // Call fetchUsers on mount
   }, []);
-  
+
   if (error) {
     return <div>Error: {error}</div>;
   }
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to the first page after search
   };
 
-  const filteredListings = employers.filter(listing =>
-    listing.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    listing.contact_person.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredListings = users.filter(listing =>
+    (listing.full_name ? listing.full_name.toLowerCase() : "").includes(searchTerm.toLowerCase()) ||
+    (listing.company_name ? listing.company_name.toLowerCase() : "").includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastListing = currentPage * listingsPerPage;
@@ -70,7 +67,7 @@ const ApplicantDashboard = () => {
       <main className="flex-grow-1 p-4">
         <section>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <h3>Employers: {filteredListings.length}</h3>
+            <h3>Users: {filteredListings.length}</h3>
             <div className="input-group" style={{ maxWidth: '300px' }}>
               <input
                 type="text"
@@ -84,9 +81,10 @@ const ApplicantDashboard = () => {
               </button>
             </div>
           </div>
+
           {filteredListings.length > 0 ? (
             <>
-              <Employerlist currentListings={currentListings} />
+              <Userlist currentListings={currentListings} fetchUsers={fetchUsers} />
               <Pagination
                 listingsPerPage={listingsPerPage}
                 totalListings={filteredListings.length}
@@ -95,8 +93,9 @@ const ApplicantDashboard = () => {
               />
             </>
           ) : (
-            <p>No Employers Found.</p>
-          )}        </section>
+            <p>No Unapproved Employers found.</p>
+          )}
+        </section>
       </main>
     </div>
   );

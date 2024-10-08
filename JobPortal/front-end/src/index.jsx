@@ -28,6 +28,7 @@ import ApplicantProfile from './pages/Employer/applicant_profile';
 
 import EmpNotifications from './pages/Employer/emp_notifications';
 import EmpMyProfile from './pages/Employer/emp_myprofile';
+import WaitApproval from './pages/Employer/waitapproval';
 import EmpTimeToFill from './pages/Employer/emp_timetofill';
 
 import DashboardAnalytics from './pages/Admin/admindashboard';
@@ -36,6 +37,7 @@ import AdminApplicants from './pages/Admin/admin_applicants';
 import AdminJobs from './pages/Admin/admin_joblistings';
 import AdminUsers from './pages/Admin/admin_users';
 import AdminArchivedUsers from './pages/Admin/admin_archived_users';
+import AdminUnapprovedEmp from './pages/Admin/admin_unapprovedemp';
 
 import UserProfileJs from './pages/Admin/userjs_profile'; 
 import UserProfileEmp from './pages/Admin/useremp_profile';
@@ -82,8 +84,10 @@ root.render(
         <Route path="/seejoblisting/:jobId" element={<SeeJobListing/>} />
         <Route path="/admin_users" element={<AdminUsers />} /> 
         <Route path="/admin_archived_users" element={<AdminArchivedUsers />} /> 
+        <Route path="/admin_unapprovedemp" element={<AdminUnapprovedEmp />} /> 
         <Route path="/emp_notifications" element={<EmpNotifications />} /> 
         <Route path="/emp_myprofile" element={<EmpMyProfile />} /> 
+        <Route path="/waitapproval" element={<WaitApproval />} /> 
         <Route path="/emp_timetofill" element={<EmpTimeToFill />} /> 
         <Route path="/js_empprofile/:userId" element={<JsEmpProfile />} />
         <Route path="/js_empjoblisting/:userId" element={<JsEmpJobListings />} />

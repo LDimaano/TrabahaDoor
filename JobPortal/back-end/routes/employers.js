@@ -5,12 +5,12 @@ const multer = require('multer');
 const path = require('path');
 const baseURL = 'http://localhost:5000'; // Change this to your production URL when deploying
 
-// Assuming you're using pg for PostgreSQL
-router.use('/documents', express.static(path.join(__dirname, 'documents')));
+// Serve static files from the documents directory
+router.use('/documents', express.static(path.join(__dirname, '..', 'documents')));
 
 const documentStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './documents'); // Ensure the folder exists
+    cb(null, path.join(__dirname, '..', 'documents')); // Ensure the folder exists
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -29,16 +29,15 @@ const uploadDocuments = multer({
   { name: 'contract_sub_contractor_certificate', maxCount: 1 }
 ]);
 
-// Define the routes
 router.post('/upload', uploadDocuments, async (req, res) => {
   try {
-    const user_id = req.body.userId; // Change this line to match the frontend
+    const user_id = req.body.userId;
 
     if (!user_id) {
       return res.status(400).send('User ID is required');
     }
 
-    // Construct URLs for the uploaded files
+
     const sec_certificate_url = req.files.sec_certificate
       ? `${baseURL}/documents/${req.files.sec_certificate[0].filename}`
       : null;
@@ -63,7 +62,7 @@ router.post('/upload', uploadDocuments, async (req, res) => {
       ? `${baseURL}/documents/${req.files.contract_sub_contractor_certificate[0].filename}`
       : null;
 
-    // Insert the URLs and user_id into the database
+
     const query = `
       INSERT INTO documents 
       (user_id, sec_certificate, business_permit, bir_certificate, poea_license, private_recruitment_agency_license, contract_sub_contractor_certificate)
@@ -81,7 +80,6 @@ router.post('/upload', uploadDocuments, async (req, res) => {
     ];
 
     const result = await pool.query(query, values);
-    console.log(result); // Log the result to check what is returned
 
     res.status(200).send(`Documents uploaded successfully for user ID: ${user_id}. Record ID: ${result.rows[0].id}`);
   } catch (error) {
@@ -89,7 +87,6 @@ router.post('/upload', uploadDocuments, async (req, res) => {
     res.status(500).send('Server error');
   }
 });
-
 
 router.post('/employer-profile', async (req, res) => {
   const {
@@ -134,12 +131,6 @@ router.post('/employer-profile', async (req, res) => {
         foundedYear,
         description,
       ]
-    );
-
-    // Update the user's has_uploaded_documents flag to true
-    await pool.query(
-      `UPDATE users SET has_uploaded_documents = true WHERE user_id = $1`,
-      [user_id]
     );
 
     // Send the newly created profile back as the response

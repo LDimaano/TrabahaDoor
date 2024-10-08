@@ -105,7 +105,7 @@ function EmployerProfileCreation() {
 
       setTimeout(() => {
         navigate('/employerfiles');
-      }, 3000);
+      }, 500);
     } catch (err) {
       console.error('Submission failed:', err);
       setError('Failed to submit the profile. Please try again.');

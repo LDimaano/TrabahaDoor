@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding, faArchive } from '@fortawesome/free-solid-svg-icons';
+import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding, faArchive, faBan } from '@fortawesome/free-solid-svg-icons';
 
 const SideBar = () => {
   const [email, setEmail] = useState('');
   const menuItems = [
     { icon: faTachometerAlt, caption: "Dashboard", link: "/admindashboard" },
-    { icon: faBuilding, caption: "All Employers", link: "/admin_employers" },
+    { icon: faBuilding, caption: "Approved Employers", link: "/admin_employers" },
     { icon: faUsers, caption: "All Applicants", link: "/admin_applicants", active: true },
     { icon: faBriefcase, caption: "Job Listing", link: "/admin_joblistings" },
     { icon: faUser, caption: "All Users", link: "/admin_users" },
-    { icon: faArchive, caption: "Archived Users", link: "/admin_archived_users" }
+    { icon: faArchive, caption: "Archived Users", link: "/admin_archived_users" },
+    { icon: faBan, caption: "Unapproved Employers", link: "/admin_unapprovedemp" }
 
   ];
 
