@@ -35,6 +35,7 @@ import AdminEmployer from './pages/Admin/admin_employers';
 import AdminApplicants from './pages/Admin/admin_applicants';
 import AdminJobs from './pages/Admin/admin_joblistings';
 import AdminUsers from './pages/Admin/admin_users';
+import AdminArchivedUsers from './pages/Admin/admin_archived_users';
 
 import UserProfileJs from './pages/Admin/userjs_profile'; 
 import UserProfileEmp from './pages/Admin/useremp_profile';
@@ -80,6 +81,7 @@ root.render(
         <Route path="/admin_joblistings" element={<AdminJobs />} /> 
         <Route path="/seejoblisting/:jobId" element={<SeeJobListing/>} />
         <Route path="/admin_users" element={<AdminUsers />} /> 
+        <Route path="/admin_archived_users" element={<AdminArchivedUsers />} /> 
         <Route path="/emp_notifications" element={<EmpNotifications />} /> 
         <Route path="/emp_myprofile" element={<EmpMyProfile />} /> 
         <Route path="/emp_timetofill" element={<EmpTimeToFill />} /> 

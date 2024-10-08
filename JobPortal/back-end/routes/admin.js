@@ -534,6 +534,41 @@ router.get('/dashboard-data', async (req, res) => {
   }
 });
 
+router.get('/viewarchivedusers', async (req, res) => {
+  console.log('Session data:', req.session);
+
+  if (!req.session.user) {
+      return res.status(403).json({ message: 'Not authenticated' });
+  }
+
+  try {
+      const result = await pool.query(
+          `
+        SELECT
+          au.user_id,
+          au.email,
+          au.usertype,
+          app.profile_picture_url,
+          ajs.full_name,
+          aep.company_name
+        FROM archived_users au
+        LEFT JOIN archived_profilepictures app ON au.user_id = app.user_id
+        LEFT JOIN archived_job_seekers ajs ON au.user_id = ajs.user_id
+        LEFT JOIN archived_emp_profiles aep ON au.user_id = aep.user_id
+        WHERE au.usertype IN ('jobseeker', 'employer')
+          `
+      );
+
+      console.log('Database archived user result:', result.rows);
+
+      res.json(result.rows);
+  } catch (error) {
+      console.error('Error fetching employers:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 
 
 
