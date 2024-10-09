@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Header from '../../components/empheader';
 import ApplicantProfile from '../../components/app_profile';
-import ApplicantCard from '../../components/app_card';
+import ApplicantCard from '../../components/app_cardforemp';
 
 // Modal Component
 const ConfirmModal = ({ show, onClose, onConfirm }) => {

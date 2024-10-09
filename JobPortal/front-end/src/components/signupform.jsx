@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Modal from '../components/modal';
 
 function SignupForm({ openTermsModal, openPrivacyModal }) {
   const [email, setEmail] = useState('');

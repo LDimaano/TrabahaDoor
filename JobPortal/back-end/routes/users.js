@@ -47,7 +47,7 @@ router.post('/submit-form', async (req, res) => {
     });
   } catch (error) {
     console.error('Error inserting data:', error);
-    res.status(500).json({ error: 'Error inserting data' });
+    res.status(500).json({ error: 'Email is already in use.' });
   }
 });
 
@@ -63,14 +63,14 @@ router.post('/login', async (req, res) => {
 
     // If no user is found
     if (rows.length === 0) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid Email Or Password' });
     }
 
     const user = rows[0];
 
     // Compare the passwords
     if (password !== user.password) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid Email Or Password' });
     }
 
     // Set session data
