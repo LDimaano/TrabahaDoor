@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const { sendActivationEmail } = require('../mailer');
 
 router.get('/infoadmin', async (req, res) => {
     console.log('Session data:', req.session);
@@ -606,29 +607,34 @@ router.get('/viewunapprovedemp', async (req, res) => {
 });
 
 router.put('/approve/:userId', async (req, res) => {
-  console.log('approved Session data:', req.session);
+    console.log('approved Session data:', req.session);
 
-  const { userId } = req.params;
-  console.log(`Approved userId: ${userId}`);
+    const { userId } = req.params;
+    console.log(`Approved userId: ${userId}`);
 
-  try {
-      const result = await pool.query(
-          `UPDATE users SET approve = 'yes' WHERE user_id = $1 RETURNING *`,
-          [userId]
-      );
+    try {
+        const result = await pool.query(
+            `UPDATE users SET approve = 'yes' WHERE user_id = $1 RETURNING *`,
+            [userId]
+        );
 
-      if (result.rows.length === 0) {
-          return res.status(404).json({ message: 'User not found' });
-      }
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
-      console.log('User approval result:', result.rows[0]);
+        const user = result.rows[0];
+        console.log('User approval result:', user);
 
-      res.status(200).json({ message: 'Employer approved successfully', user: result.rows[0] });
-  } catch (error) {
-      console.error('Error approving employer:', error);
-      res.status(500).json({ message: 'Server error' });
-  }
+        // Send an email to the employer that their account is activated
+        await sendActivationEmail(user.email);
+
+        res.status(200).json({ message: 'Employer approved successfully', user });
+    } catch (error) {
+        console.error('Error approving employer:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
 });
+
 
 
 

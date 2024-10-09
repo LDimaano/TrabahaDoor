@@ -43,6 +43,12 @@ const generateEmailContent = (type, data) => {
                 html: `<p>Hello ${data.jobSeekerName},</p>
                        <p><strong>${data.companyName}</strong> is interested in connecting with you. Please log in to view more details.</p>`,
             };
+        case 'account_activation':
+            return {
+                subject: 'Your Account Has Been Activated',
+                text: `Your employer account has been successfully activated. You can now log in and start posting job listings.`,
+                html: `<p>Your employer account has been successfully activated. You can now log in and start posting job listings.</p>`,
+            };
         default:
             return {};
     }
@@ -92,8 +98,22 @@ const sendContactNotificationEmail = async (jobSeekerEmail, jobSeekerName, compa
     });
 };
 
+const sendActivationEmail = async (employerEmail) => {
+    const emailContent = generateEmailContent('account_activation', {});
+
+    await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: employerEmail,
+        subject: emailContent.subject,
+        text: emailContent.text,
+        html: emailContent.html,
+    });
+};
+
+
 module.exports = {
     sendApplicationEmail,
     sendStatusUpdateEmail,
-    sendContactNotificationEmail
+    sendContactNotificationEmail,
+    sendActivationEmail
 };
