@@ -7,16 +7,16 @@ import { Modal, Button } from 'react-bootstrap'; // Importing Bootstrap Modal an
 function EmployerProfileCreation() {
   const navigate = useNavigate();
 
-  const [companyName, setCompanyName] = useState('Tech Innovations Ltd');
-  const [contactPerson, setContactPerson] = useState('Jane Doe');
-  const [contactNumber, setContactNumber] = useState('+44 1245 678 901');
-  const [website, setWebsite] = useState('http://www.techinnovations.com');
+  const [companyName, setCompanyName] = useState('');
+  const [contactPerson, setContactPerson] = useState('');
+  const [contactNumber, setContactNumber] = useState('');
+  const [website, setWebsite] = useState('');
   const [industry, setIndustry] = useState(null);
   const [industryOptions, setIndustryOptions] = useState([]);
-  const [companyAddress, setCompanyAddress] = useState('123 Tech Lane, Silicon Valley');
-  const [companySize, setCompanySize] = useState('500-1000 employees');
-  const [foundedYear, setFoundedYear] = useState('2000');
-  const [description, setDescription] = useState('Tech Innovations Ltd is a leading IT solutions provider specializing in software development and consulting.');
+  const [companyAddress, setCompanyAddress] = useState('');
+  const [companySize, setCompanySize] = useState('');
+  const [foundedYear, setFoundedYear] = useState('');
+  const [description, setDescription] = useState('');
   const [photo, setPhoto] = useState(null);
   const [error, setError] = useState('');
   

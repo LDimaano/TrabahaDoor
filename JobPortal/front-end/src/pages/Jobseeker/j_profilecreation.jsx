@@ -8,10 +8,10 @@ import { Modal, Button } from 'react-bootstrap';
 function ProfileCreation() {
   const navigate = useNavigate();
 
-  const [fullName, setFullName] = useState('Juan A. Dela Cruz');
-  const [phoneNumber, setPhoneNumber] = useState('+44 1245 572 135');
-  const [dateOfBirth, setDateOfBirth] = useState('1997-08-09');
-  const [gender, setGender] = useState('Male');
+  const [fullName, setFullName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [gender, setGender] = useState('');
   const [address, setAddress] = useState(null);
   const [addressOptions, setAddressOptions] = useState([]);
   const [industry, setIndustry] = useState(null);
