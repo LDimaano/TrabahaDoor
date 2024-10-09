@@ -360,14 +360,16 @@ const getJobPostings = async (userId) => {
 // Function to get applicants
 const getApplicants = async () => {
   const query = `
-    SELECT
+      SELECT
         js.full_name,
         js.user_id,
         u.email,
         a.location,
         ARRAY_AGG(DISTINCT jt.job_title) AS job_titles,
         ARRAY_AGG(DISTINCT s.skill_name) AS skills,
-        pp.profile_picture_url
+        pp.profile_picture_url,
+		js.industry_id, 
+    i.industry_name as industry
     FROM job_seekers js
     JOIN users u ON js.user_id = u.user_id
     JOIN address a ON js.address_id = a.address_id
@@ -376,12 +378,15 @@ const getApplicants = async () => {
     JOIN profilepictures pp ON js.user_id = pp.user_id
     JOIN js_skills jk ON js.user_id = jk.user_id
     JOIN skills s ON jk.skill_id = s.skill_id
+	JOIN industries i ON js.industry_id = i.industry_id
     GROUP BY 
         js.full_name,
         js.user_id,
         u.email,
         a.location,
-        pp.profile_picture_url;`;
+        pp.profile_picture_url,
+		js.industry_id,
+    i.industry_name`;
     
   const { rows } = await pool.query(query); // Execute the query
   return rows; // Return the retrieved applicants

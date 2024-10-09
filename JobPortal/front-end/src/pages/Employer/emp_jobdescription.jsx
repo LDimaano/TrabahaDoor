@@ -79,8 +79,7 @@ const JobDescription = () => {
               </div>
               <div className="d-flex flex-column">
                 <span className="text-muted">{jobData.company_name}</span>
-                <span>{jobData.industry}</span>
-                <span>{jobData.job_type}</span>
+                <span>{jobData.industry_name}</span>
               </div>
             </div>
           </div>
@@ -98,7 +97,8 @@ const JobDescription = () => {
           jobInfo={[
             { label: 'Job Posted On', value: new Date(jobData.datecreated).toLocaleDateString() },
             { label: 'Job Type', value: jobData.jobtype },
-            { label: 'Salary', value: jobData.salaryrange }
+            { label: 'Salary', value: jobData.salaryrange },
+            { label: 'Industry', value: jobData.industry_name }
           ]}
           skills={jobData.skills || []} 
         />

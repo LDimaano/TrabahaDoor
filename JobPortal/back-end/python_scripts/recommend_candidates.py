@@ -5,31 +5,37 @@ def recommend_candidates(job_postings, applicants, contact_history):
     """Generate a list of recommended candidates based on job postings and collaborative filtering by contact history."""
     recommendations = {}
 
-    # First, recommend candidates based on job posting skill matches
+    # First, recommend candidates based on job posting skill and industry matches
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
+        job_industry = job.get('industry', '').lower()
 
         for applicant in applicants:
             applicant_titles = applicant.get('job_titles', [])
             applicant_skills = set(applicant.get('skills', []))
             applicant_full_name = applicant.get('full_name', 'No Name Provided')
             user_id = applicant.get('user_id')
+            applicant_industry = applicant.get('industry', '').lower()
 
-            # Check for skill matches
+            # Check for both skill and industry matches
             matched_skills = job_skills.intersection(applicant_skills)
+            industry_match = job_industry == applicant_industry
 
-            if matched_skills:  # At least one skill matches
+            # Recommend candidates based on both or either one (skills or industry)
+            if matched_skills or industry_match:
                 recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
-
+                
                 # Ensure jobseeker only appears once based on user_id
                 if user_id not in recommendations:
                     recommendations[user_id] = {
                         'user_id': user_id,
                         'full_name': applicant_full_name,
                         'job_title': recommended_job_title,
-                        'matched_skills': list(matched_skills),
+                        'matched_skills': list(matched_skills) if matched_skills else [],  # Show matched skills if any
+                        'industry_match': industry_match,  # True if industries match
                         'profile_picture_url': applicant.get('profile_picture_url', ''),
-                        'from_collaborative_filtering': False  # Indicate if recommended via skill match
+                        'from_collaborative_filtering': False,  # Indicate if recommended via skill or industry match
+                        'match_type': 'both' if matched_skills and industry_match else 'skills' if matched_skills else 'industry'
                     }
 
     # Now, incorporate collaborative filtering by recommending applicants contacted by similar employers
@@ -49,7 +55,8 @@ def recommend_candidates(job_postings, applicants, contact_history):
                 'job_title': job_title,
                 'matched_skills': skills,  # Skills from contact history
                 'profile_picture_url': profile_picture_url,
-                'from_collaborative_filtering': True  # Indicate recommendation via collaborative filtering
+                'from_collaborative_filtering': True,  # Indicate recommendation via collaborative filtering
+                'match_type': 'collaborative'  # Indicates it comes from collaborative filtering
             }
 
     # Convert dictionary back to a list
