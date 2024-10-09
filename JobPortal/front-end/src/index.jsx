@@ -5,6 +5,8 @@ import './css/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
+
+
 import Login from './pages/Auth/login';
 import Signup from './pages/Auth/signup';
 import LandingPage from './pages/landing';
@@ -98,4 +100,5 @@ root.render(
       </Routes>
     </Router>
   </React.StrictMode>
+  
 );
