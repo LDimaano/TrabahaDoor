@@ -13,18 +13,21 @@ router.get('/applicantlist', async (req, res) => {
     // Base query with initial SELECT statement
     let query = `
       SELECT
-        job_seekers.full_name,
-        job_seekers.user_id,
-        users.email,
-        address.location,
-        MAX(job_titles.job_title) AS latest_job_title,
-        pp.profile_picture_url
-      FROM job_seekers
-      JOIN users ON job_seekers.user_id = users.user_id
-      JOIN address ON job_seekers.address_id = address.address_id
-      JOIN job_experience ON job_seekers.user_id = job_experience.user_id
-      JOIN job_titles ON job_experience.jobtitle_id = job_titles.jobtitle_id
-      JOIN profilepictures pp ON job_seekers.user_id = pp.user_id
+        js.full_name,
+        js.user_id,
+        u.email,
+        a.location,
+        MAX(jt.job_title) AS latest_job_title,
+        pp.profile_picture_url,
+      i.industry_name,
+      js.industry_id
+    FROM job_seekers js
+    JOIN users u ON js.user_id = u.user_id
+    JOIN address a ON js.address_id = a.address_id
+    JOIN job_experience je ON js.user_id = je.user_id
+    JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
+    JOIN profilepictures pp ON js.user_id = pp.user_id
+    JOIN industries i ON js.industry_id = i.industry_id
     `;
 
     // Initialize an array to hold values for prepared statements
@@ -33,13 +36,13 @@ router.get('/applicantlist', async (req, res) => {
 
     // Check if jobTitle is provided and add to query
     if (jobTitle) {
-      whereClauses.push(`job_titles.job_title ILIKE $${values.length + 1}`);
+      whereClauses.push(`jt.job_title ILIKE $${values.length + 1}`);
       values.push(`%${jobTitle}%`);
     }
 
     // Check if selectedIndustry is provided and add to query
     if (selectedIndustry) {
-      whereClauses.push(`job_seekers.industry_id = $${values.length + 1}`);
+      whereClauses.push(`js.industry_id = $${values.length + 1}`);
       values.push(selectedIndustry);
     }
 
@@ -51,11 +54,13 @@ router.get('/applicantlist', async (req, res) => {
     // Grouping remains as it is
     query += `
       GROUP BY
-        job_seekers.full_name,
-        users.email,
-        address.location,
-        pp.profile_picture_url,
-        job_seekers.user_id;
+      js.full_name,
+      js.user_id,
+      u.email,
+      a.location,
+      pp.profile_picture_url,
+      js.industry_id,
+      i.industry_name
     `;
 
     const result = await pool.query(query, values);
