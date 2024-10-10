@@ -1,4 +1,4 @@
-CREATE DATABASE trabahadoor;
+--CREATE DATABASE trabahadoor;
 
 
 CREATE TYPE usertype_enum AS ENUM ('jobseeker', 'employer', 'admin');
@@ -26,7 +26,7 @@ CREATE TABLE emp_profiles (
     founded_year INTEGER,
     description TEXT,
     user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE; 
+    FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
 );
 
 
@@ -40,7 +40,7 @@ CREATE TABLE job_seekers (
   address_id INT,
   industry_id INT, 
   FOREIGN KEY (address_id) REFERENCES address(address_id) ON DELETE CASCADE,
-  FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE; 
+  FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
 );
 
 
@@ -63,7 +63,7 @@ CREATE TABLE job_experience (
 CREATE TABLE js_skills (
     id Serial primary key,
     Skill_id INTEGER REFERENCES skills(skill_id) ON DELETE CASCADE,
-    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 
@@ -122,7 +122,7 @@ CREATE TABLE applications (
     phone_number VARCHAR(20) NOT NULL,
     additional_info TEXT,
     date_applied TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(50) DEFAULT 'new';
+    status VARCHAR(50) DEFAULT 'new',
     FOREIGN KEY (job_id) REFERENCES joblistings(job_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
@@ -130,6 +130,11 @@ CREATE TABLE applications (
 CREATE TABLE address (
   address_id SERIAL PRIMARY KEY,
   location VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE skills (
+  skill_id SERIAL PRIMARY KEY,
+  skill_name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE industries (
@@ -245,4 +250,17 @@ CREATE TABLE archived_emp_profiles (
     description TEXT,
     archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
+);
+
+CREATE TABLE documents (
+    document_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    sec_certificate VARCHAR(255),
+    business_permit VARCHAR(255),
+    bir_certificate VARCHAR(255),
+    poea_license VARCHAR(255),
+    private_recruitment_agency_license VARCHAR(255),
+    contract_sub_contractor_certificate VARCHAR(255),
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );

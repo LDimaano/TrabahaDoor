@@ -1,6 +1,11 @@
-{"scripts": {
-    "start": "node back-end/server.js",
-    "heroku-postbuild": "cd ../front-end && npm install && npm run build"
+{
+  "engines":{
+    "node": "21.1.0",
+    "npm": "10.2.0"
+  },
+  "scripts": {
+    "start": "cd JobPortal/back-end && node server.js",
+    "heroku-postbuild": "cd JobPortal/front-end && npm install && npm run build"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",

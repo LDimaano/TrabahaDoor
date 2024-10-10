@@ -48,6 +48,9 @@ const sessionMiddleware = session({
 
 // Use the session middleware with Express
 app.use(sessionMiddleware);
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../front-end/build')));
+}
 
 // Use the session middleware with Socket.IO
 io.use(sharedSession(sessionMiddleware, {
