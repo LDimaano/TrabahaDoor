@@ -1,4 +1,7 @@
-{
+{"scripts": {
+    "start": "node back-end/server.js",
+    "heroku-postbuild": "cd ../front-end && npm install && npm run build"
+  },
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
