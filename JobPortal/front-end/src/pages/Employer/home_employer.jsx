@@ -55,10 +55,10 @@ function HomeEmployer() {
               </button>
             </div>
 
-            {/* Pass allCandidates and searchParams to CandidateList */}
+            {/* Pass allCandidates, searchParams, and the value of isRecommended based on activeTab */}
             <CandidateList
               searchParams={searchParams}
-              isRecommended={activeTab === 'recommended'}
+              isRecommended={activeTab === 'recommended'}  // Set isRecommended based on activeTab
               allCandidates={allCandidates}
             />
           </div>

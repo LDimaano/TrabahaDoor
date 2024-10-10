@@ -9,12 +9,13 @@ function CandidateList({ searchParams = {}, isRecommended }) {
   const [recommendedApplicants, setRecommendedApplicants] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [applicantsPerPage] = useState(5); // Set the number of applicants per page
+  const [applicantsPerPage] = useState(10); // Set the number of applicants per page
 
   // Fetch all applicants when the component mounts
   useEffect(() => {
     const fetchApplicants = async () => {
       try {
+        setError(null); // Clear error before fetching applicants
         const response = await fetch('http://localhost:5000/api/applicants/applicantlist');
         if (!response.ok) {
           throw new Error(`Failed to fetch applicants: ${response.status}`);
@@ -30,7 +31,7 @@ function CandidateList({ searchParams = {}, isRecommended }) {
 
     if (!isRecommended) {
       fetchApplicants();
-      setRecommendedApplicants([]);
+      setRecommendedApplicants([]); // Clear recommended applicants when switching tabs
     }
   }, [isRecommended]);
 
@@ -61,6 +62,7 @@ function CandidateList({ searchParams = {}, isRecommended }) {
       console.log('User ID for recommendations:', userId); // Log the user ID
 
       try {
+        setError(null); // Clear error before fetching recommended candidates
         // Fetch recommended candidates
         const response = await fetch('http://localhost:5000/api/recommend-candidates', {
           method: 'POST',
@@ -77,20 +79,22 @@ function CandidateList({ searchParams = {}, isRecommended }) {
         const data = await response.json();
         console.log('Recommended candidates data:', data); // Log the recommended candidates data
 
-        if (data.recommendations) {
+        if (data.recommendations && data.recommendations.length > 0) {
           setRecommendedApplicants(data.recommendations);
+        } else if (data.recommendations && data.recommendations.length === 0) {
+          setError('No recommended candidates found. It seems the job listing is empty.');
         } else {
-          console.log('No recommendations found.');
+          setError('No recommendations found.');
         }
       } catch (error) {
         console.error('Error fetching recommended candidates:', error);
-        setError('Failed to load recommended candidates.');
+        setError('No job listings available. Recommendations cannot be generated.');
       }
     };
 
     if (isRecommended) {
       fetchRecommendedCandidates();
-      setFilteredApplicants([]);
+      setFilteredApplicants([]); // Clear filtered applicants when switching to recommended
     }
   }, [isRecommended]);
 
