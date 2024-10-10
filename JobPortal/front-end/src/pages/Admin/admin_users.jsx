@@ -93,7 +93,7 @@ const ApplicantDashboard = () => {
               />
             </>
           ) : (
-            <p>No job listings found.</p>
+            <p>No Users found.</p>
           )}
         </section>
       </main>

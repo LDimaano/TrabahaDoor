@@ -94,7 +94,7 @@ const ApplicantDashboard = () => {
               />
             </>
           ) : (
-            <p>No job listings found.</p>
+            <p>No Applicants found.</p>
           )}        
           </section>
       </main>

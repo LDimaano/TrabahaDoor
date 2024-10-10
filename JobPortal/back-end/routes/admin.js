@@ -220,41 +220,38 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
     }
 });
   
-  
-
 router.get('/viewemployers', async (req, res) => {
-    console.log('Session data:', req.session);
+  console.log('Session data:', req.session);
 
-    if (!req.session.user) {
-        return res.status(403).json({ message: 'Not authenticated' });
-    }
+  if (!req.session.user) {
+    return res.status(403).json({ message: 'Not authenticated' });
+  }
 
-    const userId = req.session.user.user_id;
-    console.log('User ID from session:', userId);
+  const userId = req.session.user.user_id;
+  console.log('User ID from session:', userId);
 
-    try {
-        const result = await pool.query(
-            `
-            SELECT
-                e.id,
-                e.company_name,
-                e.contact_person,
-                e.user_id,
-                pp.profile_picture_url
-            FROM emp_profiles e
-            JOIN profilepictures pp ON e.user_id = pp.user_id
-			      JOIN users u ON e.user_id = u.user_id
-			      WHERE u.approve='yes'
-            `
-        );
+  try {
+    const result = await pool.query(`
+      SELECT
+        e.id,
+        e.company_name,
+        e.contact_person,
+        e.user_id,
+        pp.profile_picture_url
+      FROM emp_profiles e
+      JOIN profilepictures pp ON e.user_id = pp.user_id
+      JOIN users u ON e.user_id = u.user_id
+      WHERE u.approve = 'yes'
+    `);
 
-        console.log('Database query result:', result.rows);
+    console.log('Database query result:', result.rows);
 
-        res.json(result.rows);
-    } catch (error) {
-        console.error('Error fetching employers:', error);
-        res.status(500).json({ message: 'Server error' });
-    }
+    // Return an empty array if there are no results
+    res.json(result.rows.length ? result.rows : []);
+  } catch (error) {
+    console.error('Error fetching employers:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 
@@ -371,22 +368,24 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
     try {
       const result = await pool.query(
         `SELECT 
-          a.application_id,
-          a.job_id,
-          a.user_id,
-          a.full_name,
-          a.email,
-          a.phone_number,
-          a.additional_info,
-          a.status AS hiring_stage,
-          a.date_applied,
-          pp.profile_picture_url,
-          j.job_title
-        FROM applications a
-        JOIN profilepictures pp ON a.user_id = pp.user_id
-        JOIN joblistings jl ON a.job_id = jl.job_id
-        JOIN job_titles j ON jl.jobtitle_id = j.jobtitle_id
-        WHERE a.job_id = $1`,
+              a.application_id,
+              a.job_id,
+              a.user_id,
+              js.full_name,
+              u.email,
+              js.phone_number,
+              a.additional_info,
+              a.status AS hiring_stage,
+              a.date_applied,
+              pp.profile_picture_url,
+              j.job_title
+      FROM applications a
+      JOIN users u ON a.user_id = u.user_id
+      JOIN job_seekers js ON u.user_id = js.user_id
+      LEFT JOIN profilepictures pp ON a.user_id = pp.user_id
+      JOIN joblistings jl ON a.job_id = jl.job_id
+      JOIN job_titles j ON jl.jobtitle_id = j.jobtitle_id
+      WHERE a.job_id = $1`,
         [jobId]
       );
   
@@ -541,33 +540,32 @@ router.get('/viewarchivedusers', async (req, res) => {
   console.log('Session data:', req.session);
 
   if (!req.session.user) {
-      return res.status(403).json({ message: 'Not authenticated' });
+    return res.status(403).json({ message: 'Not authenticated' });
   }
 
   try {
-      const result = await pool.query(
-          `
-        SELECT
-          au.user_id,
-          au.email,
-          au.usertype,
-          app.profile_picture_url,
-          ajs.full_name,
-          aep.company_name
-        FROM archived_users au
-        LEFT JOIN archived_profilepictures app ON au.user_id = app.user_id
-        LEFT JOIN archived_job_seekers ajs ON au.user_id = ajs.user_id
-        LEFT JOIN archived_emp_profiles aep ON au.user_id = aep.user_id
-        WHERE au.usertype IN ('jobseeker', 'employer')
-          `
-      );
+    const result = await pool.query(`
+      SELECT
+        au.user_id,
+        au.email,
+        au.usertype,
+        app.profile_picture_url,
+        ajs.full_name,
+        aep.company_name
+      FROM archived_users au
+      LEFT JOIN archived_profilepictures app ON au.user_id = app.user_id
+      LEFT JOIN archived_job_seekers ajs ON au.user_id = ajs.user_id
+      LEFT JOIN archived_emp_profiles aep ON au.user_id = aep.user_id
+      WHERE au.usertype IN ('jobseeker', 'employer')
+    `);
 
-      console.log('Database archived user result:', result.rows);
+    console.log('Database archived user result:', result.rows);
 
-      res.json(result.rows);
+    // Return an empty array if there are no results
+    res.json(result.rows.length ? result.rows : []);
   } catch (error) {
-      console.error('Error fetching employers:', error);
-      res.status(500).json({ message: 'Server error' });
+    console.error('Error fetching archived users:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
