@@ -26,7 +26,7 @@ CREATE TABLE emp_profiles (
     founded_year INTEGER,
     description TEXT,
     user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE; 
+    FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
 );
 
 
@@ -40,7 +40,7 @@ CREATE TABLE job_seekers (
   address_id INT,
   industry_id INT, 
   FOREIGN KEY (address_id) REFERENCES address(address_id) ON DELETE CASCADE,
-  FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE; 
+  FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
 );
 
 
@@ -63,7 +63,7 @@ CREATE TABLE job_experience (
 CREATE TABLE js_skills (
     id Serial primary key,
     Skill_id INTEGER REFERENCES skills(skill_id) ON DELETE CASCADE,
-    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 
@@ -122,7 +122,7 @@ CREATE TABLE applications (
     phone_number VARCHAR(20) NOT NULL,
     additional_info TEXT,
     date_applied TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(50) DEFAULT 'new';
+    status VARCHAR(50) DEFAULT 'new',
     FOREIGN KEY (job_id) REFERENCES joblistings(job_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
