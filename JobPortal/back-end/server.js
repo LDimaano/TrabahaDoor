@@ -14,9 +14,6 @@ const bodyParser = require('body-parser');
 const app = express();
 const server = http.createServer(app);
 
-// Declare io globally
-let io;
-
 // Configure CORS and Socket.IO
 io = require('socket.io')(server, {
   cors: {
@@ -31,7 +28,7 @@ io = require('socket.io')(server, {
 // Middleware to parse JSON and cookies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 // Session configuration
@@ -48,6 +45,17 @@ const sessionMiddleware = session({
 
 // Use the session middleware with Express
 app.use(sessionMiddleware);
+
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' ? "https://trabahadoor.onrender.com" : "http://localhost:3000",
+  methods: ["GET", "POST"],
+  credentials: true,
+};
+
+// Initialize Socket.IO with CORS options
+const io = require('socket.io')(server, {
+  cors: corsOptions,
+});
 
 // Use the session middleware with Socket.IO
 io.use(sharedSession(sessionMiddleware, {

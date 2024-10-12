@@ -41,7 +41,15 @@ function Header() {
   }, []);
 
   useEffect(() => {
-    const socket = io('http://localhost:5000', { withCredentials: true });
+    const socket = io(process.env.REACT_APP_SOCKET_URL, { withCredentials: true });
+    
+    socket.on('connect_error', (err) => {
+      console.error('Connection Error:', err);
+    });
+    
+    socket.on('connect', () => {
+      console.log('Successfully connected to the socket server');
+    });
 
     if (userId) {
       socket.emit('joinRoom', userId);
