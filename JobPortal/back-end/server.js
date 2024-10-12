@@ -28,7 +28,7 @@ const server = http.createServer(app);
 // Middleware to parse JSON and cookies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+app.use(cors({ origin: 'https://trabahadoor-front-end.onrender.com', credentials: true }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 // Session configuration
@@ -47,7 +47,7 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' ? "https://trabahadoor.onrender.com" : "http://localhost:3000",
+  origin: 'https://trabahadoor-front-end.onrender.com',
   methods: ["GET", "POST"],
   credentials: true,
 };
@@ -63,6 +63,7 @@ io.use(sharedSession(sessionMiddleware, {
 }));
 
 io.on('connection', (socket) => {
+  console.log('a user connected');
   const session = socket.handshake.session;
 
   if (!session || !session.user || !session.user.user_id) {
@@ -1041,7 +1042,7 @@ app.use('/api/employers', employerRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applicants', applicantsRoutes);
 app.use('/api/admin', adminRoutes)
-
+console.log('Socket URL:', process.env.REACT_APP_SOCKET_URL); 
 // Start the server
 const PORT = process.env.PORT || 3000; // Default to 3000 if process.env.PORT is not defined
 server.listen(PORT, () => {
