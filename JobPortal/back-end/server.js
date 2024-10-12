@@ -1035,9 +1035,10 @@ app.use('/api/applicants', applicantsRoutes);
 app.use('/api/admin', adminRoutes)
 
 // Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000; // Default to 3000 if process.env.PORT is not defined
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 
 module.exports = { io };
