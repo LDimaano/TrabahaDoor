@@ -14,14 +14,14 @@ const bodyParser = require('body-parser');
 const app = express();
 const server = http.createServer(app);
 
-// Configure CORS and Socket.IO
-io = require('socket.io')(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-    credentials: true
-  }
-});
+// // Configure CORS and Socket.IO
+// io = require('socket.io')(server, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//     methods: ["GET", "POST"],
+//     credentials: true
+//   }
+// });
 
 
 
