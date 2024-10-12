@@ -110,7 +110,7 @@ function ProfileCreation() {
     
     try {
       console.log('Uploading file...', file);
-      const response = await fetch(`http://localhost:5000/api/upload-profile-picture/${userId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/upload-profile-picture/${userId}`, {
         method: 'POST',
         body: formData,
       });
@@ -189,7 +189,7 @@ const handleModalCancel = () => {
     };
   
     try {
-      const response = await fetch('http://localhost:5000/api/jobseekers/profile', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/profile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -216,7 +216,7 @@ const handleModalCancel = () => {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/skills');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/skills`);
         if (!response.ok) throw new Error('Failed to fetch skills');
         const data = await response.json();
         const skillOptions = data.map(skill => ({
@@ -232,7 +232,7 @@ const handleModalCancel = () => {
 
     const fetchJobTitles = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/jobtitles');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobtitles`);
         if (!response.ok) throw new Error('Failed to fetch job titles');
         const data = await response.json();
         const jobTitleOptions = data.map(jobTitle => ({
@@ -248,7 +248,7 @@ const handleModalCancel = () => {
 
     const fetchAddresses = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/addresses');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/addresses`);
         if (!response.ok) throw new Error('Failed to fetch addresses');
         const data = await response.json();
         const addressOptions = data.map(address => ({
@@ -264,7 +264,7 @@ const handleModalCancel = () => {
 
     const fetchIndustries = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/industries');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/industries`);
         if (!response.ok) throw new Error('Failed to fetch industries');
         const data = await response.json();
         const industryOptions = data.map(industry => ({
