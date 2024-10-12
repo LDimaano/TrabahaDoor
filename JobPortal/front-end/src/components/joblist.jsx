@@ -14,7 +14,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
 
   useEffect(() => {
     const fetchJobs = async () => {
-      let url = `http://localhost:5000/api/jobs/postedjobs`;
+      let url = '${process.env.REACT_APP_API_URL/api/jobs/postedjobs';
       const params = new URLSearchParams();
       if (searchQuery) {
         params.append('searchQuery', searchQuery);
@@ -48,7 +48,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         return;
       }
       try {
-        const response = await fetch(`http://localhost:5000/api/getskills/${userId}`);
+        const response = await fetch('${process.env.REACT_APP_API_URL/api/getskills/${userId}');
         if (!response.ok) {
           const errorDetails = await response.text();
           throw new Error(`Failed to fetch user skills: ${errorDetails}`);
@@ -68,7 +68,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         return;
       }
       try {
-        const response = await fetch(`http://localhost:5000/api/jobseekers/user-info`, {
+        const response = await fetch('${process.env.REACT_APP_API_URL/api/jobseekers/user-info', {
           method: 'GET',
           credentials: 'include',
         });
@@ -91,7 +91,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
     if (isRecommended && userSkills.length > 0 && userProfile && userProfile.industryName) {
       const fetchRecommendedJobs = async () => {
         try {
-          const response = await fetch(`http://localhost:5000/api/recommend`, {
+          const response = await fetch('${process.env.REACT_APP_API_URL/api/recommend', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

@@ -8,7 +8,7 @@ function SearchForm({ onSearch }) {
 
   const fetchIndustries = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/industries');
+      const response = await fetch('${process.env.REACT_APP_API_URL/api/industries');
       if (!response.ok) throw new Error('Failed to fetch industries');
       const data = await response.json();
       setIndustryOptions(data);
