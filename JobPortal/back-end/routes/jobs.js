@@ -305,7 +305,7 @@ router.get('/postedjobs', async (req, res) => {
       JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
       JOIN industries ON joblistings.industry_id = industries.industry_id
       JOIN emp_profiles ON joblistings.user_id = emp_profiles.user_id
-      JOIN profilepictures pp ON joblistings.user_id = pp.user_id
+      LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
       WHERE 1=1
     `;
 
