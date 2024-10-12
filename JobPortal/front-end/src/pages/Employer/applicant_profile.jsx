@@ -73,7 +73,7 @@ const MyProfile = () => {
   // Function to handle the contact action
   const handleContact = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/applicants/contact/${user_id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/contact/${user_id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ const MyProfile = () => {
   useEffect(() => {
     const fetchApplicantData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/applicants/applicantprofile/${user_id}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/applicantprofile/${user_id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch applicant data');
         }

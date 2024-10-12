@@ -38,7 +38,7 @@ const JobseekerDashboard = () => {
           return;
         }
   
-        const response = await fetch(`http://localhost:5000/api/jobseekers/getUserJobListings?user_id=${userId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/getUserJobListings?user_id=${userId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

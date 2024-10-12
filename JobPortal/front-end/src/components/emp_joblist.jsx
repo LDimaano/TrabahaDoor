@@ -36,7 +36,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
   // Function to handle job deletion
   const handleDeleteJob = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/employers/deljoblistings/${selectedJobId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/deljoblistings/${selectedJobId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

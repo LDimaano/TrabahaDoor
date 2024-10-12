@@ -18,7 +18,7 @@ function Header() {
   useEffect(() => {
     const fetchFullName = async () => {
       try {
-        const response = await fetch('${process.env.REACT_APP_API_URL/api/jobseekers/user-info', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/user-info`, {
           method: 'GET',
           credentials: 'include',
           headers: {

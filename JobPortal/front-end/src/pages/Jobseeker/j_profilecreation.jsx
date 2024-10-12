@@ -110,7 +110,7 @@ function ProfileCreation() {
     
     try {
       console.log('Uploading file...', file);
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/upload-profile-picture/${userId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recommend/api/upload-profile-picture/${userId}`, {
         method: 'POST',
         body: formData,
       });

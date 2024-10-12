@@ -15,7 +15,7 @@ const ApplicantDashboard = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/admin/viewarchivedusers', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/viewarchivedusers`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

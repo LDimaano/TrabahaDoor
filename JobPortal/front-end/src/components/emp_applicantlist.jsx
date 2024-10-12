@@ -23,7 +23,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
     const userId = sessionStorage.getItem('user_id');
     if (userId) {
       try {
-        const response = await fetch(`http://localhost:5000/api/applicants/recommend-candidates/${jobId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/recommend-candidates/${jobId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId }),
@@ -82,7 +82,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
       // Log the request details
       console.log(`Updating hiring stage for userId: ${userId}, jobId: ${jobId}, newStage: ${newStage}`);
   
-      const response = await fetch(`http://localhost:5000/api/applicants/applications/${userId}/${jobId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/applications/${userId}/${jobId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ hiringStage: newStage }),

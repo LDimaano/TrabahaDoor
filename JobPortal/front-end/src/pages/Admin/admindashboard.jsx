@@ -12,7 +12,7 @@ function DashboardAnalytics() {
   useEffect(() => {
     async function fetchDashboardData() {
       try {
-        const response = await fetch('http://localhost:5000/api/admin/dashboard-data');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/dashboard-data`);
         console.log('Response status:', response.status);
         
         if (!response.ok) {

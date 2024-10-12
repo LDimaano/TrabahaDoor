@@ -23,7 +23,7 @@ const MyProfile = () => {
 
     const fetchApplicantData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/jobseekers/job-seeker/${userId}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/job-seeker/${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch applicant data');
         }

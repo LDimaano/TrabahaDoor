@@ -29,7 +29,7 @@ const MyProfile = () => {
   useEffect(() => {
     const fetchApplicantData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/admin/applicantprofile/${user_id}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/applicantprofile/${user_id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch applicant data');
         }

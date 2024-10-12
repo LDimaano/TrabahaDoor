@@ -12,7 +12,7 @@ function HomeEmployer() {
   useEffect(() => {
     const fetchAllCandidates = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/candidates');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/candidates`);
         if (!response.ok) throw new Error('Failed to fetch candidates');
         const data = await response.json();
         setAllCandidates(data);

@@ -17,7 +17,7 @@ function Header() {
   useEffect(() => {
     const fetchCompanyInfo = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/employers/user-infoemp', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/user-infoemp`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -72,7 +72,7 @@ function Header() {
     if (!userId) return;
   
     try {
-      const response = await fetch(`http://localhost:5000/api/notifications`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -103,7 +103,7 @@ function Header() {
   
       if (newJobIds.length > 0) {
         try {
-          const response = await fetch('http://localhost:5000/api/notifications/mark-as-viewed', {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications/mark-as-viewed`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -140,7 +140,7 @@ function Header() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/users/logout', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/logout`, {
         method: 'POST',
         credentials: 'include',
         headers: {

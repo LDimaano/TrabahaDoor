@@ -29,7 +29,7 @@ const JobseekerDashboard = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:5000/api/jobseekers/jsempjoblistings/${userId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/jsempjoblistings/${userId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

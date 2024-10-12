@@ -32,7 +32,7 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
 
   const handleApprove = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/approve/${selectedUserId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/approve/${selectedUserId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

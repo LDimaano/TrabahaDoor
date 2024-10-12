@@ -13,7 +13,7 @@ const Notifications = () => {
   // Initialize WebSocket connection
   useEffect(() => {
     const userId = sessionStorage.getItem('user_id');
-    const socket = io('http://localhost:5000', {
+    const socket = io(`${process.env.REACT_APP_API_URL}`, {
       withCredentials: true,
       transports: ['websocket'],
     });
@@ -48,7 +48,7 @@ const Notifications = () => {
     if (!userId) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/alljsnotifications`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/alljsnotifications`, {
         method: 'GET',
         credentials: 'include',
         headers: {

@@ -48,7 +48,7 @@ const UploadDocuments = () => {
             console.log(`User ID: ${userId}`); // Log the user ID
     
             // Send the form data to the server using await
-            const response = await fetch('http://localhost:5000/api/employers/upload', { // Full backend URL
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/upload`, { // Full backend URL
                 method: 'POST',
                 body: form
             });

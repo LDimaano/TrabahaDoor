@@ -7,7 +7,7 @@ function BarChart() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/timetofill')
+    fetch(`${process.env.REACT_APP_API_URL}/api/timetofill`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

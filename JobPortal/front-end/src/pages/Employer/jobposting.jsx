@@ -29,7 +29,7 @@ const JobPosting = () => {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/skills');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/skills`);
         if (!response.ok) throw new Error('Failed to fetch skills');
         const data = await response.json();
         // Convert data to { value: skill_id, label: skill_name }
@@ -47,7 +47,7 @@ const JobPosting = () => {
 
     const fetchJobTitles = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/jobtitles'); // Ensure this URL is correct
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobtitles`); // Ensure this URL is correct
         if (!response.ok) throw new Error('Failed to fetch job titles');
         const data = await response.json();
         // Convert data to { value: jobtitle_id, label: job_title }
@@ -65,7 +65,7 @@ const JobPosting = () => {
 
     const fetchIndustries = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/industries');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/industries`);
         if (!response.ok) throw new Error('Failed to fetch industries');
         const data = await response.json();
         const industryOptions = data.map(industry => ({
@@ -145,7 +145,7 @@ const JobPosting = () => {
  
     try {
       // Send a POST request to the server with jobData
-      const response = await fetch('http://localhost:5000/api/jobs/joblistings', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/joblistings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

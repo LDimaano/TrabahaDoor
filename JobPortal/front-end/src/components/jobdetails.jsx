@@ -10,7 +10,7 @@ const JobDetails = ({ jobInfo, skills }) => {
     const fetchSkills = async () => {
       try {
         // Fetch job details including skills from the API
-        const response = await fetch(`http://localhost:5000/api/jobs/joblistings/${jobId}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/joblistings/${jobId}`);
         const data = await response.json();
         setFetchedSkills(data.skills || []); // Ensure data.skills is always an array
       } catch (error) {

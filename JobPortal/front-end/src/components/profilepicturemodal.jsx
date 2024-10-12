@@ -32,7 +32,7 @@ const ProfilePictureModal = ({ onClose, onUpdate }) => {
     formData.append('profilePicture', selectedFile);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/update-profile-picture/${userId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/update-profile-picture/${userId}`, {
         method: 'POST',
         body: formData,
       });

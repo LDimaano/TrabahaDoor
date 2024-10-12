@@ -16,7 +16,7 @@ function CandidateList({ searchParams = {}, isRecommended }) {
     const fetchApplicants = async () => {
       try {
         setError(null); // Clear error before fetching applicants
-        const response = await fetch('http://localhost:5000/api/applicants/applicantlist');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/applicantlist`);
         if (!response.ok) {
           throw new Error(`Failed to fetch applicants: ${response.status}`);
         }
@@ -64,7 +64,7 @@ function CandidateList({ searchParams = {}, isRecommended }) {
       try {
         setError(null); // Clear error before fetching recommended candidates
         // Fetch recommended candidates
-        const response = await fetch('http://localhost:5000/api/recommend-candidates', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recommend-candidates`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

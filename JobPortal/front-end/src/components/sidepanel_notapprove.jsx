@@ -10,7 +10,7 @@ const Sidebar = () => {
   useEffect(() => {
     const fetchCompanyInfo = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/employers/user-infoemp', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/user-infoemp`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -38,7 +38,7 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/users/logout', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/logout`, {
         method: 'POST',
         credentials: 'include',
         headers: {

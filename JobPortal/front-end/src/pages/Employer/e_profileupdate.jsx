@@ -24,7 +24,7 @@ function EmployerProfileCreation() {
 
   const fetchEmployerProfile = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/employers/fetchemployer-profile/${userId}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/fetchemployer-profile/${userId}`);
       if (!response.ok) throw new Error('Failed to fetch employer profile');
       const data = await response.json();
 
@@ -67,7 +67,7 @@ function EmployerProfileCreation() {
 
     try {
         // Update request to the API
-        const response = await fetch(`http://localhost:5000/api/employers/employer-profile/${userId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/employer-profile/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ function EmployerProfileCreation() {
 
   const fetchIndustries = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/industries');
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/industries`);
       if (!response.ok) throw new Error('Failed to fetch industries');
       const data = await response.json();
       const industryOptions = data.map((industry) => ({

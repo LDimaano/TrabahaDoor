@@ -21,7 +21,7 @@ function SubmitApplication() {
     useEffect(() => {
         const fetchJobDetails = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/jobs/joblistings/${jobId}`);
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/joblistings/${jobId}`);
                 if (!response.ok) throw new Error('Failed to fetch job details');
                 const data = await response.json();
                 setJobDetails(data);
@@ -32,7 +32,7 @@ function SubmitApplication() {
 
         const checkIfApplied = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/jobs/applications/check`, {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/applications/check`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ function SubmitApplication() {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:5000/api/jobs/applications', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/applications`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

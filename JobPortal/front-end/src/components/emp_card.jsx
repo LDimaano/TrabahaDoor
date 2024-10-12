@@ -37,7 +37,7 @@ const ApplicantCard = ({ applicant }) => {
       return;
     }
 
-    fetch(`http://localhost:5000/api/employers/delete`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/employers/delete`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

@@ -10,7 +10,7 @@ function TopHiringList({ title }) {
   useEffect(() => {
     const fetchTopCompanies = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/admin/topcompanies', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/topcompanies`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

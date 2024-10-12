@@ -29,7 +29,7 @@ const UpdateJobPosting = () => {
     // Fetch the existing job data
     const fetchJobData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/jobs/fetch-jobinfo/${job_id}`); // Adjust the endpoint as per your backend
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/fetch-jobinfo/${job_id}`); // Adjust the endpoint as per your backend
         if (!response.ok) throw new Error('Failed to fetch job data');
         const data = await response.json();
 
@@ -69,7 +69,7 @@ const UpdateJobPosting = () => {
     // Fetch skills, job titles, and industries as before
     const fetchSkills = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/skills');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/skills`);
         if (!response.ok) throw new Error('Failed to fetch skills');
         const data = await response.json();
         const skillOptions = data.map(skill => ({
@@ -85,7 +85,7 @@ const UpdateJobPosting = () => {
 
     const fetchJobTitles = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/jobtitles');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobtitles`);
         if (!response.ok) throw new Error('Failed to fetch job titles');
         const data = await response.json();
         const jobTitleOptions = data.map(jobTitle => ({
@@ -101,7 +101,7 @@ const UpdateJobPosting = () => {
 
     const fetchIndustries = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/industries');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/industries`);
         if (!response.ok) throw new Error('Failed to fetch industries');
         const data = await response.json();
         const industryOptions = data.map(industry => ({
@@ -163,7 +163,7 @@ const UpdateJobPosting = () => {
 
     try {
       // Send a PUT request to the server with jobData
-      const response = await fetch(`http://localhost:5000/api/jobs/updatejoblistings/${job_id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/updatejoblistings/${job_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

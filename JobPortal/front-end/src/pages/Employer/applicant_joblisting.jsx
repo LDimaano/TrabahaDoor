@@ -15,7 +15,7 @@ const ApplicantDashboard = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/employers/joblistings', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/joblistings`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

@@ -26,7 +26,7 @@ const ApplicantDashboard = () => {
 
   const fetchApplicants = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/applicants/appliedapplicants/${jobId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/appliedapplicants/${jobId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -54,7 +54,7 @@ const ApplicantDashboard = () => {
 
   const handleStageChangeInDashboard = async (userId, newStage) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/applicants/applications/${userId}/${jobId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/applications/${userId}/${jobId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ hiringStage: newStage }),

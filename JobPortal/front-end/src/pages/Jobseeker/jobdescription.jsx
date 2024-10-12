@@ -13,7 +13,7 @@ const JobDescription = () => {
   useEffect(() => {
     const fetchJobData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/jobs/joblistings/${jobId}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/joblistings/${jobId}`);
         const data = await response.json();
         setJobData(data);
       } catch (error) {

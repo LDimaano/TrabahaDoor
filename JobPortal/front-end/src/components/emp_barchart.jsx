@@ -9,7 +9,7 @@ function BarChart() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/timetofillemp', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/timetofillemp`, {
           method: 'GET',
           credentials: 'include',
           headers: {
