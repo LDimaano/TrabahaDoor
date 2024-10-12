@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "socket.io-express-session": "^0.1.3"
+  }
+}
