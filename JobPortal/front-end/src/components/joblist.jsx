@@ -68,7 +68,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         return;
       }
       try {
-        const response = await fetch('${process.env.REACT_APP_API_URL/api/jobseekers/user-info', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/user-info`, {
           method: 'GET',
           credentials: 'include',
         });

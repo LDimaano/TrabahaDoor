@@ -70,7 +70,7 @@ function Header() {
     if (!userId) return;
 
     try {
-      const response = await fetch('${process.env.REACT_APP_API_URL/api/jsnotifications', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jsnotifications`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -99,7 +99,7 @@ function Header() {
     const newApplicationIds = notifications.filter((n) => n.notif_status === 'new').map((n) => n.application_id);
     if (newApplicationIds.length > 0) {
       try {
-        const response = await fetch('${process.env.REACT_APP_API_URL/api/jsnotifications/mark-as-viewed', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jsnotifications/mark-as-viewed`, {
           method: 'PATCH',
           credentials: 'include',
           headers: {
@@ -135,7 +135,7 @@ function Header() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('${process.env.REACT_APP_API_URL/api/users/logout', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/logout`, {
         method: 'POST',
         credentials: 'include',
         headers: {
