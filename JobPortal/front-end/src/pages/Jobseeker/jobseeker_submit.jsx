@@ -5,7 +5,7 @@ import JobHeader from '../../components/submitheader';
 import Modal from '../../components/modal';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:5000'); // Initialize socket connection
+const socket = io(process.env.REACT_APP_SOCKET_URL); // Initialize socket connection
 
 function SubmitApplication() {
     const [isModalOpen, setIsModalOpen] = useState(false);
