@@ -27,6 +27,8 @@ const Header = () => {
           />
           <span className="ms-2 fw-bold">TrabahaDoor</span>
         </a>
+        
+        {/* Navbar toggler for mobile */}
         <button 
           className="navbar-toggler" 
           type="button" 
@@ -38,6 +40,8 @@ const Header = () => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
+        
+        {/* Navigation links collapse for responsiveness */}
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             {navItems.map((item, index) => (
@@ -46,6 +50,8 @@ const Header = () => {
               </li>
             ))}
           </ul>
+          
+          {/* Login/Signup buttons */}
           <div className="d-flex">
             <button className="btn btn-outline-primary me-2" onClick={handleLoginClick}>Login</button>
             <button className="btn btn-primary" onClick={handleSignupClick}>Sign Up</button>

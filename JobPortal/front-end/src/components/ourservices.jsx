@@ -28,14 +28,15 @@ const OurServices = () => {
     <section className="py-5 bg-light">
       <div className="container text-center">
         <h2 className="mb-4">OUR SERVICES</h2>
-        <div className="row">
+        <div className="row g-4">
           {services.map((service, index) => (
-            <ServiceCard
-              key={index}
-              icon={service.icon}
-              title={service.title}
-              description={service.description}
-            />
+            <div key={index} className="col-12 col-sm-6 col-md-4 col-lg-3">
+              <ServiceCard
+                icon={service.icon}
+                title={service.title}
+                description={service.description}
+              />
+            </div>
           ))}
         </div>
       </div>

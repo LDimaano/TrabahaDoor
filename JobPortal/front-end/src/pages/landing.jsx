@@ -11,22 +11,29 @@ import Footer from '../components/footer';
 const LandingPage = () => {
   return (
     <div>
+      {/* Wrap the header and sections with Bootstrap containers for proper responsiveness */}
       <Header />
-      <section id="home">
+      
+      <section id="home" className="container-fluid p-0">
         <Hero />
       </section>
-      <section id="announcement">
+      
+      <section id="announcement" className="container py-5">
         <Announcements />
       </section>
-      <section id="services">
+      
+      <section id="services" className="container py-5">
         <OurServices />
       </section>
-      <section id="about-us">
+      
+      <section id="about-us" className="container py-5">
         <AboutUs />
       </section>
-      <section id="contact-us">
+      
+      <section id="contact-us" className="container py-5">
         <ContactSection />
       </section>
+
       <Footer />
     </div>
   );

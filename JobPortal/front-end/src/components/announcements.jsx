@@ -42,9 +42,9 @@ const Announcements = () => {
                 <div className="d-flex justify-content-center">
                   <img 
                     src={slide.src} 
-                    className="d-block w-100" // Use Bootstrap classes for responsive width
+                    className="d-block img-fluid"  // Use Bootstrap img-fluid for responsive images
                     alt={slide.alt} 
-                    style={{ height: '400px', objectFit: 'cover' }} // Inline styles for uniform height
+                    style={{ maxHeight: '400px', objectFit: 'cover', width: '100%' }}  // Max height for large screens
                   />
                 </div>
                 <div className="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-2 rounded">
