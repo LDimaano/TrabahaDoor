@@ -13,15 +13,24 @@ function Header() {
   const location = useLocation();
   const userId = sessionStorage.getItem('user_id');
 
-  // Fetch company info
   useEffect(() => {
     const fetchCompanyInfo = async () => {
       try {
+        // Get user_id from session storage
+        const userId = sessionStorage.getItem('user_id');
+
+        if (!userId) {
+          console.error('User ID not found in session storage');
+          return;
+        }
+
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/user-infoemp`, {
           method: 'GET',
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
+            // Optionally, you could pass userId in the headers if needed
+            // 'Authorization': `Bearer ${userId}`,
           },
         });
 
@@ -38,9 +47,8 @@ function Header() {
         console.error('Error fetching company info:', error);
       }
     };
-
     fetchCompanyInfo();
-  }, []);
+  }, []); 
 
   useEffect(() => {
     const socket = io(process.env.REACT_APP_SOCKET_URL, { withCredentials: true });
