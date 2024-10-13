@@ -29,7 +29,6 @@ const server = require('http').createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: 'https://trabahadoor-front-end.onrender.com', credentials: true }));
-app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.json());
 // Session configuration
@@ -52,6 +51,8 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 };
+
+app.use(cors(corsOptions));
 
 // Initialize Socket.IO with CORS options
 const io = require('socket.io')(server, {
