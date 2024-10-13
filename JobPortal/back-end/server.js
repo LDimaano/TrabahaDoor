@@ -77,6 +77,7 @@ io.use(sharedSession(sessionMiddleware, {
 io.on('connection', (socket) => {
   console.log('a user connected');
   const session = socket.handshake.session;
+  console.log(session)
 
   if (!session || !session.user || !session.user.user_id) {
     console.error('No session or user ID found for the connected socket');
