@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const navigate = useNavigate();
-  const [company_name, setCompanyName] = useState(''); 
+  const [company_name, setCompanyName] = useState('');
   const [contact_person, setContactPerson] = useState('');
   const [profile_picture_url, setProfilePictureUrl] = useState('');
 
@@ -26,7 +26,7 @@ const Header = () => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('API response data:', data); 
+          console.log('API response data:', data);
           setCompanyName(data.company_name || '');
           setContactPerson(data.contact_person || '');
           setProfilePictureUrl(data.profile_picture_url || '');
@@ -42,17 +42,17 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="d-flex justify-content-between align-items-center mb-4">
-      <div className="d-flex align-items-center">
+    <header className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+      <div className="d-flex align-items-center mb-3 mb-md-0">
         <img
           src={profile_picture_url}
           alt="Company Logo"
           className="me-3"
-          style={{ width: '50px' }}
+          style={{ width: '50px', height: '50px', objectFit: 'cover' }}
         />
         <div>
-          <span className="text-muted">{contact_person}</span>
-          <h2>{company_name}</h2>
+          <span className="text-muted d-block">{contact_person}</span>
+          <h2 className="h5 h-md-2">{company_name}</h2>
         </div>
       </div>
       <div className="d-flex align-items-center">

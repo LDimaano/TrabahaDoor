@@ -167,30 +167,34 @@ function Header() {
           />
           <span className="fw-bold">TrabahaDoor</span>
         </a>
-        <span className="navbar-text mx-auto">
-          Welcome, {fullName || 'Guest'}
-        </span>
-        <div className="collapse navbar-collapse">
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto d-flex align-items-center">
-            <li className="nav-item mx-3 position-relative">
+            <li className="nav-item mx-3">
               <Link to="/js_joblistings" className={getNavLinkClass('/js_joblistings')}>
                 <i className="fas fa-briefcase fa-lg" style={{ color: '#6c757d' }}></i>
               </Link>
             </li>
-            <li className="nav-item mx-3 position-relative">
-              <button
-                className="btn btn-link"
-                onClick={toggleNotifications}
-                aria-expanded={showNotifications}
-              >
+            <li className="nav-item mx-3">
+              <button className="btn btn-link" onClick={toggleNotifications}>
                 <i className="fas fa-bell fa-lg" style={{ color: '#6c757d' }}></i>
                 {notificationCount > 0 && (
                   <span className="badge bg-danger">{notificationCount}</span>
                 )}
               </button>
               {showNotifications && (
-                <div 
-                  className="position-absolute bg-white border rounded shadow p-2" 
+                <div
+                  className="position-absolute bg-white border rounded shadow p-2"
                   style={{ top: '100%', right: '0', width: '250px', zIndex: 1050 }}
                   onMouseLeave={() => {
                     markNotificationsAsViewed();
@@ -216,7 +220,7 @@ function Header() {
                 </div>
               )}
             </li>
-            <li className="nav-item mx-3 position-relative">
+            <li className="nav-item mx-3">
               <button className="btn btn-link" onClick={handleProfileClick}>
                 <i className="fas fa-user fa-lg" style={{ color: '#6c757d' }}></i>
               </button>
