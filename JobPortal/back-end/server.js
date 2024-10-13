@@ -36,7 +36,7 @@ app.use(cors({
 app.use(cookieParser());
 app.use(bodyParser.json());
 // Session configuration
-const sessionMiddleware = session({
+app.use(session({
   secret: process.env.SESSION_SECRET || 'a2f4b9c0e5d',
   resave: false,
   saveUninitialized: false,
@@ -45,10 +45,7 @@ const sessionMiddleware = session({
     httpOnly: true,
     maxAge: 60 * 60 * 1000 // 1 hour session expiration
   }
-});
-
-// Use the session middleware with Express
-app.use(sessionMiddleware);
+}));
 
 const corsOptions = {
   origin: 'https://trabahadoor-front-end.onrender.com',

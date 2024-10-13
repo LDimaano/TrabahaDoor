@@ -78,10 +78,9 @@ router.post('/login', async (req, res) => {
       user_id: user.user_id,
       email: user.email,
       usertype: user.usertype,
-      approve: user.approve // Include approve in session data
     };
 
-    console.log('Session data after login:', req.session);
+    console.log('user id: ', req.session.user.user_id);
 
     // Save session and handle redirection
     await req.session.save(err => {
