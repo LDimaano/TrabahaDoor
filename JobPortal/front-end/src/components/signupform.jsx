@@ -21,11 +21,11 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
     if (!isValidLength) {
       return 'Password must be at least 8 characters long.';
     } else if (!hasUpperCase) {
-      return ' Password must include at least one uppercase letter.';
+      return 'Password must include at least one uppercase letter.';
     } else if (!hasLowerCase) {
-      return ' Password must include at least one lowercase letter.';
+      return 'Password must include at least one lowercase letter.';
     } else if (!hasNumber) {
-      return ' Password must include at least one number.';
+      return 'Password must include at least one number.';
     }
 
     return '';
