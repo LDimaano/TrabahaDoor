@@ -142,6 +142,7 @@ router.post('/employer-profile', async (req, res) => {
 });
 
 router.get('/user-infoemp', async (req, res) => {
+  const userId = req.query.userId || req.session.user.user_id;
   console.log('Session data:', req.session);
 
 
@@ -149,8 +150,6 @@ router.get('/user-infoemp', async (req, res) => {
     return res.status(403).json({ message: 'Not authenticated' });
   }
 
-
-  const userId = req.session.user.user_id;
   console.log('User ID from session:', userId);
 
 
