@@ -48,7 +48,10 @@ function Header() {
   }, []);
 
   useEffect(() => {
-    const socket = io(process.env.REACT_APP_SOCKET_URL, { withCredentials: true });
+    const socket = io(process.env.REACT_APP_SOCKET_URL, {
+      withCredentials: true,
+      transports: ['websocket', 'polling']
+    });
 
     socket.on('connect_error', (err) => {
       console.error('Connection Error:', err);
