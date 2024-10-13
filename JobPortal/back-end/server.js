@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 
 
 const app = express();
-const server = http.createServer(app);
+const server = require('http').createServer(app);
 
 // // Configure CORS and Socket.IO
 // io = require('socket.io')(server, {
@@ -29,6 +29,7 @@ const server = http.createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: 'https://trabahadoor-front-end.onrender.com', credentials: true }));
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.json());
 // Session configuration
@@ -48,14 +49,19 @@ app.use(sessionMiddleware);
 
 const corsOptions = {
   origin: 'https://trabahadoor-front-end.onrender.com',
-  methods: ["GET", "POST"],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 };
 
 // Initialize Socket.IO with CORS options
 const io = require('socket.io')(server, {
-  cors: corsOptions,
+  cors: {
+    origin: 'https://trabahadoor-front-end.onrender.com',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+  }
 });
+
 
 // Use the session middleware with Socket.IO
 io.use(sharedSession(sessionMiddleware, {

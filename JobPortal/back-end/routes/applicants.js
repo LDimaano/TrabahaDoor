@@ -26,7 +26,7 @@ router.get('/applicantlist', async (req, res) => {
     JOIN address a ON js.address_id = a.address_id
     JOIN job_experience je ON js.user_id = je.user_id
     JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
-    JOIN profilepictures pp ON js.user_id = pp.user_id
+    LEFT JOIN profilepictures pp ON js.user_id = pp.user_id
     JOIN industries i ON js.industry_id = i.industry_id
     `;
 
