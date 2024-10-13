@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 function SignupForm({ openTermsModal, openPrivacyModal }) {
   const [email, setEmail] = useState('');
@@ -7,6 +9,7 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
   const [usertype, setUserType] = useState('jobseeker');
   const [error, setError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
   const navigate = useNavigate();
 
   const validatePassword = (password) => {
@@ -37,7 +40,6 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
   const handleClick = async (event) => {
     event.preventDefault();
 
-    // Check if the password meets the requirements before submitting the form
     const passwordValidationError = validatePassword(password);
     if (passwordValidationError) {
       setPasswordError(passwordValidationError);
@@ -96,17 +98,26 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
             aria-label="Enter your Email Address"
           />
         </div>
-        <div className="mb-3">
+        <div className="mb-3 position-relative">
           <label htmlFor="passwordInput" className="form-label">Password</label>
-          <input 
-            type="password" 
-            className="form-control form-control-lg" 
-            placeholder="Enter password" 
-            value={password}
-            onChange={handlePasswordChange}
-            id="passwordInput" 
-            aria-label="Enter your password"
-          />
+          <div className="input-group">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              className="form-control form-control-lg"
+              placeholder="Enter password"
+              value={password}
+              onChange={handlePasswordChange}
+              id="passwordInput"
+              aria-label="Enter your password"
+            />
+            <span
+              className="input-group-text"
+              style={{ cursor: 'pointer' }}
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+            </span>
+          </div>
           {passwordError && <small className="text-danger">{passwordError}</small>}
           <small className="text-muted">
             Password must be at least 8 characters, include one uppercase letter, one lowercase letter, and one number.
