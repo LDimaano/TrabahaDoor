@@ -14,16 +14,6 @@ const bodyParser = require('body-parser');
 const app = express();
 const server = require('http').createServer(app);
 
-// // Configure CORS and Socket.IO
-// io = require('socket.io')(server, {
-//   cors: {
-//     origin: "http://localhost:3000",
-//     methods: ["GET", "POST"],
-//     credentials: true
-//   }
-// });
-
-
 
 // Middleware to parse JSON and cookies
 app.use(express.json());
@@ -46,6 +36,19 @@ app.use(session({
     maxAge: 60 * 60 * 1000 // 1 hour session expiration
   }
 }));
+
+const sessionMiddleware = session({
+  secret: process.env.SESSION_SECRET || 'a2f4b9c0e5d',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // Set to true if using HTTPS
+    httpOnly: true,
+    maxAge: 60 * 60 * 1000 // 1 hour session expiration
+  }
+});
+
+app.use(sessionMiddleware);
 
 const corsOptions = {
   origin: 'https://trabahadoor-front-end.onrender.com',
