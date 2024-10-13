@@ -6,11 +6,44 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
   const [password, setPassword] = useState('');
   const [usertype, setUserType] = useState('jobseeker');
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
+
+  const validatePassword = (password) => {
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const isValidLength = password.length >= 8;
+
+    if (!isValidLength) {
+      return 'Password must be at least 8 characters long.';
+    } else if (!hasUpperCase) {
+      return 'Password must include at least one uppercase letter.';
+    } else if (!hasLowerCase) {
+      return 'Password must include at least one lowercase letter.';
+    } else if (!hasNumber) {
+      return 'Password must include at least one number.';
+    }
+
+    return '';
+  };
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    setPasswordError(validatePassword(newPassword));
+  };
 
   const handleClick = async (event) => {
     event.preventDefault();
-  
+
+    // Check if the password meets the requirements before submitting the form
+    const passwordValidationError = validatePassword(password);
+    if (passwordValidationError) {
+      setPasswordError(passwordValidationError);
+      return;
+    }
+
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/submit-form`, { 
         method: 'POST',
@@ -40,7 +73,6 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
       setError('Network error. Please try again.');
     }
   };
-  
 
   return (
     <form className="col-lg-6 d-flex align-items-center" onSubmit={handleClick}>
@@ -71,10 +103,14 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
             className="form-control form-control-lg" 
             placeholder="Enter password" 
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
             id="passwordInput" 
             aria-label="Enter your password"
           />
+          {passwordError && <small className="text-danger">{passwordError}</small>}
+          <small className="text-muted">
+            Password must be at least 8 characters, include one uppercase letter, one lowercase letter, and one number.
+          </small>
         </div>
         <div className="mb-3">
           <label className="form-check-label me-3">
