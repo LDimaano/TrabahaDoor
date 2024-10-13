@@ -12,7 +12,7 @@ const Header = () => {
     navigate('/signup'); 
   };
 
-  const navItems = ['Home', 'Announcement', 'Services', 'About Us','Contact Us'];
+  const navItems = ['Home', 'Announcement', 'Services', 'About Us', 'Contact Us'];
 
   return (
     <header className="navbar navbar-expand-lg navbar-light bg-light">
@@ -27,8 +27,19 @@ const Header = () => {
           />
           <span className="ms-2 fw-bold">TrabahaDoor</span>
         </a>
-        <div className="collapse navbar-collapse">
-          <ul className="navbar-nav me-auto">
+        <button 
+          className="navbar-toggler" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#navbarNav" 
+          aria-controls="navbarNav" 
+          aria-expanded="false" 
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             {navItems.map((item, index) => (
               <li key={index} className="nav-item">
                 <a className="nav-link" href={`#${item.toLowerCase().replace(' ', '-')}`}>{item}</a>
