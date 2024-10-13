@@ -29,7 +29,7 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
     }
 
     return '';
-  };setUserType
+  };
 
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
