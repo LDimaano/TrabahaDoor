@@ -122,7 +122,7 @@ app.post('/api/update-profile-picture/:userId', upload.single('profilePicture'),
   }
 
   // Construct the full URL for the uploaded file
-  const profilePictureUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+  const profilePictureUrl = `${process.env.REACT_APP_API_URL}/uploads/${req.file.filename}`;
 
   // Update the database with the new profile picture URL
   const query = 'UPDATE profilepictures SET profile_picture_url = $1 WHERE user_id = $2';

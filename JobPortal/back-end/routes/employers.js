@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../db');
 const multer = require('multer');
 const path = require('path');
-const baseURL = 'http://localhost:5000'; // Change this to your production URL when deploying
+const baseURL = `${process.env.REACT_APP_API_URL}`; // Change this to your production URL when deploying
 
 // Serve static files from the documents directory
 router.use('/documents', express.static(path.join(__dirname, '..', 'documents')));
