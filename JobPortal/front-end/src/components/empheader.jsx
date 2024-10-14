@@ -144,6 +144,10 @@ function Header() {
     navigate('/emp_notifications');
   };
 
+  const handleHomeClick = () => {
+    navigate('/home_employer');
+  };
+
   const handleLogout = async () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/logout`, {
@@ -170,7 +174,7 @@ function Header() {
       <div className="container-fluid">
       <button 
         className="navbar-brand d-flex align-items-center btn btn-link" 
-        onClick={() => window.location.href="/home_employer"}
+        onClick={handleHomeClick} 
         style={{ textDecoration: 'none' }}
       >
         <img

@@ -37,6 +37,10 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
     setPasswordError(validatePassword(newPassword));
   };
 
+  const handleLoginClick = () => {
+    navigate('/login'); 
+  };
+
   const handleClick = async (event) => {
     event.preventDefault();
 
@@ -151,7 +155,7 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
         <div className="text-center mt-3">
           <span>Already have an account?</span>
           <button 
-            onClick={() => window.location.href = '/login'} 
+            onClick={handleLoginClick} 
             className="btn btn-link ms-2" 
             style={{ textDecoration: 'underline', padding: 0, border: 'none', background: 'transparent', color: 'blue' }}
           >

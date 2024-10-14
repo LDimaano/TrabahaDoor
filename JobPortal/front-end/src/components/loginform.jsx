@@ -42,6 +42,10 @@ function LoginForm() {
     }
   };
 
+  const handleSignupClick = () => {
+    navigate('/signup');
+  };
+
   return (
     <form className="col-lg-6 d-flex align-items-center" onSubmit={handleClick}>
       <div className="card p-5 shadow-lg w-100">
@@ -100,7 +104,7 @@ function LoginForm() {
         <div className="text-center mt-3">
           <span>Don’t have an account?</span>
           <button 
-            onClick={() => window.location.href = '/signup'} 
+            onClick={handleSignupClick} 
             className="btn btn-link ms-2" 
             style={{ textDecoration: 'underline', padding: 0, border: 'none', background: 'transparent', color: 'blue' }}
           >
