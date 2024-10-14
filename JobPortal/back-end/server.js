@@ -140,14 +140,14 @@ app.post('/api/update-profile-picture/:userId', upload.single('profilePicture'),
 
 
 // Real-time notification route
-app.get('/api/notifications', async (req, res) => {
-  const userId = req.session.user.user_id;
-
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
-  }
-
+app.get('/api/notifications/:userId', async (req, res) => {
   try {
+    const { userId } = req.params;
+
+    if (!userId || isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
     const result = await pool.query(
       `
     SELECT 
@@ -198,7 +198,7 @@ const getJobData = async () => {
       JOIN industries ON joblistings.industry_id = industries.industry_id
       JOIN job_skills ON joblistings.job_id = job_skills.job_id
       JOIN skills ON job_skills.skill_id = skills.skill_id
-	  JOIN profilepictures pp ON joblistings.user_id = pp.user_id;
+	    LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id;
     `);
 
     // Transform job data to include only the necessary information
@@ -320,8 +320,6 @@ app.post('/api/recommend', async (req, res) => {
   }
 });
 
-  
-
 // Function to get job postings
 // Function to get job postings for a user
 const getJobPostings = async (userId) => {
@@ -416,7 +414,7 @@ const getApplicants = async () => {
 
 const getContactHistory = async (empUserId) => {
   const query = `
-        SELECT 
+    SELECT 
         ec.js_user_id, 
         ec.emp_user_id, 
         js.full_name, 
@@ -430,7 +428,7 @@ const getContactHistory = async (empUserId) => {
     JOIN job_seekers js ON u.user_id = js.user_id
     JOIN skills s ON jk.skill_id = s.skill_id
     JOIN job_titles jt ON jt.jobtitle_id = (SELECT jobtitle_id FROM job_experience WHERE user_id = u.user_id LIMIT 1)
-    JOIN profilepictures pp ON pp.user_id = u.user_id
+    LEFT JOIN profilepictures pp ON pp.user_id = u.user_id
     WHERE ec.emp_user_id != $1 -- Fetching contacts from similar employers
     GROUP BY ec.js_user_id, js.full_name, u.email, jt.job_title, pp.profile_picture_url, ec.emp_user_id;
       `;
@@ -647,14 +645,14 @@ app.get('/api/allnotifications', async (req, res) => {
 
 
 // Endpoint to mark a notification as read
-app.post('/api/notifications/mark-as-viewed', async (req, res) => {
+app.post('/api/notifications/mark-as-viewed/:userId', async (req, res) => {
   const { jobIds } = req.body;
-  const userIdFromSession = req.session.user?.user_id; 
+  const { userId } = req.params;
   // Optional chaining to avoid crashes
 
   // Check if the user is authenticated
-  if (!userIdFromSession) {
-    return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
+  if (!userId || isNaN(userId)) {
+    return res.status(400).json({ message: 'Invalid user ID' });
   }
 
   // Check if any job IDs are provided

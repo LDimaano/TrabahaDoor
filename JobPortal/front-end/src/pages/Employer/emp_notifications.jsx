@@ -48,7 +48,7 @@ function EmpNotifications() {
     if (!userId) return;
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/allnotifications`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/allnotifications/${userId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {

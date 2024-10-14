@@ -14,16 +14,10 @@ function Header() {
   const userId = sessionStorage.getItem('user_id');
 
   useEffect(() => {
+    const userId = sessionStorage.getItem('user_id');
     const fetchCompanyInfo = async () => {
       try {
-        const userId = sessionStorage.getItem('user_id');
-
-        if (!userId) {
-          console.error('User ID not found in session storage');
-          return;
-        }
-
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/user-infoemp`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/user-infoemp/${userId}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -77,10 +71,16 @@ function Header() {
   }, [userId]);
 
   const fetchNotifications = async () => {
-    if (!userId) return;
+    const userId = sessionStorage.getItem('user_id');
+     
+    // Check if userId exists before making the fetch request
+     if (!userId) {
+      console.error('User ID not found in session storage');
+      return;
+    }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications/${userId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -109,7 +109,8 @@ function Header() {
 
       if (newJobIds.length > 0) {
         try {
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications/mark-as-viewed`, {
+          const userId = sessionStorage.getItem('user_id');
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications/mark-as-viewed/${userId}`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -177,6 +178,9 @@ function Header() {
           />
           <span className="fw-bold">TrabahaDoor</span>
         </a>
+        <span className="navbar-text mx-auto">
+          Welcome, {companyInfo.companyName || 'Guest'}
+        </span>
         <button
           className="navbar-toggler"
           type="button"

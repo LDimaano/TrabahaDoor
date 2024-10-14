@@ -141,20 +141,16 @@ router.post('/employer-profile', async (req, res) => {
   }
 });
 
-router.get('/user-infoemp', async (req, res) => {
-  const userId = req.query.userId || req.session.user.user_id;
-  console.log('Session data:', req.session);
-
-
-  if (!req.session.user) {
-    return res.status(403).json({ message: 'Not authenticated' });
-  }
-
-  console.log('User ID from session:', userId);
-
-
+router.get('/user-infoemp/:userId', async (req, res) => {
   try {
-    // Use a join to fetch company_name from emp_profiles and email from users
+    const { userId } = req.params;
+    console.log('Received userId:', userId);
+    
+    // Input validation
+    if (!userId || isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+    
     const result = await pool.query(
       `
        SELECT emp_profiles.company_name,
