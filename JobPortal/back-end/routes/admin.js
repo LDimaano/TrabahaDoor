@@ -215,17 +215,14 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
     }
 });
   
-router.get('/viewemployers', async (req, res) => {
-  console.log('Session data:', req.session);
-
-  if (!req.session.user) {
-    return res.status(403).json({ message: 'Not authenticated' });
-  }
-
-  const userId = req.session.user.user_id;
-  console.log('User ID from session:', userId);
-
+router.get('/viewemployers/:userId', async (req, res) => {
   try {
+    const { userId } = req.params;
+
+    if (!userId || isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
     const result = await pool.query(`
       SELECT
         e.id,
