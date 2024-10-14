@@ -73,12 +73,14 @@ const MyProfile = () => {
   // Function to handle the contact action
   const handleContact = async () => {
     try {
+      const userId = sessionStorage.getItem('user_id');
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/contact/${user_id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include', 
+        body: JSON.stringify({ userId }),
       });
   
       if (!response.ok) {

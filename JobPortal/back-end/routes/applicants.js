@@ -401,12 +401,6 @@ const getApplicantsForJob = async (jobId) => {
 // New endpoint for recommending candidates based on jobId
 router.post('/recommend-candidates/:jobId', async (req, res) => {
   const { jobId } = req.params;
-  const userId = req.body.userId; 
-
-  if (!userId || !jobId) {
-    return res.status(400).json({ error: 'User ID and Job ID are required.' });
-  }
-
   try {
     const jobPostings = await getJobPostings(userId);
     const applicants = await getApplicantsForJob(jobId);
@@ -448,7 +442,7 @@ router.post('/recommend-candidates/:jobId', async (req, res) => {
 
 router.post('/contact/:user_id', async (req, res) => {
   const { user_id: js_user_id } = req.params;
-  const emp_user_id = req.session.user.user_id;
+  const { userId: emp_user_id } = req.body; 
 
   try {
     if (!js_user_id || !emp_user_id) {

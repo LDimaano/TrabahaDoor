@@ -16,7 +16,8 @@ const Header = () => {
   useEffect(() => {
     const fetchCompanyName = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/user-infoemp`, {
+        const userId = sessionStorage.getItem('user_id');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/user-infoemp/${userId}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
