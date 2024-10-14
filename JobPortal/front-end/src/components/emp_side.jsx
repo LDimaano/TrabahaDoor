@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faClipboardList, faSignOutAlt, faHourglassStart } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   const [company_name, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
   const [profile_picture_url, setProfilePictureUrl] = useState('');
@@ -51,7 +53,7 @@ const Sidebar = () => {
         // Clear session data
         window.sessionStorage.clear();
         // Redirect to login page or home page
-        window.location.href = '/'; // Adjust as needed
+        navigate('/'); // Adjust as needed
       } else {
         console.error('Failed to log out:', response.statusText);
       }
@@ -61,15 +63,15 @@ const Sidebar = () => {
   };
 
   const handleHomeClick = () => {
-    window.location.href = '/home_employer';
+    navigate('/home_employer');
   };
 
   const handleJobListingClick = () => {
-    window.location.href = '/applicant_joblisting';
+    navigate('/applicant_joblisting');
   };
 
   const handleTimeToFillClick = () => {
-    window.location.href = '/emp_timetofill';
+    navigate('/emp_timetofill');
   };
 
   return (
