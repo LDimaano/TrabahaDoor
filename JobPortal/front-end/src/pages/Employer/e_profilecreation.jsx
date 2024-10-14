@@ -207,7 +207,6 @@ function EmployerProfileCreation() {
               className="form-control"
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
-              required
             />
           </div>
         </div>
