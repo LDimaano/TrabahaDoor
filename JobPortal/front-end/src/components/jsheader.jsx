@@ -71,10 +71,16 @@ function Header() {
   }, [userId]);
 
   const fetchNotifications = async () => {
-    if (!userId) return;
+    const userId = sessionStorage.getItem('user_id');
+     
+    // Check if userId exists before making the fetch request
+     if (!userId) {
+      console.error('User ID not found in session storage');
+      return;
+    }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jsnotifications`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jsnotifications/${userId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -100,16 +106,21 @@ function Header() {
   };
 
   const markNotificationsAsViewed = async () => {
+    const userId = sessionStorage.getItem('user_id');
     const newApplicationIds = notifications.filter((n) => n.notif_status === 'new').map((n) => n.application_id);
-    if (newApplicationIds.length > 0) {
+    const newContactIds = notifications
+    .filter((n) => n.notif_status === 'new' && n.contact_id)
+    .map((n) => n.contact_id);
+    if (newApplicationIds.length > 0 || newContactIds.length > 0) {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jsnotifications/mark-as-viewed`, {
+
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jsnotifications/mark-as-viewed/${userId}`, {
           method: 'PATCH',
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ applicationIds: newApplicationIds }),
+          body: JSON.stringify({ applicationIds: newApplicationIds, contactIds: newContactIds }),
         });
 
         if (response.ok) {

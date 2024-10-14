@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: 'https://trabahadoor-front-end.onrender.com',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
 }));
 app.use(cookieParser());
@@ -52,7 +52,7 @@ app.use(sessionMiddleware);
 
 const corsOptions = {
   origin: 'https://trabahadoor-front-end.onrender.com',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true,
 };
 
@@ -62,7 +62,7 @@ app.use(cors(corsOptions));
 const io = require('socket.io')(server, {
   cors: {
     origin: 'https://trabahadoor-front-end.onrender.com',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true
   },
   transports: ['websocket', 'polling']
@@ -679,15 +679,13 @@ app.post('/api/notifications/mark-as-viewed', async (req, res) => {
 });
 
 
-app.get('/api/jsnotifications', async (req, res) => {
-  const userId = req.session.user.user_id;
-
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
-  }
-
+app.get('/api/jsnotifications/:userId', async (req, res) => {
   try {
     // Fetch application-related notifications
+    const { userId } = req.params;
+    if (!userId || isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
     const applicationResult = pool.query(
       `
       SELECT 
@@ -760,18 +758,17 @@ app.get('/api/jsnotifications', async (req, res) => {
 });
 
 
-app.patch('/api/jsnotifications/mark-as-viewed', async (req, res) => {
+app.patch('/api/jsnotifications/mark-as-viewed/:userId', async (req, res) => {
   const { applicationIds, contactIds } = req.body; // Update to include contactIds
-  const userIdFromSession = req.session.user?.user_id;
-
-  // Check for user authentication
-  if (!userIdFromSession) {
-    return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
-  }
+  const { userId } = req.params;
+    
+  if (!userId || isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
 
   // Validate that application IDs are provided
-  if (!applicationIds || applicationIds.length === 0) {
-    return res.status(400).json({ error: 'No application IDs provided' });
+  if ((!applicationIds || applicationIds.length === 0) && (!contactIds || contactIds.length === 0)) {
+    return res.status(400).json({ error: 'No application or contact IDs provided' });
   }
 
   try {
@@ -780,18 +777,18 @@ app.patch('/api/jsnotifications/mark-as-viewed', async (req, res) => {
       `UPDATE applications
        SET notif_status = 'read'
        WHERE application_id = ANY($1) AND user_id = $2 AND notif_status = 'new';`,
-      [applicationIds, userIdFromSession]
+      [applicationIds, userId]
     );
 
     console.log('Rows affected in applications:', applicationResult.rowCount);
-    console.log('User ID from session:', userIdFromSession);
+    console.log('User ID from session:', userId);
 
     // Check if contactIds are provided and update emp_contact notifications as well
       const contactResult = await pool.query(
         `UPDATE emp_contact
          SET notifstatus = 'read'
          WHERE js_user_id = $1 AND notifstatus = 'new';`,
-        [userIdFromSession] // Use the contactIds parameter
+        [userId] // Use the contactIds parameter
       );
 
       console.log('Rows affected in emp_contact:', contactResult.rowCount);
@@ -805,13 +802,12 @@ app.patch('/api/jsnotifications/mark-as-viewed', async (req, res) => {
 });
 
 
-
-app.get('/api/alljsnotifications', async (req, res) => {
-  const userId = req.session.user.user_id;
-
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
-  }
+app.get('/api/alljsnotifications/:userId', async (req, res) => {
+  const { userId } = req.params;
+    
+  if (!userId || isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
 
   try {
     // Fetch application-related notifications

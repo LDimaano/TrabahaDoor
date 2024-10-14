@@ -48,7 +48,7 @@ const Notifications = () => {
     if (!userId) return;
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/alljsnotifications`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/alljsnotifications/${userId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
