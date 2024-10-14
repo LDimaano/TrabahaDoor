@@ -306,7 +306,6 @@ router.get('/employerprofile/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
-
     const EmployerData = await pool.query(`
       SELECT
         e.company_name,
@@ -325,10 +324,7 @@ router.get('/employerprofile/:userId', async (req, res) => {
       LEFT JOIN industries i ON e.industry_id = i.industry_id
       LEFT JOIN profilepictures pp ON e.user_id = pp.user_id
       WHERE e.user_id = $1
-
-
     `, [userId]);
-
 
     console.log('Fetched employer data:', EmployerData.rows);
    

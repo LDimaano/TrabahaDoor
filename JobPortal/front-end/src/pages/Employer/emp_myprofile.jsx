@@ -18,10 +18,10 @@ const MyProfile = () => {
 
   useEffect(() => {
     const userId = sessionStorage.getItem('user_id'); // Fetch user ID from session
-
+  
     const fetchEmployerData = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/fetchemployer-profile/${userId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/employerprofile/${userId}`, {
           method: 'GET', // Specify the method
           credentials: 'include', // Include credentials (cookies)
           headers: {
@@ -32,11 +32,11 @@ const MyProfile = () => {
           throw new Error('Failed to fetch employer data');
         }
         const data = await response.json();
-
+  
         console.log('Fetched Data:', data);
-
+  
         console.log('Employer Data:', data.employer);
-
+  
         // Set the state for employer data
         const newEmployerData = {
           companyname: data.employer.company_name || 'Not Provided',
@@ -48,10 +48,10 @@ const MyProfile = () => {
         };
         setEmployerData(newEmployerData);
         console.log('Updated Employer Data:', newEmployerData); // Debugging console log
-
+  
         // Set the state for company data
         const newCompanyData = {
-          company_name: data.employer.company_name ||  'Not Provided',
+          company_name: data.employer.company_name || 'Not Provided',
           company_address: data.employer.company_address || 'Not Provided',
           industry: data.employer.industry || 'Not Provided',
           company_size: data.employer.company_size || 'Not Provided',
@@ -60,14 +60,14 @@ const MyProfile = () => {
         };
         setCompanyData(newCompanyData);
         console.log('Updated Company Data:', newCompanyData); // Debugging console log
-
+  
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching employer data:', error);
         setIsLoading(false);
       }
     };
-
+  
     fetchEmployerData();
   }, []);
   
