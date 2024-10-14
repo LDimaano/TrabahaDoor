@@ -149,7 +149,7 @@ function Header() {
   };
 
   const handleHomeClick = () => {
-    navigate('/home_employer');
+    navigate('/home_jobseeker');
   };
 
   const handleLogout = async () => {
