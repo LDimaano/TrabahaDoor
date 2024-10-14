@@ -202,7 +202,7 @@ function EmployerProfileCreation() {
           <div className="col-md-6">
             <label htmlFor="website" className="form-label">Website <span className="text-danger">*</span></label>
             <input
-              type="url"
+              type="text"
               id="website"
               className="form-control"
               value={website}
