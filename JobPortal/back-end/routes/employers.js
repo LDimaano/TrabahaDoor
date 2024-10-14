@@ -163,7 +163,7 @@ router.get('/user-infoemp', async (req, res) => {
         pp.profile_picture_url
        FROM emp_profiles
        JOIN users ON emp_profiles.user_id = users.user_id
-       JOIN profilepictures pp ON users.user_id = pp.user_id
+       LEFT JOIN profilepictures pp ON users.user_id = pp.user_id
        WHERE emp_profiles.user_id = $1
        `,
       [userId]
@@ -205,7 +205,7 @@ router.get('/fetchemployer-profile/:userId', async (req, res) => {
         pp.profile_picture_url 
       FROM emp_profiles e 
       JOIN industries i ON e.industry_id = i.industry_id 
-      JOIN profilepictures pp ON e.user_id = pp.user_id 
+      LEFT JOIN profilepictures pp ON e.user_id = pp.user_id 
       WHERE e.user_id = $1
     `, [userId]);
 
