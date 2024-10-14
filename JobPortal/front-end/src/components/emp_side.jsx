@@ -10,7 +10,8 @@ const Sidebar = () => {
   useEffect(() => {
     const fetchCompanyInfo = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/user-infoemp`, {
+        const userId = sessionStorage.getItem('user_id');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/user-infoemp/${userId}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -59,6 +60,10 @@ const Sidebar = () => {
     }
   };
 
+  const navigateTo = (path) => {
+    window.location.href = path;
+  };
+
   return (
     <aside className="p-3 d-flex flex-column" style={{ backgroundColor: '#044474', width: '250px', height: '100vh', position: 'relative' }}>
       <div className="d-flex align-items-center justify-content-center mb-4">
@@ -73,22 +78,22 @@ const Sidebar = () => {
       <nav className="flex-grow-1">
         <ul className="nav flex-column">
           <li className="nav-item">
-            <a href="/home_employer" className="nav-link text-white">
+            <button onClick={() => navigateTo('/home_employer')} className="btn btn-link nav-link text-white">
               <FontAwesomeIcon icon={faHome} className="me-2" />
               Home
-            </a>
+            </button>
           </li>
           <li className="nav-item">
-            <a href="/applicant_joblisting" className="nav-link text-white">
+            <button onClick={() => navigateTo('/applicant_joblisting')} className="btn btn-link nav-link text-white">
               <FontAwesomeIcon icon={faClipboardList} className="me-2" />
               Job Listing
-            </a>
+            </button>
           </li>
           <li className="nav-item">
-          <a href="/emp_timetofill" className="nav-link text-white">
-            <FontAwesomeIcon icon={faHourglassStart} className="me-2" />
-            Time to fill
-          </a>
+            <button onClick={() => navigateTo('/emp_timetofill')} className="btn btn-link nav-link text-white">
+              <FontAwesomeIcon icon={faHourglassStart} className="me-2" />
+              Time to fill
+            </button>
           </li>
         </ul>
       </nav>
@@ -113,12 +118,12 @@ const Sidebar = () => {
           left: '0',
           right: '0',
           backgroundColor: 'transparent',
-          border: 'none', // Optional: to remove the default border
-          color: 'white', // Change this to your desired text color
+          border: 'none',
+          color: 'white',
         }}
       >
         <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
-          Logout
+        Logout
       </button>
     </aside>
   );

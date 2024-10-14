@@ -165,12 +165,7 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
 
 //fetching applied applicants
 router.get('/appliedapplicants/:jobId', async (req, res) => {
-  if (!req.session.user) {
-    return res.status(403).json({ message: 'Not authenticated' });
-  }
-
   const jobId = req.params.jobId;
-
   try {
     const result = await pool.query(
       `SELECT 
