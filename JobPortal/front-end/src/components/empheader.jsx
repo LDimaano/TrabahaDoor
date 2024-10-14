@@ -168,16 +168,20 @@ function Header() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-transparent">
       <div className="container-fluid">
-        <a className="navbar-brand d-flex align-items-center" href="/home_employer">
-          <img
-            src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
-            alt="TrabahaDoor Logo"
-            width="30"
-            height="30"
-            className="me-2"
-          />
-          <span className="fw-bold">TrabahaDoor</span>
-        </a>
+      <button 
+        className="navbar-brand d-flex align-items-center btn btn-link" 
+        onClick={() => window.location.href="/home_employer"}
+        style={{ textDecoration: 'none' }}
+      >
+        <img
+          src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+          alt="TrabahaDoor Logo"
+          width="30"
+          height="30"
+          className="me-2"
+        />
+        <span className="fw-bold">TrabahaDoor</span>
+      </button>
         <span className="navbar-text mx-auto">
           Welcome, {companyInfo.companyName || 'Guest'}
         </span>

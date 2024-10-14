@@ -4,7 +4,7 @@ const Hero = () => {
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate('/j_profilecreation');
+    navigate('/login');
   };
 
   return (

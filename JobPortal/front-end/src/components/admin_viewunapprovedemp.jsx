@@ -74,7 +74,7 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
               <td>
                 <img
                   src={listing.profile_picture_url}
-                  alt={`${listing.full_name || listing.company_name}'s avatar`}
+                  alt="profile"
                   className="me-2"
                   style={{ width: '50px', borderRadius: '50%' }}
                 />

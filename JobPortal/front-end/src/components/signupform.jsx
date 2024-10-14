@@ -150,7 +150,13 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
         <button className="btn btn-primary btn-lg w-100" type="submit">Continue</button>
         <div className="text-center mt-3">
           <span>Already have an account?</span>
-          <a href="/login" className="ms-2">Log in</a>
+          <button 
+            onClick={() => window.location.href = '/login'} 
+            className="btn btn-link ms-2" 
+            style={{ textDecoration: 'underline', padding: 0, border: 'none', background: 'transparent', color: 'blue' }}
+          >
+            Log in
+          </button>
         </div>
         <div className="text-center mt-3">
           <p>

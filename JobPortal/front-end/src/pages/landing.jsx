@@ -11,9 +11,8 @@ import Footer from '../components/footer';
 const LandingPage = () => {
   return (
     <div>
-      {/* Wrap the header and sections with Bootstrap containers for proper responsiveness */}
       <Header />
-      
+
       <section id="home" className="container-fluid p-0">
         <Hero />
       </section>

@@ -99,7 +99,13 @@ function LoginForm() {
         <button className="btn btn-primary btn-lg w-100" type="submit">Login</button>
         <div className="text-center mt-3">
           <span>Don’t have an account?</span>
-          <a href="/signup" className="ms-2">Sign Up</a>
+          <button 
+            onClick={() => window.location.href = '/signup'} 
+            className="btn btn-link ms-2" 
+            style={{ textDecoration: 'underline', padding: 0, border: 'none', background: 'transparent', color: 'blue' }}
+          >
+            Sign Up
+          </button>
         </div>
       </div>
     </form>

@@ -172,7 +172,11 @@ function Header() {
   return (
     <nav className="navbar navbar-expand-lg bg-transparent">
       <div className="container d-flex justify-content-between align-items-center">
-        <a className="navbar-brand d-flex align-items-center" href="/home_jobseeker">
+      <button 
+          className="navbar-brand d-flex align-items-center btn btn-link" 
+          onClick={() => window.location.href="/home_employer"}
+          style={{ textDecoration: 'none' }}
+        >
           <img
             src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
             alt="TrabahaDoor Logo"
@@ -181,7 +185,7 @@ function Header() {
             className="me-2"
           />
           <span className="fw-bold">TrabahaDoor</span>
-        </a>
+        </button>
         <span className="navbar-text mx-auto">
           Welcome, {fullName || 'Guest'}
         </span>
