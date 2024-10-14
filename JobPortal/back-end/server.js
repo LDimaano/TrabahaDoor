@@ -812,8 +812,7 @@ app.get('/api/alljsnotifications/:userId', async (req, res) => {
   try {
     // Fetch application-related notifications
     const applicationResult = pool.query(
-      `
-      SELECT 
+      ` SELECT 
           js.full_name, 
           jt.job_title, 
           j.job_id, 
@@ -826,7 +825,7 @@ app.get('/api/alljsnotifications/:userId', async (req, res) => {
       JOIN joblistings j ON a.job_id = j.job_id
       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
       JOIN job_seekers js ON a.user_id = js.user_id
-      JOIN profilepictures pp ON j.user_id = pp.user_id
+      LEFT JOIN profilepictures pp ON j.user_id = pp.user_id
       WHERE a.user_id = $1
       ORDER BY a.date_applied DESC;
       `,
@@ -845,7 +844,7 @@ app.get('/api/alljsnotifications/:userId', async (req, res) => {
           pp.profile_picture_url
       FROM emp_contact c
       JOIN emp_profiles e ON c.emp_user_id = e.user_id
-      JOIN profilepictures pp ON c.emp_user_id = pp.user_id
+      LEFT JOIN profilepictures pp ON c.emp_user_id = pp.user_id
       WHERE c.js_user_id = $1 
       ORDER BY c.created_at DESC;
       `,
