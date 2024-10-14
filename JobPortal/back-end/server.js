@@ -19,7 +19,7 @@ const server = require('http').createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: 'https://trabahadoor-front-end.onrender.com',
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));

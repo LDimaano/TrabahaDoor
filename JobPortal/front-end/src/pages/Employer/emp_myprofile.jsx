@@ -21,7 +21,13 @@ const MyProfile = () => {
 
     const fetchEmployerData = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/fetchemployer-profile/${userId}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/fetchemployer-profile/${userId}`, {
+          method: 'GET', // Specify the method
+          credentials: 'include', // Include credentials (cookies)
+          headers: {
+            'Content-Type': 'application/json', // Set the content type
+          },
+        });
         if (!response.ok) {
           throw new Error('Failed to fetch employer data');
         }
