@@ -347,24 +347,10 @@ router.get('/employerprofile/:userId', async (req, res) => {
   }
 });
 
-
-
-
 //show joblisting
-router.get('/joblistings', async (req, res) => {
-  console.log('Session data:', req.session);
-
-
-  if (!req.session.user) {
-    return res.status(403).json({ message: 'Not authenticated' });
-  }
-
-
-  const userId = req.session.user.user_id;
-  console.log('User ID from session:', userId);
-
-
+router.get('/joblistings/:userId', async (req, res) => {
   try {
+    const { userId } = req.params;
     const result = await pool.query(
       `
       SELECT
@@ -382,11 +368,8 @@ router.get('/joblistings', async (req, res) => {
           `,
       [userId]
     );
-
-
     console.log('Database query result:', result.rows);
-
-
+    
     if (result.rows.length > 0) {
       res.json(result.rows);
     } else {
