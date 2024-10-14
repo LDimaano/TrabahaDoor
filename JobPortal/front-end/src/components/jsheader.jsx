@@ -16,9 +16,10 @@ function Header() {
 
   // Fetch user full name
   useEffect(() => {
+    const userId = sessionStorage.getItem('user_id');
     const fetchFullName = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/user-info`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/user-info/${userId}`, {
           method: 'GET',
           credentials: 'include',
           headers: {

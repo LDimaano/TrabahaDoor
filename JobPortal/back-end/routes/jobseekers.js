@@ -86,34 +86,34 @@ router.get('/user/skills/:userId', async (req, res) => {
 });
 
 // GET route to fetch user full name based on session user_id
-router.get('/user-info', async (req, res) => {
-  console.log('Session data:', req.session);
-  if (!req.session.user) {
-    return res.status(403).json({ message: 'Not authenticated' });
-  }
-
-  const userId = req.session.user.user_id;
-  console.log('User ID from session:', userId);
-
+router.get('/user-info/:userId', async (req, res) => {
   try {
+    const { userId } = req.params;
+    console.log('Received userId:', userId);
+    
+    // Input validation
+    if (!userId || isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
     const result = await pool.query(
-        `SELECT 
-            js.full_name,
-            js.user_id,
-            js.industry_id,
-            i.industry_name,
-            je.salary
-        FROM job_seekers js
-        JOIN job_experience je ON js.user_id = je.user_id
-        JOIN industries i ON js.industry_id = i.industry_id
-        WHERE js.user_id = $1`,
-        [userId]
+      `SELECT 
+          js.full_name,
+          js.user_id,
+          js.industry_id,
+          i.industry_name,
+          je.salary
+      FROM job_seekers js
+      JOIN job_experience je ON js.user_id = je.user_id
+      JOIN industries i ON js.industry_id = i.industry_id
+      WHERE js.user_id = $1`,
+      [userId]
     );
 
     console.log('Database query result:', result.rows);
 
     if (result.rows.length > 0) {
-      const userInfo = result.rows[0]; // Fetching the first result
+      const userInfo = result.rows[0];
       const response = {
         fullName: userInfo.full_name,
         industryName: userInfo.industry_name,
@@ -128,6 +128,7 @@ router.get('/user-info', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
   try {
