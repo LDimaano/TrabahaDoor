@@ -60,8 +60,16 @@ const Sidebar = () => {
     }
   };
 
-  const navigateTo = (path) => {
-    window.location.href = path;
+  const handleHomeClick = () => {
+    window.location.href = '/home_employer';
+  };
+
+  const handleJobListingClick = () => {
+    window.location.href = '/applicant_joblisting';
+  };
+
+  const handleTimeToFillClick = () => {
+    window.location.href = '/emp_timetofill';
   };
 
   return (
@@ -78,19 +86,19 @@ const Sidebar = () => {
       <nav className="flex-grow-1">
         <ul className="nav flex-column">
           <li className="nav-item">
-            <button onClick={() => navigateTo('/home_employer')} className="btn btn-link nav-link text-white">
+            <button onClick={handleHomeClick} className="btn btn-link nav-link text-white">
               <FontAwesomeIcon icon={faHome} className="me-2" />
               Home
             </button>
           </li>
           <li className="nav-item">
-            <button onClick={() => navigateTo('/applicant_joblisting')} className="btn btn-link nav-link text-white">
+            <button onClick={handleJobListingClick} className="btn btn-link nav-link text-white">
               <FontAwesomeIcon icon={faClipboardList} className="me-2" />
               Job Listing
             </button>
           </li>
           <li className="nav-item">
-            <button onClick={() => navigateTo('/emp_timetofill')} className="btn btn-link nav-link text-white">
+            <button onClick={handleTimeToFillClick} className="btn btn-link nav-link text-white">
               <FontAwesomeIcon icon={faHourglassStart} className="me-2" />
               Time to fill
             </button>

@@ -299,7 +299,7 @@ const getJobPostings = async (userId) => {
     JOIN industries ON joblistings.industry_id = industries.industry_id
     JOIN job_skills ON joblistings.job_id = job_skills.job_id
     JOIN skills ON job_skills.skill_id = skills.skill_id
-    JOIN profilepictures pp ON joblistings.user_id = pp.user_id
+    LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
     WHERE joblistings.user_id = $1
     GROUP BY 
       joblistings.job_id,
@@ -401,6 +401,7 @@ const getApplicantsForJob = async (jobId) => {
 // New endpoint for recommending candidates based on jobId
 router.post('/recommend-candidates/:jobId', async (req, res) => {
   const { jobId } = req.params;
+  const { userId } = req.body;
   try {
     const jobPostings = await getJobPostings(userId);
     const applicants = await getApplicantsForJob(jobId);
