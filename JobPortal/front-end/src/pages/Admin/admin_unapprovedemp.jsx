@@ -14,7 +14,8 @@ const ApplicantDashboard = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/viewunapprovedemp`, {
+      const userId = sessionStorage.getItem('user_id');
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/viewunapprovedemp/${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

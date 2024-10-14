@@ -14,8 +14,9 @@ const ApplicantDashboard = () => {
 
   useEffect(() => {
     const fetchApplicants = async () => {
+      const userId = sessionStorage.getItem('user_id');
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/viewjobseekers`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/viewjobseekers/${userId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

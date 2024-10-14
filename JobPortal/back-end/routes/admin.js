@@ -34,17 +34,12 @@ router.get('/infoadmin/:userId', async (req, res) => {
     }
   });
 
-router.get('/viewusers', async (req, res) => {
-    console.log('Session data:', req.session);
-
-    if (!req.session.user) {
-        return res.status(403).json({ message: 'Not authenticated' });
-    }
-
-    const userId = req.session.user.user_id;
-    console.log('User ID from session:', userId);
-
+router.get('/viewusers/:userId', async (req, res) => {
     try {
+      const { userId } = req.params;
+      if (!userId || isNaN(userId)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
         const result = await pool.query(
             `
             SELECT 
@@ -247,17 +242,13 @@ router.get('/viewemployers/:userId', async (req, res) => {
 });
 
 
-router.get('/viewjobseekers', async (req, res) => {
-    console.log('Session data:', req.session);
-
-    if (!req.session.user) {
-        return res.status(403).json({ message: 'Not authenticated' });
-    }
-
-    const userId = req.session.user.user_id;
-    console.log('User ID from session:', userId);
-
+router.get('/viewjobseekers/:userId', async (req, res) => {
     try {
+      const { userId } = req.params;
+
+    if (!userId || isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
         const result = await pool.query(
             `
             SELECT
@@ -267,12 +258,9 @@ router.get('/viewjobseekers', async (req, res) => {
                 pp.profile_picture_url
             FROM job_seekers j
             JOIN profilepictures pp ON j.user_id = pp.user_id
-	
             `
         );
-
         console.log('Database query result:', result.rows);
-
         res.json(result.rows);
     } catch (error) {
         console.error('Error fetching employers:', error);
@@ -280,17 +268,12 @@ router.get('/viewjobseekers', async (req, res) => {
     }
 });
 
-router.get('/viewjoblisting', async (req, res) => {
-    console.log('Session data:', req.session);
-
-    if (!req.session.user) {
-        return res.status(403).json({ message: 'Not authenticated' });
-    }
-
-    const userId = req.session.user.user_id;
-    console.log('User ID from session:', userId);
-
+router.get('/viewjoblisting/:userId', async (req, res) => {
     try {
+      const { userId } = req.params;
+      if (!userId || isNaN(userId)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
         const result = await pool.query(
             `
             SELECT 
@@ -319,10 +302,6 @@ router.get('/viewapplicantlist/:userId/:jobId', async (req, res) => {
     const { userId, jobId } = req.params;
     console.log('Session data:', req.session);
     
-
-    if (!req.session.user) {
-        return res.status(403).json({ message: 'Not authenticated' });
-    }
 
     try {
         const result = await pool.query(
@@ -438,12 +417,6 @@ router.get('/joblistings/:jobId', async (req, res) => {
 
   // GET /topindustries - Fetch top 5 industries with the highest number of job listings
   router.get('/topindustries', async (req, res) => {
-    console.log('Session data:', req.session);
-
-    if (!req.session.user) {
-        return res.status(403).json({ message: 'Not authenticated' });
-    }
-
     try {
         const result = await pool.query(`
             SELECT 
@@ -467,12 +440,6 @@ router.get('/joblistings/:jobId', async (req, res) => {
 });
 
 router.get('/topcompanies', async (req, res) => {
-    console.log('Session data:', req.session);
-
-    if (!req.session.user) {
-        return res.status(403).json({ message: 'Not authenticated' });
-    }
-
     try {
         const result = await pool.query(`
             SELECT 
@@ -498,8 +465,6 @@ router.get('/topcompanies', async (req, res) => {
 });
 
 router.get('/dashboard-data', async (req, res) => {
-  console.log('Session data:', req.session);
-
   try {
     // Query the count of job seekers
     const jobSeekerCountQuery = 'SELECT COUNT(*) as count FROM job_seekers';
@@ -528,14 +493,12 @@ router.get('/dashboard-data', async (req, res) => {
   }
 });
 
-router.get('/viewarchivedusers', async (req, res) => {
-  console.log('Session data:', req.session);
-
-  if (!req.session.user) {
-    return res.status(403).json({ message: 'Not authenticated' });
-  }
-
+router.get('/viewarchivedusers/:userId', async (req, res) => {
   try {
+    const { userId } = req.params;
+      if (!userId || isNaN(userId)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
     const result = await pool.query(`
       SELECT
         au.user_id,
@@ -561,14 +524,12 @@ router.get('/viewarchivedusers', async (req, res) => {
   }
 });
 
-router.get('/viewunapprovedemp', async (req, res) => {
-  console.log('Session data:', req.session);
-
-  if (!req.session.user) {
-      return res.status(403).json({ message: 'Not authenticated' });
-  }
-
+router.get('/viewunapprovedemp/:userId', async (req, res) => {
   try {
+    const { userId } = req.params;
+      if (!userId || isNaN(userId)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
       const result = await pool.query(
           `
       SELECT 
@@ -597,8 +558,6 @@ router.get('/viewunapprovedemp', async (req, res) => {
 });
 
 router.put('/approve/:userId', async (req, res) => {
-    console.log('approved Session data:', req.session);
-
     const { userId } = req.params;
     console.log(`Approved userId: ${userId}`);
 
