@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding, faArchive, faBan } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom'; // Assuming you are using react-router-dom for navigation
 
 const SideBar = () => {
   const [email, setEmail] = useState('');
+  const navigate = useNavigate();
   const menuItems = [
     { icon: faTachometerAlt, caption: "Dashboard", link: "/admindashboard" },
     { icon: faBuilding, caption: "Approved Employers", link: "/admin_employers" },
@@ -12,7 +14,6 @@ const SideBar = () => {
     { icon: faUser, caption: "All Users", link: "/admin_users" },
     { icon: faArchive, caption: "Archived Users", link: "/admin_archived_users" },
     { icon: faBan, caption: "Unapproved Employers", link: "/admin_unapprovedemp" }
-
   ];
 
   const handleLogout = async () => {
@@ -37,9 +38,10 @@ const SideBar = () => {
   };
 
   useEffect(() => {
+    const userId = sessionStorage.getItem('user_id');
     const fetchCompanyInfo = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/infoadmin`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/infoadmin/${userId}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -60,6 +62,10 @@ const SideBar = () => {
 
     fetchCompanyInfo();
   }, []);
+
+  const handleNavigation = (link) => {
+    navigate(link);
+  };
 
   return (
     <aside 
@@ -85,10 +91,14 @@ const SideBar = () => {
         <ul className="nav flex-column">
           {menuItems.map((item, index) => (
             <li key={index} className={`nav-item ${item.active ? 'active' : ''}`}>
-              <a href={item.link} className="nav-link text-white">
+              <button
+                onClick={() => handleNavigation(item.link)}
+                className="nav-link text-white btn btn-link"
+                style={{ textAlign: 'left' }}
+              >
                 <FontAwesomeIcon icon={item.icon} className="me-2" />
                 {item.caption}
-              </a>
+              </button>
             </li>
           ))}
         </ul>

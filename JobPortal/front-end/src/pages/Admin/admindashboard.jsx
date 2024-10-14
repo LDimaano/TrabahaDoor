@@ -95,9 +95,7 @@ function DashboardAnalytics() {
               </div>
             </div>
           </div>
-
           <div>
-            {/* Content goes here */}
           </div>
         </div>
       </div>

@@ -3,18 +3,13 @@ const router = express.Router();
 const pool = require('../db');
 const { sendActivationEmail } = require('../mailer');
 
-router.get('/infoadmin', async (req, res) => {
-    console.log('Session data:', req.session);
-  
-    if (!req.session.user) {
-      return res.status(403).json({ message: 'Not authenticated' });
-    }
-  
-    const userId = req.session.user.user_id;
-    console.log('User ID from session for info admin:', userId);
-  
+router.get('/infoadmin/:userId', async (req, res) => {
     try {
-      // Use a join to fetch company_name from emp_profiles and email from users
+      const { userId } = req.params;
+      // Input validation
+      if (!userId || isNaN(userId)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
       const result = await pool.query(
         `
         SELECT 
