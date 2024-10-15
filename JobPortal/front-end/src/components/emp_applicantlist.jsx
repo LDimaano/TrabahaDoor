@@ -3,6 +3,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 
+const styles = {
+  dropdownMenu: {
+    zIndex: 1050, // Ensure the dropdown appears on top
+  },
+  tableResponsive: {
+    maxHeight: '500px', // Set a fixed height for the table
+    overflowY: 'auto',  // Allow vertical scrolling
+  },
+};
+
+
 function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const navigate = useNavigate();
   const jobId = useParams().jobId;
@@ -130,7 +141,8 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
             >
               {localHiringStages[listing.user_id] || 'Received'} 
             </button>
-            <ul className="dropdown-menu" aria-labelledby={`dropdownMenuButton-${listing.user_id}`}>
+            <ul className="dropdown-menu" aria-labelledby={`dropdownMenuButton-${listing.user_id}`}
+            style={styles.dropdownMenu}>
               {['Received', 'In review', 'For interview', 'Filled'].map((stage) => (
                 <li key={stage}>
                   <button
@@ -172,7 +184,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
     : currentListings;
 
   return (
-    <div className="table-responsive">
+    <div className="table-responsive" style={styles.tableResponsive}>
       <ul className="nav nav-tabs">
         <li className="nav-item">
           <a
