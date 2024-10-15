@@ -337,7 +337,7 @@ const getJobPostings = async (userId) => {
     JOIN industries ON joblistings.industry_id = industries.industry_id
     JOIN job_skills ON joblistings.job_id = job_skills.job_id
     JOIN skills ON job_skills.skill_id = skills.skill_id
-    JOIN profilepictures pp ON joblistings.user_id = pp.user_id
+    LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
     WHERE joblistings.user_id = $1;
   `;
 
@@ -395,7 +395,7 @@ const getApplicants = async () => {
     JOIN address a ON js.address_id = a.address_id
     JOIN job_experience je ON js.user_id = je.user_id
     JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
-    JOIN profilepictures pp ON js.user_id = pp.user_id
+    LEFT JOIN profilepictures pp ON js.user_id = pp.user_id
     JOIN js_skills jk ON js.user_id = jk.user_id
     JOIN skills s ON jk.skill_id = s.skill_id
 	JOIN industries i ON js.industry_id = i.industry_id
@@ -596,15 +596,16 @@ app.get('/api/timetofillemp', async (req, res) => {
   }
 });
 
-app.get('/api/allnotifications', async (req, res) => {
-  const userId = req.session.user.user_id;
-
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized: No user ID found in session' });
-  }
-
+app.get('/api/allnotifications/:userId', async (req, res) => {
   try {
-    // Fetch only new notifications
+    const { userId } = req.params;
+    console.log('Received userId:', userId);
+    
+    // Input validation
+    if (!userId || isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
     const result = await pool.query(
       `
       SELECT 
@@ -619,7 +620,7 @@ app.get('/api/allnotifications', async (req, res) => {
       JOIN job_titles jt ON j.jobtitle_id = jt.jobtitle_id
       JOIN users u ON j.user_id = u.user_id
       JOIN job_seekers js ON a.user_id = js.user_id
-      Join profilepictures pp ON js.user_id = pp.user_id
+      LEFT JOIN profilepictures pp ON js.user_id = pp.user_id
       WHERE u.user_id = $1 
       ORDER BY a.date_applied DESC;
         `,

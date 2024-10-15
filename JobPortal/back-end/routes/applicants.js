@@ -356,7 +356,7 @@ const getApplicantsForJob = async (jobId) => {
     JOIN address a ON js.address_id = a.address_id
     JOIN job_experience je ON js.user_id = je.user_id
     JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
-    JOIN profilepictures pp ON js.user_id = pp.user_id
+    LEFT JOIN profilepictures pp ON js.user_id = pp.user_id
     JOIN js_skills jk ON js.user_id = jk.user_id
     JOIN skills s ON jk.skill_id = s.skill_id
     JOIN applications ap ON u.user_id = ap.user_id

@@ -397,7 +397,7 @@ router.get('/getUserJobListings', async (req, res) => {
       a.user_id AS js_id
     FROM applications a
     JOIN joblistings jl ON a.job_id = jl.job_id
-    JOIN profilepictures pp ON jl.user_id = pp.user_id
+    LEFT JOIN profilepictures pp ON jl.user_id = pp.user_id
     JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
     WHERE a.user_id = $1
   `;
@@ -427,7 +427,7 @@ router.get('/jsempjoblistings/:userId', async (req, res) => {
         pp.profile_picture_url
       FROM joblistings jl
       JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
-      JOIN profilepictures pp ON jl.user_id = pp.user_id
+      LEFT JOIN profilepictures pp ON jl.user_id = pp.user_id
       WHERE jl.user_id = $1
     `, [userId]);
 

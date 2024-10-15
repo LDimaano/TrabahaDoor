@@ -226,7 +226,7 @@ router.get('/viewemployers/:userId', async (req, res) => {
         e.user_id,
         pp.profile_picture_url
       FROM emp_profiles e
-      JOIN profilepictures pp ON e.user_id = pp.user_id
+      LEFT JOIN profilepictures pp ON e.user_id = pp.user_id
       JOIN users u ON e.user_id = u.user_id
       WHERE u.approve = 'yes'
     `);
@@ -257,7 +257,7 @@ router.get('/viewjobseekers/:userId', async (req, res) => {
                 j.full_name,
                 pp.profile_picture_url
             FROM job_seekers j
-            JOIN profilepictures pp ON j.user_id = pp.user_id
+            LEFT JOIN profilepictures pp ON j.user_id = pp.user_id
             `
         );
         console.log('Database query result:', result.rows);
@@ -283,7 +283,7 @@ router.get('/viewjoblisting/:userId', async (req, res) => {
                 e.contact_person,
                 e.company_name
             FROM joblistings jl
-            JOIN profilepictures pp ON jl.user_id = pp.user_id
+            LEFT JOIN profilepictures pp ON jl.user_id = pp.user_id
             JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
             JOIN emp_profiles e ON jl.user_id = e.user_id
             `
@@ -313,7 +313,7 @@ router.get('/viewapplicantlist/:userId/:jobId', async (req, res) => {
                 e.contact_person,
                 e.company_name
             FROM joblistings jl
-            JOIN profilepictures pp ON jl.user_id = pp.user_id
+            LEFT JOIN profilepictures pp ON jl.user_id = pp.user_id
             JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
             JOIN emp_profiles e ON jl.user_id = e.user_id
             `
@@ -372,7 +372,7 @@ router.get('/joblistings/:jobId', async (req, res) => {
       JOIN job_titles jt ON jl.Jobtitle_id = jt.jobtitle_id
       JOIN emp_profiles ep ON jl.user_id = ep.user_id
       JOIN industries i ON jl.industry_id = i.industry_id
-      JOIN profilepictures pp ON jl.user_id = pp.user_id
+      LEFT JOIN profilepictures pp ON jl.user_id = pp.user_id
       WHERE jl.job_id = $1;
     `;
   
@@ -442,7 +442,7 @@ router.get('/topcompanies', async (req, res) => {
                 pp.profile_picture_url
             FROM joblistings jl
             JOIN emp_profiles e ON jl.user_id = e.user_id
-            JOIN profilepictures pp ON e.user_id = pp.user_id
+            LEFT JOIN profilepictures pp ON e.user_id = pp.user_id
             GROUP BY e.company_name, pp.profile_picture_url
             ORDER BY job_count DESC
             LIMIT 5;
@@ -538,7 +538,7 @@ router.get('/viewunapprovedemp/:userId', async (req, res) => {
         d.contract_sub_contractor_certificate
       FROM documents d
       JOIN emp_profiles e ON d.user_id = e.user_id
-      JOIN profilepictures pp ON d.user_id = pp.user_id
+      LEFT JOIN profilepictures pp ON d.user_id = pp.user_id
       JOIN users u ON d.user_id = u.user_id
       WHERE u.approve = 'no'
           `
