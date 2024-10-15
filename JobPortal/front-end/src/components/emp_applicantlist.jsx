@@ -9,7 +9,8 @@ const styles = {
   },
   tableResponsive: {
     maxHeight: '500px', // Set a fixed height for the table
-    overflowY: 'inherit',  // Allow vertical scrolling
+    overflowY: 'inherit',  
+    overflowX: 'inherit', // Allow vertical scrolling
   },
 };
 
