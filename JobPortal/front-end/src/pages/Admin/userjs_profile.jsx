@@ -1,30 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import { useParams } from 'react-router-dom'; 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
+import { useNavigate, useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import ApplicantProfile from '../../components/app_profile';
 import ApplicantCard from '../../components/app_card';
 
-
 const MyProfile = () => {
-  const navigate = useNavigate(); 
-  const { user_id } = useParams(); // Use user_id to match the backend route
+  const navigate = useNavigate();
+  const { user_id } = useParams();
   const [applicantData, setApplicantData] = useState({});
   const [personalData, setPersonalData] = useState({});
   const [professionalData, setProfessionalData] = useState({
     currentJob: '',
     workExperience: [],
-    skills: [], 
+    skills: [],
     description: '',
     company: '',
   });
   const [isLoading, setIsLoading] = useState(true);
 
   const handleBack = () => {
-    navigate(-1); 
+    navigate(-1);
   };
-
 
   useEffect(() => {
     const fetchApplicantData = async () => {
@@ -34,9 +31,8 @@ const MyProfile = () => {
           throw new Error('Failed to fetch applicant data');
         }
         const data = await response.json();
-        console.log(data); 
+        console.log(data);
 
-        // Set the state for applicant data
         setApplicantData({
           name: data.jobSeeker.full_name || 'Not Provided',
           profession: data.jobSeeker.job_title || 'Not Specified',
@@ -45,25 +41,23 @@ const MyProfile = () => {
           phone: data.jobSeeker.phone_number || 'Not Provided',
         });
 
-        // Set the state for personal data
         setPersonalData({
           fullName: data.jobSeeker.full_name || 'Not Provided',
-          dateOfBirth: data.jobSeeker.date_of_birth 
-            ? `${new Date(data.jobSeeker.date_of_birth).toLocaleDateString()} (${new Date().getFullYear() - new Date(data.jobSeeker.date_of_birth).getFullYear()} y.o)` 
+          dateOfBirth: data.jobSeeker.date_of_birth
+            ? `${new Date(data.jobSeeker.date_of_birth).toLocaleDateString()} (${new Date().getFullYear() - new Date(data.jobSeeker.date_of_birth).getFullYear()} y.o)`
             : 'Not Provided',
           gender: data.jobSeeker.gender || 'Not Specified',
           address: data.jobSeeker.address || 'Address not provided',
-          industry: data.jobSeeker.industry|| 'Industry not provided',
+          industry: data.jobSeeker.industry || 'Industry not provided',
         });
 
-        // Handle professional data
         const firstJobExperience = data.jobExperience[0] || {};
 
         setProfessionalData({
           currentJob: firstJobExperience.job_title || 'Not Specified',
-          workExperience: data.jobExperience || [], // Use the entire array
-          skills: data.skills || [], // Directly set skills array
-          description: firstJobExperience.description || 'No Description', 
+          workExperience: data.jobExperience || [],
+          skills: data.skills || [],
+          description: firstJobExperience.description || 'No Description',
           company: firstJobExperience.company || 'No Company Provided',
         });
 
@@ -75,7 +69,7 @@ const MyProfile = () => {
     };
 
     fetchApplicantData();
-  }, [user_id]); // Ensure user_id is a dependency
+  }, [user_id]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -93,8 +87,8 @@ const MyProfile = () => {
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#000', 
-                  fontSize: '1.5rem', 
+                  color: '#000',
+                  fontSize: '1.5rem',
                   cursor: 'pointer',
                 }}
               >
@@ -103,14 +97,16 @@ const MyProfile = () => {
               <h3 className="mb-0">Applicant's Profile</h3>
             </div>
           </div>
-          <div className="d-flex">
-            <div className="flex-fill me-4">
+          <div className="row">
+            <div className="col-12 col-md-8 mb-4 mb-md-0">
               <ApplicantProfile
                 personalData={personalData}
                 professionalData={professionalData}
               />
             </div>
-            <ApplicantCard applicant={applicantData} />
+            <div className="col-12 col-md-4">
+              <ApplicantCard applicant={applicantData} />
+            </div>
           </div>
         </section>
       </main>

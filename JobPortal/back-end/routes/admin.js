@@ -330,7 +330,8 @@ router.get('/viewapplicantlist/:userId/:jobId', async (req, res) => {
 
 
 router.get('/appliedapplicants/:jobId', async (req, res) => {
-    try {
+  const jobId = req.params.jobId;  
+  try {
       const result = await pool.query(
         `SELECT 
               a.application_id,

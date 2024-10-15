@@ -38,9 +38,8 @@ const ApplicantDashboard = () => {
       const data = await response.json();
       setJobs(data);
 
-      // Initialize hiringStages with fetched data
       const initialStages = data.reduce((acc, applicant) => {
-        acc[applicant.user_id] = applicant.hiring_stage || 'Received'; // Assuming status is used
+        acc[applicant.user_id] = applicant.hiring_stage || 'Received';
         return acc;
       }, {});
       setHiringStages(initialStages);
@@ -63,7 +62,6 @@ const ApplicantDashboard = () => {
         throw new Error(errorData || 'Failed to update hiring stage');
       }
 
-      // Optionally refetch applicants to ensure the state is synchronized
       await fetchApplicants();
     } catch (error) {
       console.error('Error updating hiring stage:', error.message);
@@ -76,7 +74,7 @@ const ApplicantDashboard = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to first page on search
+    setCurrentPage(1);
   };
 
   const filteredListings = jobs.filter(listing =>
@@ -94,13 +92,16 @@ const ApplicantDashboard = () => {
   }
 
   return (
-    <div className="d-flex">
-      <Sidebar />
-      <main className="flex-grow-1 p-4">
+    <div className="d-flex flex-column flex-lg-row">
+      <Sidebar className="d-none d-lg-block" />
+      <main className="flex-grow-1 p-3">
         <section>
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <div className="d-flex align-items-center">
-              <button 
+          <div
+            className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3"
+            style={{ gap: '1rem' }}
+          >
+            <div className="d-flex align-items-center mb-2 mb-md-0" style={{ flexWrap: 'wrap' }}>
+              <button
                 className="btn p-0 me-3"
                 onClick={handleBack}
                 style={{
@@ -113,27 +114,30 @@ const ApplicantDashboard = () => {
               >
                 <FontAwesomeIcon icon={faArrowLeft} />
               </button>
-              <h3>Applicants: {filteredListings.length}</h3>
+              <h3 className="text-center text-md-start" style={{ fontSize: '1.2rem', marginBottom: '0' }}>
+                Applicants: {filteredListings.length}
+              </h3>
             </div>
-            <div className="input-group" style={{ maxWidth: '300px' }}>
+            <div className="input-group" style={{ maxWidth: '100%', width: '300px' }}>
               <input
                 type="text"
                 className="form-control"
                 placeholder="Search Applicants"
                 value={searchTerm}
                 onChange={handleSearch}
+                style={{ fontSize: '0.9rem' }}
               />
-              <button className="btn btn-outline-secondary">
+              <button className="btn btn-outline-secondary" style={{ fontSize: '0.9rem' }}>
                 <FontAwesomeIcon icon={faFilter} />
               </button>
             </div>
           </div>
-          <ApplicantJoblist 
+          <ApplicantJoblist
             currentListings={currentListings}
             hiringStages={hiringStages}
             onStageChange={handleStageChangeInDashboard}
           />
-          <Pagination 
+          <Pagination
             listingsPerPage={listingsPerPage}
             totalListings={filteredListings.length}
             paginate={paginate}
