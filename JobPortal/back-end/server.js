@@ -1053,7 +1053,11 @@ app.use('/api/admin', adminRoutes)
 console.log('Socket URL:', process.env.REACT_APP_SOCKET_URL);
 console.log('Database URL:', process.env.DATABASE_URL ); 
 console.log('API URL:', process.env.REACT_APP_API_URL); 
-// Start the server
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
 const PORT = process.env.PORT || 3000; // Default to 3000 if process.env.PORT is not defined
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
@@ -1061,3 +1065,4 @@ server.listen(PORT, () => {
 
 
 module.exports = { io };
+
