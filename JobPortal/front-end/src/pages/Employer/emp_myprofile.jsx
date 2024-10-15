@@ -101,7 +101,9 @@ const MyProfile = () => {
             <div className="flex-fill me-4">
               <EmployerProfile companyData={companyData} />
             </div>
-            <EmployerCard applicant={employerData} />
+            <div style={{ flexBasis: '300px', flexShrink: 0 }}>
+              <EmployerCard applicant={employerData} />
+            </div>
           </div>
         </section>
       </main>
