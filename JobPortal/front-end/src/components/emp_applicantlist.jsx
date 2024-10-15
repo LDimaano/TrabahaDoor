@@ -9,10 +9,10 @@ const styles = {
   },
   tableResponsive: {
     maxHeight: '500px', // Set a fixed height for the table
-    overflowY: 'auto',  // Allow vertical scrolling
+    overflowY: 'inherit',  // Allow vertical scrolling
   },
 };
-
+s
 
 function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const navigate = useNavigate();
