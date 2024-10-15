@@ -96,11 +96,11 @@ io.on('connection', (socket) => {
   });
 });
 
-
 app.use(express.static(path.join(__dirname, 'build')));
-// Serve static files from 'uploads' directory
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-// Serve static files from the documents directory
+
+// Serve static files from the 'documents' directory
 app.use('/documents', express.static(path.join(__dirname, 'documents')));
 
 
@@ -124,7 +124,7 @@ app.post('/api/update-profile-picture/:userId', upload.single('profilePicture'),
   }
 
   // Construct the full URL for the uploaded file
-  const profilePictureUrl = `${process.env.REACT_APP_API_URL}/uploads/${req.file.filename}`;
+  const profilePictureUrl = `https://trabahadoor.onrender.com/uploads/${req.file.filename}`;
 
   // Update the database with the new profile picture URL
   const query = 'UPDATE profilepictures SET profile_picture_url = $1 WHERE user_id = $2';
@@ -1059,7 +1059,6 @@ console.log('API URL:', process.env.REACT_APP_API_URL);
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
-
 const PORT = process.env.PORT || 3000; // Default to 3000 if process.env.PORT is not defined
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
