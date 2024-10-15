@@ -5,6 +5,7 @@ import Pagination from '../../components/emp_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import ApplicantJoblist from '../../components/admin_viewapplicantlist';
+import AdminNavbar from '../../components/AdminNavbar'; // Import the new Navbar component
 
 const ApplicantDashboard = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const ApplicantDashboard = () => {
   const [listingsPerPage] = useState(10);
   const [error, setError] = useState(null);
   const [hiringStages, setHiringStages] = useState({});
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to control sidebar visibility
 
   useEffect(() => {
     if (jobId) {
@@ -91,10 +93,20 @@ const ApplicantDashboard = () => {
     return <div>Error: {error}</div>;
   }
 
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
   return (
     <div className="d-flex flex-column flex-lg-row">
-      <Sidebar className="d-none d-lg-block" />
+      {/* Sidebar */}
+      <div className={`sidebar ${isSidebarVisible ? 'd-block' : 'd-none'} d-lg-block`}>
+        <Sidebar />
+      </div>
+
       <main className="flex-grow-1 p-3">
+        <AdminNavbar toggleSidebar={toggleSidebar} /> {/* Include Navbar for mobile */}
+
         <section>
           <div
             className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3"
@@ -145,6 +157,15 @@ const ApplicantDashboard = () => {
           />
         </section>
       </main>
+
+      {/* Sidebar toggle button for mobile */}
+      <button
+        className="btn btn-primary d-lg-none position-fixed"
+        style={{ top: '10px', left: '10px', zIndex: 999 }}
+        onClick={toggleSidebar}
+      >
+        <FontAwesomeIcon icon={faFilter} />
+      </button>
     </div>
   );
 };
