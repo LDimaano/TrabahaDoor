@@ -381,6 +381,7 @@ const getApplicantsForJob = async (jobId) => {
     const relevantData = rows.map(row => ({
       user_id: row.user_id,
       email: row.email || '',
+      profile_picture_url: row.profile_picture_url || 'no image',
       job_titles: row.job_titles || [],
       skills: row.skills || [],
       industry: row.industry_id,
