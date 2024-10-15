@@ -25,29 +25,104 @@ const generateEmailContent = (type, data) => {
     switch (type) {
         case 'application':
             return {
-                subject: 'New Application Received',
-                text: `${data.full_name} has applied for your job: ${data.job_title}`,
-                html: `<p>${data.full_name} has applied for your job: <strong>${data.job_title}</strong></p>`,
+                subject: 'New Application Received for Your Job Posting',
+
+                text: `Dear Employer,
+                
+                We are pleased to inform you that ${data.full_name} has applied for your job posting: ${data.job_title}.
+                
+                You can view more details and manage the application by logging into your employer dashboard.
+                
+                Best regards,
+                The Trabahadoor Team`,
+                
+                html: `
+                <p>Dear Employer,</p>
+                
+                <p>We are pleased to inform you that <strong>${data.full_name}</strong> has applied for the position of <strong>${data.job_title}</strong>.</p>
+                
+                <p>You can view more details and manage this application by logging into your <a href="https://trabahadoor.herokuapp.com/employer-dashboard">employer dashboard</a>.</p>
+                
+                <p>Best regards,<br/>
+                <strong>The Trabahadoor Team</strong></p>
+                `
+                
             };
         case 'status_update':
             return {
                 subject: 'Your Application Status Has Been Updated',
-                text: `Hello ${data.jobSeekerName}, your application status for ${data.job_title} has been updated to: ${data.status}`,
-                html: `<p>Hello ${data.jobSeekerName},</p>
-                       <p>Your application status for <strong>${data.job_title}</strong> has been updated to: <strong>${data.status}</strong>.</p>`,
+
+                text: `Hello ${data.jobSeekerName},
+                
+                We wanted to inform you that your application status for the position of ${data.job_title} has been updated to: ${data.status}.
+                
+                You can log into your account to view more details.
+                
+                Best regards,
+                The Trabahadoor Team`,
+                
+                html: `
+                <p>Hello ${data.jobSeekerName},</p>
+                
+                <p>We wanted to inform you that your application status for the position of <strong>${data.job_title}</strong> has been updated to: <strong>${data.status}</strong>.</p>
+                
+                <p>You can log into your account to view more details by visiting your <a href="https://trabahadoor.herokuapp.com/jobseeker-dashboard">jobseeker dashboard</a>.</p>
+                
+                <p>Best regards,<br/>
+                <strong>The Trabahadoor Team</strong></p>
+                `                
             };
         case 'contact_notification': 
             return {
                 subject: 'An Employer Wants to Connect With You',
-                text: `Hello ${data.jobSeekerName}, ${data.companyName} is interested in connecting with you. Please log in to view more details.`,
-                html: `<p>Hello ${data.jobSeekerName},</p>
-                       <p><strong>${data.companyName}</strong> is interested in connecting with you. Please log in to view more details.</p>`,
+
+                text: `Hello ${data.jobSeekerName},
+
+                We are excited to inform you that ${data.companyName} is interested in connecting with you regarding potential opportunities.
+
+                Please log into your account to view more details and take the next steps.
+
+                Best regards,
+                The Trabahadoor Team`,
+
+                html: `
+                <p>Hello ${data.jobSeekerName},</p>
+
+                <p>We are excited to inform you that <strong>${data.companyName}</strong> is interested in connecting with you regarding potential opportunities.</p>
+
+                <p>Please log into your account to view more details by visiting your <a href="https://trabahadoor.herokuapp.com/jobseeker-dashboard">jobseeker dashboard</a> and take the next steps.</p>
+
+                <p>Best regards,<br/>
+                <strong>The Trabahadoor Team</strong></p>
+                `
+
             };
         case 'account_activation':
             return {
                 subject: 'Your Account Has Been Activated',
-                text: `Your employer account has been successfully activated. You can now log in and start posting job listings.`,
-                html: `<p>Your employer account has been successfully activated. You can now log in and start posting job listings.</p>`,
+
+                text: `Congratulations! Your employer account has been successfully activated.
+                
+                You can now log in to your account and start posting job listings to find the right candidates for your organization.
+                
+                If you have any questions or need assistance, feel free to reach out to us.
+                
+                Best regards,
+                The Trabahadoor Team`,
+                
+                html: `
+                <p>Congratulations!</p>
+                
+                <p>Your employer account has been successfully activated.</p>
+                
+                <p>You can now log in to your account and start posting job listings to find the right candidates for your organization. Visit your <a href="https://trabahadoor.herokuapp.com/employer-dashboard">employer dashboard</a> to get started.</p>
+                
+                <p>If you have any questions or need assistance, feel free to reach out to us.</p>
+                
+                <p>Best regards,<br/>
+                <strong>The Trabahadoor Team</strong></p>
+                `
+                
             };
         default:
             return {};
