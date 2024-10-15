@@ -4,13 +4,15 @@ import Pagination from '../../components/admin_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import Userlist from '../../components/admin_viewarchivedusers';
+import AdminNavbar from '../../components/AdminNavbar'; // Import the new Navbar component
 
 const ApplicantDashboard = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [listingsPerPage, setListingsPerPage] = useState(5); 
+  const [listingsPerPage, setListingsPerPage] = useState(5);
   const [error, setError] = useState(null);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to control sidebar visibility
 
   useEffect(() => {
     const userId = sessionStorage.getItem('user_id');
@@ -42,6 +44,10 @@ const ApplicantDashboard = () => {
     fetchUsers();
   }, []);
 
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -64,16 +70,19 @@ const ApplicantDashboard = () => {
 
   return (
     <div className="d-flex">
-      <Sidebar />
+      <div className={`col-auto p-0 ${isSidebarVisible ? 'd-block' : 'd-none'} d-lg-block`}>
+        <Sidebar />
+      </div>
       <main className="flex-grow-1 p-4">
+        <AdminNavbar toggleSidebar={toggleSidebar} /> {/* Include Navbar for mobile */}
         <section>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <h3>Users: {filteredListings.length}</h3>
+            <h3>Archived Users: {filteredListings.length}</h3>
             <div className="input-group" style={{ maxWidth: '300px' }}>
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search Job Listings"
+                placeholder="Search Archived Users"
                 value={searchTerm}
                 onChange={handleSearch}
               />

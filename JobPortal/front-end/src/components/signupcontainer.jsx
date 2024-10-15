@@ -6,7 +6,7 @@ function SignupContainer() {
       <img 
         src={`${process.env.PUBLIC_URL}/assets/jobfair.jpg`} 
         alt="Illustration of opportunities" 
-        className="img-fluid mb-3" 
+        className="img-fluid mb-3 d-none d-lg-block" 
         loading="lazy" 
         style={{ maxHeight: '600px', objectFit: 'cover' }}
       />

@@ -4,19 +4,21 @@ import Pagination from '../../components/admin_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import Joblist from '../../components/admin_viewjoblistings';
+import AdminNavbar from '../../components/AdminNavbar'; // Import the new Navbar component
 
-const ApplicantDashboard = () => {
+const JobDashboard = () => {
   const [joblisting, setJoblisting] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [listingsPerPage, setListingsPerPage] = useState(5);
   const [error, setError] = useState(null);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to control sidebar visibility
 
   useEffect(() => {
     const fetchJoblistings = async () => {
       const userId = sessionStorage.getItem('user_id');
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin//viewjoblisting/${userId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/viewjoblisting/${userId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -29,7 +31,7 @@ const ApplicantDashboard = () => {
         }
 
         const data = await response.json();
-        
+
         // Check if data is not empty
         if (data && data.length > 0) {
           setJoblisting(data);
@@ -44,7 +46,11 @@ const ApplicantDashboard = () => {
 
     fetchJoblistings();
   }, []);
-  
+
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -58,7 +64,7 @@ const ApplicantDashboard = () => {
     listing.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     listing.contact_person.toLowerCase().includes(searchTerm.toLowerCase()) ||
     listing.job_title.toLowerCase().includes(searchTerm.toLowerCase())
-);
+  );
 
   const indexOfLastListing = currentPage * listingsPerPage;
   const indexOfFirstListing = indexOfLastListing - listingsPerPage;
@@ -68,8 +74,11 @@ const ApplicantDashboard = () => {
 
   return (
     <div className="d-flex">
-      <Sidebar />
+      <div className={`col-auto p-0 ${isSidebarVisible ? 'd-block' : 'd-none'} d-lg-block`}>
+        <Sidebar />
+      </div>
       <main className="flex-grow-1 p-4">
+        <AdminNavbar toggleSidebar={toggleSidebar} /> {/* Include Navbar for mobile */}
         <section>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h3>Job Listings: {filteredListings.length}</h3>
@@ -98,10 +107,11 @@ const ApplicantDashboard = () => {
             </>
           ) : (
             <p>No job listings found.</p>
-          )}        </section>
+          )}
+        </section>
       </main>
     </div>
   );
 };
 
-export default ApplicantDashboard;
+export default JobDashboard;
