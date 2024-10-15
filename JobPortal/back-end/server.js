@@ -96,6 +96,8 @@ io.on('connection', (socket) => {
   });
 });
 
+
+app.use(express.static(path.join(__dirname, 'build')));
 // Serve static files from 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Serve static files from the documents directory
