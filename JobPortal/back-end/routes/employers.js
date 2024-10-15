@@ -39,27 +39,27 @@ router.post('/upload', uploadDocuments, async (req, res) => {
 
 
     const sec_certificate_url = req.files.sec_certificate
-      ? `${baseURL}/documents/${req.files.sec_certificate[0].filename}`
+      ? `https://trabahadoor.onrender.com/documents/${req.files.sec_certificate[0].filename}`
       : null;
 
     const business_permit_url = req.files.business_permit
-      ? `${baseURL}/documents/${req.files.business_permit[0].filename}`
+      ? `https://trabahadoor.onrender.com/documents/${req.files.business_permit[0].filename}`
       : null;
 
     const bir_certificate_url = req.files.bir_certificate
-      ? `${baseURL}/documents/${req.files.bir_certificate[0].filename}`
+      ? `https://trabahadoor.onrender.com/documents/${req.files.bir_certificate[0].filename}`
       : null;
 
     const poea_license_url = req.files.poea_license
-      ? `${baseURL}/documents/${req.files.poea_license[0].filename}`
+      ? `https://trabahadoor.onrender.com/documents/${req.files.poea_license[0].filename}`
       : null;
 
     const private_recruitment_agency_license_url = req.files.private_recruitment_agency_license
-      ? `${baseURL}/documents/${req.files.private_recruitment_agency_license[0].filename}`
+      ? `https://trabahadoor.onrender.com/documents/${req.files.private_recruitment_agency_license[0].filename}`
       : null;
 
     const contract_sub_contractor_certificate_url = req.files.contract_sub_contractor_certificate
-      ? `${baseURL}/documents/${req.files.contract_sub_contractor_certificate[0].filename}`
+      ? `https://trabahadoor.onrender.com/documents/${req.files.contract_sub_contractor_certificate[0].filename}`
       : null;
 
 
