@@ -12,7 +12,7 @@ const styles = {
     overflowY: 'inherit',  // Allow vertical scrolling
   },
 };
-s
+
 
 function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const navigate = useNavigate();
