@@ -4,6 +4,7 @@ import Pagination from '../../components/admin_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import ApplicantJoblist from '../../components/admin_viewapplicants';
+import AdminNavbar from '../../components/AdminNavbar'; // Import the new Navbar component
 
 const ApplicantDashboard = () => {
   const [applicants, setApplicants] = useState([]);
@@ -11,6 +12,7 @@ const ApplicantDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [listingsPerPage, setListingsPerPage] = useState(5);
   const [error, setError] = useState(null);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to control sidebar visibility
 
   useEffect(() => {
     const fetchApplicants = async () => {
@@ -44,7 +46,11 @@ const ApplicantDashboard = () => {
 
     fetchApplicants();
   }, []);
-  
+
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -66,8 +72,11 @@ const ApplicantDashboard = () => {
 
   return (
     <div className="d-flex">
-      <Sidebar />
+      <div className={`col-auto p-0 ${isSidebarVisible ? 'd-block' : 'd-none'} d-lg-block`}>
+        <Sidebar />
+      </div>
       <main className="flex-grow-1 p-4">
+        <AdminNavbar toggleSidebar={toggleSidebar} /> {/* Include Navbar for mobile */}
         <section>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h3>Applicants: {filteredListings.length}</h3>
@@ -96,8 +105,8 @@ const ApplicantDashboard = () => {
             </>
           ) : (
             <p>No Applicants found.</p>
-          )}        
-          </section>
+          )}
+        </section>
       </main>
     </div>
   );
