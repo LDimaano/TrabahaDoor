@@ -8,7 +8,7 @@ const styles = {
     zIndex: 1050, // Ensure the dropdown appears on top
   },
   tableResponsive: {
-    maxHeight: '500px', // Set a fixed height for the table
+    minHeight: '500px', // Set a fixed height for the table
     overflowY: 'inherit',  
     overflowX: 'inherit', // Allow vertical scrolling
   },
