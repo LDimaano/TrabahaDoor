@@ -3,11 +3,13 @@ import SideBar from '../../components/admin_sidepanel';
 import BarChart from '../../components/barchart';
 import TopHiringIndustries from '../../components/tophiringindustries';
 import TopHiringCompanies from '../../components/tophiringcompanies';
+import { FaBars } from 'react-icons/fa';
 
 function DashboardAnalytics() {
   const [jobSeekerCount, setJobSeekerCount] = useState(0);
   const [employerCount, setEmployerCount] = useState(0);
   const [jobListingCount, setJobListingCount] = useState(0);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     async function fetchDashboardData() {
@@ -32,11 +34,23 @@ function DashboardAnalytics() {
   
     fetchDashboardData();
   }, []);
-  
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="container-fluid">
       <div className="row flex-nowrap">
-        <div className="col-auto p-0">
+        {/* Hamburger Menu for Mobile */}
+        <div className="d-md-none p-2">
+          <button className="btn btn-outline-primary" onClick={toggleSidebar}>
+            <FaBars size={24} />
+          </button>
+        </div>
+
+        {/* Sidebar */}
+        <div className={`col-auto p-0 ${isSidebarOpen ? 'd-block' : 'd-none d-md-block'}`}>
           <SideBar />
         </div>
 
@@ -50,7 +64,7 @@ function DashboardAnalytics() {
             <div className="col-lg-4 col-md-6 col-sm-12">
               <div className="p-3 bg-white border rounded shadow-sm d-flex align-items-center" style={{ height: '150px' }}>
                 <div className="me-3">
-                  <i className="fas fa-users fa-2x" style={{ color: '#007bff' }}></i> {/* Custom blue */}
+                  <i className="fas fa-users fa-2x" style={{ color: '#007bff' }}></i>
                 </div>
                 <div>
                   <h4 className="mb-2">Job Seekers</h4>
@@ -61,7 +75,7 @@ function DashboardAnalytics() {
             <div className="col-lg-4 col-md-6 col-sm-12">
               <div className="p-3 bg-white border rounded shadow-sm d-flex align-items-center" style={{ height: '150px' }}>
                 <div className="me-3">
-                  <i className="fas fa-briefcase fa-2x" style={{ color: '#007bff' }}></i> {/* Custom blue */}
+                  <i className="fas fa-briefcase fa-2x" style={{ color: '#007bff' }}></i>
                 </div>
                 <div>
                   <h4 className="mb-2">Employers</h4>
@@ -72,7 +86,7 @@ function DashboardAnalytics() {
             <div className="col-lg-4 col-md-6 col-sm-12">
               <div className="p-3 bg-white border rounded shadow-sm d-flex align-items-center" style={{ height: '150px' }}>
                 <div className="me-3">
-                  <i className="fas fa-list fa-2x" style={{ color: '#007bff' }}></i> {/* Custom blue */}
+                  <i className="fas fa-list fa-2x" style={{ color: '#007bff' }}></i>
                 </div>
                 <div>
                   <h4 className="mb-2">Job Listings</h4>
