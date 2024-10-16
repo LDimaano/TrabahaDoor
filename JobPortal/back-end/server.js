@@ -134,8 +134,8 @@ app.post('/api/update-profile-picture/:userId', upload.single('profilePicture'),
     return res.status(400).json({ message: 'No file uploaded' });
   }
 
-  // Construct the full URL for the uploaded file
-  const profilePictureUrl = `https://trabahadoor.onrender.com/uploads/${req.file.filename}`;
+  // The file's URL on S3 is available in req.file.location
+  const profilePictureUrl = req.file.location;
 
   // Update the database with the new profile picture URL
   const query = 'UPDATE profilepictures SET profile_picture_url = $1 WHERE user_id = $2';
