@@ -4,7 +4,9 @@ const session = require('express-session');
 const sharedSession = require('socket.io-express-session');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const AWS = require('aws-sdk');
 const multer = require('multer');
+const multerS3 = require('multer-s3');
 const path = require('path');
 const pool = require('./db');
 const { spawn } = require('child_process');
@@ -97,26 +99,32 @@ io.on('connection', (socket) => {
 });
 
 
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const s3 = new AWS.S3();
 
-// Serve static files from the 'documents' directory
 
 app.use('/documents', express.static(path.join(__dirname, 'documents')));
 
 app.use(express.static(path.join(__dirname, '../front-end/build')));
 
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.S3_BUCKET_NAME, // Your S3 bucket name
+    acl: 'public-read', // Optionally set access control (e.g., public-read, private, etc.)
+    key: (req, file, cb) => {
+      // The key (filename) for the uploaded file in the S3 bucket
+      cb(null, `profile-pictures/${Date.now()}-${file.originalname}`);
+    }
+  })
 });
-const upload = multer({ storage });
+
 
 app.post('/api/update-profile-picture/:userId', upload.single('profilePicture'), (req, res) => {
   const userId = req.params.userId;
