@@ -982,7 +982,7 @@ app.post('/api/upload-profile-picture/:userId', upload.single('profilePicture'),
       return res.status(400).json({ error: 'File upload failed. No file was provided.' });
     }
 
-    const profilePictureUrl = `https://trabahadoor.onrender.com/uploads/${file.filename}`;
+    const profilePictureUrl = file.location; 
 
     const result = await pool.query(
       'INSERT INTO profilepictures (user_id, profile_picture_url) VALUES ($1, $2)',
