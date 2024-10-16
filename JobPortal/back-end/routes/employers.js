@@ -1,25 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const multer = require('multer');
 const path = require('path');
-const baseURL = `${process.env.REACT_APP_API_URL}`; // Change this to your production URL when deploying
+const baseURL = `${process.env.REACT_APP_API_URL}`;
+const AWS = require('aws-sdk');
+const multer = require('multer');
+const multerS3 = require('multer-s3'); // Change this to your production URL when deploying
 
-// Serve static files from the documents directory
 router.use('/documents', express.static(path.join(__dirname, '..', 'documents')));
 
-const documentStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '..', 'documents')); // Ensure the folder exists
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname); // Create a unique file name
-  }
-});
-
 const uploadDocuments = multer({
-  storage: documentStorage
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_BUCKET_NAME,
+    acl: 'public-read',
+    key: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, `${uniqueSuffix}-${file.originalname}`); // Create a unique file name
+    }
+  })
 }).fields([
   { name: 'sec_certificate', maxCount: 1 },
   { name: 'business_permit', maxCount: 1 },
@@ -37,31 +36,29 @@ router.post('/upload', uploadDocuments, async (req, res) => {
       return res.status(400).send('User ID is required');
     }
 
-
     const sec_certificate_url = req.files.sec_certificate
-      ? `https://trabahadoor.onrender.com/documents/${req.files.sec_certificate[0].filename}`
+      ? req.files.sec_certificate[0].location
       : null;
 
     const business_permit_url = req.files.business_permit
-      ? `https://trabahadoor.onrender.com/documents/${req.files.business_permit[0].filename}`
+      ? req.files.business_permit[0].location
       : null;
 
     const bir_certificate_url = req.files.bir_certificate
-      ? `https://trabahadoor.onrender.com/documents/${req.files.bir_certificate[0].filename}`
+      ? req.files.bir_certificate[0].location
       : null;
 
     const poea_license_url = req.files.poea_license
-      ? `https://trabahadoor.onrender.com/documents/${req.files.poea_license[0].filename}`
+      ? req.files.poea_license[0].location
       : null;
 
     const private_recruitment_agency_license_url = req.files.private_recruitment_agency_license
-      ? `https://trabahadoor.onrender.com/documents/${req.files.private_recruitment_agency_license[0].filename}`
+      ? req.files.private_recruitment_agency_license[0].location
       : null;
 
     const contract_sub_contractor_certificate_url = req.files.contract_sub_contractor_certificate
-      ? `https://trabahadoor.onrender.com/documents/${req.files.contract_sub_contractor_certificate[0].filename}`
+      ? req.files.contract_sub_contractor_certificate[0].location
       : null;
-
 
     const query = `
       INSERT INTO documents 
