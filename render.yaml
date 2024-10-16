@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: TrabahaDoor-front-end
+    env: static
+    staticPublishPath: build
+    buildCommand: npm install && npm run build
+    publishPath: JobPortal/front-end/build
+
+  - type: web
+    name: TrabahaDoor
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
