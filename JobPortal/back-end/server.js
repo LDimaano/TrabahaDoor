@@ -110,6 +110,22 @@ const upload = multer({ storage: storage });
 
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
+// Utility function to get the content type based on file extension
+const getContentType = (fileName) => {
+  const extension = fileName.split('.').pop().toLowerCase();
+  switch (extension) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'pdf':
+      return 'application/pdf';
+    default:
+      return null; // Return null for unsupported types
+  }
+};
+
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
@@ -120,11 +136,12 @@ const s3Client = new S3Client({
 
 // Function to upload to S3
 const uploadFileToS3 = async (fileBuffer, fileName) => {
+  const contentType = getContentType(fileName);
   const command = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileName,
     Body: fileBuffer,
-    ContentType: 'image/jpeg', // Change according to your file type
+    ContentType: contentType, // Change according to your file type
   });
 
   try {
