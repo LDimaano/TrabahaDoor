@@ -116,7 +116,7 @@ app.use(express.static(path.join(__dirname, '../front-end/build')));
 const upload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: process.env.S3_BUCKET_NAME, // Your S3 bucket name
+    bucket: 'trabahadoor-bucket', // Your S3 bucket name
     acl: 'public-read', // Optionally set access control (e.g., public-read, private, etc.)
     key: (req, file, cb) => {
       // The key (filename) for the uploaded file in the S3 bucket
