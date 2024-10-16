@@ -172,30 +172,37 @@ app.post('/api/upload-profile-picture/:userId', upload.single('profilePicture'),
   }
 });
 
+//update  profile picture endpoint
+app.post('/api/update-profile-picture/:userId', upload.single('profilePicture'), async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
 
-app.post('/api/update-profile-picture/:userId', upload.single('profilePicture'), (req, res) => {
-  const userId = req.params.userId;
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ error: 'File upload failed. No file was provided.' });
+    }
 
-  // Check if a file was uploaded
-  if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
+    // Upload file to S3
+    const profilePictureUrl = await uploadFileToS3(file.buffer, file.originalname);
+
+    // Update the profile picture URL into the database
+    const result = await pool.query(
+      'UPDATE profilepictures SET profile_picture_url = $1 WHERE user_id = $2',
+      [profilePictureUrl, userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ message: 'Profile picture updated successfully', profilePictureUrl });
+  } catch (error) {
+    console.error('Error uploading profile picture:', error);
+    res.status(500).json({ error: 'Failed to upload profile picture' });
   }
-
-  // The file's URL on S3 is available in req.file.location
-  const profilePictureUrl = req.file.location;
-
-  // Update the database with the new profile picture URL
-  const query = 'UPDATE profilepictures SET profile_picture_url = $1 WHERE user_id = $2';
-  const values = [profilePictureUrl, userId];
-
-  pool.query(query, values)
-    .then(() => {
-      res.status(200).json({ profilePictureUrl });
-    })
-    .catch((error) => {
-      console.error('Error updating profile picture:', error);
-      res.status(500).json({ message: 'Error updating profile picture' });
-    });
 });
 
 
@@ -1013,9 +1020,6 @@ app.post('/api/applications/:applicationId/status', async (req, res) => {
   }
 });
 
-
-
-
 // Route to get skills
 app.get('/api/skills', async (req, res) => {
   try {
@@ -1038,7 +1042,6 @@ app.get('/api/jobtitles', async (req, res) => {
   }
 });
 
-
 // Route to get addresses
 app.get('/api/addresses', async (req, res) => {
   try {
@@ -1060,7 +1063,6 @@ app.get('/api/industries', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch industries' });
   }
 });
-
 
 
 // Use routes
