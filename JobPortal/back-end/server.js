@@ -12,7 +12,6 @@ const pool = require('./db');
 const { spawn } = require('child_process');
 const bodyParser = require('body-parser');
 
-
 const app = express();
 const server = require('http').createServer(app);
 
@@ -99,30 +98,78 @@ io.on('connection', (socket) => {
 });
 
 
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
-
-const s3 = new AWS.S3();
-
 
 app.use('/documents', express.static(path.join(__dirname, 'documents')));
 
 app.use(express.static(path.join(__dirname, '../front-end/build')));
 
 
-const upload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: process.env.AWS_BUCKET_NAME,
-    acl: 'public-read', // Optionally set access control (e.g., public-read, private, etc.)
-    key: (req, file, cb) => {
-      // The key (filename) for the uploaded file in the S3 bucket
-      cb(null, `profile-pictures/${Date.now()}-${file.originalname}`);
+// Set up multer to store files in memory
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+// Function to upload to S3
+const uploadFileToS3 = async (fileBuffer, fileName) => {
+  const command = new PutObjectCommand({
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: fileName,
+    Body: fileBuffer,
+    ContentType: 'image/jpeg', // Change according to your file type
+  });
+
+  try {
+    const response = await s3Client.send(command);
+    console.log('File uploaded successfully:', response);
+    return `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${fileName}`;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw new Error('Failed to upload file to S3');
+  }
+};
+
+
+// Profile picture upload endpoint
+app.post('/api/upload-profile-picture/:userId', upload.single('profilePicture'), async (req, res) => {
+  console.log('Request received to upload profile picture');
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
     }
-  })
+
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ error: 'File upload failed. No file was provided.' });
+    }
+
+    // Upload file to S3
+    const profilePictureUrl = await uploadFileToS3(file.buffer, file.originalname);
+
+    // Insert the profile picture URL into the database
+    const result = await pool.query(
+      'INSERT INTO profilepictures (user_id, profile_picture_url) VALUES ($1, $2)',
+      [userId, profilePictureUrl]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ profilePictureUrl });
+  } catch (error) {
+    console.error('Error uploading profile picture:', error);
+    res.status(500).json({ error: 'Failed to upload profile picture' });
+  }
 });
 
 
@@ -966,32 +1013,7 @@ app.post('/api/applications/:applicationId/status', async (req, res) => {
   }
 });
 
-// Profile picture upload endpoint
-app.post('/api/upload-profile-picture/:userId', upload.single('profilePicture'), async (req, res) => {
-  console.log('Request received to upload profile picture');
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'File upload failed' });
-    }
 
-    // Get the file URL from S3
-    const fileUrl = req.file.location;
-
-    // Assuming you have a function to save the URL to your database
-    await saveProfilePictureUrlToDB(req.userId, fileUrl); // Update this with your actual user ID logic
-
-    res.status(200).json({ message: 'File uploaded successfully', url: fileUrl });
-  } catch (error) {
-    console.error('Error uploading file:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-async function saveProfilePictureUrlToDB(userId, url) {
-  // Example using PostgreSQL with a query to update the user profile
-  const query = 'INSERT INTO profilepictures (user_id, profile_picture_url) VALUES ($1, $2)';
-  await db.query(query, [url, userId]); // db is your database client instance
-}
 
 
 // Route to get skills
