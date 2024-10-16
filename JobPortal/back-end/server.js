@@ -116,7 +116,7 @@ app.use(express.static(path.join(__dirname, '../front-end/build')));
 const upload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: 'trabahadoor-bucket', // Your S3 bucket name
+    bucket: process.env.AWS_BUCKET_NAME,
     acl: 'public-read', // Optionally set access control (e.g., public-read, private, etc.)
     key: (req, file, cb) => {
       // The key (filename) for the uploaded file in the S3 bucket
@@ -966,39 +966,33 @@ app.post('/api/applications/:applicationId/status', async (req, res) => {
   }
 });
 
-
-    
 // Profile picture upload endpoint
 app.post('/api/upload-profile-picture/:userId', upload.single('profilePicture'), async (req, res) => {
   console.log('Request received to upload profile picture');
   try {
-    const userId = req.params.userId;
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID is required' });
+    if (!req.file) {
+      return res.status(400).json({ message: 'File upload failed' });
     }
 
-    const file = req.file;
-    if (!file) {
-      return res.status(400).json({ error: 'File upload failed. No file was provided.' });
-    }
+    // Get the file URL from S3
+    const fileUrl = req.file.location;
 
-    const profilePictureUrl = file.location; 
+    // Assuming you have a function to save the URL to your database
+    await saveProfilePictureUrlToDB(req.userId, fileUrl); // Update this with your actual user ID logic
 
-    const result = await pool.query(
-      'INSERT INTO profilepictures (user_id, profile_picture_url) VALUES ($1, $2)',
-      [userId, profilePictureUrl]
-    );
-   
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    res.json({ profilePictureUrl });
+    res.status(200).json({ message: 'File uploaded successfully', url: fileUrl });
   } catch (error) {
-    console.error('Error uploading profile picture:', error);
-    res.status(500).json({ error: 'Failed to upload profile picture' });
+    console.error('Error uploading file:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
+async function saveProfilePictureUrlToDB(userId, url) {
+  // Example using PostgreSQL with a query to update the user profile
+  const query = 'INSERT INTO profilepictures (user_id, profile_picture_url) VALUES ($1, $2)';
+  await db.query(query, [url, userId]); // db is your database client instance
+}
+
 
 // Route to get skills
 app.get('/api/skills', async (req, res) => {
