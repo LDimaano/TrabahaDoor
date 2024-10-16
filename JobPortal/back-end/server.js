@@ -96,12 +96,15 @@ io.on('connection', (socket) => {
   });
 });
 
-app.use(express.static(path.join(__dirname, 'front-end', 'public', 'assets')));
+
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve static files from the 'documents' directory
+
 app.use('/documents', express.static(path.join(__dirname, 'documents')));
+
+app.use(express.static(path.join(__dirname, '../front-end/build')));
 
 
 // Configure multer for file uploads
@@ -1057,8 +1060,9 @@ console.log('Database URL:', process.env.DATABASE_URL );
 console.log('API URL:', process.env.REACT_APP_API_URL); 
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'front-end', 'public', 'assets', 'index.html'));  // Adjusted path
+  res.sendFile(path.join(__dirname, '../front-end/build', 'index.html')); // Adjust the path if necessary
 });
+
 const PORT = process.env.PORT || 3000; // Default to 3000 if process.env.PORT is not defined
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: backend
+    env: node
+    plan: free
+    buildCommand: cd back-end && npm install
+    startCommand: cd back-end && node server.js
+    envVars:
+      - key: DATABASE_URL
+        value: YOUR_DATABASE_URL_HERE
+      - key: REACT_APP_API_URL
+        value: YOUR_API_URL_HERE
+  - type: web
+    name: frontend
+    env: static
+    plan: free
+    buildCommand: cd front-end && npm install && npm run build
+    staticPublishPath: front-end/build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /
