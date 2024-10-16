@@ -6,10 +6,13 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 function SignupForm({ openTermsModal, openPrivacyModal }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState(''); // State for confirm password
   const [usertype, setUserType] = useState('jobseeker');
   const [error, setError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState(''); // State for confirm password error
   const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State for toggling confirm password visibility
   const navigate = useNavigate();
 
   const validatePassword = (password) => {
@@ -35,6 +38,13 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
     const newPassword = e.target.value;
     setPassword(newPassword);
     setPasswordError(validatePassword(newPassword));
+    setConfirmPasswordError(newPassword === confirmPassword ? '' : 'Passwords do not match.');
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const newConfirmPassword = e.target.value;
+    setConfirmPassword(newConfirmPassword);
+    setConfirmPasswordError(password === newConfirmPassword ? '' : 'Passwords do not match.');
   };
 
   const handleLoginClick = () => {
@@ -47,6 +57,11 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
     const passwordValidationError = validatePassword(password);
     if (passwordValidationError) {
       setPasswordError(passwordValidationError);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setConfirmPasswordError('Passwords do not match.');
       return;
     }
 
@@ -126,6 +141,28 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
           <small className="text-muted">
             Password must be at least 8 characters, include one uppercase letter, one lowercase letter, and one number.
           </small>
+        </div>
+        <div className="mb-3 position-relative">
+          <label htmlFor="confirmPasswordInput" className="form-label">Confirm Password</label>
+          <div className="input-group">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              className="form-control form-control-lg"
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              id="confirmPasswordInput"
+              aria-label="Confirm your password"
+            />
+            <span
+              className="input-group-text"
+              style={{ cursor: 'pointer' }}
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
+            </span>
+          </div>
+          {confirmPasswordError && <small className="text-danger">{confirmPasswordError}</small>}
         </div>
         <div className="mb-3">
           <label className="form-check-label me-3">
