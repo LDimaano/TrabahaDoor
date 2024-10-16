@@ -7,6 +7,21 @@ const multer = require('multer');
 const multerS3 = require('multer-s3');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
+const getContentType = (fileName) => {
+  const extension = fileName.split('.').pop().toLowerCase();
+  switch (extension) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'pdf':
+      return 'application/pdf';
+    default:
+      return null; // Return null for unsupported types
+  }
+};
+
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
