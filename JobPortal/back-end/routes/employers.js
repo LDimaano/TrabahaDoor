@@ -2,24 +2,40 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const path = require('path');
-const baseURL = `${process.env.REACT_APP_API_URL}`;
 const AWS = require('aws-sdk');
 const multer = require('multer');
-const multerS3 = require('multer-s3'); // Change this to your production URL when deploying
+const multerS3 = require('multer-s3');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
-router.use('/documents', express.static(path.join(__dirname, '..', 'documents')));
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
-const uploadDocuments = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: process.env.AWS_BUCKET_NAME,
-    acl: 'public-read',
-    key: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, `${uniqueSuffix}-${file.originalname}`); // Create a unique file name
-    }
-  })
-}).fields([
+const uploadFileToS3 = async (fileBuffer, fileName) => {
+  const contentType = getContentType(fileName); // Make sure this function is defined to return the correct content type
+  const command = new PutObjectCommand({
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: fileName,
+    Body: fileBuffer,
+    ContentType: contentType,
+  });
+
+  try {
+    const response = await s3Client.send(command);
+    console.log('File uploaded successfully:', response);
+    return `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${fileName}`;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw new Error('Failed to upload file to S3');
+  }
+};
+
+const storage = multer.memoryStorage();
+const uploadDocuments = multer({ storage }).fields([
   { name: 'sec_certificate', maxCount: 1 },
   { name: 'business_permit', maxCount: 1 },
   { name: 'bir_certificate', maxCount: 1 },
@@ -27,6 +43,8 @@ const uploadDocuments = multer({
   { name: 'private_recruitment_agency_license', maxCount: 1 },
   { name: 'contract_sub_contractor_certificate', maxCount: 1 }
 ]);
+
+router.use('/documents', express.static(path.join(__dirname, '..', 'documents')));
 
 router.post('/upload', uploadDocuments, async (req, res) => {
   try {
@@ -36,29 +54,34 @@ router.post('/upload', uploadDocuments, async (req, res) => {
       return res.status(400).send('User ID is required');
     }
 
-    const sec_certificate_url = req.files.sec_certificate
-      ? req.files.sec_certificate[0].location
-      : null;
+    const fileUploadPromises = [];
 
-    const business_permit_url = req.files.business_permit
-      ? req.files.business_permit[0].location
-      : null;
+    // Loop through each file type and upload to S3
+    const fileTypes = [
+      'sec_certificate',
+      'business_permit',
+      'bir_certificate',
+      'poea_license',
+      'private_recruitment_agency_license',
+      'contract_sub_contractor_certificate'
+    ];
 
-    const bir_certificate_url = req.files.bir_certificate
-      ? req.files.bir_certificate[0].location
-      : null;
+    const urls = {};
 
-    const poea_license_url = req.files.poea_license
-      ? req.files.poea_license[0].location
-      : null;
+    for (const type of fileTypes) {
+      if (req.files[type]) {
+        const file = req.files[type][0];
+        const uniqueFileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${file.originalname}`;
+        const uploadPromise = uploadFileToS3(file.buffer, uniqueFileName)
+          .then(url => {
+            urls[type] = url; // Store the URL for this file
+          });
+        fileUploadPromises.push(uploadPromise);
+      }
+    }
 
-    const private_recruitment_agency_license_url = req.files.private_recruitment_agency_license
-      ? req.files.private_recruitment_agency_license[0].location
-      : null;
-
-    const contract_sub_contractor_certificate_url = req.files.contract_sub_contractor_certificate
-      ? req.files.contract_sub_contractor_certificate[0].location
-      : null;
+    // Wait for all file uploads to finish
+    await Promise.all(fileUploadPromises);
 
     const query = `
       INSERT INTO documents 
@@ -68,12 +91,12 @@ router.post('/upload', uploadDocuments, async (req, res) => {
 
     const values = [
       user_id,
-      sec_certificate_url,
-      business_permit_url,
-      bir_certificate_url,
-      poea_license_url,
-      private_recruitment_agency_license_url,
-      contract_sub_contractor_certificate_url
+      urls.sec_certificate || null,
+      urls.business_permit || null,
+      urls.bir_certificate || null,
+      urls.poea_license || null,
+      urls.private_recruitment_agency_license || null,
+      urls.contract_sub_contractor_certificate || null
     ];
 
     const result = await pool.query(query, values);
