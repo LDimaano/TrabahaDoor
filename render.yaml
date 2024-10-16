@@ -1,13 +1,17 @@
+databases:
+  - name: trabahadoor-db
+    type: postgresql
+    starterPlan: free
+
 services:
+  - type: web
+    name: TrabahaDoor-backend
+    env: node
+    buildCommand: cd JobPortal/back-end && npm install
+    startCommand: cd JobPortal/back-end && node server.js
+
   - type: web
     name: TrabahaDoor-front-end
     env: static
-    staticPublishPath: build
-    buildCommand: npm install && npm run build
-    publishPath: JobPortal/front-end/build
-
-  - type: web
-    name: TrabahaDoor
-    env: node
-    buildCommand: npm install
-    startCommand: node server.js
+    staticPublishPath: JobPortal/front-end/build
+    buildCommand: cd JobPortal/front-end && npm install && npm run build
