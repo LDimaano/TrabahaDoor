@@ -14,7 +14,7 @@ const LandingPage = () => {
   return (
     <div>
       <Helmet>
-        <title>Trabahadoor - Landing Page</title>
+        <title>Trabahadoor</title>
       </Helmet>
       <Header />
 
