@@ -170,8 +170,8 @@ function Header() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-transparent">
-      <div className="container-fluid">
+    <nav className="navbar navbar-expand-lg bg-transparent">
+      <div className="container d-flex justify-content-between align-items-center">
       <button 
         className="navbar-brand d-flex align-items-center btn btn-link" 
         onClick={handleHomeClick} 
@@ -200,14 +200,14 @@ function Header() {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
-          <ul className="navbar-nav">
-            <li className="nav-item mx-3 position-relative">
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav ms-auto d-flex align-items-center">
+            <li className="nav-item mx-3">
               <Link to="/applicant_joblisting" className={getNavLinkClass('/js_joblistings')}>
                 <i className="fas fa-briefcase fa-lg" style={{ color: '#6c757d' }}></i>
               </Link>
             </li>
-            <li className="nav-item mx-3 position-relative">
+            <li className="nav-item mx-3">
               <button
                 className="btn btn-link"
                 onClick={toggleNotifications}
@@ -241,7 +241,7 @@ function Header() {
                 </div>
               )}
             </li>
-            <li className="nav-item mx-3 position-relative">
+            <li className="nav-item mx-3">
               <button className="btn btn-link" onClick={handleProfileClick}>
                 <i className="fas fa-user fa-lg" style={{ color: '#6c757d' }}></i>
               </button>

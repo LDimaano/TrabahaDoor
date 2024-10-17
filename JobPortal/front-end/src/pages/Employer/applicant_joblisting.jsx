@@ -11,6 +11,7 @@ const ApplicantDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [listingsPerPage, setListingsPerPage] = useState(10);
   const [error, setError] = useState(null);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to control sidebar visibility
 
   useEffect(() => {
     const userId = sessionStorage.getItem('user_id');
@@ -67,15 +68,23 @@ const ApplicantDashboard = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
   return (
-    <div className="d-flex">
-      <Sidebar />
-      <main className="flex-grow-1 p-4">
+    <div className="d-flex flex-column flex-lg-row">
+      {/* Sidebar */}
+      <div className={`sidebar ${isSidebarVisible ? 'd-block' : 'd-none'} d-lg-block`}>
+        <Sidebar />
+      </div>
+
+      <main className="flex-grow-1 p-3">
         <Header />
         <section>
-          <div className="d-flex justify-content-between align-items-center mb-3">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3" style={{ gap: '1rem' }}>
             <h3>Job Listings: {filteredListings.length}</h3>
-            <div className="input-group" style={{ maxWidth: '300px' }}>
+            <div className="input-group" style={{ maxWidth: '100%', width: '300px' }}>
               <input
                 type="text"
                 className="form-control"
@@ -88,10 +97,18 @@ const ApplicantDashboard = () => {
               </button>
             </div>
           </div>
-          {/* Pass setJobs to the ApplicantJoblist component */}
           <ApplicantJoblist currentListings={currentListings} setCurrentListings={setJobs} />
         </section>
       </main>
+
+      {/* Sidebar toggle button for mobile */}
+      <button
+        className="btn btn-primary d-lg-none position-fixed"
+        style={{ top: '10px', left: '10px', zIndex: 999 }}
+        onClick={toggleSidebar}
+      >
+        <FontAwesomeIcon icon={faFilter} />
+      </button>
     </div>
   );
 };
