@@ -28,20 +28,23 @@ const ConfirmModal = ({ show, onClose, onConfirm }) => {
         backgroundColor: '#fff',
         padding: '20px',
         borderRadius: '8px',
-        maxWidth: '500px',
-        width: '100%',
+        maxWidth: '90%', // Adjust width for mobile responsiveness
+        width: '500px',
+        margin: '0 20px', // Margin for smaller screens
       }}>
         <h5>Confirm Contact</h5>
         <p>Are you sure you want to contact this applicant?</p>
-        <div className="modal-actions" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <button 
-            className="btn btn-secondary" 
             onClick={onClose} 
-            style={{ marginRight: '10px' }} // Add margin here for spacing
+            style={{ marginRight: '10px', backgroundColor: '#6c757d', color: '#fff', border: 'none', padding: '8px 16px', cursor: 'pointer' }}
           >
             Cancel
           </button>
-          <button className="btn btn-primary" onClick={onConfirm}>
+          <button 
+            onClick={onConfirm}
+            style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '8px 16px', cursor: 'pointer' }}
+          >
             Confirm
           </button>
         </div>
@@ -49,7 +52,6 @@ const ConfirmModal = ({ show, onClose, onConfirm }) => {
     </div>
   );
 };
-
 
 const MyProfile = () => {
   const navigate = useNavigate(); 
@@ -64,13 +66,12 @@ const MyProfile = () => {
     company: '',
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
   const handleBack = () => {
     navigate(-1); 
   };
 
-  // Function to handle the contact action
   const handleContact = async () => {
     try {
       const userId = sessionStorage.getItem('user_id');
@@ -95,10 +96,9 @@ const MyProfile = () => {
     }
   };
 
-  // Function to handle modal confirmation
   const handleConfirmContact = () => {
-    setIsModalOpen(false); // Close the modal
-    handleContact(); // Execute contact action
+    setIsModalOpen(false);
+    handleContact();
   };
 
   useEffect(() => {
@@ -126,7 +126,7 @@ const MyProfile = () => {
             : 'Not Provided',
           gender: data.jobSeeker.gender || 'Not Specified',
           address: data.jobSeeker.address || 'Address not provided',
-          industry: data.jobSeeker.industry|| 'Industry not provided',
+          industry: data.jobSeeker.industry || 'Industry not provided',
         });
 
         const firstJobExperience = data.jobExperience[0] || {};
@@ -154,14 +154,13 @@ const MyProfile = () => {
   }
 
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header />
-      <main className="flex-grow-1 p-4 container">
+      <main style={{ flex: '1', padding: '16px', width: '100%', maxWidth: '1200px', margin: 'auto' }}>
         <section>
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <div className="d-flex align-items-center">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
               <button
-                className="btn p-0 me-3"
                 onClick={handleBack}
                 style={{
                   background: 'transparent',
@@ -169,29 +168,28 @@ const MyProfile = () => {
                   color: '#000', 
                   fontSize: '1.5rem', 
                   cursor: 'pointer',
+                  marginRight: '16px',
                 }}
               >
                 <FontAwesomeIcon icon={faArrowLeft} />
               </button>
-              <h3 className="mb-0">Applicant's Profile</h3>
+              <h3 style={{ margin: '0' }}>Applicant's Profile</h3>
             </div>
-            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+            <button style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '8px 16px', cursor: 'pointer' }} onClick={() => setIsModalOpen(true)}>
               Contact
             </button>
           </div>
-          <div className="d-flex">
-            <div className="flex-fill me-4">
-              <ApplicantProfile
-                personalData={personalData}
-                professionalData={professionalData}
-              />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+            <div style={{ flex: '1 1 300px', marginBottom: '16px' }}>
+              <ApplicantProfile personalData={personalData} professionalData={professionalData} />
             </div>
-            <ApplicantCard applicant={applicantData} />
+            <div style={{ flex: '1 1 300px', marginBottom: '16px' }}>
+              <ApplicantCard applicant={applicantData} />
+            </div>
           </div>
         </section>
       </main>
 
-      {/* Modal for confirmation */}
       <ConfirmModal 
         show={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
