@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/jsheader';
 import ApplicantProfile from '../../components/app_profile';
 import ApplicantCard from '../../components/app_card';
@@ -15,11 +15,11 @@ const MyProfile = () => {
     company: '',
   });
   const [isLoading, setIsLoading] = useState(true);
-  
-  const navigate = useNavigate(); // Initialize useNavigate hook
-  
+
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const userId = sessionStorage.getItem('user_id'); // Fetch user ID from session
+    const userId = sessionStorage.getItem('user_id');
 
     const fetchApplicantData = async () => {
       try {
@@ -74,16 +74,16 @@ const MyProfile = () => {
   }
 
   const handleEditProfile = () => {
-    const userId = sessionStorage.getItem('user_id'); // Retrieve userId from session storage
+    const userId = sessionStorage.getItem('user_id');
     navigate('/js_profile_edit', { 
       state: { 
         personalData, 
         professionalData, 
-        userId // Pass userId in state
+        userId
       } 
     });
   };
-  
+
   return (
     <div className="d-flex flex-column min-vh-100">
       <Header />
@@ -91,14 +91,15 @@ const MyProfile = () => {
         <section>
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h3>My Profile</h3>
-        
           </div>
 
-          <div className="d-flex">
-            <div className="flex-fill me-4">
+          <div className="row">
+            <div className="col-12 col-md-8 mb-3 mb-md-0">
               <ApplicantProfile personalData={personalData} professionalData={professionalData} />
             </div>
-            <ApplicantCard applicant={applicantData} />
+            <div className="col-12 col-md-4">
+              <ApplicantCard applicant={applicantData} />
+            </div>
           </div>
         </section>
       </main>

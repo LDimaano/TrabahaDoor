@@ -628,14 +628,11 @@ app.get('/api/timetofill', async (req, res) => {
 });
 
 //time to fill analysis-emp side
-app.get('/api/timetofillemp', async (req, res) => {
-  console.log('Session data time to fill:', req.session);
-  if (!req.session.user) {
-    return res.status(403).json({ message: 'Not authenticated' });
+app.get('/api/timetofillemp/:userId', async (req, res) => {
+  const { userId } = req.params;
+  if (!userId || isNaN(userId)) {
+    return res.status(400).json({ message: 'Invalid user ID' });
   }
-  const userId = req.session.user.user_id;
-  console.log('User ID for time to fill:', userId);
-
   try {
     // SQL query to join joblistings and industries and retrieve industry_name, datecreated, and datefilled
     const jobListings = await pool.query(`

@@ -8,8 +8,9 @@ function BarChart() {
 
   useEffect(() => {
     const fetchData = async () => {
+      const userId = sessionStorage.getItem('user_id');
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/timetofillemp`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/timetofillemp/${userId}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
