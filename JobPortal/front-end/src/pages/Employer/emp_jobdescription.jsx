@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faPencilAlt, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import Header from '../../components/emp_header';
 import JobContent from '../../components/jobcontent';
 import JobDetails from '../../components/jobdetails';
@@ -12,7 +12,6 @@ const JobDescription = () => {
   const navigate = useNavigate();
   const { jobId } = useParams();
   const [jobData, setJobData] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to control sidebar visibility
 
   const handleBack = () => {
     navigate(-1);
@@ -20,10 +19,6 @@ const JobDescription = () => {
 
   const handleUpdateClick = () => {
     navigate(`/jobpostingupdate/${jobData.job_id}`);
-  };
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
   };
 
   useEffect(() => {
@@ -45,7 +40,7 @@ const JobDescription = () => {
   return (
     <div className="d-flex">
       {/* Sidebar with responsive design */}
-      <div className={`d-none d-md-block ${isSidebarOpen ? 'd-block' : ''}`}>
+      <div className="d-none d-md-block">
         <Sidebar />
       </div>
       <main className="container-fluid mt-3">
@@ -67,19 +62,6 @@ const JobDescription = () => {
               }}
             >
               <FontAwesomeIcon icon={faArrowLeft} />
-            </button>
-            <button
-              className="btn p-0 me-3 d-md-none" // Only visible on small screens
-              onClick={toggleSidebar}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: '#000',
-                fontSize: '1.5rem',
-                cursor: 'pointer',
-              }}
-            >
-              <FontAwesomeIcon icon={faBars} />
             </button>
             <img
               src={jobData.profile_picture_url}
@@ -125,28 +107,6 @@ const JobDescription = () => {
           />
         </section>
       </main>
-
-      {/* Sidebar overlay for small screens */}
-      {isSidebarOpen && (
-        <div 
-          className="d-md-none position-fixed top-0 start-0 w-100 h-100" 
-          onClick={toggleSidebar}
-          style={{ 
-            background: 'rgba(0, 0, 0, 0.5)', 
-            zIndex: 1040 
-          }}
-        >
-          <div 
-            className="position-fixed top-0 start-0 p-3 bg-white" 
-            style={{ 
-              width: '250px', 
-              boxShadow: '2px 0 5px rgba(0, 0, 0, 0.2)' 
-            }}
-          >
-            <Sidebar />
-          </div>
-        </div>
-      )}
     </div>
   );
 };
