@@ -4,9 +4,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const WaitForApproval = () => {
   return (
-    <div className="d-flex flex-column flex-lg-row">
+    <div className="d-flex">
       <Sidebar />
-      <div className="container p-4 flex-grow-1">
+      <div className="container p-4">
         <h1 className="text-center">Wait for Approval</h1>
         <div className="alert alert-info text-center" role="alert">
           Please wait for the admin approval.

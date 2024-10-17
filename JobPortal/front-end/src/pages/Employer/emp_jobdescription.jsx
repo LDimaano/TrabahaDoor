@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faPencilAlt, faBars } from '@fortawesome/free-solid-svg-icons';
 import Header from '../../components/emp_header';
 import JobContent from '../../components/jobcontent';
@@ -9,13 +9,13 @@ import JobDetails from '../../components/jobdetails';
 import Sidebar from '../../components/emp_side';
 
 const JobDescription = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const { jobId } = useParams();
   const [jobData, setJobData] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to control sidebar visibility
 
   const handleBack = () => {
-    navigate(-1); 
+    navigate(-1);
   };
 
   const handleUpdateClick = () => {
@@ -49,7 +49,9 @@ const JobDescription = () => {
         <Sidebar />
       </div>
       <main className="container-fluid mt-3">
-        <Header />
+        <div className="d-none d-md-block">
+          <Header />
+        </div>
         <hr />
         <section className="row mb-5">
           <div className="col-12 d-flex align-items-center">
@@ -119,7 +121,7 @@ const JobDescription = () => {
               { label: 'Salary', value: jobData.salaryrange },
               { label: 'Industry', value: jobData.industry_name }
             ]}
-            skills={jobData.skills || []} 
+            skills={jobData.skills || []}
           />
         </section>
       </main>
