@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/emp_side';
 import Header from '../../components/emp_header';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faBars } from '@fortawesome/free-solid-svg-icons';
 import ApplicantJoblist from '../../components/emp_joblist';
 
 const ApplicantDashboard = () => {
@@ -107,7 +107,8 @@ const ApplicantDashboard = () => {
         style={{ top: '10px', left: '10px', zIndex: 999 }}
         onClick={toggleSidebar}
       >
-        <FontAwesomeIcon icon={faFilter} />
+        <FontAwesomeIcon icon={faBars} />
+
       </button>
     </div>
   );
