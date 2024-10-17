@@ -7,10 +7,15 @@ import OurServices from '../components/ourservices';
 import AboutUs from '../components/aboutus';
 import ContactSection from '../components/contact';
 import Footer from '../components/footer';
+import { Helmet } from 'react-helmet';
+
 
 const LandingPage = () => {
   return (
     <div>
+      <Helmet>
+        <title>Trabahadoor - Landing Page</title>
+      </Helmet>
       <Header />
 
       <section id="home" className="container-fluid p-0">
