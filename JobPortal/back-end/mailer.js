@@ -31,7 +31,7 @@ const generateEmailContent = (type, data) => {
                 
                 We are pleased to inform you that ${data.full_name} has applied for your job posting: ${data.job_title}.
                 
-                You can view more details and manage the application by logging into your employer dashboard.
+                You can view more details and manage the application by logging into your employer account.
                 
                 Best regards,
                 The Trabahadoor Team`,
@@ -41,7 +41,7 @@ const generateEmailContent = (type, data) => {
                 
                 <p>We are pleased to inform you that <strong>${data.full_name}</strong> has applied for the position of <strong>${data.job_title}</strong>.</p>
                 
-                <p>You can view more details and manage this application by logging into your <a href="https://trabahadoor.herokuapp.com/employer-dashboard">employer dashboard</a>.</p>
+                <p>You can view more details and manage this application by logging into your <a href="https://trabahadoor-front-end.onrender.com/login">employer account</a>.</p>
                 
                 <p>Best regards,<br/>
                 <strong>The Trabahadoor Team</strong></p>
@@ -66,7 +66,7 @@ const generateEmailContent = (type, data) => {
                 
                 <p>We wanted to inform you that your application status for the position of <strong>${data.job_title}</strong> has been updated to: <strong>${data.status}</strong>.</p>
                 
-                <p>You can log into your account to view more details by visiting your <a href="https://trabahadoor.herokuapp.com/jobseeker-dashboard">jobseeker dashboard</a>.</p>
+                <p>You can log into your account to view more details by visiting your <a href="https://trabahadoor-front-end.onrender.com/login">jobseeker account</a>.</p>
                 
                 <p>Best regards,<br/>
                 <strong>The Trabahadoor Team</strong></p>
@@ -90,7 +90,7 @@ const generateEmailContent = (type, data) => {
 
                 <p>We are excited to inform you that <strong>${data.companyName}</strong> is interested in connecting with you regarding potential opportunities.</p>
 
-                <p>Please log into your account to view more details by visiting your <a href="https://trabahadoor.herokuapp.com/jobseeker-dashboard">jobseeker dashboard</a> and take the next steps.</p>
+                <p>Please log into your account to view more details by visiting your <a href="https://trabahadoor-front-end.onrender.com/login">jobseeker account</a> and take the next steps.</p>
 
                 <p>Best regards,<br/>
                 <strong>The Trabahadoor Team</strong></p>
@@ -115,7 +115,7 @@ const generateEmailContent = (type, data) => {
                 
                 <p>Your employer account has been successfully activated.</p>
                 
-                <p>You can now log in to your account and start posting job listings to find the right candidates for your organization. Visit your <a href="https://trabahadoor.herokuapp.com/employer-dashboard">employer dashboard</a> to get started.</p>
+                <p>You can now log in to your account and start posting job listings to find the right candidates for your organization. Visit your <a href="https://trabahadoor-front-end.onrender.com/login">employer account</a> to get started.</p>
                 
                 <p>If you have any questions or need assistance, feel free to reach out to us.</p>
                 
