@@ -89,17 +89,6 @@ function LoginForm() {
     </span>
   </div>
 </div>
-
-        <div className="form-check mb-3">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            id="rememberMe"
-          />
-          <label className="form-check-label" htmlFor="rememberMe">
-            Remember me
-          </label>
-        </div>
         <button className="btn btn-primary btn-lg w-100" type="submit">Login</button>
         <div className="text-center mt-3">
           <span>Don’t have an account?</span>
