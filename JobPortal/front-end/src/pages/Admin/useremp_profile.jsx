@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import EmployerProfile from '../../components/emp_profile';
-import EmployerCard from '../../components/emp_card';
+import EmployerCard from '../../components/emp_cardadmin';
 
 const MyProfile = () => {
   const navigate = useNavigate();
