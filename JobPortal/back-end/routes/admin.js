@@ -420,8 +420,7 @@ router.get('/joblistings/:jobId', async (req, res) => {
             FROM joblistings jl
             JOIN industries i ON jl.industry_id = i.industry_id
             GROUP BY i.industry_name
-            ORDER BY job_count DESC
-            LIMIT 5;
+            ORDER BY job_count DESC;
         `);
         
         // Log the result from the SQL query
@@ -445,8 +444,7 @@ router.get('/topcompanies', async (req, res) => {
             JOIN emp_profiles e ON jl.user_id = e.user_id
             LEFT JOIN profilepictures pp ON e.user_id = pp.user_id
             GROUP BY e.company_name, pp.profile_picture_url
-            ORDER BY job_count DESC
-            LIMIT 5;
+            ORDER BY job_count DESC;
         `);
         
         // Log the result from the SQL query

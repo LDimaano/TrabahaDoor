@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Button } from 'react-bootstrap';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function BarChart() {
@@ -40,11 +42,35 @@ function BarChart() {
     }))
     .sort((a, b) => b.height - a.height); // Sort in descending order by height (days)
 
+  const generatePDFReport = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.text('Time to Fill Analysis Report', 20, 20);
+    doc.setFontSize(12);
+    doc.text('Average Time to Fill per Industry', 20, 30);
+
+    const tableData = industries.map((industry) => [industry.name, `${industry.height} days`]);
+
+    doc.autoTable({
+      head: [['Industry', 'Average Time to Fill (days)']],
+      body: tableData,
+      startY: 40,
+    });
+
+    doc.save('TimeToFillReport.pdf');
+  };
+
   return (
     <section className="card border-light shadow-sm p-4">
-      <header className="mb-4">
-        <h2 className="h4 text-dark">Time to Fill Analysis</h2>
-        <p className="text-muted">Showing Average Time to Fill per Industry</p>
+      <header className="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+          <h2 className="h4 text-dark">Time to Fill Analysis</h2>
+          <p className="text-muted">Showing Average Time to Fill per Industry</p>
+        </div>
+        <Button variant="primary" onClick={generatePDFReport}>
+          Download Report
+        </Button>
       </header>
 
       {error && <div className="alert alert-danger">{error}</div>}
