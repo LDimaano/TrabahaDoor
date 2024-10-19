@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Tooltip, OverlayTrigger, Tabs, Tab, Alert, Card, Container, Row, Col } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Tabs, Tab, Alert, Card, Container, Row, Col, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
 
 function BarChart() {
   const [timeToFillData, setTimeToFillData] = useState({});
@@ -29,6 +31,34 @@ function BarChart() {
     }))
     // Sort the industries based on the height in descending order
     .sort((a, b) => b.height - a.height);
+
+  // Function to export the data as CSV
+  const exportToCSV = () => {
+    const csvData = industries.map(({ name, height }) => `${name},${height}`).join('\n');
+    const blob = new Blob([`Industry,Time to Fill (days)\n${csvData}`], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'time_to_fill_report.csv');
+  };
+
+  // Function to export the data as PDF
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('Time to Fill Analysis Report', 14, 20);
+    doc.setFontSize(12);
+    doc.text('Industry-wise Time to Fill Data', 14, 30);
+
+    // Add table header
+    doc.text('Industry', 14, 40);
+    doc.text('Time to Fill (days)', 90, 40);
+
+    // Add industry data to the PDF
+    industries.forEach((industry, index) => {
+      doc.text(industry.name, 14, 50 + index * 10);
+      doc.text(`${industry.height}`, 90, 50 + index * 10);
+    });
+
+    doc.save('time_to_fill_report.pdf');
+  };
 
   return (
     <Container>
@@ -80,6 +110,16 @@ function BarChart() {
               <div className="mt-4 d-flex align-items-center">
                 <div className="bg-primary" style={{ width: '16px', height: '16px', borderRadius: '3px', marginRight: '8px' }}></div>
                 <span className="text-muted">Days</span>
+              </div>
+
+              {/* Report Generation Buttons */}
+              <div className="mt-4 d-flex justify-content-end">
+                <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
+                  Download CSV
+                </Button>
+                <Button variant="outline-secondary" onClick={exportToPDF}>
+                  Download PDF
+                </Button>
               </div>
             </Tab>
           </Tabs>
