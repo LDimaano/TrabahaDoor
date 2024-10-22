@@ -1037,7 +1037,7 @@ app.post('/api/applications/:applicationId/status', async (req, res) => {
 // Route to get skills
 app.get('/api/skills', async (req, res) => {
   try {
-    const skills = await pool.query('SELECT skill_id, skill_name FROM skills');
+    const skills = await pool.query('SELECT skill_id, skill_name FROM skills Order by skill_name asc');
     res.json(skills.rows);
   } catch (err) {
     console.error('Error fetching skills:', err);
@@ -1048,7 +1048,7 @@ app.get('/api/skills', async (req, res) => {
 // Route to get job titles
 app.get('/api/jobtitles', async (req, res) => {
   try {
-    const jobTitles = await pool.query('SELECT jobtitle_id, job_title FROM job_titles');
+    const jobTitles = await pool.query('SELECT jobtitle_id, job_title FROM job_titles Order By job_title asc');
     res.json(jobTitles.rows);
   } catch (err) {
     console.error('Error fetching job titles:', err);
@@ -1070,7 +1070,7 @@ app.get('/api/addresses', async (req, res) => {
 // Route to get industries
 app.get('/api/industries', async (req, res) => {
   try {
-    const industries = await pool.query('SELECT industry_id, industry_name FROM industries');
+    const industries = await pool.query('SELECT industry_id, industry_name FROM industries Order by industry_name asc');
     res.json(industries.rows);
   } catch (err) {
     console.error('Error fetching industries:', err);
