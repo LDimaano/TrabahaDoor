@@ -13,7 +13,6 @@ function SubmitApplication() {
     const [additionalInfo, setAdditionalInfo] = useState('');
     const [hasApplied, setHasApplied] = useState(false);
     const [attachment, setAttachment] = useState(null);
-    const [attachmentUrl, setAttachmentUrl] = useState(''); // Stores uploaded file URL
     const { jobId } = useParams();
     const user_id = sessionStorage.getItem('user_id');
 
@@ -64,52 +63,21 @@ function SubmitApplication() {
         };
     }, [jobId, user_id]);
 
-    const handleFileUpload = async () => {
-        if (!attachment) return;
-
-        const formData = new FormData();
-        formData.append('user_id', user_id);
-        formData.append('attachment', attachment);
-
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/upload-resume`, {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) throw new Error('Failed to upload resume');
-
-            const data = await response.json();
-            setAttachmentUrl(data.resumeUrl);
-            console.log('Resume uploaded:', data.resumeUrl);
-        } catch (error) {
-            console.error('Error uploading resume:', error);
-            alert('Failed to upload resume. Please try again.');
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Ensure the file is uploaded before submitting application
-        if (attachment && !attachmentUrl) {
-            await handleFileUpload();
+        const formData = new FormData();
+        formData.append('jobId', jobId);
+        formData.append('user_id', user_id);
+        formData.append('additionalInfo', additionalInfo);
+        if (attachment) {
+            formData.append('resume', attachment); // Change 'attachment' to 'resume'
         }
-
-        const payload = {
-            jobId,
-            user_id,
-            additionalInfo,
-            resumeUrl: attachmentUrl,
-        };
 
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/applications`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
+                body: formData, // Send FormData directly
             });
 
             if (!response.ok) throw new Error('Failed to submit application');

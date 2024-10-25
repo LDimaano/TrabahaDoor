@@ -64,45 +64,6 @@ const uploadDocuments = multer({ storage }).fields([
 
 router.use('/resume', express.static(path.join(__dirname, '..', 'resume')));
 
-router.post('/upload-resume', uploadDocuments, async (req, res) => {
-  try {
-    const user_id = req.body.userId;
-
-    if (!user_id) {
-      return res.status(400).send('User ID is required');
-    }
-
-    // Check for resume file in the request
-    if (!req.files || !req.files.resume) {
-      return res.status(400).send('Resume file is required');
-    }
-
-    const resumeFile = req.files.resume[0];
-    const uniqueFileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${resumeFile.originalname}`;
-
-    // Upload the resume file to S3
-    const resumeUrl = await uploadFileToS3(resumeFile.buffer, uniqueFileName);
-
-    // Insert the resume URL and user ID into the database
-    const query = `
-      INSERT INTO applications
-      (user_id, resume)
-      VALUES ($1, $2)
-      RETURNING *`;
-
-    const values = [user_id, resumeUrl];
-
-    const result = await pool.query(query, values);
-
-    res.status(200).send(`Resume uploaded successfully for user ID: ${user_id}. Record ID: ${result.rows[0].id}`);
-  } catch (error) {
-    console.error('Error uploading resume:', error);
-    res.status(500).send('Server error');
-  }
-});
-
-
-
 
 router.post('/joblistings', async (req, res) => {
   const {
@@ -299,15 +260,21 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
   }
 });
 
-
-router.post('/applications', async (req, res) => {
+router.post('/applications', upload.single('resume'), async (req, res) => {
   const { jobId, user_id, additionalInfo } = req.body;
 
   try {
+    const resumeUrl = req.file?.location; // Get the S3 file URL from multer's S3 storage
+
+    // Ensure that all required data is present
+    if (!jobId || !user_id || !resumeUrl) {
+      return res.status(400).json({ error: 'Job ID, user ID, and resume are required' });
+    }
+
     const result = await pool.query(
-      `INSERT INTO applications (job_id, user_id, additional_info, status)
-      VALUES ($1, $2, $3, 'new')`,
-      [jobId, user_id, additionalInfo]
+      `INSERT INTO applications (job_id, user_id, resume, additional_info, status)
+      VALUES ($1, $2, $3, $4, 'new')`,
+      [jobId, user_id, resumeUrl, additionalInfo] // Include resumeUrl in your query
     );
 
     if (result.rowCount === 1) {
@@ -326,7 +293,7 @@ router.post('/applications', async (req, res) => {
           job_title: employerData.job_title,
           full_name: employerData.full_name, // Job seeker's full name
         };
-        
+
         // Pass employerEmail, fullName, and jobTitle to the email sending function
         await sendApplicationEmail(employerData.email, applicationData.full_name, applicationData.job_title);
       }
