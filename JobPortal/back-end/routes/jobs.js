@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { sendApplicationEmail } = require('../mailer');
+const AWS = require('aws-sdk');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
 // Method to set io instance
 let io; // Declare io variable outside to be accessible
@@ -9,6 +13,96 @@ let io; // Declare io variable outside to be accessible
 router.setIo = (_io) => {
   io = _io; // Set the io instance
 };
+
+
+const getContentType = (fileName) => {
+  const extension = fileName.split('.').pop().toLowerCase();
+  switch (extension) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'pdf':
+      return 'application/pdf';
+    default:
+      return null; // Return null for unsupported types
+  }
+};
+
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+const uploadFileToS3 = async (fileBuffer, fileName) => {
+  const contentType = getContentType(fileName); // Make sure this function is defined to return the correct content type
+  const command = new PutObjectCommand({
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: fileName,
+    Body: fileBuffer,
+    ContentType: contentType,
+  });
+
+  try {
+    const response = await s3Client.send(command);
+    console.log('File uploaded successfully:', response);
+    return `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${fileName}`;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw new Error('Failed to upload file to S3');
+  }
+};
+
+const storage = multer.memoryStorage();
+const uploadDocuments = multer({ storage }).fields([
+  { name: 'resume', maxCount: 1 },
+]);
+
+router.use('/resume', express.static(path.join(__dirname, '..', 'resume')));
+
+router.post('/upload-resume', uploadDocuments, async (req, res) => {
+  try {
+    const user_id = req.body.userId;
+
+    if (!user_id) {
+      return res.status(400).send('User ID is required');
+    }
+
+    // Check for resume file in the request
+    if (!req.files || !req.files.resume) {
+      return res.status(400).send('Resume file is required');
+    }
+
+    const resumeFile = req.files.resume[0];
+    const uniqueFileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${resumeFile.originalname}`;
+
+    // Upload the resume file to S3
+    const resumeUrl = await uploadFileToS3(resumeFile.buffer, uniqueFileName);
+
+    // Insert the resume URL and user ID into the database
+    const query = `
+      INSERT INTO applications
+      (user_id, resume)
+      VALUES ($1, $2)
+      RETURNING *`;
+
+    const values = [user_id, resumeUrl];
+
+    const result = await pool.query(query, values);
+
+    res.status(200).send(`Resume uploaded successfully for user ID: ${user_id}. Record ID: ${result.rows[0].id}`);
+  } catch (error) {
+    console.error('Error uploading resume:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+
+
 
 router.post('/joblistings', async (req, res) => {
   const {

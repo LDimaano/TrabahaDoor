@@ -60,8 +60,7 @@ const uploadDocuments = multer({ storage }).fields([
 ]);
 
 router.use('/documents', express.static(path.join(__dirname, '..', 'documents')));
-
-router.post('/upload', uploadDocuments, async (req, res) => {
+router.post('/upload-resume', uploadDocuments, async (req, res) => {
   try {
     const user_id = req.body.userId;
 
@@ -69,56 +68,31 @@ router.post('/upload', uploadDocuments, async (req, res) => {
       return res.status(400).send('User ID is required');
     }
 
-    const fileUploadPromises = [];
-
-    // Loop through each file type and upload to S3
-    const fileTypes = [
-      'sec_certificate',
-      'business_permit',
-      'bir_certificate',
-      'poea_license',
-      'private_recruitment_agency_license',
-      'contract_sub_contractor_certificate'
-    ];
-
-    const urls = {};
-
-    for (const type of fileTypes) {
-      if (req.files[type]) {
-        const file = req.files[type][0];
-        const uniqueFileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${file.originalname}`;
-        const uploadPromise = uploadFileToS3(file.buffer, uniqueFileName)
-          .then(url => {
-            urls[type] = url; // Store the URL for this file
-          });
-        fileUploadPromises.push(uploadPromise);
-      }
+    // Check for resume file in the request
+    if (!req.files || !req.files.resume) {
+      return res.status(400).send('Resume file is required');
     }
 
-    // Wait for all file uploads to finish
-    await Promise.all(fileUploadPromises);
+    const resumeFile = req.files.resume[0];
+    const uniqueFileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${resumeFile.originalname}`;
 
+    // Upload the resume file to S3
+    const resumeUrl = await uploadFileToS3(resumeFile.buffer, uniqueFileName);
+
+    // Insert the resume URL and user ID into the database
     const query = `
       INSERT INTO documents 
-      (user_id, sec_certificate, business_permit, bir_certificate, poea_license, private_recruitment_agency_license, contract_sub_contractor_certificate)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      (user_id, resume_url)
+      VALUES ($1, $2)
       RETURNING *`;
 
-    const values = [
-      user_id,
-      urls.sec_certificate || null,
-      urls.business_permit || null,
-      urls.bir_certificate || null,
-      urls.poea_license || null,
-      urls.private_recruitment_agency_license || null,
-      urls.contract_sub_contractor_certificate || null
-    ];
+    const values = [user_id, resumeUrl];
 
     const result = await pool.query(query, values);
 
-    res.status(200).send(`Documents uploaded successfully for user ID: ${user_id}. Record ID: ${result.rows[0].id}`);
+    res.status(200).send(`Resume uploaded successfully for user ID: ${user_id}. Record ID: ${result.rows[0].id}`);
   } catch (error) {
-    console.error('Error saving to database:', error);
+    console.error('Error uploading resume:', error);
     res.status(500).send('Server error');
   }
 });

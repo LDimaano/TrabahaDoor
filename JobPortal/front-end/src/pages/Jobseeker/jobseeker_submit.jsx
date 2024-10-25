@@ -5,14 +5,15 @@ import JobHeader from '../../components/submitheader';
 import Modal from '../../components/modal';
 import { io } from 'socket.io-client';
 
-const socket = io(process.env.REACT_APP_SOCKET_URL); // Initialize socket connection
+const socket = io(process.env.REACT_APP_SOCKET_URL);
 
 function SubmitApplication() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [jobDetails, setJobDetails] = useState({});
     const [additionalInfo, setAdditionalInfo] = useState('');
     const [hasApplied, setHasApplied] = useState(false);
-    const [attachment, setAttachment] = useState(null); // State for file attachment
+    const [attachment, setAttachment] = useState(null);
+    const [attachmentUrl, setAttachmentUrl] = useState(''); // Stores uploaded file URL
     const { jobId } = useParams();
     const user_id = sessionStorage.getItem('user_id');
 
@@ -42,7 +43,6 @@ function SubmitApplication() {
                 });
                 
                 if (!response.ok) throw new Error('Failed to check application status');
-
                 const data = await response.json();
                 if (data.applied) setHasApplied(true);
             } catch (error) {
@@ -55,7 +55,6 @@ function SubmitApplication() {
             checkIfApplied();
         }
 
-        // Listen for notifications
         socket.on('new-application', (data) => {
             console.log(data.message);
         });
@@ -65,40 +64,63 @@ function SubmitApplication() {
         };
     }, [jobId, user_id]);
 
+    const handleFileUpload = async () => {
+        if (!attachment) return;
+
+        const formData = new FormData();
+        formData.append('user_id', user_id);
+        formData.append('attachment', attachment);
+
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/upload-resume`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) throw new Error('Failed to upload resume');
+
+            const data = await response.json();
+            setAttachmentUrl(data.resumeUrl);
+            console.log('Resume uploaded:', data.resumeUrl);
+        } catch (error) {
+            console.error('Error uploading resume:', error);
+            alert('Failed to upload resume. Please try again.');
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const formData = new FormData();
-        formData.append('jobId', jobId);
-        formData.append('user_id', user_id);
-        formData.append('additionalInfo', additionalInfo);
-        if (attachment) formData.append('attachment', attachment);
+        // Ensure the file is uploaded before submitting application
+        if (attachment && !attachmentUrl) {
+            await handleFileUpload();
+        }
+
+        const payload = {
+            jobId,
+            user_id,
+            additionalInfo,
+            resumeUrl: attachmentUrl,
+        };
 
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/applications`, {
                 method: 'POST',
-                body: formData, // Send formData for file upload
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
             });
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Error response:', errorText);
-                let errorData;
-                try {
-                    errorData = JSON.parse(errorText);
-                } catch {
-                    errorData = { error: errorText };
-                }
-                throw new Error(errorData.error || 'An unexpected error occurred.');
-            }
+            if (!response.ok) throw new Error('Failed to submit application');
 
             const result = await response.json();
             alert(result.message || 'Application submitted successfully!');
             closeModal();
-            setHasApplied(true); // Update state to indicate application submitted
+            setHasApplied(true);
         } catch (error) {
             console.error('Error submitting application:', error);
-            alert(error.message || 'Failed to submit the application. Please try again later.');
+            alert('Failed to submit the application. Please try again later.');
         }
     };
 
@@ -151,7 +173,7 @@ function SubmitApplication() {
             <button
                 onClick={openModal}
                 className={`btn ${hasApplied ? 'btn-secondary' : 'btn-primary'}`}
-                disabled={hasApplied} // Disable button if user has already applied
+                disabled={hasApplied}
             >
                 {hasApplied ? 'Already Applied' : 'Apply Now'}
             </button>
