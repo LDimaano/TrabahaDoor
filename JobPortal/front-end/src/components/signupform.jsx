@@ -6,13 +6,13 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 function SignupForm({ openTermsModal, openPrivacyModal }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); // State for confirm password
+  const [confirmPassword, setConfirmPassword] = useState(''); 
   const [usertype, setUserType] = useState('jobseeker');
   const [error, setError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [confirmPasswordError, setConfirmPasswordError] = useState(''); // State for confirm password error
-  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State for toggling confirm password visibility
+  const [confirmPasswordError, setConfirmPasswordError] = useState(''); 
+  const [showPassword, setShowPassword] = useState(false); 
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
   const navigate = useNavigate();
 
   const validatePassword = (password) => {
@@ -37,18 +37,24 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
-    setPasswordError(validatePassword(newPassword));
-    setConfirmPasswordError(newPassword === confirmPassword ? '' : 'Passwords do not match.');
+    const validationError = validatePassword(newPassword);
+    setPasswordError(validationError);
+    
+    if (!validationError) {
+      setConfirmPasswordError(
+        newPassword === confirmPassword ? '' : 'Passwords do not match.'
+      );
+    }
   };
 
   const handleConfirmPasswordChange = (e) => {
     const newConfirmPassword = e.target.value;
     setConfirmPassword(newConfirmPassword);
-    setConfirmPasswordError(password === newConfirmPassword ? '' : 'Passwords do not match.');
-  };
-
-  const handleLoginClick = () => {
-    navigate('/login'); 
+    if (!passwordError) {
+      setConfirmPasswordError(
+        password === newConfirmPassword ? '' : 'Passwords do not match.'
+      );
+    }
   };
 
   const handleClick = async (event) => {
@@ -66,24 +72,24 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/submit-form`, { 
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/submit-form`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password, usertype }),
       });
-  
+
       const result = await response.json();
-  
+
       if (response.ok) {
         const userId = result.userId;
-  
+
         if (!userId) {
           setError('User ID is missing from the response.');
           return;
         }
-  
+
         sessionStorage.setItem('userId', userId);
         navigate(usertype === 'jobseeker' ? `/j_profilecreation?userId=${userId}` : `/e_profilecreation?userId=${userId}`);
       } else {
@@ -99,11 +105,6 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
     <form className="col-lg-6 d-flex align-items-center" onSubmit={handleClick}>
       <div className="card p-5 shadow-lg w-100">
         <h2 className="text-center mb-4">Sign up Now</h2>
-        <div className="text-center mb-4 d-flex align-items-center justify-content-center">
-          <hr className="w-25" />
-          <span className="mx-2">Sign up with email</span>
-          <hr className="w-25" />
-        </div>
         {error && <div className="alert alert-danger">{error}</div>}
         <div className="mb-3">
           <label htmlFor="emailInput" className="form-label">Email Address</label>
@@ -122,7 +123,7 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
           <div className="input-group">
             <input
               type={showPassword ? 'text' : 'password'}
-              className="form-control form-control-lg"
+              className={`form-control form-control-lg ${passwordError ? 'is-invalid' : ''}`}
               placeholder="Enter password"
               value={password}
               onChange={handlePasswordChange}
@@ -138,21 +139,24 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
             </span>
           </div>
           {passwordError && <small className="text-danger">{passwordError}</small>}
-          <small className="text-muted">
-            Password must be at least 8 characters, include one uppercase letter, one lowercase letter, and one number.
-          </small>
+          {!passwordError && (
+            <small className="text-muted">
+              Password must be at least 8 characters, include one uppercase letter, one lowercase letter, and one number.
+            </small>
+          )}
         </div>
         <div className="mb-3 position-relative">
           <label htmlFor="confirmPasswordInput" className="form-label">Confirm Password</label>
           <div className="input-group">
             <input
               type={showConfirmPassword ? 'text' : 'password'}
-              className="form-control form-control-lg"
+              className={`form-control form-control-lg ${confirmPasswordError ? 'is-invalid' : ''}`}
               placeholder="Confirm password"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
               id="confirmPasswordInput"
               aria-label="Confirm your password"
+              disabled={!!passwordError} // Disable if there's a password error
             />
             <span
               className="input-group-text"
@@ -189,23 +193,6 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
           </label>
         </div>
         <button className="btn btn-primary btn-lg w-100" type="submit">Continue</button>
-        <div className="text-center mt-3">
-          <span>Already have an account?</span>
-          <button 
-            onClick={handleLoginClick} 
-            className="btn btn-link ms-2" 
-            style={{ textDecoration: 'underline', padding: 0, border: 'none', background: 'transparent', color: 'blue' }}
-          >
-            Log in
-          </button>
-        </div>
-        <div className="text-center mt-3">
-          <p>
-            By clicking 'Continue', you acknowledge that you have read and accept the 
-            <a href="#" className="ms-1" onClick={openTermsModal}>Terms of Service</a> and 
-            <a href="#" className="ms-1" onClick={openPrivacyModal}>Privacy Policy</a>.
-          </p>
-        </div>
       </div>
     </form>
   );
