@@ -16,8 +16,6 @@ router.setIo = (_io) => {
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-
 const getContentType = (fileName) => {
   const extension = fileName.split('.').pop().toLowerCase();
   switch (extension) {
