@@ -12,6 +12,7 @@ function SubmitApplication() {
     const [jobDetails, setJobDetails] = useState({});
     const [additionalInfo, setAdditionalInfo] = useState('');
     const [hasApplied, setHasApplied] = useState(false);
+    const [attachment, setAttachment] = useState(null); // State for file attachment
     const { jobId } = useParams();
     const user_id = sessionStorage.getItem('user_id');
 
@@ -67,17 +68,16 @@ function SubmitApplication() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const formData = new FormData();
+        formData.append('jobId', jobId);
+        formData.append('user_id', user_id);
+        formData.append('additionalInfo', additionalInfo);
+        if (attachment) formData.append('attachment', attachment);
+
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/applications`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    jobId,
-                    user_id,
-                    additionalInfo,
-                }),
+                body: formData, // Send formData for file upload
             });
 
             if (!response.ok) {
@@ -114,13 +114,22 @@ function SubmitApplication() {
                 <div className="mb-4 text-start">
                     <h2 className="h4">Submit your application</h2>
                     <p> Applying will share your information, such as <strong>email</strong> and <strong>phone number</strong>, with the employer.</p>
-
                 </div>
                 <form onSubmit={handleSubmit}>
                     <AdditionalInfo
                         value={additionalInfo}
                         onChange={(e) => setAdditionalInfo(e.target.value)}
                     />
+                    <div className="mb-3">
+                        <label htmlFor="attachment" className="form-label">Attach your CV/Resume (PDF)</label>
+                        <input
+                            type="file"
+                            id="attachment"
+                            accept="application/pdf"
+                            className="form-control"
+                            onChange={(e) => setAttachment(e.target.files[0])}
+                        />
+                    </div>
                     <hr />
                     <button type="submit" className="btn btn-primary" disabled={hasApplied}>
                         Submit Application
