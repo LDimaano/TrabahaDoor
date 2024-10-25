@@ -502,14 +502,14 @@ const handleModalCancel = () => {
                   styles={{
                     container: (provided) => ({
                       ...provided,
-                      minWidth: "200px", // minimum width for content
+                      minWidth: "500px", // minimum width for content
                       width: "auto", // auto width based on content
                       flexGrow: 1, // allows it to grow within the flex container
                     }),
                     menu: (provided) => ({
                       ...provided,
                       width: "auto", // auto width for dropdown items
-                      minWidth: "200px",
+                      minWidth: "500px",
                     }),
                   }}
                 />
