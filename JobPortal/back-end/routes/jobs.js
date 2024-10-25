@@ -10,11 +10,13 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
 // Method to set io instance
 let io; // Declare io variable outside to be accessible
-32
 router.setIo = (_io) => {
   io = _io; // Set the io instance
 };
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
 const getContentType = (fileName) => {
   const extension = fileName.split('.').pop().toLowerCase();
@@ -40,7 +42,11 @@ const s3Client = new S3Client({
 });
 
 const uploadFileToS3 = async (fileBuffer, fileName) => {
-  const contentType = getContentType(fileName); // Make sure this function is defined to return the correct content type
+  const contentType = getContentType(fileName);
+  if (!contentType) {
+    throw new Error('Unsupported file type');
+  }
+  
   const command = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileName,
@@ -58,13 +64,59 @@ const uploadFileToS3 = async (fileBuffer, fileName) => {
   }
 };
 
-const storage = multer.memoryStorage();
-const uploadDocuments = multer({ storage }).fields([
-  { name: 'resume', maxCount: 1 },
-]);
+router.post('/applications', upload.single('resume'), async (req, res) => {
+  const { jobId, user_id, additionalInfo } = req.body;
 
-router.use('/resume', express.static(path.join(__dirname, '..', 'resume')));
+  try {
+    // Ensure that the file is provided
+    if (!req.file) {
+      return res.status(400).json({ error: 'Resume file is required' });
+    }
 
+    // Upload the file to S3 and get the URL
+    const resumeUrl = await uploadFileToS3(req.file.buffer, req.file.originalname);
+
+    // Ensure that all required data is present
+    if (!jobId || !user_id || !resumeUrl) {
+      return res.status(400).json({ error: 'Job ID, user ID, and resume are required' });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO applications (job_id, user_id, resume, additional_info, status)
+      VALUES ($1, $2, $3, $4, 'new')`,
+      [jobId, user_id, resumeUrl, additionalInfo] // Include resumeUrl in your query
+    );
+
+    if (result.rowCount === 1) {
+      if (io) {
+        io.emit('new-application', {
+          message: `A new application has been submitted for job ID ${jobId}`,
+        });
+      }
+
+      // Fetch employer's email, job_title, and applicant's full name from the database
+      const employerData = await getEmployerEmailByJobId(jobId);
+
+      if (employerData) {
+        // Send the email notification
+        const applicationData = {
+          job_title: employerData.job_title,
+          full_name: employerData.full_name, // Job seeker's full name
+        };
+
+        // Pass employerEmail, fullName, and jobTitle to the email sending function
+        await sendApplicationEmail(employerData.email, applicationData.full_name, applicationData.job_title);
+      }
+
+      res.status(201).json({ message: 'Application submitted successfully!' });
+    } else {
+      res.status(500).json({ error: 'Failed to submit application' });
+    }
+  } catch (error) {
+    console.error('Error submitting application:', error);
+    res.status(500).json({ error: 'An error occurred while submitting the application', details: error.message });
+  }
+});
 
 router.post('/joblistings', async (req, res) => {
   const {
@@ -258,54 +310,6 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
   } catch (error) {
     console.error('Error updating job:', error);
     res.status(500).json({ error: 'Failed to update job' });
-  }
-});
-
-router.post('/applications', upload.single('resume'), async (req, res) => {
-  const { jobId, user_id, additionalInfo } = req.body;
-
-  try {
-    const resumeUrl = req.file?.location; // Get the S3 file URL from multer's S3 storage
-
-    // Ensure that all required data is present
-    if (!jobId || !user_id || !resumeUrl) {
-      return res.status(400).json({ error: 'Job ID, user ID, and resume are required' });
-    }
-
-    const result = await pool.query(
-      `INSERT INTO applications (job_id, user_id, resume, additional_info, status)
-      VALUES ($1, $2, $3, $4, 'new')`,
-      [jobId, user_id, resumeUrl, additionalInfo] // Include resumeUrl in your query
-    );
-
-    if (result.rowCount === 1) {
-      if (io) {
-        io.emit('new-application', {
-          message: `A new application has been submitted for job ID ${jobId}`,
-        });
-      }
-
-      // Fetch employer's email, job_title, and applicant's full name from the database
-      const employerData = await getEmployerEmailByJobId(jobId);
-
-      if (employerData) {
-        // Send the email notification
-        const applicationData = {
-          job_title: employerData.job_title,
-          full_name: employerData.full_name, // Job seeker's full name
-        };
-
-        // Pass employerEmail, fullName, and jobTitle to the email sending function
-        await sendApplicationEmail(employerData.email, applicationData.full_name, applicationData.job_title);
-      }
-
-      res.status(201).json({ message: 'Application submitted successfully!' });
-    } else {
-      res.status(500).json({ error: 'Failed to submit application' });
-    }
-  } catch (error) {
-    console.error('Error submitting application:', error);
-    res.status(500).json({ error: 'An error occurred while submitting the application', details: error.message });
   }
 });
 

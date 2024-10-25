@@ -13,6 +13,7 @@ function SubmitApplication() {
     const [additionalInfo, setAdditionalInfo] = useState('');
     const [hasApplied, setHasApplied] = useState(false);
     const [attachment, setAttachment] = useState(null);
+    const [loading, setLoading] = useState(false); // Loading state for form submission
     const { jobId } = useParams();
     const user_id = sessionStorage.getItem('user_id');
 
@@ -43,7 +44,7 @@ function SubmitApplication() {
                 
                 if (!response.ok) throw new Error('Failed to check application status');
                 const data = await response.json();
-                if (data.applied) setHasApplied(true);
+                setHasApplied(data.applied); // Set application status directly
             } catch (error) {
                 console.error('Error checking application status:', error);
             }
@@ -59,17 +60,19 @@ function SubmitApplication() {
         });
 
         return () => {
-            socket.off('new-application');
+            socket.off('new-application'); // Cleanup socket event listener
         };
     }, [jobId, user_id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Set loading to true
 
         const formData = new FormData();
         formData.append('jobId', jobId);
         formData.append('user_id', user_id);
         formData.append('additionalInfo', additionalInfo);
+        
         if (attachment) {
             formData.append('resume', attachment); // Change 'attachment' to 'resume'
         }
@@ -89,6 +92,8 @@ function SubmitApplication() {
         } catch (error) {
             console.error('Error submitting application:', error);
             alert('Failed to submit the application. Please try again later.');
+        } finally {
+            setLoading(false); // Reset loading state
         }
     };
 
@@ -103,7 +108,7 @@ function SubmitApplication() {
                 <hr />
                 <div className="mb-4 text-start">
                     <h2 className="h4">Submit your application</h2>
-                    <p> Applying will share your information, such as <strong>email</strong> and <strong>phone number</strong>, with the employer.</p>
+                    <p>Applying will share your information, such as <strong>email</strong> and <strong>phone number</strong>, with the employer.</p>
                 </div>
                 <form onSubmit={handleSubmit}>
                     <AdditionalInfo
@@ -117,14 +122,14 @@ function SubmitApplication() {
                         <input
                             type="file"
                             id="attachment"
-                            accept="application/pdf"
+                            accept="application/pdf" // Allow only PDF files
                             className="form-control"
                             onChange={(e) => setAttachment(e.target.files[0])}
                         />
                     </div>
                     <hr />
-                    <button type="submit" className="btn btn-primary" disabled={hasApplied}>
-                        Submit Application
+                    <button type="submit" className="btn btn-primary" disabled={hasApplied || loading}>
+                        {loading ? 'Submitting...' : 'Submit Application'}
                     </button>
                     <p className="mt-3 text-start">
                         By sending the request you confirm that you accept our{" "}
