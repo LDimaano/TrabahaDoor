@@ -4,6 +4,7 @@ const pool = require('../db');
 const { sendApplicationEmail } = require('../mailer');
 const AWS = require('aws-sdk');
 const multer = require('multer');
+const path = require('path');
 const multerS3 = require('multer-s3');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
