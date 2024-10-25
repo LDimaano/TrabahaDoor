@@ -121,7 +121,9 @@ function SubmitApplication() {
                         onChange={(e) => setAdditionalInfo(e.target.value)}
                     />
                     <div className="mb-3">
-                        <label htmlFor="attachment" className="form-label">Attach your CV/Resume (PDF)</label>
+                        <label htmlFor="attachment" className="form-label d-flex align-items-center">
+                            <i className="fas fa-paperclip me-2"></i>Attach your CV/Resume (PDF)
+                        </label>
                         <input
                             type="file"
                             id="attachment"
