@@ -487,7 +487,6 @@ const handleModalCancel = () => {
             Add Experience
           </button>
         </div>
-
         <div className="mb-4 border p-4">
           <h3>Skills</h3>
           {skills.map((skill, index) => (
@@ -500,6 +499,19 @@ const handleModalCancel = () => {
                   onChange={(selectedOption) => handleSkillChange(index, selectedOption)}
                   placeholder="Select Skill"
                   isClearable
+                  styles={{
+                    container: (provided) => ({
+                      ...provided,
+                      minWidth: "200px", // minimum width for content
+                      width: "auto", // auto width based on content
+                      flexGrow: 1, // allows it to grow within the flex container
+                    }),
+                    menu: (provided) => ({
+                      ...provided,
+                      width: "auto", // auto width for dropdown items
+                      minWidth: "200px",
+                    }),
+                  }}
                 />
                 <button
                   type="button"
@@ -519,6 +531,7 @@ const handleModalCancel = () => {
             Add Skill
           </button>
         </div>
+
 
         {error && (
           <div className="alert alert-danger" role="alert">
