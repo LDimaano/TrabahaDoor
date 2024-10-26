@@ -5,26 +5,47 @@ def recommend_candidates(job_postings, applicants, contact_history):
     """Generate a list of recommended candidates based on job postings and collaborative filtering by contact history."""
     recommendations = {}
 
-    # First, recommend candidates based on job posting skill and industry matches
+    # First, recommend candidates based on job title matches
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
         job_industry = job.get('industry', '').lower()
+        job_title = job.get('job_title', '').lower()  # Get the job title to compare with applicant titles
 
         for applicant in applicants:
-            applicant_titles = applicant.get('job_titles', [])
+            applicant_titles = [title.lower() for title in applicant.get('job_titles', [])]
             applicant_skills = set(applicant.get('skills', []))
             applicant_full_name = applicant.get('full_name', 'No Name Provided')
             user_id = applicant.get('user_id')
             applicant_industry = applicant.get('industry', '').lower()
 
-            # Check for both skill and industry matches
+            # Check if any applicant job title matches the job posting title
+            job_title_match = job_title in applicant_titles
+
+            # If a job title match is found, prioritize this applicant
+            if job_title_match:
+                recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
+                
+                # Ensure jobseeker only appears once based on user_id
+                if user_id not in recommendations:
+                    recommendations[user_id] = {
+                        'user_id': user_id,
+                        'full_name': applicant_full_name,
+                        'job_title': recommended_job_title,
+                        'matched_skills': list(job_skills.intersection(applicant_skills)),  # Show matched skills if any
+                        'industry_match': job_industry == applicant_industry,  # True if industries match
+                        'profile_picture_url': applicant.get('profile_picture_url', ''),
+                        'from_collaborative_filtering': False,  # Indicate recommendation via job title match
+                        'match_type': 'title'
+                    }
+                continue  # Skip to the next applicant if title match is found
+
+            # If no title match, recommend based on skill and industry matches
             matched_skills = job_skills.intersection(applicant_skills)
             industry_match = job_industry == applicant_industry
 
-            # Recommend candidates based on both or either one (skills or industry)
             if matched_skills or industry_match:
                 recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
-                
+
                 # Ensure jobseeker only appears once based on user_id
                 if user_id not in recommendations:
                     recommendations[user_id] = {
@@ -34,7 +55,7 @@ def recommend_candidates(job_postings, applicants, contact_history):
                         'matched_skills': list(matched_skills) if matched_skills else [],  # Show matched skills if any
                         'industry_match': industry_match,  # True if industries match
                         'profile_picture_url': applicant.get('profile_picture_url', ''),
-                        'from_collaborative_filtering': False,  # Indicate if recommended via skill or industry match
+                        'from_collaborative_filtering': False,  # Indicate recommendation via skill or industry match
                         'match_type': 'both' if matched_skills and industry_match else 'skills' if matched_skills else 'industry'
                     }
 
