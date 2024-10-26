@@ -179,7 +179,8 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
               a.status AS hiring_stage,
               a.date_applied,
               pp.profile_picture_url,
-              j.job_title
+              j.job_title,
+              a.resume
       FROM applications a
       JOIN users u ON a.user_id = u.user_id
       JOIN job_seekers js ON u.user_id = js.user_id
