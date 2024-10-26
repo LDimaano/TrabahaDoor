@@ -5,6 +5,7 @@ def recommend_candidates(job_postings, applicants):
     recommendations_with_title_match = {}
     recommendations_with_skill_match = {}
     recommendations_with_industry_match = {}
+    seen_user_ids = set()  # Track user IDs already added to avoid duplicates
 
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
@@ -12,11 +13,14 @@ def recommend_candidates(job_postings, applicants):
         job_industry = job.get('industry', 'No Industry Provided')  # Industry field of job posting
 
         for applicant in applicants:
+            user_id = applicant.get('user_id')
+            if user_id in seen_user_ids:
+                continue  # Skip if this user_id has already been added
+
             applicant_titles = applicant.get('job_titles', [])
             applicant_skills = set(applicant.get('skills', []))
-            applicant_industry = applicant.get('industry', '')  # Industry field of applicant
+            applicant_industry = applicant.get('industry', '')
             applicant_full_name = applicant.get('full_name', 'No Name Provided')
-            user_id = applicant.get('user_id')
 
             # Check for job title match
             has_title_match = job_title in applicant_titles
@@ -28,57 +32,31 @@ def recommend_candidates(job_postings, applicants):
             # Check for industry match if no title or skill match
             has_industry_match = (job_industry == applicant_industry)
 
+            recommendation_data = {
+                'user_id': user_id,
+                'full_name': applicant_full_name,
+                'job_title': job_title,
+                'recommended_job_title': applicant_titles[0] if applicant_titles else "No Job Title",
+                'matched_skills': list(matched_skills),
+                'profile_picture_url': applicant.get('profile_picture_url', ''),
+                'email': applicant.get('email', ''),
+                'phone_number': applicant.get('phone_number', ''),
+                'additional_info': applicant.get('additional_info', ''),
+                'status': applicant.get('status', ''),
+                'date_applied': applicant.get('date_applied', ''),
+                'application_id': applicant.get('application_id', ''),
+            }
+
+            # Add to the highest-priority match category
             if has_title_match:
-                recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
-                if user_id not in recommendations_with_title_match:
-                    recommendations_with_title_match[user_id] = {
-                        'user_id': user_id,
-                        'full_name': applicant_full_name,
-                        'job_title': job_title,
-                        'recommended_job_title': recommended_job_title,
-                        'matched_skills': list(matched_skills),
-                        'profile_picture_url': applicant.get('profile_picture_url', ''),
-                        'email': applicant.get('email', ''),
-                        'phone_number': applicant.get('phone_number', ''),
-                        'additional_info': applicant.get('additional_info', ''),
-                        'status': applicant.get('status', ''),
-                        'date_applied': applicant.get('date_applied', ''),
-                        'application_id': applicant.get('application_id', ''),
-                    }
-            elif has_skill_match:  # If no title match, check for skill match
-                recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
-                if user_id not in recommendations_with_skill_match:
-                    recommendations_with_skill_match[user_id] = {
-                        'user_id': user_id,
-                        'full_name': applicant_full_name,
-                        'job_title': job_title,
-                        'recommended_job_title': recommended_job_title,
-                        'matched_skills': list(matched_skills),
-                        'profile_picture_url': applicant.get('profile_picture_url', ''),
-                        'email': applicant.get('email', ''),
-                        'phone_number': applicant.get('phone_number', ''),
-                        'additional_info': applicant.get('additional_info', ''),
-                        'status': applicant.get('status', ''),
-                        'date_applied': applicant.get('date_applied', ''),
-                        'application_id': applicant.get('application_id', ''),
-                    }
-            elif has_industry_match:  # If no title or skill match, check for industry match
-                recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
-                if user_id not in recommendations_with_industry_match:
-                    recommendations_with_industry_match[user_id] = {
-                        'user_id': user_id,
-                        'full_name': applicant_full_name,
-                        'job_title': job_title,
-                        'recommended_job_title': recommended_job_title,
-                        'matched_skills': list(matched_skills),
-                        'profile_picture_url': applicant.get('profile_picture_url', ''),
-                        'email': applicant.get('email', ''),
-                        'phone_number': applicant.get('phone_number', ''),
-                        'additional_info': applicant.get('additional_info', ''),
-                        'status': applicant.get('status', ''),
-                        'date_applied': applicant.get('date_applied', ''),
-                        'application_id': applicant.get('application_id', ''),
-                    }
+                recommendations_with_title_match[user_id] = recommendation_data
+                seen_user_ids.add(user_id)
+            elif has_skill_match:
+                recommendations_with_skill_match[user_id] = recommendation_data
+                seen_user_ids.add(user_id)
+            elif has_industry_match:
+                recommendations_with_industry_match[user_id] = recommendation_data
+                seen_user_ids.add(user_id)
 
     # Combine recommendations with priority: title matches, then skill matches, then industry matches
     combined_recommendations = (
