@@ -19,6 +19,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const navigate = useNavigate();
   const jobId = useParams().jobId;
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
   const [localHiringStages, setLocalHiringStages] = useState({});
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -247,29 +248,66 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
         </div>
       </div>
 
-      {/* Modal for Application Details */}
-      {isModalOpen && (
-        <div className="modal fade show" style={{ display: 'block' }} role="dialog">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Application Details</h5>
-                <button type="button" className="btn-close" onClick={closeModal}></button>
-              </div>
-              <div className="modal-body">
-                <p><strong>Full Name:</strong> {modalData.full_name}</p>
-                <p><strong>Job Title:</strong> {modalData.job_title}</p>
-                <p><strong>Email:</strong> {modalData.email}</p>
-                <p><strong>Phone Number:</strong> {modalData.phone_number}</p>
-                <p><strong>Additional Info:</strong> {modalData.additional_info}</p>
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={closeModal}>Close</button>
-              </div>
-            </div>
-          </div>
+      {/* Main Application Details Modal */}
+{isModalOpen && (
+  <div className="modal fade show" style={{ display: 'block' }} role="dialog">
+    <div className="modal-dialog" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Application Details</h5>
+          <button type="button" className="btn-close" onClick={closeModal}></button>
         </div>
-      )}
+        <div className="modal-body">
+          <p><strong>Full Name:</strong> {modalData.full_name}</p>
+          <p><strong>Job Title:</strong> {modalData.job_title}</p>
+          <p><strong>Email:</strong> {modalData.email}</p>
+          <p><strong>Phone Number:</strong> {modalData.phone_number}</p>
+          <p><strong>Additional Info:</strong> {modalData.additional_info}</p>
+          {modalData.resume && (
+            <div>
+              <button 
+                className="btn btn-primary" 
+                onClick={() => setIsPdfModalOpen(true)}
+              >
+                View File
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-secondary" onClick={closeModal}>Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* PDF Viewing Modal */}
+{isPdfModalOpen && (
+  <div className="modal fade show" style={{ display: 'block' }} role="dialog">
+    <div className="modal-dialog modal-lg" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Resume PDF</h5>
+          <button type="button" className="btn-close" onClick={() => setIsPdfModalOpen(false)}></button>
+        </div>
+        <div className="modal-body">
+          <iframe
+            src={modalData.resume}
+            title="Resume PDF"
+            width="100%"
+            height="500px"
+            style={{ border: 'none' }}
+          />
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-secondary" onClick={() => setIsPdfModalOpen(false)}>Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
 
       {/* Confirm Modal for Hiring Stage Change */}
       {isConfirmModalOpen &&
