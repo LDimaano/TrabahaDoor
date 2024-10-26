@@ -8,15 +8,15 @@ def recommend_candidates(job_postings, applicants, contact_history):
     # First, recommend candidates based on job title matches
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
-        job_industry = job.get('industry', '').lower()
-        job_title = job.get('job_title', '').lower()  # Get the job title to compare with applicant titles
+        job_industry = job.get('industry', '')
+        job_title = job.get('job_title', '')  # Keep the job title as is
 
         for applicant in applicants:
-            applicant_titles = [title.lower() for title in applicant.get('job_titles', [])]
+            applicant_titles = applicant.get('job_titles', [])  # Keep applicant titles as is
             applicant_skills = set(applicant.get('skills', []))
             applicant_full_name = applicant.get('full_name', 'No Name Provided')
             user_id = applicant.get('user_id')
-            applicant_industry = applicant.get('industry', '').lower()
+            applicant_industry = applicant.get('industry', '')
 
             # Check if any applicant job title matches the job posting title
             job_title_match = job_title in applicant_titles
