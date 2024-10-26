@@ -345,6 +345,7 @@ const getApplicantsForJob = async (jobId) => {
       u.email,
       js.phone_number,
       a.location,
+      ap.resume,
       ap.additional_info,
       ARRAY_AGG(DISTINCT jt.job_title) AS job_titles,
       ARRAY_AGG(DISTINCT s.skill_name) AS skills,
@@ -385,6 +386,8 @@ const getApplicantsForJob = async (jobId) => {
       profile_picture_url: row.profile_picture_url || 'no image',
       job_titles: row.job_titles || [],
       skills: row.skills || [],
+      resume: row.resume,
+      additional_info: row.additional_info,
       industry: row.industry_id,
       full_name: row.full_name || 'No Name Provided', // Include full_name for matching
       phone_number: row.phone_number || '',
