@@ -51,11 +51,15 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, p
             similarity_score += 3  # You can adjust this weight as needed
             influence_tag = 'collaborative' if influence_tag == 'collaborative' else 'hybrid'
 
+        # Increase score for title match
+        if title_match:
+            similarity_score += 1  # You can adjust this weight as needed
+
         # Log match counts and filters
         print(f"Job: {job_title}, Match Count: {match_count}, Industry Match: {industry_match}, Collaborative Match: {collaborative_match}, Title Match: {title_match}, Similarity Score: {similarity_score}", file=sys.stderr)
 
         # Only add recommendation if there is a match
-        if match_count > 0 or industry_match or collaborative_match:
+        if match_count > 0 or industry_match or collaborative_match or title_match:
             recommendations.append({
                 'job_title': job_title,
                 'industry_name': job.get('industry_name', 'Unknown Industry'),
