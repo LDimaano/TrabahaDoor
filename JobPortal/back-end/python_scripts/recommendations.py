@@ -1,6 +1,22 @@
 import sys
 import json
 
+def score_to_stars(score):
+    """Convert a similarity score to a star rating."""
+    # Define the star rating based on the score
+    if score <= 0:
+        return 0
+    elif score <= 2:
+        return 1
+    elif score <= 4:
+        return 2
+    elif score <= 6:
+        return 3
+    elif score <= 8:
+        return 4
+    else:
+        return 5
+
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, past_applications=None, similar_jobseekers=None):
     recommendations = []
     skills_set = set(skills)
@@ -58,6 +74,9 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, p
         # Log match counts and filters
         print(f"Job: {job_title}, Match Count: {match_count}, Industry Match: {industry_match}, Collaborative Match: {collaborative_match}, Title Match: {title_match}, Similarity Score: {similarity_score}", file=sys.stderr)
 
+        # Convert similarity score to stars
+        star_rating = score_to_stars(similarity_score)
+
         # Only add recommendation if there is a match
         if match_count > 0 or industry_match or collaborative_match or title_match:
             recommendations.append({
@@ -72,12 +91,12 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, p
                 'collaborative_match': collaborative_match,
                 'title_match': title_match,
                 'similar_seekers': collaborative_filtering_jobs.get(job.get('job_id'), []),
-                'similarity_score': similarity_score,
+                'star_rating': star_rating,  # Add star rating
                 'influence_tag': influence_tag  # Add influence tag
             })
 
-    # Sort recommendations by similarity score (highest first)
-    recommendations.sort(key=lambda x: x['similarity_score'], reverse=True)
+    # Sort recommendations by star rating (highest first)
+    recommendations.sort(key=lambda x: x['star_rating'], reverse=True)
 
     # Return the recommendations
     return recommendations
