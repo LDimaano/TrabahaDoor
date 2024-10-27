@@ -35,12 +35,13 @@ def recommend_candidates(job_postings, applicants, contact_history):
                     'industry_match': job_industry == applicant_industry,
                     'profile_picture_url': applicant.get('profile_picture_url', ''),
                     'from_collaborative_filtering': False,
-                    'match_type': 'title'
+                    'match_type': 'title',
+                    'influence_tag': 'content'  # Content-based filtering
                 })
                 seen_user_ids.add(user_id)
                 continue
 
-            # If no title match, recommend based on skill and industry matches
+            # If no title match, check for skill and industry matches
             matched_skills = job_skills.intersection(applicant_skills)
             industry_match = job_industry == applicant_industry
 
@@ -54,7 +55,8 @@ def recommend_candidates(job_postings, applicants, contact_history):
                     'industry_match': industry_match,
                     'profile_picture_url': applicant.get('profile_picture_url', ''),
                     'from_collaborative_filtering': False,
-                    'match_type': 'both' if matched_skills and industry_match else 'skills' if matched_skills else 'industry'
+                    'match_type': 'both' if matched_skills and industry_match else 'skills' if matched_skills else 'industry',
+                    'influence_tag': 'content'  # Content-based filtering
                 })
                 seen_user_ids.add(user_id)
 
@@ -75,12 +77,22 @@ def recommend_candidates(job_postings, applicants, contact_history):
                 'matched_skills': skills,
                 'profile_picture_url': profile_picture_url,
                 'from_collaborative_filtering': True,
-                'match_type': 'collaborative'
+                'match_type': 'collaborative',
+                'influence_tag': 'collaborative'  # Collaborative filtering
             })
             seen_user_ids.add(js_user_id)
 
     # Prioritize candidates: first title matches, then skill matches, then collaborative filtering matches
     recommendations = title_matches + skill_matches + contact_matches
+
+    # Filter recommendations to ensure only those with matches are returned
+    recommendations = [rec for rec in recommendations if rec['matched_skills'] or rec['industry_match']]
+
+    # Set influence_tag for hybrid matches
+    for rec in recommendations:
+        # Determine if this recommendation should be hybrid
+        if rec['match_type'] == 'both' and rec['from_collaborative_filtering']:
+            rec['influence_tag'] = 'hybrid'  # Hybrid filtering
 
     return recommendations
 

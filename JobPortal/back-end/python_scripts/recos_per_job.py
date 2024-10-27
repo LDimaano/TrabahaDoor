@@ -1,31 +1,6 @@
 import sys
 import json
 
-def score_to_stars(score):
-    """Convert a similarity score to a star rating."""
-    if score <= 0:
-        return 0
-    elif score <= 2:
-        return 1
-    elif score <= 4:
-        return 2
-    elif score <= 6:
-        return 3
-    elif score <= 8:
-        return 4
-    else:
-        return 5
-
-def calculate_similarity_rating(has_title_match, has_skill_match, has_industry_match, num_matched_skills):
-    rating = 0
-    if has_title_match:
-        rating += 3  # Title match contributes more to the score
-    if has_skill_match:
-        rating += min(num_matched_skills, 2)  # Skill matches contribute up to 2
-    if has_industry_match:
-        rating += 1  # Industry match contributes 1
-    return rating
-
 def recommend_candidates(job_postings, applicants):
     recommendations_with_title_match = {}
     recommendations_with_skill_match = {}
@@ -53,16 +28,9 @@ def recommend_candidates(job_postings, applicants):
             # Check for skill match
             matched_skills = job_skills.intersection(applicant_skills)
             has_skill_match = bool(matched_skills)
-            num_matched_skills = len(matched_skills)
 
             # Check for industry match if no title or skill match
             has_industry_match = (job_industry == applicant_industry)
-
-            # Calculate similarity rating
-            similarity_rating = calculate_similarity_rating(has_title_match, has_skill_match, has_industry_match, num_matched_skills)
-
-            # Convert similarity rating to stars
-            star_rating = score_to_stars(similarity_rating)
 
             recommendation_data = {
                 'user_id': user_id,
@@ -70,8 +38,6 @@ def recommend_candidates(job_postings, applicants):
                 'job_title': job_title,
                 'recommended_job_title': applicant_titles[0] if applicant_titles else "No Job Title",
                 'matched_skills': list(matched_skills),
-                'similarity_rating': similarity_rating,  # Add similarity rating
-                'star_rating': star_rating,  # Add star rating
                 'profile_picture_url': applicant.get('profile_picture_url', ''),
                 'email': applicant.get('email', ''),
                 'phone_number': applicant.get('phone_number', ''),

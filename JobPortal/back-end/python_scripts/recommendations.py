@@ -42,6 +42,14 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, p
 
         # Only add recommendation if there is a match
         if match_count > 0 or industry_match or collaborative_match or title_match:
+            influence_tag = ''
+            if (match_count > 0 or industry_match) and collaborative_match:
+                influence_tag = 'hybrid'  # Hybrid filtering
+            elif match_count > 0 or industry_match:
+                influence_tag = 'content'  # Content-based filtering
+            elif collaborative_match:
+                influence_tag = 'collaborative'  # Collaborative filtering
+
             recommendations.append({
                 'job_title': job_title,
                 'industry_name': job.get('industry_name', 'Unknown Industry'),
@@ -54,7 +62,7 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, p
                 'collaborative_match': collaborative_match,
                 'title_match': title_match,
                 'similar_seekers': collaborative_filtering_jobs.get(job.get('job_id'), []),
-                # Removed star rating and influence tag
+                'influence_tag': influence_tag  # Added influence tag
             })
 
     # Sort recommendations by match count (highest first)
