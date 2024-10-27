@@ -339,7 +339,6 @@ app.get('/api/getskills/:userId', async (req, res) => {
     res.status(500).json({ error: 'Error fetching skills' });
   }
 });
-
 app.post('/api/recommend', async (req, res) => {
   // Validate the required skills input
   if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
@@ -351,8 +350,14 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(400).json({ error: 'Industry is required.' });
   }
 
+  // Validate the job titles input
+  if (!req.body.jobTitles || !Array.isArray(req.body.jobTitles)) {
+    return res.status(400).json({ error: 'Job titles must be an array.' });
+  }
+
   const jobSeekerSkills = req.body.skills;
   const jobSeekerIndustry = req.body.industry;  // Use jobseeker's industry
+  const jobSeekerJobTitles = req.body.jobTitles; // Use job titles
 
   try {
     // Fetch job data
@@ -362,14 +367,15 @@ app.post('/api/recommend', async (req, res) => {
     console.log('Job Data:', JSON.stringify(jobData, null, 2));
     console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
     console.log('Job Seeker Industry:', jobSeekerIndustry);
+    console.log('Job Seeker Job Titles:', JSON.stringify(jobSeekerJobTitles, null, 2)); // Log job titles
 
     // Spawn the Python process to generate recommendations
     const pythonProcess = spawn('python', [
       'python_scripts/recommendations.py', 
       JSON.stringify(jobData), 
       JSON.stringify(jobSeekerSkills), 
-      jobSeekerIndustry  // Pass jobseeker's industry to Python
-      // Removed salary range from Python invocation
+      jobSeekerIndustry,  // Pass jobseeker's industry to Python
+      JSON.stringify(jobSeekerJobTitles) // Pass job titles to Python
     ]);
 
     let pythonOutput = '';
@@ -403,6 +409,7 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(500).send('An error occurred while fetching job data.');
   }
 });
+
 
 // Function to get job postings
 // Function to get job postings for a user

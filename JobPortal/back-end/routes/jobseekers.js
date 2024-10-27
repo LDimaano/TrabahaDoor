@@ -97,16 +97,25 @@ router.get('/user-info/:userId', async (req, res) => {
     }
 
     const result = await pool.query(
-      `SELECT 
+            `SELECT 
           js.full_name,
           js.user_id,
           js.industry_id,
           i.industry_name,
-          je.salary
-      FROM job_seekers js
-      JOIN job_experience je ON js.user_id = je.user_id
-      JOIN industries i ON js.industry_id = i.industry_id
-      WHERE js.user_id = $1`,
+          je.salary,
+          ARRAY_AGG(DISTINCT jt.job_title) AS job_titles
+      FROM 
+          job_seekers js
+      JOIN 
+          job_experience je ON js.user_id = je.user_id
+      JOIN 
+          industries i ON js.industry_id = i.industry_id
+      JOIN 
+          job_titles jt ON je.jobtitle_id = jt.jobtitle_id
+      WHERE 
+          js.user_id = $1
+      GROUP BY 
+          js.user_id, js.full_name, js.industry_id, i.industry_name, je.salary;`,
       [userId]
     );
 
@@ -117,7 +126,8 @@ router.get('/user-info/:userId', async (req, res) => {
       const response = {
         fullName: userInfo.full_name,
         industryName: userInfo.industry_name,
-        salary: userInfo.salary,
+        salaryRange: userInfo.salary,
+        jobTitles: userInfo.job_titles,
       };
       res.json(response);
     } else {

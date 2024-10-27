@@ -100,6 +100,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
               skills: userSkills,
               industry: userProfile.industryName,
               salaryRange: userProfile.salaryRange || null,
+              jobTitles: userProfile.jobTitles || [], 
             }),
           });
           if (!response.ok) {
