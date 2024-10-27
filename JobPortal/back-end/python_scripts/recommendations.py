@@ -54,22 +54,23 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, p
         # Log match counts and filters
         print(f"Job: {job_title}, Match Count: {match_count}, Industry Match: {industry_match}, Collaborative Match: {collaborative_match}, Title Match: {title_match}, Similarity Score: {similarity_score}", file=sys.stderr)
 
-        # Add recommendation with influence tag
-        recommendations.append({
-            'job_title': job_title,
-            'industry_name': job.get('industry_name', 'Unknown Industry'),
-            'match_count': match_count,
-            'job_id': job.get('job_id'),
-            'salaryrange': job.get('salaryrange', 'unknown salary'),
-            'jobtype': job.get('jobtype', 'Unknown Job Type'),
-            'profile_picture_url': job.get('profile_picture_url', 'Unknown picture'),
-            'industry_match': industry_match,
-            'collaborative_match': collaborative_match,
-            'title_match': title_match,
-            'similar_seekers': collaborative_filtering_jobs.get(job.get('job_id'), []),
-            'similarity_score': similarity_score,
-            'influence_tag': influence_tag  # Add influence tag
-        })
+        # Only add recommendation if there is a match
+        if match_count > 0 or industry_match or collaborative_match:
+            recommendations.append({
+                'job_title': job_title,
+                'industry_name': job.get('industry_name', 'Unknown Industry'),
+                'match_count': match_count,
+                'job_id': job.get('job_id'),
+                'salaryrange': job.get('salaryrange', 'unknown salary'),
+                'jobtype': job.get('jobtype', 'Unknown Job Type'),
+                'profile_picture_url': job.get('profile_picture_url', 'Unknown picture'),
+                'industry_match': industry_match,
+                'collaborative_match': collaborative_match,
+                'title_match': title_match,
+                'similar_seekers': collaborative_filtering_jobs.get(job.get('job_id'), []),
+                'similarity_score': similarity_score,
+                'influence_tag': influence_tag  # Add influence tag
+            })
 
     # Sort recommendations by similarity score (highest first)
     recommendations.sort(key=lambda x: x['similarity_score'], reverse=True)
