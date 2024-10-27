@@ -1,22 +1,6 @@
 import sys
 import json
 
-def score_to_stars(score):
-    """Convert a similarity score to a star rating."""
-    # Define the star rating based on the score
-    if score <= 0:
-        return 0
-    elif score <= 2:
-        return 1
-    elif score <= 4:
-        return 2
-    elif score <= 6:
-        return 3
-    elif score <= 8:
-        return 4
-    else:
-        return 5
-
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, past_applications=None, similar_jobseekers=None):
     recommendations = []
     skills_set = set(skills)
@@ -53,29 +37,8 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, p
         collaborative_match = job.get('job_id') in collaborative_filtering_jobs
         title_match = job_title in job_titles_set
 
-        # Calculate similarity score
-        similarity_score = match_count  # Base score from skills
-        influence_tag = 'content'  # Default influence
-
-        # Increase score for industry match
-        if industry_match:
-            similarity_score += 2  # You can adjust this weight as needed
-            influence_tag = 'content' if influence_tag == 'content' else 'hybrid'
-
-        # Increase score for collaborative match
-        if collaborative_match:
-            similarity_score += 3  # You can adjust this weight as needed
-            influence_tag = 'collaborative' if influence_tag == 'collaborative' else 'hybrid'
-
-        # Increase score for title match
-        if title_match:
-            similarity_score += 1  # You can adjust this weight as needed
-
         # Log match counts and filters
-        print(f"Job: {job_title}, Match Count: {match_count}, Industry Match: {industry_match}, Collaborative Match: {collaborative_match}, Title Match: {title_match}, Similarity Score: {similarity_score}", file=sys.stderr)
-
-        # Convert similarity score to stars
-        star_rating = score_to_stars(similarity_score)
+        print(f"Job: {job_title}, Match Count: {match_count}, Industry Match: {industry_match}, Collaborative Match: {collaborative_match}, Title Match: {title_match}", file=sys.stderr)
 
         # Only add recommendation if there is a match
         if match_count > 0 or industry_match or collaborative_match or title_match:
@@ -91,12 +54,11 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, p
                 'collaborative_match': collaborative_match,
                 'title_match': title_match,
                 'similar_seekers': collaborative_filtering_jobs.get(job.get('job_id'), []),
-                'star_rating': star_rating,  # Add star rating
-                'influence_tag': influence_tag  # Add influence tag
+                # Removed star rating and influence tag
             })
 
-    # Sort recommendations by star rating (highest first)
-    recommendations.sort(key=lambda x: x['star_rating'], reverse=True)
+    # Sort recommendations by match count (highest first)
+    recommendations.sort(key=lambda x: x['match_count'], reverse=True)
 
     # Return the recommendations
     return recommendations

@@ -120,6 +120,20 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   };
   
 
+  const renderStarRating = (rating) => {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      stars.push(
+        <FontAwesomeIcon
+          key={i}
+          icon={i < rating ? ['fas', 'star'] : ['far', 'star']} // Filled star or outline star based on rating
+          style={{ color: '#FFD700' }} // Gold color for stars
+        />
+      );
+    }
+    return <div>{stars}</div>;
+  };
+
   const renderApplicantRows = (listings) => {
     return listings.map((listing) => (
       <tr key={listing.user_id}>
@@ -131,6 +145,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
             style={{ width: '50px', borderRadius: '50%' }}
           />
           {listing.full_name}
+          <div>{renderStarRating(listing.rating || 0)}</div> {/* Add star rating here */}
         </td>
         <td>
           <div className="dropdown">
