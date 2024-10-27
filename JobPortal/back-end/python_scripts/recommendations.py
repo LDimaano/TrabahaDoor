@@ -65,8 +65,8 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, p
     # Check total recommendations before sorting
     print(f"Total Recommendations Before Sorting: {len(recommendations)}", file=sys.stderr)
 
-    # Sort by match count (skills), industry match, title match, and collaborative filtering match
-    recommendations.sort(key=lambda x: (x['match_count'], x['industry_match'], x['title_match'], x['collaborative_match']), reverse=True)
+    # Sort by title match, match count (skills), collaborative filtering match, and industry match
+    recommendations.sort(key=lambda x: (x['title_match'], x['match_count'], x['collaborative_match'], x['industry_match']), reverse=True)
 
     # Log total recommendations after sorting
     print(f"Total Recommendations After Sorting: {len(recommendations)}", file=sys.stderr)
