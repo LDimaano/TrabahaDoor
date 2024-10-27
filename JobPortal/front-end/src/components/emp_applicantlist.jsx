@@ -145,7 +145,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
             style={{ width: '50px', borderRadius: '50%' }}
           />
           {listing.full_name}
-          <div>{renderStarRating(listing.rating || 0)}</div> {/* Add star rating here */}
+          <div>{renderStarRating(listing.star_rating || 0)}</div> {/* Add star rating here */}
         </td>
         <td>
           <div className="dropdown">
