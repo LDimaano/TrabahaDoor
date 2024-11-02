@@ -208,39 +208,44 @@ function Header() {
               </Link>
             </li>
             <li className="nav-item mx-3">
-              <button
-                className="btn btn-link"
-                onClick={toggleNotifications}
-                aria-expanded={showNotifications}
-              >
-                <i className="fas fa-bell fa-lg" style={{ color: '#6c757d' }}></i>
-                {notificationCount > 0 && (
-                  <span className="badge bg-danger position-absolute" style={{ top: '-5px', right: '-5px' }}>
-                    {notificationCount}
-                  </span>
-                )}
-              </button>
-              {showNotifications && (
-                <div
-                  className="position-absolute bg-white border rounded shadow p-2"
-                  style={{ top: '100%', right: '0', width: '250px', zIndex: 1050 }}
-                >
-                  <h6 className="mb-2 text-center">Notifications</h6>
-                  {notifications.length > 0 ? (
-                    notifications.slice(0, 7).map((notification, index) => (
-                      <div key={index} className="d-flex justify-content-between">
-                        <p>{notification.message}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p>No new notifications</p>
-                  )}
-                  <button className="btn btn-link mt-2" onClick={handleViewAllClick}>
-                    View All Notifications
-                  </button>
-                </div>
-              )}
-            </li>
+  <div className="position-relative">
+    <button
+      className="btn btn-link"
+      onClick={toggleNotifications}
+      aria-expanded={showNotifications}
+    >
+      <i className="fas fa-bell fa-lg" style={{ color: '#6c757d' }}></i>
+      {notificationCount > 0 && (
+        <span 
+          className="badge bg-danger position-absolute"
+          style={{ top: '0', right: '5px' }} // Adjust top and right as needed
+        >
+          {notificationCount}
+        </span>
+      )}
+    </button>
+    {showNotifications && (
+      <div
+        className="position-absolute bg-white border rounded shadow p-2"
+        style={{ top: '100%', right: '0', width: '250px', zIndex: 1050 }}
+      >
+        <h6 className="mb-2 text-center">Notifications</h6>
+        {notifications.length > 0 ? (
+          notifications.slice(0, 7).map((notification, index) => (
+            <div key={index} className="d-flex justify-content-between">
+              <p>{notification.message}</p>
+            </div>
+          ))
+        ) : (
+          <p>No new notifications</p>
+        )}
+        <button className="btn btn-link mt-2" onClick={handleViewAllClick}>
+          View All Notifications
+        </button>
+      </div>
+    )}
+  </div>
+</li>
             <li className="nav-item mx-3">
               <button className="btn btn-link" onClick={handleProfileClick}>
                 <i className="fas fa-user fa-lg" style={{ color: '#6c757d' }}></i>
