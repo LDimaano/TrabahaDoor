@@ -102,7 +102,7 @@ const MyProfile = () => {
     navigate(-1); 
   };
 
-  const handleContact = async () => {
+  const handleContact = async (message) => {
     try {
       const userId = sessionStorage.getItem('user_id');
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/contact/${user_id}`, {
