@@ -8,12 +8,13 @@ const SideBar = () => {
   const navigate = useNavigate();
   const menuItems = [
     { icon: faTachometerAlt, caption: "Dashboard", link: "/admindashboard" },
+    { icon: faBan, caption: "Pending Confirmation", link: "/admin_unapprovedemp" },
     { icon: faBuilding, caption: "Approved Employers", link: "/admin_employers" },
-    { icon: faUsers, caption: "All Applicants", link: "/admin_applicants", active: true },
+    { icon: faUsers, caption: "Job Seekers", link: "/admin_applicants", active: true },
     { icon: faBriefcase, caption: "Job Listing", link: "/admin_joblistings" },
-    { icon: faUser, caption: "All Users", link: "/admin_users" },
-    { icon: faArchive, caption: "Archived Users", link: "/admin_archived_users" },
-    { icon: faBan, caption: "Unapproved Employers", link: "/admin_unapprovedemp" }
+    { icon: faUser, caption: "Users", link: "/admin_users" },
+    { icon: faArchive, caption: "Archived", link: "/admin_archived_users" },
+    
   ];
 
   const handleLogout = async () => {
