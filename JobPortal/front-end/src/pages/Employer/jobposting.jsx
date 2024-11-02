@@ -5,8 +5,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import EmpHeader from '../../components/emp_header'; // Import the EmpHeader component
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import Select from 'react-select'; // Import react-select
-import { Modal, Button } from 'react-bootstrap';
-
+import { Modal, Button, Alert } from 'react-bootstrap';
 
 const JobPosting = () => {
   const [responsibilities, setResponsibilities] = useState("");
@@ -22,9 +21,9 @@ const JobPosting = () => {
   const [jobType, setJobType] = useState("");
   const [error, setError] = useState(''); // New state for job type
   const [showModal, setShowModal] = useState(false); // Modal visibility state
- 
-  const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState(''); // New state for success message
 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSkills = async () => {
@@ -44,7 +43,6 @@ const JobPosting = () => {
       }
     };
 
-
     const fetchJobTitles = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobtitles`); // Ensure this URL is correct
@@ -60,8 +58,7 @@ const JobPosting = () => {
         console.error('Error fetching job titles:', error);
         setError('Failed to load job titles.');
       }
-    };    
-
+    };
 
     const fetchIndustries = async () => {
       try {
@@ -79,12 +76,10 @@ const JobPosting = () => {
       }
     };
 
-
     fetchSkills();
     fetchJobTitles();
     fetchIndustries();
   }, []);
-
 
   const handleSkillChange = (index, selectedOption) => {
     const newSkills = [...skills];
@@ -92,44 +87,38 @@ const JobPosting = () => {
     setSkills(newSkills);
   };
 
-
   const handleAddSkill = () => {
     setSkills([...skills, null]); // Add an empty skill object
   };
-
 
   const handleRemoveSkill = (index) => {
     const newSkills = skills.filter((_, i) => i !== index);
     setSkills(newSkills);
   };
 
-
   const handleJobTitleChange = (selectedOption) => {
     setJobTitle(selectedOption); // Set the selected job title object
   };
-
 
   // Function to handle the back button click
   const handleBack = () => {
     navigate(-1); // Navigate back
   };
 
-
   // Handle form submission
   const handleSubmit = async (e) => {
- 
     // Attempt to retrieve user_id from session storage
     const user_id = sessionStorage.getItem('user_id');
- 
+    
     // Log the user_id value for debugging purposes
     console.log('Retrieved user_id:', user_id);
- 
+    
     // Check if user_id is null or undefined
     if (!user_id) {
       alert('User ID not found. Please log in again.');
       return; // Exit the function if user_id is not found
     }
- 
+    
     // Construct the jobData object with user_id and other form fields
     const jobData = {
       user_id: user_id,
@@ -142,7 +131,7 @@ const JobPosting = () => {
       Qualifications: qualifications,
       JobType: jobType // New field
     };
- 
+    
     try {
       // Send a POST request to the server with jobData
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/joblistings`, {
@@ -152,11 +141,14 @@ const JobPosting = () => {
         },
         body: JSON.stringify(jobData),
       });
- 
+      
       // Check if the response is successful
       if (response.ok) {
-        alert('Job posted successfully!');
-        navigate('/applicant_joblisting'); // Navigate to another page upon success
+        setSuccessMessage('Job posted successfully!'); // Set the success message
+        setTimeout(() => {
+          setSuccessMessage(''); // Clear the success message after a delay
+          navigate('/applicant_joblisting'); // Navigate to another page upon success
+        }, 3000); // Adjust the delay as needed
       } else {
         // Handle server response errors
         alert('Failed to post job. Please try again.');
@@ -183,12 +175,10 @@ const JobPosting = () => {
     setShowModal(false);
   };
 
-
   return (
     <div className="container mt-4"> {/* Added margin top here */}
       {/* Top Navigation */}
       <EmpHeader /> {/* Use EmpHeader component */}
-
 
       {/* Post Job Header */}
       <section className="d-flex align-items-center mb-4">
@@ -198,6 +188,12 @@ const JobPosting = () => {
         <h2 className="h4">Post a Job</h2>
       </section>
 
+      {/* Success Message */}
+      {successMessage && (
+        <Alert variant="success" onClose={() => setSuccessMessage('')} dismissible>
+          {successMessage}
+        </Alert>
+      )}
 
       {/* Job Posting Form */}
       <form className="p-4" onSubmit={handleSubmit}>
@@ -355,29 +351,23 @@ const JobPosting = () => {
 </div>
 </form>
 
-{/* Confirmation Modal */}
-<Modal show={showModal} onHide={() => setShowModal(false)}>
-  <Modal.Header closeButton>
-    <Modal.Title>Confirm Job Posting</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>Are you sure you want to post this job?</Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setShowModal(false)}>
-      Cancel
-    </Button>
-    <Button variant="primary" onClick={handleModalConfirm}>
-      Confirm
-    </Button>
-  </Modal.Footer>
-</Modal>
-
-</div>
+      {/* Confirmation Modal */}
+      <Modal show={showModal} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Job Posting</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to post this job?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleModalClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleModalConfirm}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 };
 
-
-
 export default JobPosting;
-
-
-
