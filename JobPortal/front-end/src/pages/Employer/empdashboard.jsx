@@ -25,9 +25,33 @@ const EmployerDashboard = () => {
           <h3>Welcome to the Employer Dashboard</h3>
           <p>Select options from the sidebar to manage job listings and view applicant details.</p>
 
-          {/* Placeholder for main content or dashboard widgets */}
-          <div className="mt-4 p-4 bg-light border rounded shadow-sm text-center">
-            <p className="text-muted">Content Placeholder</p>
+          {/* Dashboard Grid for Placeholders */}
+          <div className="row g-4 mt-4">
+            <div className="col-lg-6 col-md-12">
+              <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '250px' }}>
+                <p className="text-muted">Chart Placeholder 1</p>
+              </div>
+            </div>
+            <div className="col-lg-6 col-md-12">
+              <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '250px' }}>
+                <p className="text-muted">Chart Placeholder 2</p>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6">
+              <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '200px' }}>
+                <p className="text-muted">Chart Placeholder 3</p>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6">
+              <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '200px' }}>
+                <p className="text-muted">Chart Placeholder 4</p>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-12">
+              <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '200px' }}>
+                <p className="text-muted">Chart Placeholder 5</p>
+              </div>
+            </div>
           </div>
         </section>
       </main>
