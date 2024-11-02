@@ -14,6 +14,7 @@ function SubmitApplication() {
     const [hasApplied, setHasApplied] = useState(false);
     const [attachment, setAttachment] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for form submission
+    const [successMessage, setSuccessMessage] = useState(''); // State for success message
     const { jobId } = useParams();
     const user_id = sessionStorage.getItem('user_id');
 
@@ -86,9 +87,9 @@ function SubmitApplication() {
             if (!response.ok) throw new Error('Failed to submit application');
 
             const result = await response.json();
-            alert(result.message || 'Application submitted successfully!');
             closeModal();
             setHasApplied(true);
+            setSuccessMessage('Your application has been successfully submitted!'); // Set success message
         } catch (error) {
             console.error('Error submitting application:', error);
             alert('Failed to submit the application. Please try again later.');
@@ -151,6 +152,7 @@ function SubmitApplication() {
                 {hasApplied ? 'Already Applied' : 'Apply Now'}
             </button>
             <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent} />
+            {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
         </>
     );
 }
