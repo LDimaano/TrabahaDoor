@@ -70,30 +70,31 @@ function ApplicantJoblist({ currentListings }) {
               </tr>
             </thead>
             <tbody>
-              {currentListings.map((listing, index) => (
-                <tr key={listing.id} className={index % 2 === 0 ? 'even-row' : 'odd-row'}>
-                  <td className="d-flex align-items-center">
-                    <img
-                      src={listing.profile_picture_url}
-                      alt="profile"
-                      className="me-2"
-                      style={{ width: '50px', borderRadius: '50%' }}
-                    />
-                    {listing.company_name}
-                  </td>
-                  <td>{listing.contact_person}</td>
-                  <td>
-                    <button 
-                      className="btn btn-primary" 
-                      onClick={() => handleSeeJs(listing.user_id)}
-                    >
-                      <FontAwesomeIcon icon={faEye} className="me-1" />
-                      View Profile
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+  {currentListings.map((listing, index) => (
+    <tr key={listing.id} className={index % 2 === 0 ? 'even-row' : 'odd-row'}>
+      <td className="d-flex align-items-center">
+        <img
+          src={listing.profile_picture_url}
+          alt="profile"
+          className="me-2"
+          style={{ width: '50px', borderRadius: '50%' }}
+        />
+        {listing.company_name}
+      </td>
+      <td>{listing.contact_person}</td>
+      <td>
+        <button 
+          className="btn btn-primary" 
+          onClick={() => handleSeeJs(listing.user_id)}
+        >
+          <FontAwesomeIcon icon={faEye} className="me-1" />
+          View Profile
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
           </table>
         </div>
       )}
