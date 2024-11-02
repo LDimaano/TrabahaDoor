@@ -713,7 +713,7 @@ router.get('/gender-distribution/:userId', async (req, res) => {
   }
 });
 
-router.get('/gender-distribution/:userId', async (req, res) => {
+router.get('/industry-distribution/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
     const query = `
@@ -735,6 +735,35 @@ router.get('/gender-distribution/:userId', async (req, res) => {
       i.industry_name
     `;
     
+    const { rows } = await pool.query(query, [userId]);
+
+    res.json(rows); // Send the data as JSON
+  } catch (error) {
+    console.error('Error fetching gender distribution:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/location-distribution/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const query = `
+        SELECT
+      a.location,
+        COUNT(*) as count
+    FROM
+        joblistings jl 
+    JOIN
+        applications app ON jl.job_id = app.job_id
+    JOIN
+        job_seekers js ON app.user_id = js.user_id
+    JOIN
+      address a ON js.address_id = a.address_id
+    WHERE
+        jl.user_id = 21
+    GROUP BY
+      a.location
+    `;
     const { rows } = await pool.query(query, [userId]);
 
     res.json(rows); // Send the data as JSON
