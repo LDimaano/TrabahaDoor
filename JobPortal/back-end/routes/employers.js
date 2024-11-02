@@ -773,6 +773,35 @@ router.get('/location-distribution/:userId', async (req, res) => {
   }
 });
 
+router.get('/applicants-distribution/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const query = `
+    SELECT
+      jt.job_title,
+        COUNT(*) as count
+    FROM
+        joblistings jl 
+    JOIN
+        applications app ON jl.job_id = app.job_id
+    JOIN
+        job_seekers js ON app.user_id = js.user_id
+    JOIN
+      job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
+    WHERE
+        jl.user_id = $1
+    GROUP BY
+      jt.job_title
+    `;
+    const { rows } = await pool.query(query, [userId]);
+
+    res.json(rows); // Send the data as JSON
+  } catch (error) {
+    console.error('Error fetching gender distribution:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 module.exports = router;
