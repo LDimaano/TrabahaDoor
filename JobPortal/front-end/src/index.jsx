@@ -33,6 +33,7 @@ import EmpNotifications from './pages/Employer/emp_notifications';
 import EmpMyProfile from './pages/Employer/emp_myprofile';
 import WaitApproval from './pages/Employer/waitapproval';
 import EmpTimeToFill from './pages/Employer/emp_timetofill';
+import EmployerDashboard from './pages/Employer/empdashboard';
 
 import DashboardAnalytics from './pages/Admin/admindashboard';
 import AdminEmployer from './pages/Admin/admin_employers';
@@ -98,6 +99,7 @@ root.render(
         <Route path="/e_profileupdate/:userId" element={<UpdateEmpProfile />} />
         <Route path="/jobpostingupdate/:job_id" element={<UpdateEmpjoblist />} />
         <Route path="/employerfiles" element={<UploadDocuments />} />
+        <Route path="/empdashboard" element={<EmployerDashboard />} />
       </Routes>
     </Router>
   </React.StrictMode>

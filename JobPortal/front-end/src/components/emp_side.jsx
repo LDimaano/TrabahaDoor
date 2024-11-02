@@ -73,7 +73,7 @@ const Sidebar = () => {
   };
 
   const handleDashboardClick = () => {
-    navigate('/dashboard');
+    navigate('/empdashboard');
   };
 
   return (
