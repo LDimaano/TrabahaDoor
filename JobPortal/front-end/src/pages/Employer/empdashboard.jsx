@@ -22,8 +22,8 @@ const EmployerDashboard = () => {
       <main className="flex-grow-1 p-3">
         <Header />
         <section>
-          <h3>Welcome to the Employer Dashboard</h3>
-          <p>Select options from the sidebar to manage job listings and view applicant details.</p>
+          <h3>Dashboard</h3>
+         
 
           {/* Dashboard Grid for Placeholders */}
           <div className="row g-4 mt-4">
