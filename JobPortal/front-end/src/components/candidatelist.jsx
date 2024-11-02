@@ -162,14 +162,33 @@ function CandidateList({ searchParams = {}, isRecommended }) {
 }
 
 const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage }) => {
+  const totalPages = Math.ceil(totalApplicants / applicantsPerPage);
+  const maxPagesVisible = 5;
   const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(totalApplicants / applicantsPerPage); i++) {
+
+  // Calculate start and end pages to show up to 5 pages
+  let startPage = Math.max(1, currentPage - Math.floor(maxPagesVisible / 2));
+  let endPage = Math.min(totalPages, startPage + maxPagesVisible - 1);
+
+  if (endPage - startPage + 1 < maxPagesVisible) {
+    startPage = Math.max(1, endPage - maxPagesVisible + 1);
+  }
+
+  // Create the range of page numbers based on startPage and endPage
+  for (let i = startPage; i <= endPage; i++) {
     pageNumbers.push(i);
   }
 
   return (
     <nav>
       <ul className="pagination justify-content-center">
+        {currentPage > 1 && (
+          <li className="page-item">
+            <a onClick={() => paginate(currentPage - 1)} href="#!" className="page-link">
+              Previous
+            </a>
+          </li>
+        )}
         {pageNumbers.map((number) => (
           <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
             <a onClick={() => paginate(number)} href="#!" className="page-link">
@@ -177,9 +196,17 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
             </a>
           </li>
         ))}
+        {currentPage < totalPages && (
+          <li className="page-item">
+            <a onClick={() => paginate(currentPage + 1)} href="#!" className="page-link">
+              Next
+            </a>
+          </li>
+        )}
       </ul>
     </nav>
   );
 };
+
 
 export default CandidateList;
