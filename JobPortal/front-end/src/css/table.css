@@ -14,7 +14,3 @@
     background-color: #f8f9fa; /* Light grey background for header */
     font-weight: bold;
 }
-
-.table tbody tr:hover {
-    background-color: #e9ecef; /* Slightly darker grey on hover */
-}
