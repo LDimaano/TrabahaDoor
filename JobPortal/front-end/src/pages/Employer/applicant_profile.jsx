@@ -10,7 +10,6 @@ import ApplicantCard from '../../components/app_cardforemp';
 // Modal Component
 const ConfirmModal = ({ show, onClose, onConfirm }) => {
   const [message, setMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState(''); // State for success message
 
   if (!show) return null;
 
@@ -18,13 +17,7 @@ const ConfirmModal = ({ show, onClose, onConfirm }) => {
     try {
       await onConfirm(message); // Call onConfirm with the message
       setMessage(''); // Clear the message input
-      setSuccessMessage('Successfully contacted the jobseeker!'); // Set success message
       onClose(); // Close the modal after confirming
-
-      // Reset success message after 3 seconds
-      setTimeout(() => {
-        setSuccessMessage('');
-      }, 3000);
     } catch (error) {
       console.error('Error contacting applicant:', error);
     }
@@ -95,16 +88,51 @@ const ConfirmModal = ({ show, onClose, onConfirm }) => {
             Confirm
           </button>
         </div>
+      </div>
+    </div>
+  );
+};
 
-        {successMessage && ( // Display the success message if it exists
-          <div style={{
+// Success Modal Component
+const SuccessModal = ({ show, onClose, message }) => {
+  if (!show) return null;
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000,
+    }}>
+      <div style={{
+        backgroundColor: '#fff',
+        padding: '20px',
+        borderRadius: '8px',
+        maxWidth: '90%',
+        width: '400px',
+        margin: '0 20px',
+      }}>
+        <h5>Success</h5>
+        <p>{message}</p>
+        <button 
+          onClick={onClose}
+          style={{
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: 'none',
+            padding: '8px 16px',
+            cursor: 'pointer',
             marginTop: '20px',
-            color: 'green', // Color for success message
-            fontWeight: 'bold',
-          }}>
-            {successMessage}
-          </div>
-        )}
+          }}
+        >
+          Close
+        </button>
       </div>
     </div>
   );
@@ -124,6 +152,8 @@ const MyProfile = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // State for success modal
+  const [successMessage, setSuccessMessage] = useState(''); // State for success message
 
   const handleBack = () => {
     navigate(-1); 
@@ -148,10 +178,13 @@ const MyProfile = () => {
   
       const data = await response.json(); 
       console.log('Contact successful:', data);
+      setSuccessMessage('Successfully contacted the jobseeker!'); // Set the success message
+      setIsSuccessModalOpen(true); // Open the success modal
     } catch (error) {
       console.error('Error contacting applicant:', error.message);
     }
   };
+
   useEffect(() => {
     const fetchApplicantData = async () => {
       try {
@@ -224,27 +257,27 @@ const MyProfile = () => {
               >
                 <FontAwesomeIcon icon={faArrowLeft} />
               </button>
-              <h3 style={{ margin: '0' }}>Applicant's Profile</h3>
-            </div>
-            <button style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '8px 16px', cursor: 'pointer' }} onClick={() => setIsModalOpen(true)}>
-              Contact
-            </button>
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-            <div style={{ flex: '1 1 300px', marginBottom: '16px' }}>
-              <ApplicantProfile personalData={personalData} professionalData={professionalData} />
-            </div>
-            <div style={{ flex: '1 1 300px', marginBottom: '16px' }}>
-              <ApplicantCard applicant={applicantData} />
+              <h1>Applicant Profile</h1>
             </div>
           </div>
+          <ApplicantProfile applicantData={applicantData} />
+          <ApplicantCard
+            applicantData={applicantData}
+            personalData={personalData}
+            professionalData={professionalData}
+            setIsModalOpen={setIsModalOpen} 
+          />
         </section>
       </main>
-
-      <ConfirmModal 
+      <ConfirmModal
         show={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onConfirm={(message) => handleContact(message)} 
+        onConfirm={handleContact} // Pass the handleContact function
+      />
+      <SuccessModal 
+        show={isSuccessModalOpen} 
+        onClose={() => setIsSuccessModalOpen(false)} 
+        message={successMessage} 
       />
     </div>
   );
