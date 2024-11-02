@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faClipboardList, faSignOutAlt, faHourglassStart } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faClipboardList, faSignOutAlt, faHourglassStart, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -50,10 +50,8 @@ const Sidebar = () => {
       });
 
       if (response.ok) {
-        // Clear session data
         window.sessionStorage.clear();
-        // Redirect to login page or home page
-        navigate('/'); // Adjust as needed
+        navigate('/'); 
       } else {
         console.error('Failed to log out:', response.statusText);
       }
@@ -74,6 +72,10 @@ const Sidebar = () => {
     navigate('/emp_timetofill');
   };
 
+  const handleDashboardClick = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <aside className="p-3 d-flex flex-column" style={{ backgroundColor: '#044474', width: '250px', height: '100vh', position: 'relative' }}>
       <div className="d-flex align-items-center justify-content-center mb-4">
@@ -91,6 +93,12 @@ const Sidebar = () => {
             <button onClick={handleHomeClick} className="btn btn-link nav-link text-white">
               <FontAwesomeIcon icon={faHome} className="me-2" />
               Home
+            </button>
+          </li>
+          <li className="nav-item">
+            <button onClick={handleDashboardClick} className="btn btn-link nav-link text-white">
+              <FontAwesomeIcon icon={faTachometerAlt} className="me-2" />
+              Dashboard
             </button>
           </li>
           <li className="nav-item">
