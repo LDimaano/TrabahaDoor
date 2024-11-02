@@ -1,0 +1,27 @@
+.table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .table th, .table td {
+    padding: 12px 15px;
+    text-align: left;
+  }
+  
+  .table th {
+    background-color: #f8f9fa; /* Light grey background for header */
+    font-weight: bold;
+  }
+  
+  .even-row {
+    background-color: #ffffff; /* White background for even rows */
+  }
+  
+  .odd-row {
+    background-color: #f2f2f2; /* Light grey background for odd rows */
+  }
+  
+  .table tbody tr:hover {
+    background-color: #e9ecef; /* Slightly darker grey on hover */
+  }
+  
