@@ -748,7 +748,7 @@ router.get('/location-distribution/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
     const query = `
-        SELECT
+    SELECT
       a.location,
         COUNT(*) as count
     FROM
@@ -760,7 +760,7 @@ router.get('/location-distribution/:userId', async (req, res) => {
     JOIN
       address a ON js.address_id = a.address_id
     WHERE
-        jl.user_id = 21
+        jl.user_id = $1
     GROUP BY
       a.location
     `;
