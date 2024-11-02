@@ -72,15 +72,16 @@ function ApplicantJoblist({ currentListings }) {
                       <tbody>
             {currentListings.map((listing) => (
               <tr key={listing.id}>
-                <td className="d-flex align-items-center">
+                <td>
                   <img
-                    src={listing.profile_picture_url}
-                    alt="profile"
-                    className="me-2"
-                    style={{ width: '50px', borderRadius: '50%' }}
+                      src={listing.profile_picture_url}
+                      alt="profile"
+                      className="me-2"
+                      style={{ width: '50px', borderRadius: '50%' }}
                   />
                   {listing.company_name}
-                </td>
+              </td>
+
                 <td>{listing.contact_person}</td>
                 <td>
                   <button 
