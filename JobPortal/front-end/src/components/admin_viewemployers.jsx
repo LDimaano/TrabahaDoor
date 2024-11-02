@@ -32,12 +32,9 @@ function ApplicantJoblist({ currentListings }) {
       </div>
 
       {/* Render listings based on selected view mode */}
-      <div className={viewMode === 'grid' ? 'row' : 'table-responsive'}>
-        {currentListings.map((listing) => {
-          // Debugging: log the entire listing object to check its structure
-          console.log("Listing data:", listing);
-
-          return viewMode === 'grid' ? (
+      {viewMode === 'grid' ? (
+        <div className="row">
+          {currentListings.map((listing) => (
             <div className="col-md-4 mb-4" key={listing.id || listing.id}>
               <div className="card border-light shadow-sm">
                 <div className="card-body text-center">
@@ -59,35 +56,44 @@ function ApplicantJoblist({ currentListings }) {
                 </div>
               </div>
             </div>
-          ) : (
-            <table className="table table-bordered" key={listing.id || listing.id}>
-              <tbody>
-                <tr>
-                  <td>
-                    <img
-                      src={listing.profile_picture_url}
-                      alt="profile"
-                      className="me-2"
-                      style={{ width: '50px', borderRadius: '50%' }}
-                    />
-                    {listing.company_name}
-                  </td>
-                  <td>{listing.contact_person}</td>
-                  <td>
-                    <button 
-                      className="btn btn-primary" 
-                      onClick={() => handleSeeJs(listing.user_id)}
-                    >
-                      <FontAwesomeIcon icon={faEye} className="me-1" />
-                      View Profile
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <table className="table table-bordered">
+          <thead>
+            <tr>
+              <th style={{ width: '30%' }}>Employer</th>
+              <th style={{ width: '40%' }}>Contact Person</th>
+              <th style={{ width: '30%' }}>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentListings.map((listing) => (
+              <tr key={listing.id || listing.id}>
+                <td className="d-flex align-items-center">
+                  <img
+                    src={listing.profile_picture_url}
+                    alt="profile"
+                    className="me-2"
+                    style={{ width: '50px', borderRadius: '50%' }}
+                  />
+                  {listing.company_name}
+                </td>
+                <td>{listing.contact_person}</td>
+                <td>
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={() => handleSeeJs(listing.user_id)}
+                  >
+                    <FontAwesomeIcon icon={faEye} className="me-1" />
+                    View Profile
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
