@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import Sidebar from '../../components/emp_side';
 import Header from '../../components/emp_header';
+import ChartPlaceholder1 from '../../components/ChartPlaceholder1';
+import ChartPlaceholder2 from '../../components/ChartPlaceholder2';
+import ChartPlaceholder3 from '../../components/ChartPlaceholder3';
+import ChartPlaceholder4 from '../../components/ChartPlaceholder4';
+import ChartPlaceholder5 from '../../components/ChartPlaceholder5';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 const EmployerDashboard = () => {
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to control sidebar visibility
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
@@ -23,34 +28,23 @@ const EmployerDashboard = () => {
         <Header />
         <section>
           <h3>Dashboard</h3>
-         
 
-          {/* Dashboard Grid for Placeholders */}
+          {/* Dashboard Grid with Components */}
           <div className="row g-4 mt-4">
             <div className="col-lg-6 col-md-12">
-              <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '250px' }}>
-                <p className="text-muted">Chart Placeholder 1</p>
-              </div>
+              <ChartPlaceholder1 />
             </div>
             <div className="col-lg-6 col-md-12">
-              <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '250px' }}>
-                <p className="text-muted">Chart Placeholder 2</p>
-              </div>
+              <ChartPlaceholder2 />
             </div>
             <div className="col-lg-4 col-md-6">
-              <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '200px' }}>
-                <p className="text-muted">Chart Placeholder 3</p>
-              </div>
+              <ChartPlaceholder3 />
             </div>
             <div className="col-lg-4 col-md-6">
-              <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '200px' }}>
-                <p className="text-muted">Chart Placeholder 4</p>
-              </div>
+              <ChartPlaceholder4 />
             </div>
             <div className="col-lg-4 col-md-12">
-              <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '200px' }}>
-                <p className="text-muted">Chart Placeholder 5</p>
-              </div>
+              <ChartPlaceholder5 />
             </div>
           </div>
         </section>

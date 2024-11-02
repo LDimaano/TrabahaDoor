@@ -685,7 +685,34 @@ router.post('/upload', uploadDocuments, async (req, res) => {
   }
 });
 
+// Route: GET /api/gender-distribution
+router.get('/gender-distribution/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const query = `
+      SELECT
+          js.gender,
+          COUNT(*) AS count
+      FROM
+          joblistings jl 
+      JOIN
+          applications app ON jl.job_id = app.job_id
+      JOIN
+          job_seekers js ON app.user_id = js.user_id
+      WHERE
+          jl.user_id = $1
+      GROUP BY
+          js.gender;
+    `;
+    
+    const { rows } = await pool.query(query, [userId]);
 
+    res.json(rows); // Send the data as JSON
+  } catch (error) {
+    console.error('Error fetching gender distribution:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 
