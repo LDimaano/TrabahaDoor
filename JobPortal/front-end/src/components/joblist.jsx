@@ -13,24 +13,17 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   const jobsPerPage = 5;
 
   useEffect(() => {
+    // Fetch jobs based on search and filter parameters
     const fetchJobs = async () => {
       let url = `${process.env.REACT_APP_API_URL}/api/jobs/postedjobs`;
       const params = new URLSearchParams();
-      if (searchQuery) {
-        params.append('searchQuery', searchQuery);
-      }
-      if (filters && filters.industry) {
-        params.append('selectedIndustry', filters.industry);
-      }
-      if (params.toString()) {
-        url += `?${params.toString()}`;
-      }
-      console.log('Fetching jobs with URL:', url);
+      if (searchQuery) params.append('searchQuery', searchQuery);
+      if (filters && filters.industry) params.append('selectedIndustry', filters.industry);
+      if (params.toString()) url += `?${params.toString()}`;
+
       try {
         const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setJobs(data || []);
       } catch (error) {
@@ -43,19 +36,12 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   useEffect(() => {
     const fetchUserSkills = async () => {
       const userId = sessionStorage.getItem('user_id');
-      if (!userId) {
-        console.error('No user_id found in sessionStorage');
-        return;
-      }
+      if (!userId) return;
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/getskills/${userId}`);
-        if (!response.ok) {
-          const errorDetails = await response.text();
-          throw new Error(`Failed to fetch user skills: ${errorDetails}`);
-        }
+        if (!response.ok) throw new Error(await response.text());
         const skills = await response.json();
-        const skillNames = skills.map(skill => skill.skill_name);
-        setUserSkills(skillNames || []);
+        setUserSkills(skills.map(skill => skill.skill_name) || []);
       } catch (error) {
         console.error('Error fetching user skills:', error);
       }
@@ -63,21 +49,13 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
 
     const fetchUserProfile = async () => {
       const userId = sessionStorage.getItem('user_id');
-      if (!userId) {
-        console.error('No user_id found in sessionStorage');
-        return;
-      }
+      if (!userId) return;
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/user-info/${userId}`, {
-          method: 'GET',
-          credentials: 'include',
+          method: 'GET', credentials: 'include',
         });
-        if (!response.ok) {
-          const errorDetails = await response.text();
-          throw new Error(`Failed to fetch user profile: ${errorDetails}`);
-        }
-        const profile = await response.json();
-        setUserProfile(profile || null);
+        if (!response.ok) throw new Error(await response.text());
+        setUserProfile(await response.json() || null);
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
@@ -93,20 +71,15 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         try {
           const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recommend`, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               skills: userSkills,
               industry: userProfile.industryName,
               salaryRange: userProfile.salaryRange || null,
-              jobTitles: userProfile.jobTitles || [], 
+              jobTitles: userProfile.jobTitles || [],
             }),
           });
-          if (!response.ok) {
-            const errorDetails = await response.text();
-            throw new Error(`Failed to fetch recommended jobs: ${errorDetails}`);
-          }
+          if (!response.ok) throw new Error(await response.text());
           const recommendedJobsData = await response.json();
           setRecommendedJobs(recommendedJobsData.recommendations || []);
         } catch (error) {
@@ -135,13 +108,9 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   const applySearch = (jobs) => {
     if (!jobs || jobs.length === 0 || !searchQuery) return jobs;
     if (searchType === "jobTitle") {
-      return jobs.filter(job =>
-        job.job_title && job.job_title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      return jobs.filter(job => job.job_title && job.job_title.toLowerCase().includes(searchQuery.toLowerCase()));
     } else if (searchType === "companyName") {
-      return jobs.filter(job =>
-        job.company_name && job.company_name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      return jobs.filter(job => job.company_name && job.company_name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
     return jobs;
   };
@@ -156,8 +125,18 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const totalJobs = isRecommended ? recommendedJobs.length : searchedJobs.length;
+  const totalPages = Math.ceil(totalJobs / jobsPerPage);
+  const maxPagesVisible = 5;
+
+  let startPage = Math.max(1, currentPage - Math.floor(maxPagesVisible / 2));
+  let endPage = Math.min(totalPages, startPage + maxPagesVisible - 1);
+
+  if (endPage - startPage + 1 < maxPagesVisible) {
+    startPage = Math.max(1, endPage - maxPagesVisible + 1);
+  }
+
   const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(totalJobs / jobsPerPage); i++) {
+  for (let i = startPage; i <= endPage; i++) {
     pageNumbers.push(i);
   }
 
@@ -166,49 +145,41 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       {isRecommended ? (
         <>
           <h3>Recommended Jobs</h3>
-          {currentJobs.length === 0 ? (
-            <p>No recommended jobs available</p>
-          ) : (
+          {currentJobs.length === 0 ? <p>No recommended jobs available</p> : (
             <ul className="list-group">
-              {currentJobs.map((job) => (
-                <JobListItem key={job.job_id} job={job} />
-              ))}
+              {currentJobs.map((job) => <JobListItem key={job.job_id} job={job} />)}
             </ul>
           )}
         </>
       ) : (
         <>
           <h3>All Jobs</h3>
-          {currentJobs.length === 0 ? (
-            <p>No jobs available</p>
-          ) : (
+          {currentJobs.length === 0 ? <p>No jobs available</p> : (
             <ul className="list-group">
-              {currentJobs.map((job) => (
-                <JobListItem key={job.job_id} job={job} />
-              ))}
+              {currentJobs.map((job) => <JobListItem key={job.job_id} job={job} />)}
             </ul>
           )}
         </>
       )}
       <nav className="pagination-container">
         <ul className="pagination">
-          <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-            <a onClick={() => paginate(currentPage - 1)} href="#" className="page-link">
-              &laquo;
-            </a>
-          </li>
+          {currentPage > 1 && (
+            <li className="page-item">
+              <a onClick={() => paginate(currentPage - 1)} href="#!" className="page-link">{'<<'}</a>
+            </li>
+          )}
           {pageNumbers.map(number => (
             <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-              <a onClick={() => paginate(number)} href="#" className="page-link">
-                {number}
-              </a>
+              <a onClick={() => paginate(number)} href="#!" className="page-link">{number}</a>
             </li>
           ))}
-          <li className={`page-item ${currentPage === pageNumbers.length ? 'disabled' : ''}`}>
-            <a onClick={() => paginate(currentPage + 1)} href="#" className="page-link">
-              &raquo;
-            </a>
-          </li>
+          {currentPage < totalPages && (
+            <li className="page-item">
+              <a onClick={() => paginate(currentPage + 1)} href="#!" className="page-link">
+              {'>>'}
+              </a>
+            </li>
+          )}
         </ul>
       </nav>
     </div>

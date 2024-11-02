@@ -185,7 +185,7 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
         {currentPage > 1 && (
           <li className="page-item">
             <a onClick={() => paginate(currentPage - 1)} href="#!" className="page-link">
-              Previous
+            {'<<'}
             </a>
           </li>
         )}
@@ -199,7 +199,7 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
         {currentPage < totalPages && (
           <li className="page-item">
             <a onClick={() => paginate(currentPage + 1)} href="#!" className="page-link">
-              Next
+              {'>>'}
             </a>
           </li>
         )}
