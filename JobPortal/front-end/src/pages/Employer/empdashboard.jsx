@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import Sidebar from '../../components/emp_side';
 import Header from '../../components/emp_header';
-import ChartPlaceholder1 from '../../components/ChartPlaceholder1';
-import ChartPlaceholder2 from '../../components/ChartPlaceholder2';
-import ChartPlaceholder3 from '../../components/ChartPlaceholder3';
-import ChartPlaceholder4 from '../../components/ChartPlaceholder4';
-import ChartPlaceholder5 from '../../components/ChartPlaceholder5';
+import ChartPlaceholder1 from '../../components/emp_chart1';
+import ChartPlaceholder2 from '../../components/emp_chart2';
+import ChartPlaceholder3 from '../../components/emp_chart3';
+import ChartPlaceholder4 from '../../components/emp_chart4';
+import ChartPlaceholder5 from '../../components/emp_chart5';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
