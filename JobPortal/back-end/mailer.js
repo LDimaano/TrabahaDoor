@@ -78,7 +78,9 @@ const generateEmailContent = (type, data) => {
 
                 text: `Hello ${data.jobSeekerName},
 
-                We are excited to inform you that ${data.companyName} is interested in connecting with you regarding potential opportunities.
+                We are excited to inform you that ${data.companyName} has reached out to you with the following message:
+
+                "${data.message}"
 
                 Please log into your account to view more details and take the next steps.
 
@@ -88,8 +90,9 @@ const generateEmailContent = (type, data) => {
                 html: `
                 <p>Hello ${data.jobSeekerName},</p>
 
-                <p>We are excited to inform you that <strong>${data.companyName}</strong> is interested in connecting with you regarding potential opportunities.</p>
-
+                <p>We are excited to inform you that <strong>${data.companyName}</strong> has reached out to you with the following message:</p>
+                
+                <p> "${data.message}" </p>
                 <p>Please log into your account to view more details by visiting your <a href="https://trabahadoor-front-end.onrender.com/login">jobseeker account</a> and take the next steps.</p>
 
                 <p>Best regards,<br/>
@@ -161,8 +164,8 @@ const sendStatusUpdateEmail = async (jobSeekerEmail, jobSeekerName, jobTitle, st
     });
 };
 
-const sendContactNotificationEmail = async (jobSeekerEmail, jobSeekerName, companyName) => {
-    const emailContent = generateEmailContent('contact_notification', { jobSeekerName, companyName });
+const sendContactNotificationEmail = async (jobSeekerEmail, jobSeekerName, companyName, message) => {
+    const emailContent = generateEmailContent('contact_notification', { jobSeekerName, companyName, message });
     
     await transporter.sendMail({
         from: process.env.EMAIL_USER,

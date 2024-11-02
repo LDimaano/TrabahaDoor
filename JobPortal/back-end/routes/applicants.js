@@ -448,26 +448,26 @@ router.post('/recommend-candidates/:jobId', async (req, res) => {
 
 router.post('/contact/:user_id', async (req, res) => {
   const { user_id: js_user_id } = req.params;
-  const { userId: emp_user_id } = req.body; 
+  const { userId: emp_user_id, message } = req.body; 
 
   try {
     if (!js_user_id || !emp_user_id) {
       return res.status(400).json({ message: "Missing user IDs." });
     }
 
-    // Insert a new record into the emp_contact table
+    // Insert a new record into the emp_contact table with message
     const newContact = await pool.query(
-      `INSERT INTO emp_contact (js_user_id, emp_user_id) 
-       VALUES ($1, $2) 
+      `INSERT INTO emp_contact (js_user_id, emp_user_id, message) 
+       VALUES ($1, $2, $3) 
        RETURNING *`,
-      [js_user_id, emp_user_id]
+      [js_user_id, emp_user_id, message]
     );
 
     // Fetch jobseeker email and name from the database
     const jobseeker = await pool.query(
       `SELECT 
-	      u.email, 
-	      js.full_name 
+        u.email, 
+        js.full_name 
       FROM job_seekers js
       JOIN users u ON js.user_id = u.user_id
       WHERE js.user_id = $1`,
@@ -485,8 +485,8 @@ router.post('/contact/:user_id', async (req, res) => {
       const js_name = jobseeker.rows[0].full_name;
       const company_name = employer.rows[0].company_name;
 
-      // Send an email to the jobseeker
-      await sendContactNotificationEmail(js_email, js_name, company_name);
+      // Send an email to the jobseeker with the message
+      await sendContactNotificationEmail(js_email, js_name, company_name, message);
     }
 
     // Send the newly created contact as a response
@@ -497,6 +497,7 @@ router.post('/contact/:user_id', async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 
 module.exports = router;

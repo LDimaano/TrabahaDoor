@@ -9,6 +9,8 @@ import ApplicantCard from '../../components/app_cardforemp';
 
 // Modal Component
 const ConfirmModal = ({ show, onClose, onConfirm }) => {
+  const [message, setMessage] = useState('');
+
   if (!show) return null;
 
   return (
@@ -34,16 +36,44 @@ const ConfirmModal = ({ show, onClose, onConfirm }) => {
       }}>
         <h5>Confirm Contact</h5>
         <p>Are you sure you want to contact this applicant?</p>
+
+        <textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Type a message to the jobseeker..."
+          style={{
+            width: '100%',
+            height: '80px',
+            marginBottom: '20px',
+            padding: '10px',
+            borderRadius: '4px',
+            border: '1px solid #ced4da',
+          }}
+        />
+
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <button 
             onClick={onClose} 
-            style={{ marginRight: '10px', backgroundColor: '#6c757d', color: '#fff', border: 'none', padding: '8px 16px', cursor: 'pointer' }}
+            style={{
+              marginRight: '10px',
+              backgroundColor: '#6c757d',
+              color: '#fff',
+              border: 'none',
+              padding: '8px 16px',
+              cursor: 'pointer',
+            }}
           >
             Cancel
           </button>
           <button 
-            onClick={onConfirm}
-            style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '8px 16px', cursor: 'pointer' }}
+            onClick={() => onConfirm(message)}
+            style={{
+              backgroundColor: '#007bff',
+              color: '#fff',
+              border: 'none',
+              padding: '8px 16px',
+              cursor: 'pointer',
+            }}
           >
             Confirm
           </button>
@@ -81,7 +111,7 @@ const MyProfile = () => {
           'Content-Type': 'application/json',
         },
         credentials: 'include', 
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ userId, message }), 
       });
   
       if (!response.ok) {
@@ -193,7 +223,7 @@ const MyProfile = () => {
       <ConfirmModal 
         show={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onConfirm={handleConfirmContact} 
+        onConfirm={(message) => handleContact(message)} 
       />
     </div>
   );
