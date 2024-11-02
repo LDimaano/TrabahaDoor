@@ -13,6 +13,12 @@ const ConfirmModal = ({ show, onClose, onConfirm }) => {
 
   if (!show) return null;
 
+  const handleConfirm = () => {
+    onConfirm(message); // Call onConfirm with the message
+    setMessage(''); // Clear the message input
+    onClose(); // Close the modal after confirming
+  };
+
   return (
     <div style={{
       position: 'fixed',
@@ -66,7 +72,7 @@ const ConfirmModal = ({ show, onClose, onConfirm }) => {
             Cancel
           </button>
           <button 
-            onClick={() => onConfirm(message)}
+            onClick={handleConfirm} // Use handleConfirm for the confirm action
             style={{
               backgroundColor: '#007bff',
               color: '#fff',
@@ -125,12 +131,6 @@ const MyProfile = () => {
       console.error('Error contacting applicant:', error.message);
     }
   };
-
-  const handleConfirmContact = () => {
-    setIsModalOpen(false);
-    handleContact();
-  };
-
   useEffect(() => {
     const fetchApplicantData = async () => {
       try {
