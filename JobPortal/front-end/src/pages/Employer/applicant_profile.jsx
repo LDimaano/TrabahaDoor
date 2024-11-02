@@ -10,13 +10,24 @@ import ApplicantCard from '../../components/app_cardforemp';
 // Modal Component
 const ConfirmModal = ({ show, onClose, onConfirm }) => {
   const [message, setMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState(''); // State for success message
 
   if (!show) return null;
 
-  const handleConfirm = () => {
-    onConfirm(message); // Call onConfirm with the message
-    setMessage(''); // Clear the message input
-    onClose(); // Close the modal after confirming
+  const handleConfirm = async () => {
+    try {
+      await onConfirm(message); // Call onConfirm with the message
+      setMessage(''); // Clear the message input
+      setSuccessMessage('Successfully contacted the jobseeker!'); // Set success message
+      onClose(); // Close the modal after confirming
+
+      // Reset success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
+    } catch (error) {
+      console.error('Error contacting applicant:', error);
+    }
   };
 
   return (
@@ -84,6 +95,16 @@ const ConfirmModal = ({ show, onClose, onConfirm }) => {
             Confirm
           </button>
         </div>
+
+        {successMessage && ( // Display the success message if it exists
+          <div style={{
+            marginTop: '20px',
+            color: 'green', // Color for success message
+            fontWeight: 'bold',
+          }}>
+            {successMessage}
+          </div>
+        )}
       </div>
     </div>
   );
