@@ -7,19 +7,12 @@
     padding: 12px 15px;
     text-align: left;
     border: 1px solid #dee2e6; /* Add border to each cell */
+    background-color: #ffffff; /* White background for all rows */
 }
 
 .table th {
     background-color: #f8f9fa; /* Light grey background for header */
     font-weight: bold;
-}
-
-.even-row {
-    background-color: #f2f2f2; /* Light grey background for even rows */
-}
-
-.odd-row {
-    background-color: #ffffff; /* White background for odd rows */
 }
 
 .table tbody tr:hover {
