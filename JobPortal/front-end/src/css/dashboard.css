@@ -58,25 +58,33 @@
     margin-bottom: 16px !important;
   }
   
+  /* Sidebar styling */
+.col-auto {
+    background-color: #2d3748;
+    color: #ffffff;
+    padding: 0; /* Remove any padding around sidebar */
+    min-width: 220px;
+    max-width: 220px; /* Fixed width for consistency */
+  }
+  
+  .col-auto .nav-link {
+    padding-left: 1rem; /* Adjust internal padding for links */
+    padding-right: 1rem;
+  }
+  
   /* Sidebar toggle for mobile */
   @media (max-width: 992px) {
     .col-auto {
       position: fixed;
       top: 0;
       bottom: 0;
+      left: 0; /* Aligns sidebar with the left edge of the screen */
       z-index: 1050;
       transform: translateX(-100%);
       transition: transform 0.3s ease-in-out;
     }
     .col-auto.d-block {
       transform: translateX(0);
-    }
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .kpi-card .kpi-value {
-      font-size: 1.75rem;
     }
   }
   
