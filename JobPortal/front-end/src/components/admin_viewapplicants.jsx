@@ -84,7 +84,8 @@ function ApplicantJoblist({ currentListings }) {
                       className="btn btn-primary" 
                       onClick={() => handleSeeJs(listing.user_id)}
                     >
-                      See applicant's profile
+                       <FontAwesomeIcon icon={faEye} className="me-1" />
+                       View Profile
                     </button>
                   </td>
                 </tr>
