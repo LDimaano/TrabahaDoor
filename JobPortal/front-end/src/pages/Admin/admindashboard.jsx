@@ -4,6 +4,7 @@ import SideBar from '../../components/admin_sidepanel';
 import BarChart from '../../components/barchart';
 import TopHiringIndustries from '../../components/tophiringindustries';
 import TopHiringCompanies from '../../components/tophiringcompanies';
+import '../css/dashboard.css'; // Import CSS for custom styles
 
 function DashboardAnalytics() {
   const [jobSeekerCount, setJobSeekerCount] = useState(0);
