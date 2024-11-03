@@ -1,0 +1,9 @@
+.applicant-joblist .card {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border: none;
+  }
+  .applicant-joblist .card-img-top {
+    border-top-left-radius: calc(0.25rem - 1px);
+    border-top-right-radius: calc(0.25rem - 1px);
+  }
+  
