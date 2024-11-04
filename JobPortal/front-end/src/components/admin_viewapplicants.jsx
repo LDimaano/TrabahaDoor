@@ -17,17 +17,17 @@ function ApplicantJoblist({ currentListings }) {
 
   return (
     <div>
-      {/* View toggle button */}
-      <div className="d-flex justify-content-start mb-3">
+      {/* View toggle button positioned at the upper right */}
+      <div className="d-flex justify-content-end mb-3">
         <button 
-          className="btn btn-outline-primary me-2" 
+          className="btn btn-outline-secondary" 
           onClick={toggleViewMode}
         >
-          <FontAwesomeIcon icon={viewMode === 'list' ? faTh : faList} className="me-1" />
-          {viewMode === 'list' ? 'Grid View' : 'List View'}
+          Toggle View
+          <FontAwesomeIcon icon={viewMode === 'list' ? faThLarge : faList} className="ms-2" />
         </button>
       </div>
-
+      
       {/* Render listings based on selected view mode */}
       {viewMode === 'grid' ? (
         <div className="row">
