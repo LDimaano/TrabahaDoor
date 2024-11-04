@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTh, faList, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faTh, faList } from '@fortawesome/free-solid-svg-icons';
 
 function ApplicantJoblist({ currentListings }) {
   const [viewMode, setViewMode] = useState('list');

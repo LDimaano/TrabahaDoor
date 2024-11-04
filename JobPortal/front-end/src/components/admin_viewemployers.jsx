@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faList, faThLarge } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faTh, faList } from '@fortawesome/free-solid-svg-icons';
 import '../css/table.css'; // Import CSS for custom styles
 
 function ApplicantJoblist({ currentListings }) {

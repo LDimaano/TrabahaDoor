@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList, faThLarge } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faTh, faList } from '@fortawesome/free-solid-svg-icons';
 
 function ApplicantJoblist({ currentListings }) {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ function ApplicantJoblist({ currentListings }) {
           className="btn btn-outline-primary me-2" 
           onClick={toggleViewMode}
         >
-          <FontAwesomeIcon icon={viewMode === 'list' ? faThLarge : faList} className="me-1" />
+          <FontAwesomeIcon icon={viewMode === 'list' ? faTh : faList} className="me-1" />
           {viewMode === 'list' ? 'Grid View' : 'List View'}
         </button>
       </div>
