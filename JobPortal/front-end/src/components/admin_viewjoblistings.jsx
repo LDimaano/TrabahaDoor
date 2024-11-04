@@ -68,7 +68,7 @@ function ApplicantJoblist({ currentListings }) {
                       className="btn btn-primary"
                       onClick={() => handleSeeApplicants(listing.job_id)}
                     >
-                       <FontAwesomeIcon icon={faEye} /> View
+                       <FontAwesomeIcon icon={faEye} /> Applicants
                     </button>
                   </td>
                   <td>
@@ -76,7 +76,7 @@ function ApplicantJoblist({ currentListings }) {
                       className="btn btn-primary"
                       onClick={() => handleJobListing(listing.job_id)}
                     >
-                        <FontAwesomeIcon icon={faEye} /> View
+                        <FontAwesomeIcon icon={faEye} /> More
                     </button>
                   </td>
                 </tr>
@@ -103,13 +103,13 @@ function ApplicantJoblist({ currentListings }) {
                     className="btn btn-outline-primary me-2"
                     onClick={() => handleSeeApplicants(listing.job_id)}
                   >
-                     <FontAwesomeIcon icon={faEye} /> View
+                     <FontAwesomeIcon icon={faEye} /> Applicants
                   </button>
                   <button
                     className="btn btn-primary"
                     onClick={() => handleJobListing(listing.job_id)}
                   >
-                      <FontAwesomeIcon icon={faEye} /> View
+                      <FontAwesomeIcon icon={faEye} /> More
                   </button>
                 </div>
               </div>

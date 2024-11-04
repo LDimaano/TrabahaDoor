@@ -10,7 +10,7 @@ const JobDashboard = () => {
   const [joblisting, setJoblisting] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [listingsPerPage, setListingsPerPage] = useState(5);
+  const [listingsPerPage, setListingsPerPage] = useState(20);
   const [error, setError] = useState(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to control sidebar visibility
 
