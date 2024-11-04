@@ -58,7 +58,7 @@ function ApplicantJoblist({ currentListings }) {
                       className="btn btn-primary"
                       onClick={() => handleSeeUser_id(listing.user_id, listing.usertype)}
                     >
-                       <FontAwesomeIcon icon={faEye} /> Profile
+                      <FontAwesomeIcon icon={faEye} /> Profile
                     </button>
                   </td>
                 </tr>
@@ -75,9 +75,16 @@ function ApplicantJoblist({ currentListings }) {
                   src={listing.profile_picture_url}
                   alt={`${listing.full_name || listing.company_name}'s avatar`}
                   className="card-img-top"
-                  style={{ height: '200px', objectFit: 'cover' }}
+                  style={{
+                    height: '200px',
+                    width: '200px',
+                    objectFit: 'cover',
+                    borderRadius: '50%', // Makes the image circular
+                    margin: 'auto',
+                    padding: '10px',
+                  }}
                 />
-                <div className="card-body">
+                <div className="card-body text-center">
                   <h5 className="card-title">{listing.full_name || listing.company_name}</h5>
                   <p className="card-text"><strong>Email:</strong> {listing.email}</p>
                   <p className="card-text"><strong>User Type:</strong> {listing.usertype}</p>
@@ -85,7 +92,7 @@ function ApplicantJoblist({ currentListings }) {
                     className="btn btn-primary"
                     onClick={() => handleSeeUser_id(listing.user_id, listing.usertype)}
                   >
-                     <FontAwesomeIcon icon={faEye} /> Profile
+                    <FontAwesomeIcon icon={faEye} /> Profile
                   </button>
                 </div>
               </div>

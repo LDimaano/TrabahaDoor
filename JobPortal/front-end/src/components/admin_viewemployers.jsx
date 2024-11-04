@@ -43,7 +43,7 @@ function ApplicantJoblist({ currentListings }) {
                     src={listing.profile_picture_url}
                     alt="profile"
                     className="rounded-circle mb-2"
-                    style={{ width: '80px', height: '80px' }}
+                    style={{ width: '80px', height: '80px', objectFit: 'cover' }}
                   />
                   <h5 className="card-title">{listing.company_name}</h5>
                   <p className="card-text">{listing.contact_person}</p>
@@ -60,42 +60,40 @@ function ApplicantJoblist({ currentListings }) {
           ))}
         </div>
       ) : (
-                 <div className="table-responsive">
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th style={{ width: '30%' }}>Employer</th>
-                          <th style={{ width: '40%' }}>Contact Person</th>
-                          <th style={{ width: '30%' }}>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-            {currentListings.map((listing) => (
-              <tr key={listing.id}>
-                <td>
-                  <img
+        <div className="table-responsive">
+          <table className="table table-bordered">
+            <thead>
+              <tr>
+                <th style={{ width: '30%' }}>Employer</th>
+                <th style={{ width: '40%' }}>Contact Person</th>
+                <th style={{ width: '30%' }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentListings.map((listing) => (
+                <tr key={listing.id}>
+                  <td>
+                    <img
                       src={listing.profile_picture_url}
                       alt="profile"
-                      className="me-2"
-                      style={{ width: '50px', borderRadius: '50%' }}
-                  />
-                  {listing.company_name}
-              </td>
-
-                <td>{listing.contact_person}</td>
-                <td>
-                  <button 
-                    className="btn btn-primary" 
-                    onClick={() => handleSeeJs(listing.user_id)}
-                  >
-                    <FontAwesomeIcon icon={faEye} className="me-1" />
-                    View Profile
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-
+                      className="me-2 rounded-circle"
+                      style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                    />
+                    {listing.company_name}
+                  </td>
+                  <td>{listing.contact_person}</td>
+                  <td>
+                    <button 
+                      className="btn btn-primary" 
+                      onClick={() => handleSeeJs(listing.user_id)}
+                    >
+                      <FontAwesomeIcon icon={faEye} className="me-1" />
+                      View Profile
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       )}
