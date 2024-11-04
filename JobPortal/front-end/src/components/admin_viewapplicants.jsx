@@ -24,10 +24,10 @@ function ApplicantJoblist({ currentListings }) {
           onClick={toggleViewMode}
         >
           Toggle View
-          <FontAwesomeIcon icon={viewMode === 'list' ? faThLarge : faList} className="ms-2" />
+          <FontAwesomeIcon icon={viewMode === 'list' ? faTh : faList} className="ms-2" />
         </button>
       </div>
-      
+
       {/* Render listings based on selected view mode */}
       {viewMode === 'grid' ? (
         <div className="row">
