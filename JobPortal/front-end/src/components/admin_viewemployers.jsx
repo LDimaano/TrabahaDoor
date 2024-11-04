@@ -12,23 +12,20 @@ function ApplicantJoblist({ currentListings }) {
     navigate(`/useremp_profile/${userId}`);
   };
 
+  const toggleViewMode = () => {
+    setViewMode((prevMode) => (prevMode === 'list' ? 'grid' : 'list'));
+  };
+
   return (
     <div>
-      {/* View toggle buttons */}
+      {/* View toggle button */}
       <div className="d-flex justify-content-start mb-3">
         <button 
-          className={`btn btn-outline-primary me-2 ${viewMode === 'list' ? 'active' : ''}`} 
-          onClick={() => setViewMode('list')}
+          className="btn btn-outline-primary" 
+          onClick={toggleViewMode}
         >
-          <FontAwesomeIcon icon={faList} className="me-1" />
-          List View
-        </button>
-        <button 
-          className={`btn btn-outline-primary ${viewMode === 'grid' ? 'active' : ''}`} 
-          onClick={() => setViewMode('grid')}
-        >
-          <FontAwesomeIcon icon={faThLarge} className="me-1" />
-          Grid View
+          <FontAwesomeIcon icon={viewMode === 'list' ? faThLarge : faList} className="me-1" />
+          {viewMode === 'list' ? 'Grid View' : 'List View'}
         </button>
       </div>
 

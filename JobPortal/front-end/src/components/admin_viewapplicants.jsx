@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faTh, faList } from '@fortawesome/free-solid-svg-icons';
 
 function ApplicantJoblist({ currentListings }) {
-  const [viewMode, setViewMode] = useState('list'); // State to track view mode
+  const [viewMode, setViewMode] = useState('list'); // Track view mode
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
-  const navigate = useNavigate();
 
   const openModal = (listing) => {
     setModalData(listing);
@@ -16,44 +14,33 @@ function ApplicantJoblist({ currentListings }) {
 
   const closeModal = () => setIsModalOpen(false);
 
-  // Function to toggle view mode
+  // Toggle view mode between 'list' and 'grid'
   const toggleViewMode = () => {
     setViewMode((prevMode) => (prevMode === 'list' ? 'grid' : 'list'));
   };
 
-  const handleJobListing = (jobId) => {
-    navigate(`/seejoblisting/${jobId}`);
-  };
-
-  const handleSeeApplicants = (jobId) => {
-    navigate(`/seeapplicantlist/${jobId}`);
-  };
-
   return (
     <div>
-      {/* Top bar with view toggle button on the left */}
-      <div className="d-flex justify-content-between mb-3">
+      <div className="d-flex justify-content-start mb-3">
         <button className="btn btn-outline-secondary" onClick={toggleViewMode}>
           <FontAwesomeIcon icon={viewMode === 'list' ? faTh : faList} /> Toggle View
         </button>
       </div>
 
-      {/* Render based on view mode */}
       {viewMode === 'list' ? (
         <div className="table-responsive">
           <table className="table table-bordered">
             <thead>
               <tr>
-                <th>Company Name</th>
-                <th>Job Title</th>
-                <th>Contact Person</th>
-                <th>View Applicants</th>
-                <th>View Job Listing</th>
+                <th>Full Name</th>
+                <th>Hiring Stage</th>
+                <th>Applied Date</th>
+                <th>Application</th>
               </tr>
             </thead>
             <tbody>
               {currentListings.map((listing) => (
-                <tr key={listing.job_id}>
+                <tr key={listing.user_id}>
                   <td>
                     <img
                       src={listing.profile_picture_url}
@@ -61,24 +48,16 @@ function ApplicantJoblist({ currentListings }) {
                       className="me-2"
                       style={{ width: '50px', borderRadius: '50%' }}
                     />
-                    {listing.company_name}
+                    {listing.full_name}
                   </td>
-                  <td>{listing.job_title}</td>
-                  <td>{listing.contact_person}</td>
+                  <td>{listing.hiring_stage}</td>
+                  <td>{new Date(listing.date_applied).toLocaleDateString()}</td>
                   <td>
                     <button
-                      className="btn btn-primary"
-                      onClick={() => handleSeeApplicants(listing.job_id)}
+                      className="btn btn-outline-primary"
+                      onClick={() => openModal(listing)}
                     >
-                       <FontAwesomeIcon icon={faEye} /> View
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => handleJobListing(listing.job_id)}
-                    >
-                        <FontAwesomeIcon icon={faEye} /> View
+                      <FontAwesomeIcon icon={faEye} /> View
                     </button>
                   </td>
                 </tr>
@@ -89,7 +68,7 @@ function ApplicantJoblist({ currentListings }) {
       ) : (
         <div className="row">
           {currentListings.map((listing) => (
-            <div className="col-md-4 mb-4" key={listing.job_id}>
+            <div className="col-md-4 mb-4" key={listing.user_id}>
               <div className="card h-100">
                 <img
                   src={listing.profile_picture_url}
@@ -98,20 +77,14 @@ function ApplicantJoblist({ currentListings }) {
                   style={{ height: '200px', objectFit: 'cover' }}
                 />
                 <div className="card-body">
-                  <h5 className="card-title">{listing.company_name}</h5>
-                  <p className="card-text"><strong>Job Title:</strong> {listing.job_title}</p>
-                  <p className="card-text"><strong>Contact:</strong> {listing.contact_person}</p>
+                  <h5 className="card-title">{listing.full_name}</h5>
+                  <p><strong>Hiring Stage:</strong> {listing.hiring_stage}</p>
+                  <p><strong>Applied Date:</strong> {new Date(listing.date_applied).toLocaleDateString()}</p>
                   <button
-                    className="btn btn-outline-primary me-2"
-                    onClick={() => handleSeeApplicants(listing.job_id)}
+                    className="btn btn-outline-primary"
+                    onClick={() => openModal(listing)}
                   >
-                     <FontAwesomeIcon icon={faEye} /> Applicants
-                  </button>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => handleJobListing(listing.job_id)}
-                  >
-                      <FontAwesomeIcon icon={faEye} /> More
+                    <FontAwesomeIcon icon={faEye} /> View
                   </button>
                 </div>
               </div>
