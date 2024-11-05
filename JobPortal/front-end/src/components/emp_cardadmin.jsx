@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faPhone, faLink, faPen } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import ContactItem from './contactitem';
 import ProfilePictureModal from './profilepicturemodal';
 
@@ -14,13 +15,8 @@ const ApplicantCard = ({ applicant }) => {
   const [errorMessage, setErrorMessage] = useState('');  // State to hold error messages
   const [successMessage, setSuccessMessage] = useState(''); // State to hold success messages
 
-  const handleProfileUpdate = () => {
-    const userId = sessionStorage.getItem('user_id');
-    if (userId) {
-      navigate(`/e_profileupdate/${userId}`);
-    } else {
-      console.error('User ID not found in session storage');
-    }
+  const handleProfileUpdate = (userId) => {
+    navigate(`/admin_updateemp/${userId}`);
   };
 
   // Callback to update the profile picture

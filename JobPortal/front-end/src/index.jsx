@@ -42,6 +42,7 @@ import AdminJobs from './pages/Admin/admin_joblistings';
 import AdminUsers from './pages/Admin/admin_users';
 import AdminArchivedUsers from './pages/Admin/admin_archived_users';
 import AdminUnapprovedEmp from './pages/Admin/admin_unapprovedemp';
+import Adminupdateemp from './pages/Admin/admin_updateemp';
 
 import UserProfileJs from './pages/Admin/userjs_profile'; 
 import UserProfileEmp from './pages/Admin/useremp_profile';
@@ -100,6 +101,7 @@ root.render(
         <Route path="/jobpostingupdate/:job_id" element={<UpdateEmpjoblist />} />
         <Route path="/employerfiles" element={<UploadDocuments />} />
         <Route path="/empdashboard" element={<EmployerDashboard />} />
+        <Route path="/admin_updateemp/:userId" element={<Adminupdateemp />} />
       </Routes>
     </Router>
   </React.StrictMode>
