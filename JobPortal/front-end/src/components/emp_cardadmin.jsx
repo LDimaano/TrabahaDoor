@@ -14,7 +14,21 @@ const ApplicantCard = ({ applicant }) => {
   const [errorMessage, setErrorMessage] = useState('');  // State to hold error messages
   const [successMessage, setSuccessMessage] = useState(''); // State to hold success messages
 
-  
+  const handleProfileUpdate = () => {
+    const userId = sessionStorage.getItem('user_id');
+    if (userId) {
+      navigate(`/e_profileupdate/${userId}`);
+    } else {
+      console.error('User ID not found in session storage');
+    }
+  };
+
+  // Callback to update the profile picture
+  const handleUpdatePhoto = (newPhotoUrl) => {
+    setCurrentPhoto(newPhotoUrl); // Update the current photo state
+    setShowModal(false); // Close the modal
+  };
+
   // Handle account deletion with password confirmation
   const handleDeleteAccount = () => {
     const userId = sessionStorage.getItem('user_id');
@@ -54,6 +68,21 @@ const ApplicantCard = ({ applicant }) => {
             className="img-fluid rounded-circle"
             style={{ width: '150px', height: '150px' }}
           />
+          <button 
+            className="btn btn-light"
+            style={{
+              position: 'absolute',
+              bottom: '5px',
+              right: '5px',
+              borderRadius: '50%',
+              width: '30px',
+              height: '30px',
+              padding: '0',
+            }}
+            onClick={() => setShowModal(true)} // Open modal on button click
+          >
+            <FontAwesomeIcon icon={faPen} size="sm" /> {/* Use a pencil icon */}
+          </button>
         </div>
         <div>
           <h2 className="mb-0">{applicant.companyname}</h2>
@@ -67,6 +96,12 @@ const ApplicantCard = ({ applicant }) => {
         <ContactItem icon={<FontAwesomeIcon icon={faPhone} />} label="Phone" value={applicant.phone} />
         <ContactItem icon={<FontAwesomeIcon icon={faLink} />} label="Website" value={applicant.website} />
         <button 
+          className="btn btn-primary mt-3" 
+          onClick={handleProfileUpdate}
+        >
+          Update Profile
+        </button>
+        <button 
           className="btn btn-danger mt-3" 
           onClick={() => setShowDeleteModal(true)} // Show the delete confirmation modal
           style={{ width: '100%' }}
@@ -74,6 +109,9 @@ const ApplicantCard = ({ applicant }) => {
           Delete Account
         </button>
       </section>
+
+      {/* Render the modal if showModal is true */}
+      {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
       
       {showDeleteModal && (
         <div 
