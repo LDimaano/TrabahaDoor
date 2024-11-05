@@ -312,7 +312,7 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
 router.get('/fetchjobseeker-profileadmin/:user_id', async (req, res) => {
   try {
     const { user_id } = req.params;
-    console.log('Received userid for admin js update:', userId);
+    console.log('Received userid for admin js update:', user_id);
 
     // Validate userId
     if (!user_id || isNaN(parseInt(user_id))) {
