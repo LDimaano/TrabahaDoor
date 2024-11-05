@@ -49,7 +49,7 @@ function EmployerProfileCreation() {
   useEffect(() => {
     fetchIndustries();
     fetchEmployerProfile();
-  }, []);
+  }, );
 
   const handleUpdate = async () => {
     const profileData = {

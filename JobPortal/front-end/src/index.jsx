@@ -43,6 +43,7 @@ import AdminUsers from './pages/Admin/admin_users';
 import AdminArchivedUsers from './pages/Admin/admin_archived_users';
 import AdminUnapprovedEmp from './pages/Admin/admin_unapprovedemp';
 import Adminupdateemp from './pages/Admin/admin_updateemp';
+import Adminupdatejs from './pages/Admin/admin_updatejs';
 
 import UserProfileJs from './pages/Admin/userjs_profile'; 
 import UserProfileEmp from './pages/Admin/useremp_profile';
@@ -102,6 +103,7 @@ root.render(
         <Route path="/employerfiles" element={<UploadDocuments />} />
         <Route path="/empdashboard" element={<EmployerDashboard />} />
         <Route path="/admin_updateemp/:user_id" element={<Adminupdateemp />} />
+        <Route path="/admin_updatejs/:user_id" element={<Adminupdatejs />} />
       </Routes>
     </Router>
   </React.StrictMode>
