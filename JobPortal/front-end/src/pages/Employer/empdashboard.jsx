@@ -37,14 +37,11 @@ const EmployerDashboard = () => {
             <div className="col-lg-6 col-md-12">
               <ChartPlaceholder2 />
             </div>
-            <div className="col-lg-4 col-md-6">
+            <div className="col-lg-6 col-md-12">
               <ChartPlaceholder3 />
             </div>
-            <div className="col-lg-4 col-md-6">
+            <div className="col-lg-6 col-md-12">
               <ChartPlaceholder4 />
-            </div>
-            <div className="col-lg-4 col-md-12">
-              <ChartPlaceholder5 />
             </div>
           </div>
         </section>
