@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
 function ApplicantJoblist({ currentListings }) {
   const [showModal, setShowModal] = useState(false);
   const [selectedApplicationId, setSelectedApplicationId] = useState(null);
+  const [listings, setListings] = useState(currentListings);
+
+  useEffect(() => {
+    setListings(currentListings);
+  }, [currentListings]);
 
   const handleDeleteClick = (application_id) => {
     setSelectedApplicationId(application_id);
@@ -20,18 +25,18 @@ function ApplicantJoblist({ currentListings }) {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.ok) {
+        setListings(listings.filter(listing => listing.application_id !== selectedApplicationId));
       } else {
         console.error('Failed to delete the application');
       }
     } catch (error) {
       console.error('Error:', error);
     }
-  
+
     setShowModal(false);
   };
-  
 
   return (
     <>
@@ -40,14 +45,13 @@ function ApplicantJoblist({ currentListings }) {
           <thead>
             <tr>
               <th>Job Title</th>
-              <th>app_id</th>
               <th>Hiring Status</th>
               <th>Applied Date</th>
               <th>Delete</th>
             </tr>
           </thead>
           <tbody>
-            {currentListings.map((listing) => (
+            {listings.map((listing) => (
               <tr key={listing.application_id}>
                 <td>
                   <img
@@ -58,7 +62,6 @@ function ApplicantJoblist({ currentListings }) {
                   />
                   {listing.job_title}
                 </td>
-                <td>{listing.application_id}</td>
                 <td>{listing.status}</td>
                 <td>{new Date(listing.date_applied).toLocaleDateString()}</td>
                 <td>
