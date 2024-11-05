@@ -15,7 +15,7 @@ function ApplicantJoblist({ currentListings}) {
         </thead>
         <tbody>
           {currentListings.map((listing) => (
-            <tr key={listing.app_id}>
+            <tr key={listing.application_id}>
               <td>
                 <img
                   src={listing.profile_picture_url}
@@ -26,7 +26,7 @@ function ApplicantJoblist({ currentListings}) {
                 {listing.job_title}
               </td>
               <td>
-                {listing.app_id}
+                {listing.application_id}
               </td>
               <td>
                 {listing.status}
