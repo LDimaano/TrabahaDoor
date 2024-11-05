@@ -1,20 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
-function ApplicantJoblist({ initialListings }) {
-  const [currentListings, setCurrentListings] = useState(initialListings);
+function ApplicantJoblist({ currentListings }) {
   const [showModal, setShowModal] = useState(false);
   const [selectedApplicationId, setSelectedApplicationId] = useState(null);
-
-  const fetchCurrentListings = async () => {
-    try {
-      const response = await fetch('/api/currentListings');
-      const data = await response.json();
-      setCurrentListings(data);
-    } catch (error) {
-      console.error('Error fetching current listings:', error);
-    }
-  };
 
   const handleDeleteClick = (application_id) => {
     setSelectedApplicationId(application_id);
@@ -44,10 +33,6 @@ function ApplicantJoblist({ initialListings }) {
     setShowModal(false);
   };
   
-
-  useEffect(() => {
-    fetchCurrentListings();
-  }, []);
 
   return (
     <>
