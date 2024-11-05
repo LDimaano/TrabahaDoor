@@ -6,7 +6,7 @@ import { Modal, Button } from 'react-bootstrap';
 
 function ProfileEditForm() {
   const navigate = useNavigate();
-  const { userId } = useParams();
+  const { user_id } = useParams();
 
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -40,10 +40,10 @@ function ProfileEditForm() {
   ];
 
   useEffect(() => {
-    if (!userId) return;
+    if (user_id) return;
     const fetchProfileData = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/fetchjobseeker-profile/${userId}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/fetchjobseeker-profile/${user_id}`);
         if (!response.ok) throw new Error('Failed to fetch profile data');
         const data = await response.json();
 
@@ -156,7 +156,7 @@ function ProfileEditForm() {
     fetchJobTitles();
     fetchAddresses();
     fetchIndustries();
-  }, [userId]);
+  }, [user_id]);
 
   const handleSkillChange = (index, selectedOption) => {
     const newSkills = [...skills];
@@ -252,7 +252,7 @@ function ProfileEditForm() {
       console.log('Industry:', industry);
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/update-jobseeker-profile/${userId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/update-jobseeker-profile/${user_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
