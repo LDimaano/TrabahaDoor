@@ -400,6 +400,7 @@ router.get('/getUserJobListings', async (req, res) => {
     SELECT 
       jl.job_id,
       jl.user_id AS emp_id,
+      a.application_id,
       pp.profile_picture_url,
       jt.job_title,
       a.date_applied,
