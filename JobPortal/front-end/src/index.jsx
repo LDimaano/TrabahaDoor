@@ -101,7 +101,7 @@ root.render(
         <Route path="/jobpostingupdate/:job_id" element={<UpdateEmpjoblist />} />
         <Route path="/employerfiles" element={<UploadDocuments />} />
         <Route path="/empdashboard" element={<EmployerDashboard />} />
-        <Route path="/admin_updateemp/:userId" element={<Adminupdateemp />} />
+        <Route path="/admin_updateemp/:user_id" element={<Adminupdateemp />} />
       </Routes>
     </Router>
   </React.StrictMode>

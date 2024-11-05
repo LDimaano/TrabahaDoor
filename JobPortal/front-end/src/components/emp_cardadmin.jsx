@@ -13,9 +13,9 @@ const ApplicantCard = ({ applicant }) => {
   const [password, setPassword] = useState(''); // State to hold the entered password
   const [errorMessage, setErrorMessage] = useState('');  // State to hold error messages
   const [successMessage, setSuccessMessage] = useState(''); // State to hold success messages
-  const { userId } = useParams();
+  const { user_id } = useParams(); 
   const handleProfileUpdate = () => {
-    navigate(`/admin_updateemp/${userId}`);
+    navigate(`/admin_updateemp/${user_id}`);
   };
 
   // Callback to update the profile picture
