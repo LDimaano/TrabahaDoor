@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faPhone, faLink, faPen } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ContactItem from './contactitem';
 import ProfilePictureModal from './profilepicturemodal';
 
@@ -14,8 +13,8 @@ const ApplicantCard = ({ applicant }) => {
   const [password, setPassword] = useState(''); // State to hold the entered password
   const [errorMessage, setErrorMessage] = useState('');  // State to hold error messages
   const [successMessage, setSuccessMessage] = useState(''); // State to hold success messages
-
-  const handleProfileUpdate = (userId) => {
+  const { userId } = useParams();
+  const handleProfileUpdate = () => {
     navigate(`/admin_updateemp/${userId}`);
   };
 
