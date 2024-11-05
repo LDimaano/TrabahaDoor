@@ -24,7 +24,7 @@ function EmployerProfileCreation() {
 
   const fetchEmployerProfile = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/fetchemployer-profile/${user_id}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/fetchemployer-profileforadmin/${user_id}`);
       if (!response.ok) throw new Error('Failed to fetch employer profile');
       const data = await response.json();
 

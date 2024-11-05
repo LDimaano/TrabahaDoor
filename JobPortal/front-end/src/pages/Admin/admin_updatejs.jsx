@@ -40,7 +40,6 @@ function ProfileEditForm() {
   ];
 
   useEffect(() => {
-    if (user_id) return;
     const fetchProfileData = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/fetchjobseeker-profileadmin/${user_id}`);
