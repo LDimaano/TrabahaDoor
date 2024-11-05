@@ -22,7 +22,6 @@ function ApplicantJoblist({ currentListings }) {
       });
   
       if (response.ok) {
-        await fetchCurrentListings();
       } else {
         console.error('Failed to delete the application');
       }
