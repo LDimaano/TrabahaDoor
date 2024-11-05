@@ -258,7 +258,7 @@ function ProfileEditForm() {
       });
       if (!response.ok) throw new Error('Failed to update profile');
       console.log('Profile updated successfully!');
-      navigate(`/js_myprofile`);
+      navigate(`/admin_applicants`);
     } catch (error) {
       console.error('Error updating profile:', error);
       setError('Failed to update profile.');
