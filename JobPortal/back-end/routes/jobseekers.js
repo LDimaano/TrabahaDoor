@@ -422,6 +422,23 @@ router.get('/getUserJobListings', async (req, res) => {
   }
 });
 
+//delete applications
+router.delete('/deleteApplication', async (req, res) => {
+  const { application_id } = req.query; 
+  try {
+    await pool.query(
+      'DELETE FROM applications WHERE application_id = $1',
+      [application_id]
+    );
+    res.status(200).json({ message: 'Application deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting application:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 //get emp joblistings
 router.get('/jsempjoblistings/:userId', async (req, res) => {
   const { userId } = req.params;
