@@ -85,7 +85,7 @@ function EmployerProfileCreation() {
         console.log('Profile updated successfully:', data);
 
         setTimeout(() => {
-            navigate('/emp_myprofile');
+            navigate('/admin_employers');
         }, 1000);
     } catch (err) {
         console.error('Update failed:', err);
