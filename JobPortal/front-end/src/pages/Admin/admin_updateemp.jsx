@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 function EmployerProfileCreation() {
   const navigate = useNavigate();
-  const { userId } = useParams(); // Extract userId from URL params
+  const { user_id } = useParams(); 
   
   const [companyName, setCompanyName] = useState('');
   const [contactPerson, setContactPerson] = useState('');
@@ -24,7 +24,7 @@ function EmployerProfileCreation() {
 
   const fetchEmployerProfile = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/fetchemployer-profile/${userId}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/fetchemployer-profile/${user_id}`);
       if (!response.ok) throw new Error('Failed to fetch employer profile');
       const data = await response.json();
 
@@ -53,7 +53,7 @@ function EmployerProfileCreation() {
 
   const handleUpdate = async () => {
     const profileData = {
-        user_id: userId, // Ensure userId is defined correctly in your component
+        user_id: user_id, // Ensure userId is defined correctly in your component
         companyName,
         contactPerson,
         contactNumber,
@@ -67,7 +67,7 @@ function EmployerProfileCreation() {
 
     try {
         // Update request to the API
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/employer-profile/${userId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/employer-profile/${user_id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

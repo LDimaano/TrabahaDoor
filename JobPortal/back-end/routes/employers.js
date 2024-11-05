@@ -306,6 +306,55 @@ router.put('/employer-profile/:userId', async (req, res) => {
   }
 });
 
+//fetch employer profile for admin update
+router.get('/fetchemployer-profileforadmin/:user_id', async (req, res) => {
+  try {
+    // Log the userId to see if it's being passed correctly
+    const { user_id } = req.params;
+    console.log('Received user_id for admin update:', user_id);
+
+    // Continue with the query if userId is valid
+    if (!user_id || isNaN(parseInt(user_id))) {
+      return res.status(400).json({ error: 'Invalid or missing user_id' });
+    }
+
+    const EmployerData = await pool.query(`
+      SELECT 
+        e.*, 
+        i.industry_name, 
+        pp.profile_picture_url 
+      FROM emp_profiles e 
+      JOIN industries i ON e.industry_id = i.industry_id 
+      LEFT JOIN profilepictures pp ON e.user_id = pp.user_id 
+      WHERE e.user_id = $1
+    `, [user_id]);
+
+    console.log('Fetched update employer data:', EmployerData.rows);
+
+    const employer = EmployerData.rows[0] || {};
+
+    res.json({
+      employer: {
+        company_name: employer.company_name || 'Not Provided',
+        contact_person: employer.contact_person || 'Not Provided',
+        contact_number: employer.contact_number || 'Not Provided',
+        email: employer.email || 'Not Provided',
+        website: employer.website || 'Not Provided',
+        industry: employer.industry_id || 'Not Provided',
+        company_address: employer.company_address || 'Not Provided',
+        company_size: employer.company_size || 'Not Provided',
+        foundedYear: employer.founded_year || 'Not Provided',
+        description: employer.description || 'Not Provided',
+        profilePicture: employer.profile_picture_url || 'No Image',
+        industryname: employer.industry_name  || 'Not Provided',
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching employer data:', error.message);
+    res.status(500).send('Server error');
+  }
+});
+
 
 router.get('/employerprofile/:userId', async (req, res) => {
   try {
