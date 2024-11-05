@@ -223,8 +223,6 @@ function ProfileEditForm() {
   };
 
   const handleSubmit = async () => {
-    const user_id = sessionStorage.getItem('user_id');
-
     const profileData = {
       user_id,
       fullName,
