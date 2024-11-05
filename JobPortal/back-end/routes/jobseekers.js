@@ -307,6 +307,95 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
   }
 });
 
+//fetch info for admin update
+
+router.get('/fetchjobseeker-profileadmin/:user_id', async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    console.log('Received userid for admin js update:', userId);
+
+    // Validate userId
+    if (!user_id || isNaN(parseInt(user_id))) {
+      return res.status(400).json({ error: 'Invalid or missing userId' });
+    }
+
+    // Query to fetch job seeker profile data, skills, and job experiences
+    const jobSeekerData = await pool.query(`
+      SELECT 
+        js.*, 
+        i.industry_name, 
+        a.location
+      FROM job_seekers js
+      JOIN industries i ON js.industry_id = i.industry_id
+      JOIN address a ON js.address_id = a.address_id
+      WHERE js.user_id = $1
+    `, [user_id]);
+
+    console.log('Fetched job seeker data:', jobSeekerData.rows);
+
+    const jobSeeker = jobSeekerData.rows[0] || {};
+
+    // Query to fetch job experiences
+    const jobExperienceData = await pool.query(`
+      SELECT
+        je.*,
+        jt.job_title
+      FROM job_experience je
+      JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
+      WHERE je.user_id = $1
+    `, [user_id]);
+
+    console.log('Fetched job experience data:', jobExperienceData.rows);
+
+    const jobExperiences = jobExperienceData.rows.map(exp => ({
+      jobTitleId: exp.jobtitle_id || 'Not Provided',
+      jobTitleName: exp.job_title || 'Not Provided',
+      salary: exp.salary  || 'Not Provided',
+      companyName: exp.company || 'Not Provided',
+      location: exp.location  || 'Not Provided',
+      startDate: exp.start_date || 'Not Provided',
+      endDate: exp.end_date || 'Not Provided',
+      description: exp.description || 'Not Provided',
+    }));
+
+    // Query to fetch job seeker skills
+    const skillData = await pool.query(`
+      SELECT
+        s.skill_id, 
+        s.skill_name 
+        FROM js_skills jss
+        JOIN skills s ON jss.skill_id = s.skill_id
+      WHERE jss.user_id = $1
+    `, [user_id]);
+
+    const skills = skillData.rows.map(skill => ({
+      skillId: skill.skill_id || 'Not Provided',
+      skillName: skill.skill_name || 'Not Provided',
+    }));
+
+    console.log('Fetched skills:', skills);
+
+    res.json({
+      jobSeeker: {
+        fullName: jobSeeker.full_name || 'Not Provided',
+        phoneNumber: jobSeeker.phone_number || 'Not Provided',
+        dateOfBirth: jobSeeker.date_of_birth || 'Not Provided',
+        gender: jobSeeker.gender || 'Not Provided',
+        industry_id: jobSeeker.industry_id || 'Not Provided',
+        industry_name: jobSeeker.industry_name || 'Not Provided',
+        address_id: jobSeeker.address_id || 'Not Provided',
+        address_name: jobSeeker.location || 'Not Provided',
+        experiences: jobExperiences,
+        skills: skills, // Include skills in the response
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching job seeker data:', error.message);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 
 router.get('/job-seeker/:userId', async (req, res) => {
   try {
