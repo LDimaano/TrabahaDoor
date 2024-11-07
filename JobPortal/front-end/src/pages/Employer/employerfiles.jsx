@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
 
 const UploadDocuments = () => {
     const [showModal, setShowModal] = useState(false);
+    const [successMessage, setSuccessMessage] = useState(''); // State for success message
     const [formData, setFormData] = useState({
         sec_certificate: null,
         business_permit: null,
@@ -61,21 +62,25 @@ const UploadDocuments = () => {
     
             const data = await response.text(); // Wait for the response data
             console.log('Response data:', data); // Log the response data from the server
-            alert(data); // Show success message
+            
+            setSuccessMessage('Document submitted successfully!'); // Set success message
             setShowModal(false); // Close the modal
-            navigate('/login'); // Navigate to home_employer after submission
+            navigate('/login'); // Navigate to login page after submission
         } catch (error) {
             console.error('Error:', error); // Log the error
             alert('Upload failed. Please try again.');
             setShowModal(false); // Close the modal in case of error
         }
     };
-    
 
     return (
         <div className="container mt-5">
             <h1 className="text-center">Required Document Upload</h1>
             <h5 className="text-center">Ensure compliance by providing all required documents.</h5>
+            
+            {/* Success Message */}
+            {successMessage && <Alert variant="success">{successMessage}</Alert>}
+
             <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="sec_certificate">
                     <Form.Label>SEC Certificate:</Form.Label>
@@ -93,7 +98,7 @@ const UploadDocuments = () => {
                 </Form.Group>
 
                 <Form.Group controlId="poea_license">
-                    <Form.Label>POEA License:</Form.Label>
+                    <Form.Label>POEA/DOLE License:</Form.Label>
                     <Form.Control type="file" name="poea_license" onChange={handleFileChange} required />
                 </Form.Group>
 
