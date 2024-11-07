@@ -65,7 +65,11 @@ const UploadDocuments = () => {
             
             setSuccessMessage('Document submitted successfully!'); // Set success message
             setShowModal(false); // Close the modal
-            navigate('/login'); // Navigate to login page after submission
+            
+            // Delay navigation to show success message briefly
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000); // 2-second delay
         } catch (error) {
             console.error('Error:', error); // Log the error
             alert('Upload failed. Please try again.');
