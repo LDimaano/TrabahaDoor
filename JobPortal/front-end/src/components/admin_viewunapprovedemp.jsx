@@ -43,9 +43,10 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
           'Content-Type': 'application/json',
         },
       });
+  
       if (response.ok) {
         console.log('Employer approved successfully');
-        fetchUsers(); // Refresh the user listings
+        await fetchUsers(); // Immediately refresh the user listings after approval
       } else {
         const errorData = await response.json();
         console.error('Error:', errorData);
@@ -56,7 +57,7 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
       handleCloseApproveModal(); // Close the approve modal
     }
   };
-
+  
   return (
     <div>
       <div className="d-flex justify-content-end mb-3">
