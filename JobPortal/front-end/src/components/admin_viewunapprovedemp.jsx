@@ -97,7 +97,31 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
                       <FontAwesomeIcon icon={faEye} /> View Document
                     </Button>
                   </td>
-                  {/* Repeat for each certificate */}
+                  <td>
+                    <Button variant="link" onClick={() => handleShowModal(listing.business_permit)}>
+                      <FontAwesomeIcon icon={faEye} /> View Document
+                    </Button>
+                  </td>
+                  <td>
+                    <Button variant="link" onClick={() => handleShowModal(listing.bir_certificate)}>
+                      <FontAwesomeIcon icon={faEye} /> View Document
+                    </Button>
+                  </td>
+                  <td>
+                    <Button variant="link" onClick={() => handleShowModal(listing.poea_license)}>
+                      <FontAwesomeIcon icon={faEye} /> View Document
+                    </Button>
+                  </td>
+                  <td>
+                    <Button variant="link" onClick={() => handleShowModal(listing.private_recruitment_agency_license)}>
+                      <FontAwesomeIcon icon={faEye} /> View Document
+                    </Button>
+                  </td>
+                  <td>
+                    <Button variant="link" onClick={() => handleShowModal(listing.contract_sub_contractor_certificate)}>
+                      <FontAwesomeIcon icon={faEye} /> View Document
+                    </Button>
+                  </td>
                   <td>
                     <Button variant="danger" onClick={() => handleShowApproveModal(listing.user_id)}>
                       Approve Employer
