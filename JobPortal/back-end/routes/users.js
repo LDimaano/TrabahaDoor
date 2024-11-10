@@ -6,7 +6,8 @@ const pool = require('../db');
 // Registration endpoint
 const jwt = require('jsonwebtoken');
 const sendVerificationEmail = require('../mailer'); // Ensure you have this file set up
-const SECRET_KEY = process.env.JWT_SECRET_KEY; // Replace this with an environment variable for security
+const SECRET_KEY = process.env.JWT_SECRET_KEY; 
+// Replace this with an environment variable for security
 router.post('/submit-form', async (req, res) => {
   const { email, password, usertype } = req.body;
 
