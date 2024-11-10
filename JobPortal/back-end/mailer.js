@@ -21,6 +21,25 @@ const transporter = nodemailer.createTransport({
   dns: { preferIPv4: true }, 
 });
 
+const sendVerificationEmail = (recipientEmail, verificationLink) => {
+    const mailOptions = {
+      from: 'trabahadoor.sanjose@gmail.com',
+      to: recipientEmail, // This uses the `recipientEmail` passed to the function
+      subject: 'Email Verification',
+      html: `<p>Please verify your email by clicking the link below:</p>
+             <a href="${verificationLink}">Verify Email</a>`,
+    };
+  
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending email:', error);
+      } else {
+        console.log('Verification email sent:', info.response);
+      }
+    });
+  };
+  
+
 const generateEmailContent = (type, data) => {
     switch (type) {
         case 'application':
@@ -193,5 +212,8 @@ module.exports = {
     sendApplicationEmail,
     sendStatusUpdateEmail,
     sendContactNotificationEmail,
-    sendActivationEmail
+    sendActivationEmail,
+    sendVerificationEmail
 };
+  
+
