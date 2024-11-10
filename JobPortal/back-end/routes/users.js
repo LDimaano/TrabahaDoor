@@ -64,7 +64,7 @@ router.post('/submit-form', async (req, res) => {
 
 
 
-router.get('/api/verify-email', async (req, res) => {
+router.get('/verify-email', async (req, res) => {
   const { token } = req.query;
 
   try {

@@ -11,7 +11,7 @@ function EmailVerification() {
 
     if (token) {
       // Use fetch to send the token to the backend for verification
-      fetch(`/api/verify-email?token=${token}`, {
+      fetch(`${process.env.REACT_APP_API_URL}/api/verify-email?token=${token}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

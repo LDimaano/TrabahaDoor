@@ -54,7 +54,7 @@ import JsEmpJobListings from './pages/Jobseeker/js_empjoblisting';
 import UpdateEmpjoblist from './pages/Employer/jobpostingupdate';
 import UploadDocuments from './pages/Employer/employerfiles';
 
-import EmailVerification from './pages/Auth/verifiy';
+import EmailVerification from './pages/Auth/verify';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -106,7 +106,7 @@ root.render(
         <Route path="/empdashboard" element={<EmployerDashboard />} />
         <Route path="/admin_updateemp/:user_id" element={<Adminupdateemp />} />
         <Route path="/admin_updatejs/:user_id" element={<Adminupdatejs />} />
-        <Route path="/verify-email" element={<EmailVerification />} />
+        <Route path="/verify" element={<EmailVerification />} />
       </Routes>
     </Router>
   </React.StrictMode>

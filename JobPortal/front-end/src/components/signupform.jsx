@@ -78,7 +78,7 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
       const result = await response.json();
 
       if (response.ok) {
-        navigate('/verify-email'); // Navigate to the email verification page
+        navigate('/verify'); 
       } else {
         setError(result.error || 'Error submitting form.');
       }
