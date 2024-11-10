@@ -24,7 +24,7 @@ router.post('/submit-form', async (req, res) => {
     const userId = result.rows[0].user_id;
 
     // Generate a verification token
-    const token = jwt.sign({ email }, process.env.SECRET_KEY, { expiresIn: '1d' });
+    const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1d' });
     
     // Create a verification link
     const verificationLink = `https://trabahadoor-front-end.onrender.com/verify-email?token=${token}`;
