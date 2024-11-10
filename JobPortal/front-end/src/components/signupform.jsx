@@ -78,12 +78,7 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
       const result = await response.json();
 
       if (response.ok) {
-        setSuccessMessage('Registration successful! Please check your email to verify your account.');
-        // Optionally clear form fields
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
-        setUserType('jobseeker');
+        navigate('/verify-email'); // Navigate to the email verification page
       } else {
         setError(result.error || 'Error submitting form.');
       }
@@ -92,6 +87,7 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
       setError('Network error. Please try again.');
     }
   };
+
 
   return (
     <form className="col-lg-6 d-flex align-items-center" onSubmit={handleClick}>

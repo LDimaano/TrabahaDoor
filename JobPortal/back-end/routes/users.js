@@ -24,19 +24,19 @@ router.post('/submit-form', async (req, res) => {
     const userId = result.rows[0].user_id;
 
     // Generate a verification token
-    const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1d' });
+    const token = jwt.sign({ email }, process.env.SECRET_KEY, { expiresIn: '1d' });
     
     // Create a verification link
     const verificationLink = `https://trabahadoor-front-end.onrender.com/verify-email?token=${token}`;
 
     // Send the verification email
-    sendVerificationEmail(email, verificationLink); // Pass the `email` directly from `req.body`
+    sendVerificationEmail(email, verificationLink);
 
     // Set session data
     req.session.user = {
       user_id: userId,
       email,
-      usertype
+      usertype,
     };
 
     // Save the session and send a response
@@ -49,14 +49,19 @@ router.post('/submit-form', async (req, res) => {
       res.status(201).json({
         message: 'User registered successfully. Please check your email to verify your account.',
         userId,
-        user: { user_id: userId, email, usertype }
+        user: { user_id: userId, email, usertype },
       });
     });
   } catch (error) {
-    console.error('Error inserting data:', error);
-    res.status(500).json({ error: 'Email is already in use.' });
+    if (error.code === '23505') {  // PostgreSQL unique violation error code
+      res.status(409).json({ error: 'Email is already in use.' });
+    } else {
+      console.error('Error inserting data:', error);
+      res.status(500).json({ error: 'Server error. Please try again later.' });
+    }
   }
 });
+
 
 
 router.get('/api/verify-email', async (req, res) => {
