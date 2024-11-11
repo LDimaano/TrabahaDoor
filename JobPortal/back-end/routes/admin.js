@@ -577,6 +577,20 @@ router.put('/approve/:userId', async (req, res) => {
     }
 });
 
+router.get('/gender-distribution', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT gender, COUNT(*) AS count
+      FROM job_seekers
+      GROUP BY gender;
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching gender distribution data:", error);
+    res.status(500).json({ error: 'Database query error' });
+  }
+});
+
 
 
 

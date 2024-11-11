@@ -796,7 +796,7 @@ router.get('/industry-distribution/:userId', async (req, res) => {
 
     res.json(rows); // Send the data as JSON
   } catch (error) {
-    console.error('Error fetching gender distribution:', error);
+    console.error('Error fetching industry distribution:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -825,7 +825,7 @@ router.get('/location-distribution/:userId', async (req, res) => {
 
     res.json(rows); // Send the data as JSON
   } catch (error) {
-    console.error('Error fetching gender distribution:', error);
+    console.error('Error fetching location distribution:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -854,7 +854,7 @@ router.get('/applicants-distribution/:userId', async (req, res) => {
 
     res.json(rows); // Send the data as JSON
   } catch (error) {
-    console.error('Error fetching gender distribution:', error);
+    console.error('Error fetching applicants distribution:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
