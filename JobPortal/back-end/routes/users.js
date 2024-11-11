@@ -80,10 +80,13 @@ router.get('/verify-email', async (req, res) => {
 
     console.log('Decoded email:', email); // Debugging output
 
-    // Update the user's 'is_verified' status in the database
-    const [affectedRows] = await User.update({ is_verified: true }, { where: { email } });
+    // Use raw SQL to update the 'is_verified' status directly
+    const result = await pool.query(
+      'UPDATE users SET is_verified = true WHERE email = $1 RETURNING *',
+      [email] // Safely pass the email to avoid SQL injection
+    );
 
-    if (affectedRows === 0) {  // No rows affected, meaning no user was found with that email
+    if (result.rowCount === 0) {  // No rows affected, meaning no user was found with that email
       return res.status(404).json({ message: 'User not found' });
     }
 
