@@ -591,6 +591,30 @@ router.get('/gender-distribution', async (req, res) => {
   }
 });
 
+router.get('/location-distribution', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+      a.location,
+      COUNT(*) as count
+    FROM
+        joblistings jl 
+    JOIN
+        applications app ON jl.job_id = app.job_id
+    JOIN
+        job_seekers js ON app.user_id = js.user_id
+    JOIN
+        address a ON js.address_id = a.address_id
+    GROUP BY
+         a.location
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching location distribution data:", error);
+    res.status(500).json({ error: 'Database query error' });
+  }
+});
+
 
 
 

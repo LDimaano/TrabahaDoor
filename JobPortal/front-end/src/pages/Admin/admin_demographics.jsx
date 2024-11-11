@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SideBar from '../../components/admin_sidepanel';
 import GenderDistributionChart from '../../components/genderdistribution';
+import LocationDistributionChart from '../../components/jsaddress';
 
 function Demographics() {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
@@ -23,7 +24,7 @@ function Demographics() {
           <div className="col-lg-6 col-md-12 mb-3">
             <div className="bg-white border rounded shadow-sm p-3 h-100">
               <h5 className="mb-3">Jobseeker's Gender Distribution</h5>
-              <div style={{ height: '300px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
                 <GenderDistributionChart />
               </div>
             </div>
@@ -31,9 +32,9 @@ function Demographics() {
 
           <div className="col-lg-6 col-md-12 mb-3">
             <div className="bg-white border rounded shadow-sm p-3 h-100">
-              <h5 className="mb-3">Chart 2 Title</h5>
-              <div style={{ height: '300px' }}>
-                {/* <Chart2 /> */}
+              <h5 className="mb-3">Jobseeker's Address Distribution</h5>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
+                <LocationDistributionChart/>
               </div>
             </div>
           </div>
