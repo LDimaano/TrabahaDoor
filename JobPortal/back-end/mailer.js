@@ -20,24 +20,6 @@ const transporter = nodemailer.createTransport({
   debug: true,   // Enable debug output
   dns: { preferIPv4: true }, 
 });
-
-const sendVerificationEmail = (recipientEmail, verificationLink) => {
-    const mailOptions = {
-      from: 'trabahadoor.sanjose@gmail.com',
-      to: recipientEmail, // This uses the `recipientEmail` passed to the function
-      subject: 'Email Verification',
-      html: `<p>Please verify your email by clicking the link below:</p>
-             <a href="${verificationLink}">Verify Email</a>`,
-    };
-  
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error('Error sending email:', error);
-      } else {
-        console.log('Verification email sent:', info.response);
-      }
-    });
-  };
   
 
 const generateEmailContent = (type, data) => {
@@ -146,6 +128,25 @@ const generateEmailContent = (type, data) => {
                 `
                 
             };
+        case 'email_verification':
+            return {
+                subject: 'Email Verification',
+
+                text: `Please verify your email by clicking the link below:
+
+                ${verificationLink}
+                
+                Best regards,
+                The Trabahadoor Team`,
+                
+                html: `
+                <p>Please verify your email by clicking the link below:</p>
+                <a href="${verificationLink}">Verify Email</a>
+                
+                <p>Best regards,<br/>
+                <strong>The Trabahadoor Team</strong></p>
+                `
+            }
         default:
             return {};
     }
@@ -206,6 +207,21 @@ const sendActivationEmail = async (employerEmail) => {
         html: emailContent.html,
     });
 };
+
+const sendVerificationEmail = async (recipientEmail, verificationLink) => {
+    
+    const emailContent = generateEmailContent('email_verification', { verificationLink });
+
+    await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: recipientEmail,
+        subject: emailContent.subject,
+        text: emailContent.text,
+        html: emailContent.html,
+    })
+};
+
+
 
 
 module.exports = {
