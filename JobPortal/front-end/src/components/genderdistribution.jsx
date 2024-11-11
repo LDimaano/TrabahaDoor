@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -34,7 +36,42 @@ const GenderDistributionChart = () => {
     fetchData();
   }, []);
 
-  return chartData ? <Pie data={chartData} /> : <p>Loading...</p>;
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Gender Distribution Report', 14, 10);
+
+    // Define table columns and data
+    const tableColumn = ["Gender", "Count"];
+    const tableRows = chartData.labels.map((label, index) => [label, chartData.datasets[0].data[index]]);
+
+    // Add table to PDF
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    // Save the PDF
+    doc.save('Gender_Distribution_Report.pdf');
+  };
+
+  return (
+    <div style={{ position: 'relative' }}>
+      {chartData ? (
+        <>
+          <button 
+            onClick={downloadPDF} 
+            style={{ position: 'absolute', top: 0, right: 0 }}
+          >
+            Download PDF
+          </button>
+          <Pie data={chartData} />
+        </>
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
+  );
 };
 
 export default GenderDistributionChart;
