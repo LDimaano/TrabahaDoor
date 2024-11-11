@@ -66,16 +66,26 @@ router.post('/submit-form', async (req, res) => {
 
 router.get('/verify-email', async (req, res) => {
   console.log('Verify email endpoint hit'); // Debugging output
+
   const { token } = req.query;
 
+  if (!token) {
+    return res.status(400).json({ message: 'No token provided' });
+  }
+
   try {
+    // Verify the token and decode it
     const decoded = jwt.verify(token, SECRET_KEY);
     const email = decoded.email;
 
     console.log('Decoded email:', email); // Debugging output
 
-    // Update user's `isVerified` status in the database
-    await User.update({ isVerified: true }, { where: { email } });
+    // Update the user's 'is_verified' status in the database
+    const [affectedRows] = await User.update({ is_verified: true }, { where: { email } });
+
+    if (affectedRows === 0) {  // No rows affected, meaning no user was found with that email
+      return res.status(404).json({ message: 'User not found' });
+    }
 
     res.status(200).json({ message: 'Email verified successfully!' });
   } catch (error) {
@@ -83,7 +93,6 @@ router.get('/verify-email', async (req, res) => {
     res.status(400).json({ message: 'Invalid or expired token.' });
   }
 });
-
 
 // Login endpoint
 router.post('/login', async (req, res) => {
