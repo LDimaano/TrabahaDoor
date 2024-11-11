@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Header from '../../components/header_unverified'; // Import the Header component
+import Header from '../../components/header_unverified1'; // Import the Header component
 
 function EmailVerification() {
   const [message, setMessage] = useState('Verifying your email...');

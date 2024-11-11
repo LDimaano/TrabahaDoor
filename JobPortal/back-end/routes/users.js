@@ -136,26 +136,28 @@ router.post('/login', async (req, res) => {
 
       console.log('Session created:', req.session); // Log the session
       const redirectUrl = (() => {
+        const userId = sessionStorage.getItem('user_id');
+        
         if (user.usertype === 'jobseeker') {
-          if (user.is_complete === true && user.is_verified === true) {
-            return '/home_jobseeker';
-          } else if (user.is_complete === false && user.is_verified === true) {
-            return '/j_profilecreation';
-          } else if (user.is_complete === false && user.is_verified === false) {
-            return '/unverified-account';
-          }
+            if (user.is_complete === true && user.is_verified === true) {
+                return '/home_jobseeker';
+            } else if (user.is_complete === false && user.is_verified === true) {
+                return userId ? `/j_profilecreation/${userId}` : '/j_profilecreation';
+            } else if (user.is_complete === false && user.is_verified === false) {
+                return '/unverified-account';
+            }
         } else if (user.usertype === 'employer') {
-          if (user.is_complete === true && user.is_verified === true) {
-            return '/home_employer';
-          } else if (user.is_complete === false && user.is_verified === true) {
-            return '/e_profilecreation';
-          } else if (user.is_complete === false && user.is_verified === false) {
-            return '/unverified-account';
-          }
+            if (user.is_complete === true && user.is_verified === true) {
+                return '/home_employer';
+            } else if (user.is_complete === false && user.is_verified === true) {
+                return userId ? `/e_profilecreation/${userId}` : '/e_profilecreation';
+            } else if (user.is_complete === false && user.is_verified === false) {
+                return '/unverified-account';
+            }
         } else {
-          return '/admindashboard';
+            return '/admindashboard';
         }
-      })();
+    })();    
     
       res.json({
         redirectUrl,
