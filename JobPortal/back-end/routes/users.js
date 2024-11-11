@@ -135,38 +135,38 @@ router.post('/login', async (req, res) => {
       }
 
       console.log('Session created:', req.session); // Log the session
+
+      // Determine redirect URL based on user data
       const redirectUrl = (() => {
-        const userId = sessionStorage.getItem('user_id');
-        
         if (user.usertype === 'jobseeker') {
-            if (user.is_complete === true && user.is_verified === true) {
-                return '/home_jobseeker';
-            } else if (user.is_complete === false && user.is_verified === true) {
-                return userId ? `/j_profilecreation/${userId}` : '/j_profilecreation';
-            } else if (user.is_complete === false && user.is_verified === false) {
-                return '/unverified-account';
-            }
+          if (user.is_complete && user.is_verified) {
+            return '/home_jobseeker';
+          } else if (!user.is_complete && user.is_verified) {
+            return `/j_profilecreation/${user.user_id}`;
+          } else {
+            return '/unverified-account';
+          }
         } else if (user.usertype === 'employer') {
-            if (user.is_complete === true && user.is_verified === true) {
-                return '/home_employer';
-            } else if (user.is_complete === false && user.is_verified === true) {
-                return userId ? `/e_profilecreation/${userId}` : '/e_profilecreation';
-            } else if (user.is_complete === false && user.is_verified === false) {
-                return '/unverified-account';
-            }
+          if (user.is_complete && user.is_verified) {
+            return '/home_employer';
+          } else if (!user.is_complete && user.is_verified) {
+            return `/e_profilecreation/${user.user_id}`;
+          } else {
+            return '/unverified-account';
+          }
         } else {
-            return '/admindashboard';
+          return '/admindashboard';
         }
-    })();    
-    
+      })();
+
       res.json({
         redirectUrl,
         user: {
           user_id: user.user_id,
           email: user.email,
           usertype: user.usertype,
-          approve: user.approve // Include approve in response
-        }
+          approve: user.approve, // Include approve in response
+        },
       });
     });
   } catch (err) {
