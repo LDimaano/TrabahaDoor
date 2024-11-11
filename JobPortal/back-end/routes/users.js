@@ -26,6 +26,7 @@ router.post('/submit-form', async (req, res) => {
     // Generate a verification token
     const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1d' });
 
+    console.log(`the token for verification: ${token}`);
     // Create a verification link
     const verificationLink = `https://trabahadoor-front-end.onrender.com/verify-email?token=${token}`;
 
@@ -79,7 +80,6 @@ router.get('/verify-email', async (req, res) => {
     res.status(400).json({ message: 'Invalid or expired token.' });
   }
 });
-
 
 
 // Login endpoint
