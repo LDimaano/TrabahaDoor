@@ -21,7 +21,7 @@ const ProfessionalInfo = ({ data }) => (
 
                 {/* Display Salary Range if available */}
                 {exp.salaryrange && (
-                  <p><strong>Salary Range:</strong> {exp.salaryrange || 'Not Provided'}</p>
+                  <p><strong>Salary Range:</strong> {exp.salary || 'Not Provided'}</p>
                 )}
                 <hr />
               </li>
