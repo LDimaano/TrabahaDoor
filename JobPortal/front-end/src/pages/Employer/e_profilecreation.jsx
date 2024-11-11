@@ -103,7 +103,7 @@ function EmployerProfileCreation() {
       console.log('Profile created successfully:', data);
 
       setTimeout(() => {
-        navigate('/employerfiles');
+        navigate(`/employerfiles/${user_id}`);
       }, 500);
     } catch (err) {
       console.error('Submission failed:', err);

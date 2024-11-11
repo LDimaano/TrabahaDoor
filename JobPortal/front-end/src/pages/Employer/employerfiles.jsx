@@ -16,7 +16,7 @@ const UploadDocuments = () => {
     });
 
     const navigate = useNavigate();
-    const userId = sessionStorage.getItem('userId'); // Get user ID from session storage
+    const user_id = window.location.pathname.split('/')[2]; // Get user ID from session storage
 
     // Handle file change event
     const handleFileChange = (e) => {
@@ -45,11 +45,11 @@ const UploadDocuments = () => {
             }
     
             // Append the user ID
-            form.append('userId', userId);
-            console.log(`User ID: ${userId}`); // Log the user ID
+            form.append('user_id', user_id);
+            console.log(` user_id document file upload: ${user_id}`); // Log the user ID
     
             // Send the form data to the server using await
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/upload`, { // Full backend URL
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/upload/${user_id}`, { // Full backend URL
                 method: 'POST',
                 body: form
             });

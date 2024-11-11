@@ -680,9 +680,9 @@ router.delete('/delete', async (req, res) => {
 });
 
 
-router.post('/upload', uploadDocuments, async (req, res) => {
+router.post('/upload/:user_id', uploadDocuments, async (req, res) => {
   try {
-    const user_id = req.body.userId;
+    const user_id = req.params.userId;
 
     if (!user_id) {
       return res.status(400).send('User ID is required');
