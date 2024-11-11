@@ -62,7 +62,7 @@ const BarChart = () => {
     });
 
     // Save the PDF
-    doc.save('Jobseeker_Industry_Distribution_Report.pdf');
+    doc.save('Employer_Industry_Distribution_Report.pdf');
   };
 
   return (

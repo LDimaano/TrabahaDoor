@@ -66,7 +66,7 @@ const BarChart = () => {
   };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', height: '100%', width: '100%' }}>
       <FaDownload 
         onClick={downloadPDF} 
         style={{
@@ -82,12 +82,14 @@ const BarChart = () => {
         data={chartData} 
         options={{
           maintainAspectRatio: false,
+          responsive: true,
           scales: {
             y: {
               beginAtZero: true,
             },
           },
         }} 
+        style={{ height: '100%', width: '100%' }}
       />
     </div>
   );
