@@ -147,13 +147,19 @@ router.post('/login', async (req, res) => {
             return '/unverified-account';
           }
         } else if (user.usertype === 'employer') {
-          if (user.is_complete && user.is_verified) {
-            return '/home_employer';
-          } else if (!user.is_complete && user.is_verified) {
-            return `/e_profilecreation/${user.user_id}`;
+          if (user.is_verified) {
+            if (user.is_complete) {
+              if (user.approve === 'yes') {
+                return '/home_employer';
+              } else if (user.approve === 'no') {
+                return '/waitapproval';
+              }
+            } else {
+              return `/e_profilecreation/${user.user_id}`;
+            }
           } else {
             return '/unverified-account';
-          }
+          }        
         } else {
           return '/admindashboard';
         }
