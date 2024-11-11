@@ -9,7 +9,7 @@ const SideBar = () => {
   const menuItems = [
     { icon: faTachometerAlt, caption: "Dashboard", link: "/admindashboard" },
     { icon: faChartPie, caption: "Demographics", link: "/admin_demographics" }, // New menu item for Demographics
-    { icon: faBan, caption: "Pending Confirmation", link: "/admin_unapprovedemp" },
+    { icon: faHourglassHalf, caption: "Pending Confirmation", link: "/admin_unapprovedemp" },
     { icon: faBuilding, caption: "Approved Employers", link: "/admin_employers" },
     { icon: faUsers, caption: "Job Seekers", link: "/admin_applicants", active: true },
     { icon: faBriefcase, caption: "Job Listing", link: "/admin_joblistings" },
