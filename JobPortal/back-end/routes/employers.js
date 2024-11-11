@@ -120,7 +120,7 @@ router.post('/employer-profile', async (req, res) => {
   }
 
   try {
-    // Insert the data into the profiles table and return the inserted row
+    // Insert the data into the emp_profiles table and return the inserted row
     const newEmpProfile = await pool.query(
       `INSERT INTO emp_profiles (
         user_id, company_name, contact_person, contact_number, website, industry_id,
@@ -140,6 +140,14 @@ router.post('/employer-profile', async (req, res) => {
         foundedYear,
         description,
       ]
+    );
+
+    // Update the users table to set 'is_complete' to true for the given user_id
+    await pool.query(
+      `UPDATE users
+       SET is_complete = true
+       WHERE user_id = $1`,
+      [user_id]
     );
 
     // Send the newly created profile back as the response

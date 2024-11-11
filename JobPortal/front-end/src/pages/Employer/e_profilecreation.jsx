@@ -28,8 +28,8 @@ function EmployerProfileCreation() {
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
-    const userId = sessionStorage.getItem('userId');
-    console.log('User ID:', userId);
+
+    const userId = window.location.pathname.split('/')[2];
 
     if (!file) {
       console.error('No file selected');
@@ -59,8 +59,7 @@ function EmployerProfileCreation() {
   };
 
   const handleSubmit = async () => {
-    const user_id = sessionStorage.getItem('userId');
-    console.log('Retrieved user_id:', user_id);
+    const user_id = window.location.pathname.split('/')[2];
 
     if (!photo) {
       await handleFileChange({ target: { files: [document.getElementById('photo').files[0]] } });

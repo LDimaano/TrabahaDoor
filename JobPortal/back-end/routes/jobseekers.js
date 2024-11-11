@@ -62,6 +62,14 @@ router.post('/profile', async (req, res) => {
       );
     }
 
+    // Update the users table to set 'is_complete' to true for the given user_id
+    await pool.query(
+      `UPDATE users
+       SET is_complete = true
+       WHERE user_id = $1`,
+      [user_id]
+    );
+
     // Send a successful response
     res.json({ message: 'Profile created successfully', profileId });
   } catch (err) {
@@ -70,6 +78,7 @@ router.post('/profile', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
 
 
 router.get('/user/skills/:userId', async (req, res) => {
