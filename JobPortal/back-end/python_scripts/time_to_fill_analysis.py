@@ -19,10 +19,15 @@ def calculate_time_to_fill(data, scale_factor=10):
 
     # Average the days to fill for each industry and scale the result
     industry_avg_time_to_fill = {
-        industry: (sum(days) // len(days)) * scale_factor for industry, days in industry_time_to_fill.items()
+        industry: sum(days) // len(days) for industry, days in industry_time_to_fill.items()
     }
 
-    return industry_avg_time_to_fill
+    # Apply scaling factor to the average time to fill values
+    scaled_time_to_fill = {
+        industry: avg_time * scale_factor for industry, avg_time in industry_avg_time_to_fill.items()
+    }
+
+    return scaled_time_to_fill
 
 if __name__ == "__main__":
     try:
