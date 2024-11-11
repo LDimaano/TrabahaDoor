@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async'; // Import Helmet
+import { Helmet } from 'react-helmet'; // Import Helmet
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding, faArchive, faHourglassHalf, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom'; // Assuming you are using react-router-dom for navigation
