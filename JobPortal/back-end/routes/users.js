@@ -137,15 +137,26 @@ router.post('/login', async (req, res) => {
       console.log('Session created:', req.session); // Log the session
       const redirectUrl = (() => {
         if (user.usertype === 'jobseeker') {
-          return '/home_jobseeker';
+          if (user.is_complete === true && user.is_verified === true) {
+            return '/home_jobseeker';
+          } else if (user.is_complete === false && user.is_verified === true) {
+            return '/j_profilecreation';
+          } else if (user.is_complete === false && user.is_verified === false) {
+            return '/unverified-account';
+          }
         } else if (user.usertype === 'employer') {
-          // Check the approve status for employers
-          return user.approve === 'no' ? '/waitapproval' : '/home_employer';
+          if (user.is_complete === true && user.is_verified === true) {
+            return '/home_employer';
+          } else if (user.is_complete === false && user.is_verified === true) {
+            return '/e_profilecreation';
+          } else if (user.is_complete === false && user.is_verified === false) {
+            return '/unverified-account';
+          }
         } else {
           return '/admindashboard';
         }
-      })();    
-
+      })();
+    
       res.json({
         redirectUrl,
         user: {

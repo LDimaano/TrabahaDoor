@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '../../components/empheader'; // Import the Header component
+import Header from '../../components/header_unverified'; // Import the Header component
 
 function EmailCheckReminder() {
   return (
