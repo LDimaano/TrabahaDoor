@@ -355,38 +355,58 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(400).json({ error: 'Job titles must be an array.' });
   }
 
-  // Validate the salaryRange input (if provided)
-  const salaryRange = req.body.salaryRange || null;
-  if (salaryRange && (typeof salaryRange !== 'string' || !/^\d+-\d+$/.test(salaryRange))) {
-    return res.status(400).json({ error: 'Salary range must be a valid string in the format "min-max".' });
-  }
-
   const jobSeekerSkills = req.body.skills;
-  const jobSeekerIndustry = req.body.industry;  // Use jobseeker's industry
-  const jobSeekerJobTitles = req.body.jobTitles; // Use job titles
+  const jobSeekerIndustry = req.body.industry;
+  const jobSeekerJobTitles = req.body.jobTitles;
+  const jobSeekerSalary = req.body.salaryRange || null;
+
+  // Check if the salary range is valid
+  if (salaryRange && typeof salaryRange === 'string') {
+    // Handle descriptive salary range like "Above 10000"
+    if (/^Above \d+$/.test(salaryRange)) {
+      const minSalary = parseInt(salaryRange.split(' ')[1]);
+      console.log('Above Salary:', minSalary);
+      // Logic to handle "Above X" salary range
+    }
+    // Handle descriptive salary range like "Below 50000"
+    else if (/^Below \d+$/.test(salaryRange)) {
+      const maxSalary = parseInt(salaryRange.split(' ')[1]);
+      console.log('Below Salary:', maxSalary);
+      // Logic to handle "Below X" salary range
+    }
+    // Handle range salary like "10000-50000"
+    else if (/^\d+-\d+$/.test(salaryRange)) {
+      const [minSalary, maxSalary] = salaryRange.split('-').map(Number);
+      console.log('Salary Range:', minSalary, '-', maxSalary);
+      // Logic to handle "min-max" salary range
+    } else {
+      return res.status(400).json({ error: 'Salary range format is invalid.' });
+    }
+  }
 
   try {
     // Fetch job data
-    const jobData = await getJobData(); 
+    const jobData = await getJobData();
 
     // Log job data and jobseeker details for debugging
     console.log('Job Data:', JSON.stringify(jobData, null, 2));
     console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
     console.log('Job Seeker Industry:', jobSeekerIndustry);
-    console.log('Job Seeker Job Titles:', JSON.stringify(jobSeekerJobTitles, null, 2)); // Log job titles
+    console.log('Job Seeker Job Titles:', JSON.stringify(jobSeekerJobTitles, null, 2));
+    console.log('Salary Range:', salaryRange);
 
     // Spawn the Python process to generate recommendations
     const pythonProcess = spawn('python', [
-      'python_scripts/recommendations.py', 
-      JSON.stringify(jobData), 
-      JSON.stringify(jobSeekerSkills), 
-      jobSeekerIndustry,  // Pass jobseeker's industry to Python
-      JSON.stringify(jobSeekerJobTitles), // Pass job titles to Python
-      salaryRange // Pass salary range to Python (if provided)
+      'python_scripts/recommendations.py',
+      JSON.stringify(jobData),
+      JSON.stringify(jobSeekerSkills),
+      jobSeekerIndustry,
+      JSON.stringify(jobSeekerJobTitles),
+      JSON.stringify(jobSeekerSalary)// Pass salaryRange as it is
     ]);
 
     let pythonOutput = '';
-    
+
     // Collect output from Python process
     pythonProcess.stdout.on('data', (data) => {
       pythonOutput += data.toString();
@@ -416,6 +436,7 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(500).send('An error occurred while fetching job data.');
   }
 });
+
 
 // Function to get job postings
 // Function to get job postings for a user
