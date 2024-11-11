@@ -5,9 +5,9 @@ const pool = require('../db');
 
 // Registration endpoint
 const jwt = require('jsonwebtoken');
-const sendVerificationEmail = require('../mailer'); // Ensure you have this file set up
-const SECRET_KEY = process.env.JWT_SECRET_KEY; 
-// Replace this with an environment variable for security
+const sendVerificationEmail = require('../mailer'); // Ensure the correct path to mailer.js
+const SECRET_KEY = process.env.JWT_SECRET_KEY;
+
 router.post('/submit-form', async (req, res) => {
   const { email, password, usertype } = req.body;
 
@@ -25,12 +25,12 @@ router.post('/submit-form', async (req, res) => {
 
     // Generate a verification token
     const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1d' });
-    
+
     // Create a verification link
     const verificationLink = `https://trabahadoor-front-end.onrender.com/verify-email?token=${token}`;
 
     // Send the verification email
-    sendVerificationEmail(email, verificationLink);
+    await sendVerificationEmail(email, verificationLink); // Await the async function call
 
     // Set session data
     req.session.user = {

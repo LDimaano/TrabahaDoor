@@ -151,6 +151,20 @@ const generateEmailContent = (type, data) => {
             return {};
     }
 };
+
+const generateEmailContentVerify = (type, params) => {
+    switch (type) {
+      case 'email_verification':
+        return {
+          subject: 'Email Verification',
+          text: `Please verify your email by clicking the following link: ${params.verificationLink}`,
+          html: `<p>Please verify your email by clicking the following link: <a href="${params.verificationLink}">${params.verificationLink}</a></p>`,
+        };
+      default:
+        return {};
+    }
+  };
+
 const sendApplicationEmail = async (employerEmail, fullName, jobTitle) => {
     // Create the data object with both full_name and job_title
     const data = {
@@ -209,19 +223,16 @@ const sendActivationEmail = async (employerEmail) => {
 };
 
 const sendVerificationEmail = async (recipientEmail, verificationLink) => {
-    
-    const emailContent = generateEmailContent('email_verification', { verificationLink });
-
+    const emailContent = generateEmailContentVerify('email_verification', { verificationLink });
+  
     await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: recipientEmail,
-        subject: emailContent.subject,
-        text: emailContent.text,
-        html: emailContent.html,
-    })
+      from: process.env.EMAIL_USER,
+      to: recipientEmail,
+      subject: emailContent.subject,
+      text: emailContent.text,
+      html: emailContent.html,
+    });
 };
-
-
 
 
 module.exports = {
