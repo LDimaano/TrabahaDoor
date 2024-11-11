@@ -355,6 +355,12 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(400).json({ error: 'Job titles must be an array.' });
   }
 
+  // Validate the salaryRange input (if provided)
+  const salaryRange = req.body.salaryRange || null;
+  if (salaryRange && (typeof salaryRange !== 'string' || !/^\d+-\d+$/.test(salaryRange))) {
+    return res.status(400).json({ error: 'Salary range must be a valid string in the format "min-max".' });
+  }
+
   const jobSeekerSkills = req.body.skills;
   const jobSeekerIndustry = req.body.industry;  // Use jobseeker's industry
   const jobSeekerJobTitles = req.body.jobTitles; // Use job titles
@@ -375,7 +381,8 @@ app.post('/api/recommend', async (req, res) => {
       JSON.stringify(jobData), 
       JSON.stringify(jobSeekerSkills), 
       jobSeekerIndustry,  // Pass jobseeker's industry to Python
-      JSON.stringify(jobSeekerJobTitles) // Pass job titles to Python
+      JSON.stringify(jobSeekerJobTitles), // Pass job titles to Python
+      salaryRange // Pass salary range to Python (if provided)
     ]);
 
     let pythonOutput = '';
@@ -409,7 +416,6 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(500).send('An error occurred while fetching job data.');
   }
 });
-
 
 // Function to get job postings
 // Function to get job postings for a user
