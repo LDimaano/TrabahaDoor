@@ -68,8 +68,8 @@ root.render(
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/landingpage" element={<LandingPage />} />
-        <Route path="/j_profilecreation" element={<ProfileCreation />} />
-        <Route path="/e_profilecreation" element={<EmployerProfileCreation />} />
+        <Route path="/j_profilecreation/:user_id" element={<ProfileCreation />} />
+        <Route path="/e_profilecreation/:user_id" element={<EmployerProfileCreation />} />
         <Route path="/jobposting" element={<JobPostingForm />} />
         <Route path="/home_jobseeker" element={<HomeJobseeker />} />
         <Route path="/jobdescription/:jobId" element={<Jobdescription />} />
