@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { io } from 'socket.io-client';
+import React from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -29,11 +27,6 @@ function Header() {
   return (
     <nav className="navbar navbar-expand-lg bg-transparent">
       <div className="container d-flex justify-content-between align-items-center">
-      <button 
-        className="navbar-brand d-flex align-items-center btn btn-link" 
-        onClick={handleHomeClick} 
-        style={{ textDecoration: 'none' }}
-      >
         <img
           src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
           alt="TrabahaDoor Logo"
@@ -42,7 +35,6 @@ function Header() {
           className="me-2"
         />
         <span className="fw-bold">TrabahaDoor</span>
-      </button>
         <button
           className="navbar-toggler"
           type="button"
