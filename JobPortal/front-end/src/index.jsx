@@ -103,7 +103,7 @@ root.render(
         <Route path="/js_profile_edit/:userId" element={<ProfileEditForm />} />
         <Route path="/e_profileupdate/:userId" element={<UpdateEmpProfile />} />
         <Route path="/jobpostingupdate/:job_id" element={<UpdateEmpjoblist />} />
-        <Route path="/employerfiles/user_id" element={<UploadDocuments />} />
+        <Route path="/employerfiles/:user_id" element={<UploadDocuments />} />
         <Route path="/empdashboard" element={<EmployerDashboard />} />
         <Route path="/admin_updateemp/:user_id" element={<Adminupdateemp />} />
         <Route path="/admin_updatejs/:user_id" element={<Adminupdatejs />} />
