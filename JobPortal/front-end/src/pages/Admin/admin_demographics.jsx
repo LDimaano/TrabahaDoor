@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import SideBar from '../../components/admin_sidepanel';
 import GenderDistributionChart from '../../components/genderdistribution';
 import LocationDistributionChart from '../../components/jsaddress';
+import JsIndustryDistributionChart from '../../components/jsindustry';
+import EmpIndustryDistributionChart from '../../components/empindustry';
 
 function Demographics() {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
@@ -34,7 +36,7 @@ function Demographics() {
             <div className="bg-white border rounded shadow-sm p-3 h-100">
               <h5 className="mb-3">Jobseeker's Address Distribution</h5>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
-                <LocationDistributionChart/>
+                <LocationDistributionChart />
               </div>
             </div>
           </div>
@@ -43,9 +45,20 @@ function Demographics() {
         <div className="row gx-2 mb-4">
           <div className="col-lg-12 mb-3">
             <div className="bg-white border rounded shadow-sm p-3 h-100">
-              <h5 className="mb-3">Demographics Overview</h5>
+              <h5 className="mb-3">Jobseeker's Industry Distribution</h5>
               <div style={{ height: '400px' }}>
-                {/* <DemographicsOverviewChart /> */}
+                <JsIndustryDistributionChart/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="row gx-2 mb-4">
+          <div className="col-lg-12 mb-3">
+            <div className="bg-white border rounded shadow-sm p-3 h-100">
+              <h5 className="mb-3">Employer's Industry Distribution</h5>
+              <div style={{ height: '400px' }}>
+                <EmpIndustryDistributionChart/>
               </div>
             </div>
           </div>

@@ -594,19 +594,17 @@ router.get('/gender-distribution', async (req, res) => {
 router.get('/location-distribution', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT
+    SELECT
       a.location,
       COUNT(*) as count
     FROM
-        joblistings jl 
+      job_seekers js
     JOIN
-        applications app ON jl.job_id = app.job_id
-    JOIN
-        job_seekers js ON app.user_id = js.user_id
-    JOIN
-        address a ON js.address_id = a.address_id
+      address a ON js.address_id = a.address_id
     GROUP BY
-         a.location
+      a.location
+	  Order by
+	    count desc
     `);
     res.json(result.rows);
   } catch (error) {
@@ -615,6 +613,49 @@ router.get('/location-distribution', async (req, res) => {
   }
 });
 
+router.get('/jsindustry-distribution', async (req, res) => {
+  try {
+    const result = await pool.query(`
+    SELECT
+      i.industry_name,
+      COUNT(*) as count
+    FROM
+      job_seekers js
+    JOIN
+      industries i ON js.industry_id = i.industry_id
+    GROUP BY
+      i.industry_name
+	  Order BY
+	    count desc
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching jobseeker industry distribution data:", error);
+    res.status(500).json({ error: 'Database query error' });
+  }
+});
+
+router.get('/empindustry-distribution', async (req, res) => {
+  try {
+    const result = await pool.query(`
+    SELECT
+      i.industry_name,
+      COUNT(*) as count
+    FROM
+      emp_profiles e
+    JOIN
+      industries i ON e.industry_id = i.industry_id
+    GROUP BY
+      i.industry_name
+	  Order BY
+	    count desc
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching employer industry distribution data:", error);
+    res.status(500).json({ error: 'Database query error' });
+  }
+});
 
 
 

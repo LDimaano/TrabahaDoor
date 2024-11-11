@@ -774,9 +774,9 @@ router.get('/industry-distribution/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
     const query = `
-          SELECT
+    SELECT
       i.industry_name,
-        COUNT(*) as count
+      COUNT(*) as count
     FROM
         joblistings jl 
     JOIN
@@ -789,9 +789,11 @@ router.get('/industry-distribution/:userId', async (req, res) => {
         jl.user_id = $1
     GROUP BY
         js.industry_id,
-      i.industry_name
+        i.industry_name
+	  ORDER BY
+		  count desc
     `;
-    
+
     const { rows } = await pool.query(query, [userId]);
 
     res.json(rows); // Send the data as JSON
@@ -807,19 +809,21 @@ router.get('/location-distribution/:userId', async (req, res) => {
     const query = `
     SELECT
       a.location,
-        COUNT(*) as count
+      COUNT(*) as count
     FROM
-        joblistings jl 
+      joblistings jl 
     JOIN
-        applications app ON jl.job_id = app.job_id
+      applications app ON jl.job_id = app.job_id
     JOIN
-        job_seekers js ON app.user_id = js.user_id
+      job_seekers js ON app.user_id = js.user_id
     JOIN
       address a ON js.address_id = a.address_id
     WHERE
-        jl.user_id = $1
+      jl.user_id = $1
     GROUP BY
       a.location
+	  ORDER BY
+	    count desc
     `;
     const { rows } = await pool.query(query, [userId]);
 
@@ -836,19 +840,21 @@ router.get('/applicants-distribution/:userId', async (req, res) => {
     const query = `
     SELECT
       jt.job_title,
-        COUNT(*) as count
+      COUNT(*) as count
     FROM
-        joblistings jl 
+      joblistings jl 
     JOIN
-        applications app ON jl.job_id = app.job_id
+      applications app ON jl.job_id = app.job_id
     JOIN
-        job_seekers js ON app.user_id = js.user_id
+      job_seekers js ON app.user_id = js.user_id
     JOIN
       job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
     WHERE
-        jl.user_id = $1
+      jl.user_id = $1
     GROUP BY
       jt.job_title
+	  ORDER BY 
+		  count desc
     `;
     const { rows } = await pool.query(query, [userId]);
 

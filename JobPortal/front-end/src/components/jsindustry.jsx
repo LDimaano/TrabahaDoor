@@ -11,7 +11,7 @@ const BarChart = () => {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [{
-      label: 'Address of Jobseekers',
+      label: 'Industries of Jobseekers',
       data: [],
       backgroundColor: 'rgba(75, 192, 192, 0.6)',
       borderColor: 'rgba(75, 192, 192, 1)',
@@ -22,14 +22,14 @@ const BarChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/location-distribution`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/jsindustry-distribution`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const location = await response.json(); 
+        const jsindustry = await response.json(); 
 
-        const labels = location.map(location => location.location);
-        const counts = location.map(location => location.count);
+        const labels = jsindustry.map(jsindustry => jsindustry.industry_name);
+        const counts = jsindustry.map(jsindustry => jsindustry.count);
 
         setChartData({
           labels,
@@ -62,7 +62,7 @@ const BarChart = () => {
     });
 
     // Save the PDF
-    doc.save('Location_Distribution_Report.pdf');
+    doc.save('Jobseeker_Industry_Distribution_Report.pdf');
   };
 
   return (

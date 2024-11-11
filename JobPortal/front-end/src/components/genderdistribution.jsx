@@ -3,6 +3,7 @@ import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { FaDownload } from 'react-icons/fa';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -59,12 +60,17 @@ const GenderDistributionChart = () => {
     <div style={{ position: 'relative' }}>
       {chartData ? (
         <>
-          <button 
+          <FaDownload 
             onClick={downloadPDF} 
-            style={{ position: 'absolute', top: 0, right: 0 }}
-          >
-            Download PDF
-          </button>
+            style={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              cursor: 'pointer',
+              fontSize: '0.8em', 
+              color: '#007bff',  
+            }} 
+          />
           <Pie data={chartData} />
         </>
       ) : (
