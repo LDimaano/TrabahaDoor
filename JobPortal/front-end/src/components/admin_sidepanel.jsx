@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding, faArchive, faBan, faChartPie } from '@fortawesome/free-solid-svg-icons';
+import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding, faArchive, faHourglassHalf, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom'; // Assuming you are using react-router-dom for navigation
 
 const SideBar = () => {
@@ -8,7 +9,7 @@ const SideBar = () => {
   const navigate = useNavigate();
   const menuItems = [
     { icon: faTachometerAlt, caption: "Dashboard", link: "/admindashboard" },
-    { icon: faChartPie, caption: "Demographics", link: "/admin_demographics" }, // New menu item for Demographics
+    { icon: faChartPie, caption: "Demographics", link: "/admin_demographics" },
     { icon: faHourglassHalf, caption: "Pending Confirmation", link: "/admin_unapprovedemp" },
     { icon: faBuilding, caption: "Approved Employers", link: "/admin_employers" },
     { icon: faUsers, caption: "Job Seekers", link: "/admin_applicants", active: true },
@@ -69,70 +70,75 @@ const SideBar = () => {
   };
 
   return (
-    <aside 
-      className="p-3 d-flex flex-column"
-      style={{
-        backgroundColor: '#044474',
-        width: '250px',
-        height: '100vh',
-        position: 'sticky',
-        top: 0,
-      }}
-    >
-      <div className="d-flex align-items-center justify-content-center mb-4">
-        <img
-          src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
-          alt="TrabahaDoor Logo"
-          className="img-fluid"
-          style={{ width: '30px', marginRight: '10px' }}
-        />
-        <h4 className="mb-0 text-white" style={{ fontSize: '18px' }}>TrabahaDoor</h4>
-      </div>
-      <nav className="flex-grow-1">
-        <ul className="nav flex-column">
-          {menuItems.map((item, index) => (
-            <li key={index} className={`nav-item ${item.active ? 'active' : ''}`}>
-              <button
-                onClick={() => handleNavigation(item.link)}
-                className="nav-link text-white btn btn-link"
-                style={{ textAlign: 'left' }}
-              >
-                <FontAwesomeIcon icon={item.icon} className="me-2" />
-                {item.caption}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <div className="mt-4 text-center text-white" style={{ position: 'absolute', bottom: '80px', left: '0', right: '0' }}>
-        <img
-          src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
-          alt="User Avatar"
-          className="img-fluid"
-          style={{ width: '50px', borderRadius: '0%' }} 
-        />
-        <div className="mt-2">
-          <p className="mb-0">TrabahaDoor</p>
-          <small>{email}</small>
-        </div>
-      </div>
-      <button 
-        onClick={handleLogout} 
-        className="btn btn-light mt-auto" 
-        style={{ 
-          position: 'absolute', 
-          bottom: '20px', 
-          left: '0', 
-          right: '0', 
-          backgroundColor: 'transparent', 
-          border: 'none', 
-          color: '#ffffff' 
+    <>
+      <Helmet>
+        <title>TrabahaDoor - Admin</title>
+      </Helmet>
+      <aside 
+        className="p-3 d-flex flex-column"
+        style={{
+          backgroundColor: '#044474',
+          width: '250px',
+          height: '100vh',
+          position: 'sticky',
+          top: 0,
         }}
       >
-        <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
-        Logout
-      </button>
-    </aside>
+        <div className="d-flex align-items-center justify-content-center mb-4">
+          <img
+            src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+            alt="TrabahaDoor Logo"
+            className="img-fluid"
+            style={{ width: '30px', marginRight: '10px' }}
+          />
+          <h4 className="mb-0 text-white" style={{ fontSize: '18px' }}>TrabahaDoor</h4>
+        </div>
+        <nav className="flex-grow-1">
+          <ul className="nav flex-column">
+            {menuItems.map((item, index) => (
+              <li key={index} className={`nav-item ${item.active ? 'active' : ''}`}>
+                <button
+                  onClick={() => handleNavigation(item.link)}
+                  className="nav-link text-white btn btn-link"
+                  style={{ textAlign: 'left' }}
+                >
+                  <FontAwesomeIcon icon={item.icon} className="me-2" />
+                  {item.caption}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div className="mt-4 text-center text-white" style={{ position: 'absolute', bottom: '80px', left: '0', right: '0' }}>
+          <img
+            src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+            alt="User Avatar"
+            className="img-fluid"
+            style={{ width: '50px', borderRadius: '0%' }} 
+          />
+          <div className="mt-2">
+            <p className="mb-0">TrabahaDoor</p>
+            <small>{email}</small>
+          </div>
+        </div>
+        <button 
+          onClick={handleLogout} 
+          className="btn btn-light mt-auto" 
+          style={{ 
+            position: 'absolute', 
+            bottom: '20px', 
+            left: '0', 
+            right: '0', 
+            backgroundColor: 'transparent', 
+            border: 'none', 
+            color: '#ffffff' 
+          }}
+        >
+          <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
+          Logout
+        </button>
+      </aside>
+    </>
   );
 };
 
