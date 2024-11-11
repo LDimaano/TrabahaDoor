@@ -44,6 +44,7 @@ import AdminArchivedUsers from './pages/Admin/admin_archived_users';
 import AdminUnapprovedEmp from './pages/Admin/admin_unapprovedemp';
 import Adminupdateemp from './pages/Admin/admin_updateemp';
 import Adminupdatejs from './pages/Admin/admin_updatejs';
+import Demographics from './pages/Admin/admin_demographics';
 
 import UserProfileJs from './pages/Admin/userjs_profile'; 
 import UserProfileEmp from './pages/Admin/useremp_profile';
@@ -109,6 +110,7 @@ root.render(
         <Route path="/admin_updatejs/:user_id" element={<Adminupdatejs />} />
         <Route path="/verify-email" element={<EmailVerification />} />
         <Route path="/unverified-account" element={<Unverified />} />
+        <Route path="/admin_demographics" element={<Demographics />} />
       </Routes>
     </Router>
   </React.StrictMode>
