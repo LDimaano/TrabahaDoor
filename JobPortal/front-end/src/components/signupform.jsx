@@ -78,7 +78,7 @@ function SignupForm({ openTermsModal, openPrivacyModal }) {
       const result = await response.json();
 
       if (response.ok) {
-        navigate('/verify'); 
+        navigate('/unverified-account'); 
       } else {
         setError(result.error || 'Error submitting form.');
       }

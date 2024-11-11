@@ -55,6 +55,7 @@ import UpdateEmpjoblist from './pages/Employer/jobpostingupdate';
 import UploadDocuments from './pages/Employer/employerfiles';
 
 import EmailVerification from './pages/Auth/verify';
+import Unverified from './pages/Auth/unverified';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -107,6 +108,7 @@ root.render(
         <Route path="/admin_updateemp/:user_id" element={<Adminupdateemp />} />
         <Route path="/admin_updatejs/:user_id" element={<Adminupdatejs />} />
         <Route path="/verify-email" element={<EmailVerification />} />
+        <Route path="/unverified-account" element={<Unverified />} />
       </Routes>
     </Router>
   </React.StrictMode>

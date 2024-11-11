@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Header from '../../components/empheader'; // Import the Header component
 
 function EmailVerification() {
   const [message, setMessage] = useState('Verifying your email...');
+  const [userType, setUserType] = useState(null);
+  const [userId, setUserId] = useState(null); // State for storing user_id
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log('Location search:', location.search); // Debugging output
@@ -29,6 +33,8 @@ function EmailVerification() {
         })
         .then(data => {
           setMessage(data.message || 'Email verified successfully!');
+          setUserType(data.usertype); // Set usertype from backend response
+          setUserId(data.user_id); // Set user_id from backend response
         })
         .catch(error => {
           setMessage(error.message || 'Verification failed. The link may have expired.');
@@ -38,12 +44,28 @@ function EmailVerification() {
     }
   }, [location.search]);
 
+  const handleNextStep = () => {
+    if (userType === 'jobseeker') {
+      navigate('/j_profilecreation');
+    } else if (userType === 'employer') {
+      navigate('/e_profilecreation');
+    }
+  };
+
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
-      <div className="text-center">
-        <h3>{message}</h3>
+    <>
+      <Header /> {/* Render the Header component */}
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="text-center">
+          <h3>{message}</h3>
+          {userType && (
+            <button onClick={handleNextStep} className="btn btn-primary mt-3">
+              Continue to Profile Creation
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
