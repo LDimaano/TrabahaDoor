@@ -97,28 +97,30 @@ function ProfileCreation() {
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
-    const userId = sessionStorage.getItem('userId');
-    console.log('User ID:', userId);
+  
+    // Extract userId from URL path (assuming the URL is like /j_profilecreation/572)
+    const userId = window.location.pathname.split('/')[2];
+    console.log('User ID for profile creation:', userId);
     
     if (!file) {
       console.error('No file selected');
       return;
     }
-    
+  
     const formData = new FormData();
     formData.append('profilePicture', file);
-    
+  
     try {
       console.log('Uploading file...', file);
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/upload-profile-picture/${userId}`, {
         method: 'POST',
         body: formData,
       });
-      
+  
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);
       }
-      
+  
       const data = await response.json();
       console.log('Uploaded image data:', data);
       setPhoto(data.profilePictureUrl); // Set the photo URL in state
@@ -126,7 +128,7 @@ function ProfileCreation() {
       console.error('Error uploading profile picture:', error);
     }
   };
-
+  
   // State for controlling the modal visibility
 const [showModal, setShowModal] = useState(false);
 
