@@ -6,9 +6,13 @@ function EmailVerification() {
   const location = useLocation();
 
   useEffect(() => {
+    console.log('Location search:', location.search); // Debugging output
+
     const query = new URLSearchParams(location.search);
     const token = query.get('token');
-  
+
+    console.log('Extracted token:', token); // Debugging output
+
     if (token) {
       // Use fetch to send the token to the backend for verification
       fetch(`${process.env.REACT_APP_API_URL}/api/users/verify-email?token=${token}`, {
@@ -33,7 +37,6 @@ function EmailVerification() {
       setMessage('No verification token found.');
     }
   }, [location.search]);
-  
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">

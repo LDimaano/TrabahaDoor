@@ -106,7 +106,7 @@ root.render(
         <Route path="/empdashboard" element={<EmployerDashboard />} />
         <Route path="/admin_updateemp/:user_id" element={<Adminupdateemp />} />
         <Route path="/admin_updatejs/:user_id" element={<Adminupdatejs />} />
-        <Route path="/verify" element={<EmailVerification />} />
+        <Route path="/verify-email" element={<EmailVerification />} />
       </Routes>
     </Router>
   </React.StrictMode>
