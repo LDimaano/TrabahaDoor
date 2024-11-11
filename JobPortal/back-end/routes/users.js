@@ -64,19 +64,22 @@ router.post('/submit-form', async (req, res) => {
 });
 
 
-
 router.get('/verify-email', async (req, res) => {
+  console.log('Verify email endpoint hit'); // Debugging output
   const { token } = req.query;
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
     const email = decoded.email;
 
+    console.log('Decoded email:', email); // Debugging output
+
     // Update user's `isVerified` status in the database
     await User.update({ isVerified: true }, { where: { email } });
 
     res.status(200).json({ message: 'Email verified successfully!' });
   } catch (error) {
+    console.log('Error verifying token:', error); // Debugging output
     res.status(400).json({ message: 'Invalid or expired token.' });
   }
 });
