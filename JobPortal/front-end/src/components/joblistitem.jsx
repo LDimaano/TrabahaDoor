@@ -29,7 +29,6 @@ function JobListItem({ job }) {
           <p style={itemStyle}>{job.industry_name}</p>
           <p style={itemStyle}>{job.salaryrange}</p> 
           <Tag>{job.jobtype}</Tag> {/* Use the Tag component for jobtype */}
-          <p style={itemStyle}>Influence Type: {job.influence_tag}</p>
         </div>
       </div>
       <button className="btn btn-primary" onClick={handleApplyClick}>

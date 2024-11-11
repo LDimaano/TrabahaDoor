@@ -41,19 +41,22 @@ function EmailVerification() {
   }, [location.search]);
 
   const handleSignUpRedirect = () => {
-    navigate('/login'); // Navigate to /signup when the button is clicked
+    navigate('/login'); // Navigate to /login when the button is clicked
   };
 
   return (
     <>
       <Header /> {/* Render the Header component */}
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="text-center">
-          <h3>{message}</h3>
-          <p>Login to your account to continue profile creation</p>
-          <button onClick={handleSignUpRedirect} className="btn btn-primary mt-3">
-            Go to login
-          </button>
+      <div className="container d-flex justify-content-center align-items-center vh-100">
+        <div className="card shadow-lg p-4" style={{ maxWidth: '500px', width: '100%' }}>
+          <div className="card-body text-center">
+            <h2 className="card-title mb-4 text-primary">Email Verification</h2>
+            <p className="card-text fs-5">{message}</p>
+            <p className="text-muted">Login to your account to continue profile creation</p>
+            <button onClick={handleSignUpRedirect} className="btn btn-primary mt-3 px-4">
+              Go to Login
+            </button>
+          </div>
         </div>
       </div>
     </>
