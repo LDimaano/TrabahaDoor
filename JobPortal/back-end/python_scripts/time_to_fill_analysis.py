@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 from collections import defaultdict
 
-def calculate_time_to_fill(data, scale_factor=10):
+def calculate_time_to_fill(data):
     # Dictionary to store time to fill by industry
     industry_time_to_fill = defaultdict(list)
 
@@ -17,17 +17,12 @@ def calculate_time_to_fill(data, scale_factor=10):
         # Append the time to fill for each job to the respective industry
         industry_time_to_fill[industry].append(days_to_fill)
 
-    # Average the days to fill for each industry and scale the result
+    # Average the days to fill for each industry
     industry_avg_time_to_fill = {
         industry: sum(days) // len(days) for industry, days in industry_time_to_fill.items()
     }
 
-    # Apply scaling factor to the average time to fill values
-    scaled_time_to_fill = {
-        industry: avg_time * scale_factor for industry, avg_time in industry_avg_time_to_fill.items()
-    }
-
-    return scaled_time_to_fill
+    return industry_avg_time_to_fill
 
 if __name__ == "__main__":
     try:
@@ -38,8 +33,8 @@ if __name__ == "__main__":
         
         job_listings = json.loads(input_data)
 
-        # Calculate time to fill by industry with scaling
-        result = calculate_time_to_fill(job_listings, scale_factor=10)
+        # Calculate time to fill by industry without scaling
+        result = calculate_time_to_fill(job_listings)
 
         # Output result as JSON
         print(json.dumps(result))
