@@ -1,11 +1,9 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faPhone, faLink } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import ContactItem from './contactitem';
 
 const ApplicantCard = ({ applicant }) => {
-  const navigate = useNavigate(); // Initialize useNavigate
 
   return (
     <aside className="bg-white p-4 border rounded">
@@ -16,7 +14,7 @@ const ApplicantCard = ({ applicant }) => {
           className="img-fluid rounded-circle"
           style={{ width: '150px', height: '150px' }}
         />
-        <div>
+        <div className="ms-3">
           <h2 className="mb-0">{applicant.companyname}</h2>
           <p className="text-muted">{applicant.contactperson}</p>
         </div>
@@ -26,7 +24,7 @@ const ApplicantCard = ({ applicant }) => {
         <h3>Contact</h3>
         <ContactItem icon={<FontAwesomeIcon icon={faEnvelope} />} label="Email" value={applicant.email} />
         <ContactItem icon={<FontAwesomeIcon icon={faPhone} />} label="Phone" value={applicant.phone} />
-        <ContactItem icon={<FontAwesomeIcon icon={faLink} />} label="Website" value={applicant.website} />
+        <ContactItem icon={<FontAwesomeIcon icon={faLink} />} label="Website" value={applicant.website} className="w-100" />
       </section>
     </aside>
   );

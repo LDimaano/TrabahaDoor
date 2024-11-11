@@ -1,12 +1,12 @@
 import React from 'react';
 
-const ContactItem = ({ icon, label, value }) => (
-  <div className="d-flex align-items-center mb-2">
+const ContactItem = ({ icon, label, value, className }) => (
+  <div className={`d-flex align-items-center mb-2 ${className}`}>
     <div className="me-2" style={{ width: '24px' }}>
-      {icon} {/* Directly render the icon component */}
+      {icon}
     </div>
     <span>{label}:</span>
-    <span className="ms-2">{value}</span>
+    <span className="ms-2 text-break">{value}</span>
   </div>
 );
 

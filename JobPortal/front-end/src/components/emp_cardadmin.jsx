@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faPhone, faLink} from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faPhone, faLink } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import ContactItem from './contactitem';
 
@@ -23,7 +23,7 @@ const ApplicantCard = ({ applicant }) => {
             style={{ width: '150px', height: '150px' }}
           />
         </div>
-        <div>
+        <div className="ms-3">
           <h2 className="mb-0">{applicant.companyname}</h2>
           <p className="text-muted">{applicant.contactperson}</p>
         </div>
@@ -33,7 +33,7 @@ const ApplicantCard = ({ applicant }) => {
         <h3>Contact</h3>
         <ContactItem icon={<FontAwesomeIcon icon={faEnvelope} />} label="Email" value={applicant.email} />
         <ContactItem icon={<FontAwesomeIcon icon={faPhone} />} label="Phone" value={applicant.phone} />
-        <ContactItem icon={<FontAwesomeIcon icon={faLink} />} label="Website" value={applicant.website} />
+        <ContactItem icon={<FontAwesomeIcon icon={faLink} />} label="Website" value={applicant.website} className="w-100" />
         <button 
           className="btn btn-primary mt-3" 
           onClick={handleProfileUpdate}
