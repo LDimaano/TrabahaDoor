@@ -437,7 +437,7 @@ router.get('/job-seeker/:userId', async (req, res) => {
     
     // Query job experience data
     const jobExperienceData = await pool.query(`
-      SELECT je.jobtitle_id, jt.job_title, je.company, je.start_date, je.end_date, je.description
+      SELECT je.jobtitle_id, jt.job_title, je.company, je.start_date, je.end_date, je.description, je.salary
       FROM job_experience je
       JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
       WHERE je.user_id = $1
@@ -457,7 +457,8 @@ router.get('/job-seeker/:userId', async (req, res) => {
       company: exp.company || 'Not Specified',
       start_date: exp.start_date ? new Date(exp.start_date).toLocaleDateString() : 'Not Provided',
       end_date: exp.end_date ? new Date(exp.end_date).toLocaleDateString() : 'Not Provided',
-      description: exp.description || 'No Description'
+      description: exp.description || 'No Description',
+      salary: exp.salary || 'Not Provided'
     }));
 
     // Process job seeker data
