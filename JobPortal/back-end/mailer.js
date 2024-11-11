@@ -222,12 +222,12 @@ const sendActivationEmail = async (employerEmail) => {
     });
 };
 
-const sendVerificationEmail = async (recipientEmail, verificationLink) => {
+const sendVerificationEmail = async (email, verificationLink) => {
     const emailContent = generateEmailContentVerify('email_verification', { verificationLink });
   
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: recipientEmail,
+      to: email,
       subject: emailContent.subject,
       text: emailContent.text,
       html: emailContent.html,

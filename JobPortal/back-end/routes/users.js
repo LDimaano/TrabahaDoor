@@ -5,7 +5,7 @@ const pool = require('../db');
 
 // Registration endpoint
 const jwt = require('jsonwebtoken');
-const sendVerificationEmail = require('../mailer'); // Ensure the correct path to mailer.js
+const {sendVerificationEmail} = require('../mailer'); // Ensure the correct path to mailer.js
 const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 router.post('/submit-form', async (req, res) => {
