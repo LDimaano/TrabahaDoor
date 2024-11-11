@@ -18,11 +18,8 @@ const ProfessionalInfo = ({ data }) => (
                 <p><strong>Start Date:</strong> {exp.start_date || 'Not Provided'}</p>
                 <p><strong>End Date:</strong> {exp.end_date || 'Not Provided'}</p>
                 <p><strong>Description:</strong> {exp.description || 'No Description'}</p>
-
-                {/* Display Salary Range if available */}
-                {exp.salaryrange && (
-                  <p><strong>Salary Range:</strong> {exp.salary || 'Not Provided'}</p>
-                )}
+                <p><strong>Salary Range:</strong> {exp.salary || 'Not Provided'}</p>
+                
                 <hr />
               </li>
             ))}
