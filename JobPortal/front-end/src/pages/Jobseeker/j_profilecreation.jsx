@@ -98,9 +98,7 @@ function ProfileCreation() {
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
   
-    // Extract userId from URL path (assuming the URL is like /j_profilecreation/572)
     const userId = window.location.pathname.split('/')[2];
-    console.log('User ID for profile creation:', userId);
     
     if (!file) {
       console.error('No file selected');
@@ -156,7 +154,7 @@ const handleModalCancel = () => {
   const handleSubmit = async (e) => {
   
     // Ensure user ID is available
-    const user_id = sessionStorage.getItem('userId');
+    const user_id = window.location.pathname.split('/')[2];
   
     // If photo is not set, attempt to upload and wait
     if (!photo) {
