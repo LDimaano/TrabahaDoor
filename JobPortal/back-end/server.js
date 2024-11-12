@@ -356,10 +356,10 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(400).json({ error: 'Job titles must be an array.' });
   }
 
-  // Validate salary range input
-  if (!req.body.salaryRange) {
-    return res.status(400).json({ error: 'Salary range is required.' });
-  }
+  if (!req.body.salaryRange || 
+    (!Array.isArray(req.body.salaryRange) && typeof req.body.salaryRange !== 'string')) {
+  return res.status(400).json({ error: 'Salary range must be a single value or an array of predefined ranges.' });
+}
 
   const jobSeekerSkills = req.body.skills;
   const jobSeekerIndustry = req.body.industry;
