@@ -1,25 +1,9 @@
-import sys
-import json
-
-def parse_salary_range(salary_range):
-    """Helper function to convert salary range string to a numeric tuple."""
-    if salary_range == 'Below 15000':
-        return (0, 15000)
-    elif salary_range == 'Above 100000':
-        return (100001, float('inf'))
-    else:
-        try:
-            min_salary, max_salary = map(int, salary_range.split('-'))
-            return (min_salary, max_salary)
-        except ValueError:
-            return (None, None)
-
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None):
     recommendations = []
     skills_set = set(skills)
     job_titles_set = set(job_titles)
 
-    # Parse user salary ranges
+    # Parse jobseeker salary ranges (can be multiple ranges)
     user_salary_ranges = []
     if isinstance(jobseeker_salary, list):
         user_salary_ranges = [parse_salary_range(salary) for salary in jobseeker_salary]
@@ -106,40 +90,3 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
 
     # Return the recommendations
     return recommendations
-
-def validate_input_data():
-    """Validates input data from sys.argv."""    
-    try:
-        if len(sys.argv) < 7:
-            raise ValueError("Insufficient arguments provided.")
-        
-        job_data = sys.argv[1]
-        skills = sys.argv[2]
-        jobseeker_industry = sys.argv[3]
-        job_titles = sys.argv[4]
-        salary_range = sys.argv[5]
-
-        # Validate the input data is properly structured
-        job_data = json.loads(job_data)
-        skills = json.loads(skills)
-        job_titles = json.loads(job_titles)
-        salary_range = json.loads(salary_range)
-
-        if not isinstance(job_data, list) or not isinstance(skills, list) or not isinstance(job_titles, list):
-            raise ValueError("Invalid input structure.")
-        
-        return job_data, skills, jobseeker_industry, job_titles, salary_range
-    except (ValueError, json.JSONDecodeError) as e:
-        print("Input validation error:", str(e))
-        return None, None, None, None, None
-
-# Validate and process input data
-job_data, skills, jobseeker_industry, job_titles, salary_range = validate_input_data()
-if job_data and skills and job_titles:
-    # Call the recommendation function with validated data
-    recommendations = recommend_jobs(
-        job_data, skills, jobseeker_industry, job_titles, salary_range=salary_range
-    )
-    print(json.dumps(recommendations, indent=2))
-else:
-    print("Invalid input data. Please check the input.")
