@@ -117,7 +117,6 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
 
     # Return the recommendations
     return recommendations
-
 if __name__ == '__main__':
     try:
         job_data = json.loads(sys.argv[1])
@@ -127,9 +126,23 @@ if __name__ == '__main__':
         similar_jobseekers = json.loads(sys.argv[5]) if len(sys.argv) > 5 else None
         jobseeker_salary = sys.argv[6] if len(sys.argv) > 6 else None
 
-        # Only output the recommendations as JSON
-        recommended_jobs = recommend_jobs(job_data, skills, jobseeker_industry, job_titles, similar_jobseekers, jobseeker_salary)
-        print(json.dumps(recommended_jobs))
+        print("Job Data:", job_data, file=sys.stderr)
+        print("Skills:", skills, file=sys.stderr)
+        print("Industry:", jobseeker_industry, file=sys.stderr)
+        print("Job Titles:", job_titles, file=sys.stderr)
+        print("Similar Jobseekers:", similar_jobseekers, file=sys.stderr)
+        print("Salary Range:", jobseeker_salary, file=sys.stderr)
+
+        recommended_jobs = recommend_jobs(
+            job_data, skills, jobseeker_industry, job_titles, similar_jobseekers, jobseeker_salary
+        )
+
+        # Ensure the output is valid JSON
+        if not recommended_jobs:
+            print(json.dumps([]))  # Return empty array if no recommendations
+        else:
+            print(json.dumps(recommended_jobs))
 
     except Exception as e:
         print(f"Error: {str(e)}", file=sys.stderr)
+        print(json.dumps({"error": str(e)}))  # Return error in JSON format
