@@ -1,17 +1,10 @@
-import sys
 import json 
+import sys
 
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None):
     recommendations = []
     skills_set = set(skills)
     job_titles_set = set(job_titles)
-
-    # Parse jobseeker salary ranges (can be multiple ranges)
-    user_salary_ranges = []
-    if isinstance(jobseeker_salary, list):
-        user_salary_ranges = [parse_salary_range(salary) for salary in jobseeker_salary]
-    else:
-        user_salary_ranges.append(parse_salary_range(jobseeker_salary))
 
     # Initialize collaborative filtering jobs dictionary
     collaborative_filtering_jobs = {}
@@ -32,18 +25,11 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         job_title = job.get('job_title', 'Unknown Title')
         job_salary_range = job.get('salaryrange', 'unknown salary')
 
-        # Parse job salary range
-        if isinstance(job_salary_range, str):
-            job_min_salary, job_max_salary = parse_salary_range(job_salary_range)
-        else:
-            job_min_salary = job_max_salary = None
-
-        # Check if job salary matches any of the user's salary ranges
+        # Check if job salary matches any of the user's salary ranges (as strings)
         salary_match = any(
-            job_min_salary is not None and job_max_salary is not None and
-            (user_min <= job_max_salary and user_max >= job_min_salary)
-            for user_min, user_max in user_salary_ranges
-        )
+            user_salary == job_salary_range
+            for user_salary in jobseeker_salary
+        ) if jobseeker_salary else False
 
         # Count skill matches and determine match type
         match_count = len(skills_set.intersection(job_skills))

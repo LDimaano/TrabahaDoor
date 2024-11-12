@@ -339,6 +339,7 @@ app.get('/api/getskills/:userId', async (req, res) => {
     res.status(500).json({ error: 'Error fetching skills' });
   }
 });
+
 app.post('/api/recommend', async (req, res) => {
   // Validate the required skills input
   if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
