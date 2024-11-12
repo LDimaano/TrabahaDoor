@@ -339,7 +339,6 @@ app.get('/api/getskills/:userId', async (req, res) => {
     res.status(500).json({ error: 'Error fetching skills' });
   }
 });
-
 app.post('/api/recommend', async (req, res) => {
   // Validate the required skills input
   if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
@@ -383,7 +382,7 @@ app.post('/api/recommend', async (req, res) => {
       JSON.stringify(jobSeekerSkills), 
       jobSeekerIndustry,
       JSON.stringify(jobSeekerJobTitles),
-      jobSeekerSalary // Pass salary range to Python
+      JSON.stringify(jobSeekerSalary) // Pass salary range to Python
     ]);
 
     let pythonOutput = '';
@@ -417,6 +416,7 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(500).send('An error occurred while fetching job data.');
   }
 });
+
 
 // Function to get job postings
 // Function to get job postings for a user
