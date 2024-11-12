@@ -1,7 +1,4 @@
-import sys
-import json
-
-def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None):
+def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None):
     recommendations = []
     skills_set = set(skills)
     job_titles_set = set(job_titles)
@@ -10,6 +7,7 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     print("Skills Set:", skills_set, file=sys.stderr)
     print("Job Titles Set:", job_titles_set, file=sys.stderr)
     print("Jobseeker's Industry:", jobseeker_industry, file=sys.stderr)
+    print("Jobseeker's Salary Range:", jobseeker_salary, file=sys.stderr)
 
     # Collaborative filtering: Jobseeker's similar jobseekers' data
     collaborative_filtering_jobs = {}
@@ -30,12 +28,16 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         job_skills = set(job.get('required_skills', []))
         job_industry = job.get('industry_name', 'Unknown Industry')
         job_title = job.get('job_title', 'Unknown Title')
+        job_salary = job.get('salaryrange', 'unknown salary')
 
         # Count skill matches
         match_count = len(skills_set.intersection(job_skills))
         industry_match = (job_industry == jobseeker_industry) if jobseeker_industry else False
         title_match = job_title in job_titles_set
         collaborative_match = job.get('job_id') in collaborative_filtering_jobs
+
+        # Salary match logic
+        salary_match = job_salary == jobseeker_salary if jobseeker_salary else False
 
         # Determine match type
         content_match = title_match or match_count > 0 or industry_match
@@ -49,7 +51,9 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
             continue  # Skip jobs with no match
 
         # Log match counts and filters
-        print(f"Job: {job_title}, Match Count: {match_count}, Industry Match: {industry_match}, Collaborative Match: {collaborative_match}, Title Match: {title_match}, Match Type: {match_type}", file=sys.stderr)
+        print(f"Job: {job_title}, Match Count: {match_count}, Industry Match: {industry_match}, "
+              f"Collaborative Match: {collaborative_match}, Title Match: {title_match}, "
+              f"Salary Match: {salary_match}, Match Type: {match_type}", file=sys.stderr)
 
         # Add recommendation with match type
         recommendations.append({
@@ -57,36 +61,28 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
             'industry_name': job_industry,
             'match_count': match_count,
             'job_id': job.get('job_id'),
-            'salaryrange': job.get('salaryrange', 'unknown salary'),
+            'salaryrange': job_salary,
             'jobtype': job.get('jobtype', 'Unknown Job Type'),
             'profile_picture_url': job.get('profile_picture_url', 'Unknown picture'),
             'industry_match': industry_match,
             'collaborative_match': collaborative_match,
             'title_match': title_match,
+            'salary_match': salary_match,
             'similar_seekers': collaborative_filtering_jobs.get(job.get('job_id'), []),
             'match_type': match_type  # Added match type for sorting
         })
 
-    # Sort recommendations by match type (hybrid > content > collaborative), then by title match and match count
+    # Sort recommendations by match type, prioritize salary match, then title match and skill match count
     recommendations.sort(
-        key=lambda x: (x['match_type'] == 'hybrid', x['match_type'] == 'content', x['title_match'], x['match_count']),
+        key=lambda x: (
+            x['match_type'] == 'hybrid',
+            x['match_type'] == 'content',
+            x['salary_match'],  # Higher priority for jobs with matching salary
+            x['title_match'],
+            x['match_count']
+        ),
         reverse=True
     )
 
     # Return the recommendations
     return recommendations
-
-if __name__ == '__main__':
-    try:
-        job_data = json.loads(sys.argv[1])
-        skills = json.loads(sys.argv[2])
-        jobseeker_industry = sys.argv[3] if len(sys.argv) > 3 else None
-        job_titles = json.loads(sys.argv[4]) if len(sys.argv) > 4 else []
-        similar_jobseekers = json.loads(sys.argv[5]) if len(sys.argv) > 5 else None
-
-        # Only output the recommendations as JSON
-        recommended_jobs = recommend_jobs(job_data, skills, jobseeker_industry, job_titles, similar_jobseekers)
-        print(json.dumps(recommended_jobs))
-
-    except Exception as e:
-        print(f"Error: {str(e)}", file=sys.stderr)
