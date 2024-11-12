@@ -107,24 +107,55 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     # Return the recommendations
     return recommendations
 
+def validate_input_data():
+    """Validates input data from sys.argv."""
+    try:
+        if len(sys.argv) < 7:
+            raise ValueError("Insufficient arguments provided.")
+        
+        job_data = sys.argv[1]
+        skills = sys.argv[2]
+        jobseeker_industry = sys.argv[3] if len(sys.argv) > 3 else None
+        job_titles = sys.argv[4] if len(sys.argv) > 4 else []
+        similar_jobseekers = sys.argv[5] if len(sys.argv) > 5 else None
+        jobseeker_salary = sys.argv[6] if len(sys.argv) > 6 else None
+        
+        # Ensure the inputs are non-empty
+        if not job_data or not skills:
+            raise ValueError("Job data and skills cannot be empty.")
+        
+        # Try loading the JSON data
+        job_data = json.loads(job_data)
+        skills = json.loads(skills)
+        job_titles = json.loads(job_titles) if job_titles else []
+        similar_jobseekers = json.loads(similar_jobseekers) if similar_jobseekers else None
+        jobseeker_salary = json.loads(jobseeker_salary) if jobseeker_salary else None
+        
+        return job_data, skills, jobseeker_industry, job_titles, similar_jobseekers, jobseeker_salary
+    
+    except ValueError as e:
+        print(f"Input validation error: {str(e)}")
+        return None
+    except json.JSONDecodeError as e:
+        print(f"JSON decoding error: {str(e)}")
+        return None
+
 if __name__ == '__main__':
     try:
-        job_data = json.loads(sys.argv[1])
-        skills = json.loads(sys.argv[2])
-        jobseeker_industry = sys.argv[3] if len(sys.argv) > 3 else None
-        job_titles = json.loads(sys.argv[4]) if len(sys.argv) > 4 else []
-        similar_jobseekers = json.loads(sys.argv[5]) if len(sys.argv) > 5 else None
-        jobseeker_salary = sys.argv[6] if len(sys.argv) > 6 else None
-
-        recommended_jobs = recommend_jobs(
-            job_data, skills, jobseeker_industry, job_titles, similar_jobseekers, jobseeker_salary
-        )
-
-        # Ensure the output is valid JSON
-        if not recommended_jobs:
-            print(json.dumps([]))  # Return empty array if no recommendations
+        validated_data = validate_input_data()
+        if validated_data is None:
+            print(json.dumps({"error": "Invalid input data"}))
         else:
-            print(json.dumps(recommended_jobs))
+            job_data, skills, jobseeker_industry, job_titles, similar_jobseekers, jobseeker_salary = validated_data
+            recommended_jobs = recommend_jobs(
+                job_data, skills, jobseeker_industry, job_titles, similar_jobseekers, jobseeker_salary
+            )
+
+            # Ensure the output is valid JSON
+            if not recommended_jobs:
+                print(json.dumps([]))  # Return empty array if no recommendations
+            else:
+                print(json.dumps(recommended_jobs))
 
     except Exception as e:
         print(f"Error: {str(e)}", file=sys.stderr)
