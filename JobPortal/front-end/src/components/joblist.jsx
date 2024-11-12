@@ -69,19 +69,42 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
     if (isRecommended && userSkills.length > 0 && userProfile && userProfile.industryName) {
       const fetchRecommendedJobs = async () => {
         try {
+          // Validate userProfile data
+          if (!Array.isArray(userProfile.jobTitles)) {
+            console.error('Invalid jobTitles:', userProfile.jobTitles);
+            return;
+          }
+          if (userProfile.salaryRange && typeof userProfile.salaryRange !== 'string' && !Array.isArray(userProfile.salaryRange)) {
+            console.error('Invalid salaryRange:', userProfile.salaryRange);
+            return;
+          }
+  
           const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recommend`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               skills: userSkills,
               industry: userProfile.industryName,
-              salaryRange: userProfile.salaryRange || null,
+              salaryRange: userProfile.salaryRange || [],
               jobTitles: userProfile.jobTitles || [],
             }),
           });
-          if (!response.ok) throw new Error(await response.text());
+  
+          // Check if response is okay
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error fetching recommended jobs:', errorText);
+            throw new Error(errorText);
+          }
+  
           const recommendedJobsData = await response.json();
-          setRecommendedJobs(recommendedJobsData.recommendations || []);
+  
+          // Ensure the response data structure is correct
+          if (recommendedJobsData && recommendedJobsData.recommendations) {
+            setRecommendedJobs(recommendedJobsData.recommendations);
+          } else {
+            console.error('Invalid response format:', recommendedJobsData);
+          }
         } catch (error) {
           console.error('Error fetching recommended jobs:', error);
         }
@@ -89,7 +112,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       fetchRecommendedJobs();
     }
   }, [isRecommended, userSkills, userProfile]);
-
+  
   const applyFilters = (jobs) => {
     if (!jobs || jobs.length === 0) return [];
     const { employmentTypes, salaryRanges } = filters;
