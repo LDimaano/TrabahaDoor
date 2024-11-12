@@ -1,3 +1,6 @@
+import sys
+import json 
+
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None):
     recommendations = []
     skills_set = set(skills)
