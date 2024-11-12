@@ -85,7 +85,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
             body: JSON.stringify({
               skills: userSkills,
               industry: userProfile.industryName,
-              salaryRange: userProfile.salaryRange || [],
+              salaryRange: userProfile.salaryRange || null,
               jobTitles: userProfile.jobTitles || [],
             }),
           });
