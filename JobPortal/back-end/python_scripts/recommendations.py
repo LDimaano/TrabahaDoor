@@ -19,11 +19,6 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     skills_set = set(skills)
     job_titles_set = set(job_titles)
 
-    # Log the skills set and job titles set for debugging
-    print("Skills Set:", skills_set, file=sys.stderr)
-    print("Job Titles Set:", job_titles_set, file=sys.stderr)
-    print("Jobseeker's Industry:", jobseeker_industry, file=sys.stderr)
-
     # Parse user salary ranges
     user_salary_ranges = []
     if isinstance(jobseeker_salary, list):
@@ -42,9 +37,6 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
                 if job_id not in collaborative_filtering_jobs:
                     collaborative_filtering_jobs[job_id] = []
                 collaborative_filtering_jobs[job_id].append(jobseeker['user_id'])
-
-        # Log collaborative filtering jobs for debugging
-        print(f"Collaborative filtering jobs: {collaborative_filtering_jobs}", file=sys.stderr)
 
     # Iterate through job data to find matches
     for job in job_data:
@@ -83,9 +75,6 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         else:
             continue  # Skip jobs with no match
 
-        # Log match details for debugging
-        print(f"Job: {job_title}, Match Count: {match_count}, Industry Match: {industry_match}, Collaborative Match: {collaborative_match}, Title Match: {title_match}, Salary Match: {salary_match}, Match Type: {match_type}", file=sys.stderr)
-
         # Add recommendation with match type
         recommendations.append({
             'job_title': job_title,
@@ -117,6 +106,7 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
 
     # Return the recommendations
     return recommendations
+
 if __name__ == '__main__':
     try:
         job_data = json.loads(sys.argv[1])
@@ -125,13 +115,6 @@ if __name__ == '__main__':
         job_titles = json.loads(sys.argv[4]) if len(sys.argv) > 4 else []
         similar_jobseekers = json.loads(sys.argv[5]) if len(sys.argv) > 5 else None
         jobseeker_salary = sys.argv[6] if len(sys.argv) > 6 else None
-
-        print("Job Data:", job_data, file=sys.stderr)
-        print("Skills:", skills, file=sys.stderr)
-        print("Industry:", jobseeker_industry, file=sys.stderr)
-        print("Job Titles:", job_titles, file=sys.stderr)
-        print("Similar Jobseekers:", similar_jobseekers, file=sys.stderr)
-        print("Salary Range:", jobseeker_salary, file=sys.stderr)
 
         recommended_jobs = recommend_jobs(
             job_data, skills, jobseeker_industry, job_titles, similar_jobseekers, jobseeker_salary
