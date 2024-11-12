@@ -391,6 +391,7 @@ app.post('/api/recommend', async (req, res) => {
     // Collect output from Python process
     pythonProcess.stdout.on('data', (data) => {
       pythonOutput += data.toString();
+      console.log('Raw Python Output:', data.toString()); // Log the raw output
     });
 
     // Log any errors from Python process
@@ -402,6 +403,10 @@ app.post('/api/recommend', async (req, res) => {
       if (code !== 0) {
         console.error('Python process exited with code:', code);
         return res.status(500).send('An error occurred while processing your request.');
+      }
+      if (!pythonOutput) {
+        console.error('Empty output from Python process');
+        return res.status(500).send('No recommendations returned from Python.');
       }
       try {
         // Parse the Python output
@@ -417,7 +422,6 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(500).send('An error occurred while fetching job data.');
   }
 });
-
 
 // Function to get job postings
 // Function to get job postings for a user

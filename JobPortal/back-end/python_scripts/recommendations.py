@@ -1,4 +1,4 @@
-import json 
+import json
 import sys
 
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None):
@@ -79,3 +79,21 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
 
     # Return the recommendations
     return recommendations
+
+if __name__ == "__main__":
+    try:
+        # Read input from command line
+        job_data = json.loads(sys.argv[1])
+        skills = json.loads(sys.argv[2])
+        jobseeker_industry = sys.argv[3]
+        job_titles = json.loads(sys.argv[4])
+        jobseeker_salary = json.loads(sys.argv[5])
+
+        # Generate recommendations
+        recommendations = recommend_jobs(job_data, skills, jobseeker_industry, job_titles, jobseeker_salary=jobseeker_salary)
+
+        # Print the recommendations as JSON
+        print(json.dumps(recommendations))
+
+    except Exception as e:
+        print(json.dumps({"error": str(e)}), file=sys.stderr)
