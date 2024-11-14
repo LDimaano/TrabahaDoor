@@ -378,7 +378,16 @@ function ProfileEditForm() {
 
             </div>
           ))}
-          <button type="button" className="btn btn-primary" onClick={handleAddExperience}>Add Experience</button>
+         <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <button 
+              type="button" 
+              className="btn btn-primary" 
+              onClick={handleAddExperience}
+          >
+              Add Experience
+          </button>
+      </div>
+
         </div>
         <div className="mb-3">
           <h4>Skills</h4>
