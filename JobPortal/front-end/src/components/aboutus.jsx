@@ -19,7 +19,7 @@ const AboutUs = () => {
 
           {/* Text Content Section */}
           <div className="col-lg-6">
-            <h2 style={{ marginBottom: '1.5rem' }}>About <strong>PESO San Jose</strong></h2>
+            <h2 style={{ marginBottom: '1.5rem', fontWeight: '700' }}>About <strong>PESO San Jose</strong></h2>
             <p style={{ color: '#6c757d' }}>The Public Employment Service Office (PESO) of San Jose, Batangas, is dedicated to assisting job seekers, including students, indigents, and persons with disabilities (PWDs), in finding employment opportunities.</p>
             <p style={{ color: '#6c757d' }}>PESO San Jose Batangas offers job fairs, skills training, and career counseling, supporting the local workforce and economic development.</p>
             <button style={{ marginTop: '1rem', backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '0.5rem 1.5rem', borderRadius: '5px', cursor: 'pointer' }} onClick={() => window.location.href = 'https://www.facebook.com/sanjosebatangasPESO'}>Explore More</button>
