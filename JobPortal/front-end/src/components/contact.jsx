@@ -3,9 +3,9 @@ import { FaPhone, FaFacebook } from 'react-icons/fa';
 
 const ContactSection = () => {
   return (
-    <section className="py-5" style={{ backgroundColor: '#f8f9fa', padding: '3rem 0' }}>
+    <section className="py-5" style={{padding: '3rem 0' }}>
       <div className="container">
-        <h2 className="mb-4" style={{ fontWeight: '700', color: '#333' }}>Contact Us</h2>
+        <h2 className="mb-4" style={{ fontWeight: '700', color: '#333' }}>Contact</h2>
         <p className="lead" style={{ marginBottom: '2rem', color: '#555' }}>Visit our office for more inquiries. We would love to hear from you!</p>
         <div className="row mb-5">
           <div className="col-md-6 mb-4">
