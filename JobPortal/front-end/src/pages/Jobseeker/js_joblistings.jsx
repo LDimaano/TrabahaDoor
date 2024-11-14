@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import Header from '../../components/jsheader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faSearch} from '@fortawesome/free-solid-svg-icons';
 import JobseekerJoblist from '../../components/js_joblistinglist';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
@@ -100,7 +100,7 @@ const JobseekerDashboard = () => {
             <div className="d-flex align-items-center">
             <h3 style={{ marginTop: '20px', marginLeft: '20px' }}>Job Listings: {filteredListings.length}</h3>
             </div>
-            <div className="input-group" style={{ maxWidth: '300px' }}>
+            <div className="input-group" style={{ maxWidth: '300px', marginRight: '20px' }}>
               <input
                 type="text"
                 className="form-control"
@@ -109,7 +109,7 @@ const JobseekerDashboard = () => {
                 onChange={handleSearch}
               />
               <button className="btn btn-outline-secondary">
-                <FontAwesomeIcon icon={faFilter} />
+                <FontAwesomeIcon icon={faSearch} />
               </button>
             </div>
           </div>
