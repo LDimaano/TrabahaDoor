@@ -270,7 +270,10 @@ function ProfileEditForm() {
 
   return (
     <div className="container">
-      <h1>Edit Profile</h1>
+      <div className="mb-4">
+        <h1 className="text-center">Edit your Profile</h1>
+        <h5 className="text-center">Update any changes to your information</h5>
+      </div>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleFormSubmit}>
         <div className="mb-3">
@@ -363,7 +366,14 @@ function ProfileEditForm() {
                 <label>Description</label>
                 <textarea name="description" className="form-control" value={exp.description} onChange={(e) => handleExperienceChange(index, e)} required />
               </div>
-              <button type="button" className="btn btn-danger" onClick={() => handleRemoveExperience(index)}>Remove Experience</button>
+              <button
+                type="button"
+                className="btn btn-danger ml-auto"
+                onClick={() => handleRemoveExperience(index)}
+              >
+                Remove Experience
+              </button>
+
             </div>
           ))}
           <button type="button" className="btn btn-primary" onClick={handleAddExperience}>Add Experience</button>
