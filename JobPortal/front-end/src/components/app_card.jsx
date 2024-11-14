@@ -103,21 +103,35 @@ const ApplicantCard = ({ applicant }) => {
           <span>{applicant.phone}</span>
         </div>
         
-        <button 
-          className="btn btn-primary mt-3" 
-          onClick={handleProfileUpdate}
-        >
-          Update Profile
-        </button>
-          {/* Render the modal if showModal is true */}
-      {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
-      <button
-        className="btn btn-secondary mt-3"
-        onClick={() => setShowDeleteModal(true)} // Show the delete confirmation modal
-        style={{ width: 'auto', padding: '5px 15px', fontSize: '14px' }}
-      >
-        Delete Account
-      </button>
+        <div className="button-container">
+  <button
+    className="btn btn-primary mt-3" // Keep it blue but avoid making it too large
+    onClick={handleProfileUpdate}
+    style={{
+      width: 'auto', // Let it size naturally based on content
+      padding: '8px 20px', // Moderate padding for a balanced size
+      fontSize: '16px', // Slightly larger font for prominence, but not too much
+    }}
+  >
+    Update Profile
+  </button>
+  
+  {/* Render the modal if showModal is true */}
+  {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
+  
+  <button
+    className="btn btn-outline-secondary mt-3" // Subtle styling with outline
+    onClick={() => setShowDeleteModal(true)} // Show the delete confirmation modal
+    style={{
+      width: 'auto', // Same width as the update button
+      padding: '5px 15px', // Less padding to make it smaller
+      fontSize: '14px', // Smaller font size for less attention
+    }}
+  >
+    Delete Account
+  </button>
+</div>
+
       </section>
 
       {showDeleteModal && (
