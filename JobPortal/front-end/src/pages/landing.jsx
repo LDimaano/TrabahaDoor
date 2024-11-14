@@ -21,7 +21,7 @@ const LandingPage = () => {
         <Hero />
       </section>
       
-      <section id="announcement" className="container py-5">
+      <section id="PESO" className="container py-5">
         <Announcements />
       </section>
       
@@ -29,11 +29,11 @@ const LandingPage = () => {
         <OurServices />
       </section>
       
-      <section id="about-us" className="container py-5">
+      <section id="about" className="container py-5">
         <AboutUs />
       </section>
       
-      <section id="contact-us" className="container py-5">
+      <section id="contact" className="container py-5">
         <ContactSection />
       </section>
 

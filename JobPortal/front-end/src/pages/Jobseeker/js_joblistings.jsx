@@ -13,7 +13,7 @@ const JobseekerDashboard = () => {
   const [jobs, setJobs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [listingsPerPage, setListingsPerPage] = useState(5);
+  const [listingsPerPage, setListingsPerPage] = useState(10);
   const [error, setError] = useState(null);
 
   const [hiringStages, setHiringStages] = useState({});
@@ -98,19 +98,7 @@ const JobseekerDashboard = () => {
         <section>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="d-flex align-items-center">
-              <button 
-                className="btn p-0 me-3"
-                onClick={handleBack}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: '#000',
-                  fontSize: '1.5rem',
-                  cursor: 'pointer',
-                }}>
-                <FontAwesomeIcon icon={faArrowLeft} />
-              </button>
-              <h3 style={{ marginTop: '20px' }}>Job Listings: {filteredListings.length}</h3>
+            <h3 style={{ marginTop: '20px', marginLeft: '20px' }}>Job Listings: {filteredListings.length}</h3>
             </div>
             <div className="input-group" style={{ maxWidth: '300px' }}>
               <input
