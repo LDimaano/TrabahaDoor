@@ -108,9 +108,9 @@ const ApplicantCard = ({ applicant }) => {
     className="btn btn-primary mt-3"
     onClick={handleProfileUpdate}
     style={{
-      width: 'auto', // Let it size naturally based on content
-      padding: '8px 20px', // Moderate padding for a balanced size
-      fontSize: '16px', // Slightly larger font for prominence, but not too much
+      width: 'auto', // Let the button size naturally based on content
+      padding: '6px 15px', // Smaller padding for a more compact button
+      fontSize: '14px', // Smaller font size for a less prominent button
     }}
   >
     Update Profile
@@ -120,17 +120,18 @@ const ApplicantCard = ({ applicant }) => {
   {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
   
   <button
-    className="btn btn-outline-secondary mt-3" // Use margin-top to space the buttons
+    className="btn btn-outline-secondary mt-3"
     onClick={() => setShowDeleteModal(true)} // Show the delete confirmation modal
     style={{
       width: 'auto', // Same width as the update button
-      padding: '5px 15px', // Less padding to make it smaller
+      padding: '6px 15px', // Smaller padding for a more compact button
       fontSize: '14px', // Smaller font size for less attention
     }}
   >
     Delete Account
   </button>
 </div>
+
 
 
       </section>
