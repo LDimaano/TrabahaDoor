@@ -366,13 +366,15 @@ function ProfileEditForm() {
                 <label>Description</label>
                 <textarea name="description" className="form-control" value={exp.description} onChange={(e) => handleExperienceChange(index, e)} required />
               </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <button
                 type="button"
-                className="btn btn-danger ml-auto"
+                className="btn btn-danger"
                 onClick={() => handleRemoveExperience(index)}
               >
                 Remove Experience
               </button>
+            </div>
 
             </div>
           ))}
