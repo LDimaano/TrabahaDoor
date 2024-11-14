@@ -12,7 +12,7 @@ const Header = () => {
     navigate('/signup'); 
   };
 
-  const navItems = ['Home', 'PESO', 'Services', 'About Us', 'Contact Us'];
+  const navItems = ['Home', 'PESO', 'Services', 'About', 'Contact'];
 
   return (
     <header className="navbar navbar-expand-lg navbar-light bg-light">
