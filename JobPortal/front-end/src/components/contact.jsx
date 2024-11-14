@@ -2,15 +2,15 @@ import React from 'react';
 
 const ContactSection = () => {
   return (
-    <section className="py-5" style={{ backgroundColor: '#f0f0f0', padding: '2rem 0' }}>
+    <section className="py-5" style={{ backgroundColor: '#f8f9fa', padding: '3rem 0' }}>
       <div className="container text-center">
-        <h2 className="mb-4">CONTACT US</h2>
-        <p className="lead" style={{ marginBottom: '1.5rem', color: '#6c757d' }}>Visit our office for more inquiries. We would love to hear from you!</p>
-        <div className="row justify-content-center mb-4">
+        <h2 className="mb-4" style={{ fontWeight: '700', color: '#333' }}>Contact Us</h2>
+        <p className="lead" style={{ marginBottom: '2rem', color: '#555' }}>Visit our office for more inquiries. We would love to hear from you!</p>
+        <div className="row justify-content-center mb-5">
           <div className="col-md-6">
-            <div style={{ backgroundColor: '#fff', padding: '1rem', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-              <p><strong>Phone:</strong> (043) 779 8550</p>
-              <p><strong>Facebook:</strong> <a href="https://www.facebook.com/sanjosebatangasPESO" target="_blank" rel="noopener noreferrer" style={{ color: '#007bff' }}>facebook.com/sanjosebatangasPESO</a></p>
+            <div style={{ backgroundColor: '#ffffff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)' }}>
+              <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}><strong>Phone:</strong> (043) 779 8550</p>
+              <p style={{ fontSize: '1.1rem' }}><strong>Facebook:</strong> <a href="https://www.facebook.com/sanjosebatangasPESO" target="_blank" rel="noopener noreferrer" style={{ color: '#007bff' }}>facebook.com/sanjosebatangasPESO</a></p>
             </div>
           </div>
         </div>
@@ -23,7 +23,7 @@ const ContactSection = () => {
               allowFullScreen=""
               loading="lazy"
               title="Office Location"
-              style={{ borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
+              style={{ borderRadius: '12px', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)' }}
             ></iframe>
           </div>
         </div>
