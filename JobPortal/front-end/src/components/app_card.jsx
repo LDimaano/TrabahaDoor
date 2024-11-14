@@ -104,7 +104,6 @@ const ApplicantCard = ({ applicant }) => {
         </div>
         
         <div className="button-container">
-        <div className="button-container">
   <button
     className="btn btn-primary mt-3"
     onClick={handleProfileUpdate}
@@ -133,7 +132,6 @@ const ApplicantCard = ({ applicant }) => {
   </button>
 </div>
 
-</div>
 
       </section>
 
