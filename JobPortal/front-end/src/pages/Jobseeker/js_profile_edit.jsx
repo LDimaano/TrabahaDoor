@@ -398,12 +398,18 @@ function ProfileEditForm() {
                 onChange={(selectedOption) => handleSkillChange(index, selectedOption)}
                 options={availableSkills}
               />
+                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <button type="button" className="btn btn-danger" onClick={() => handleRemoveSkill(index)}>Remove Skill</button>
+              </div>
             </div>
           ))}
+             <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <button type="button" className="btn btn-primary" onClick={handleAddSkill}>Add Skill</button>
+          </div>
         </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button type="submit" className="btn btn-success">Save Changes</button>
+        </div>
       </form>
 
       <Modal show={showModal} onHide={handleModalCancel}>
