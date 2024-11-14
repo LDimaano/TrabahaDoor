@@ -98,9 +98,9 @@ const JobseekerDashboard = () => {
         <section>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="d-flex align-items-center">
-            <h3 style={{ marginTop: '20px', marginLeft: '20px' }}>Job Listings: {filteredListings.length}</h3>
+            <h3 style={{ marginTop: '20px', marginLeft: '100px' }}>Job Listings: {filteredListings.length}</h3>
             </div>
-            <div className="input-group" style={{ maxWidth: '300px', marginRight: '20px' }}>
+            <div className="input-group" style={{ maxWidth: '300px', marginRight: '100px' }}>
               <input
                 type="text"
                 className="form-control"
