@@ -271,7 +271,9 @@ function ProfileEditForm() {
   return (
     <div className="container">
       <div className="mb-4">
-        <h1 className="text-center">Edit your Profile</h1>
+      <h1 className="text-center" style={{ marginTop: "20px" }}>
+          Edit your Profile
+      </h1>
         <h5 className="text-center">Update any changes to your information</h5>
       </div>
       {error && <div className="alert alert-danger">{error}</div>}
