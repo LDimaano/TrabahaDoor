@@ -103,6 +103,7 @@ const ApplicantCard = ({ applicant }) => {
           <span>{applicant.phone}</span>
         </div>
         
+    
         <div className="button-container">
   <button
     className="btn btn-primary mt-3"
@@ -111,6 +112,7 @@ const ApplicantCard = ({ applicant }) => {
       width: 'auto', // Let the button size naturally based on content
       padding: '6px 15px', // Smaller padding for a more compact button
       fontSize: '14px', // Smaller font size for a less prominent button
+      marginBottom: '10px', // Space between buttons
     }}
   >
     Update Profile
@@ -131,8 +133,6 @@ const ApplicantCard = ({ applicant }) => {
     Delete Account
   </button>
 </div>
-
-
 
       </section>
 
