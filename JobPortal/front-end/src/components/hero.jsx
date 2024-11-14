@@ -34,7 +34,7 @@ const Hero = () => {
           {/* Image Content */}
           <div className="col-lg-6 col-md-12 text-center">
             <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/dd4529adb83c64e54d505e5c50c741ae2faae77894b272c18394f2ee1c7392ee?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
+              src="/assets/jobfair.jpg"
               alt="People working together"
               className="img-fluid"
               style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}

@@ -9,7 +9,7 @@ const AboutUs = () => {
           <div className="col-lg-6 mb-4 mb-lg-0">
             <div style={{ borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
               <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/bc8ceb35ea27108f4f8c5a04de801c84eeec28ac0633cc84f8307834cd82482c?placeholderIfAbsent=true&apiKey=691aa702d0594162a92c71d207580975"
+                src="/assets/about.jpg"
                 className="img-fluid"
                 alt="PESO San Jose office or team members"
                 style={{ maxWidth: '100%', height: 'auto', maxHeight: '420px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
