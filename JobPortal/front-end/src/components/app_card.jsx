@@ -111,13 +111,13 @@ const ApplicantCard = ({ applicant }) => {
         </button>
           {/* Render the modal if showModal is true */}
       {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
-        <button 
-          className="btn btn-danger mt-3" 
-          onClick={() => setShowDeleteModal(true)} // Show the delete confirmation modal
-          style={{ width: '100%' }}
-        >
-          Delete Account
-        </button>
+      <button
+        className="btn btn-secondary mt-3"
+        onClick={() => setShowDeleteModal(true)} // Show the delete confirmation modal
+        style={{ width: 'auto', padding: '5px 15px', fontSize: '14px' }}
+      >
+        Delete Account
+      </button>
       </section>
 
       {showDeleteModal && (
