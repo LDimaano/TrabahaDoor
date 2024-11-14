@@ -105,18 +105,20 @@ const ApplicantCard = ({ applicant }) => {
         
     
         <div className="button-container">
-  <button
-    className="btn btn-primary mt-3"
-    onClick={handleProfileUpdate}
-    style={{
-      width: 'auto', // Let the button size naturally based on content
-      padding: '6px 15px', // Smaller padding for a more compact button
-      fontSize: '14px', // Smaller font size for a less prominent button
-      marginRight: '30px', // Space between buttons
-    }}
-  >
-    Update Profile
-  </button>
+        <button
+  className="btn btn-primary mt-3"
+  onClick={handleProfileUpdate}
+  style={{
+    width: '100%', // Makes the button take up the full width
+    padding: '6px 15px', // Smaller padding for a more compact button
+    fontSize: '14px', // Smaller font size for a less prominent button
+    marginRight: '30px', // Space between buttons (if there is any other button)
+    display: 'block', // Makes the button block-level
+  }}
+>
+  Update Profile
+</button>
+
   
   {/* Render the modal if showModal is true */}
   {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
