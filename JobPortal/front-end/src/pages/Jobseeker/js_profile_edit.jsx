@@ -271,7 +271,7 @@ function ProfileEditForm() {
   return (
     <div className="container">
       <div className="mb-4">
-      <h1 className="text-center" style={{ marginTop: "20px" }}>
+      <h1 className="text-center" style={{ marginTop: "45px" }}>
           Edit your Profile
       </h1>
         <h5 className="text-center">Update any changes to your information</h5>
