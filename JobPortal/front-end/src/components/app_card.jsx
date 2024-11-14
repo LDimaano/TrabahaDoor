@@ -104,8 +104,9 @@ const ApplicantCard = ({ applicant }) => {
         </div>
         
         <div className="button-container">
+        <div className="button-container">
   <button
-    className="btn btn-primary mt-3" // Keep it blue but avoid making it too large
+    className="btn btn-primary mt-3"
     onClick={handleProfileUpdate}
     style={{
       width: 'auto', // Let it size naturally based on content
@@ -120,7 +121,7 @@ const ApplicantCard = ({ applicant }) => {
   {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
   
   <button
-    className="btn btn-outline-secondary mt-3" // Subtle styling with outline
+    className="btn btn-outline-secondary mt-3" // Use margin-top to space the buttons
     onClick={() => setShowDeleteModal(true)} // Show the delete confirmation modal
     style={{
       width: 'auto', // Same width as the update button
@@ -130,6 +131,8 @@ const ApplicantCard = ({ applicant }) => {
   >
     Delete Account
   </button>
+</div>
+
 </div>
 
       </section>
