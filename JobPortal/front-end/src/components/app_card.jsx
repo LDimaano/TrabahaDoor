@@ -112,7 +112,7 @@ const ApplicantCard = ({ applicant }) => {
       width: 'auto', // Let the button size naturally based on content
       padding: '6px 15px', // Smaller padding for a more compact button
       fontSize: '14px', // Smaller font size for a less prominent button
-      marginBottom: '10px', // Space between buttons
+      marginRight: '30px', // Space between buttons
     }}
   >
     Update Profile
