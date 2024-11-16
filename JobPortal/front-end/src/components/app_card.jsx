@@ -103,21 +103,39 @@ const ApplicantCard = ({ applicant }) => {
           <span>{applicant.phone}</span>
         </div>
         
-        <button 
-          className="btn btn-primary mt-3" 
-          onClick={handleProfileUpdate}
-        >
-          Update Profile
-        </button>
-          {/* Render the modal if showModal is true */}
-      {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
-        <button 
-          className="btn btn-danger mt-3" 
-          onClick={() => setShowDeleteModal(true)} // Show the delete confirmation modal
-          style={{ width: '100%' }}
-        >
-          Delete Account
-        </button>
+    
+        <div className="button-container">
+        <button
+  className="btn btn-primary mt-3"
+  onClick={handleProfileUpdate}
+  style={{
+    width: '100%', // Makes the button take up the full width
+    padding: '6px 15px', // Smaller padding for a more compact button
+    fontSize: '14px', // Smaller font size for a less prominent button
+    marginRight: '30px', // Space between buttons (if there is any other button)
+    display: 'block', // Makes the button block-level
+  }}
+>
+  Update Profile
+</button>
+
+  
+  {/* Render the modal if showModal is true */}
+  {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
+  
+  <button
+    className="btn btn-outline-secondary mt-3"
+    onClick={() => setShowDeleteModal(true)} // Show the delete confirmation modal
+    style={{
+      width: 'auto', // Same width as the update button
+      padding: '6px 15px', // Smaller padding for a more compact button
+      fontSize: '14px', // Smaller font size for less attention
+    }}
+  >
+    Delete Account
+  </button>
+</div>
+
       </section>
 
       {showDeleteModal && (

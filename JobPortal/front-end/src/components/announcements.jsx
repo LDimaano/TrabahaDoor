@@ -34,7 +34,7 @@ const Announcements = () => {
   return (
     <section className="py-5">
       <div className="container text-center">
-        <h2 className="mb-4">Public Employment Service Office of San Jose</h2>
+        <h2 className="mb-4" style={{ fontWeight: '700', color: '#333' }}>Public Employment Service Office of San Jose</h2>
         <div id="carouselExampleControls" className="carousel slide" data-bs-ride="carousel">
           <div className="carousel-inner">
             {slides.map((slide, index) => (

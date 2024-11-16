@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import Header from '../../components/jsheader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faSearch} from '@fortawesome/free-solid-svg-icons';
 import JobseekerJoblist from '../../components/js_joblistinglist';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
@@ -13,7 +13,7 @@ const JobseekerDashboard = () => {
   const [jobs, setJobs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [listingsPerPage, setListingsPerPage] = useState(5);
+  const [listingsPerPage, setListingsPerPage] = useState(10);
   const [error, setError] = useState(null);
 
   const [hiringStages, setHiringStages] = useState({});
@@ -98,21 +98,9 @@ const JobseekerDashboard = () => {
         <section>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="d-flex align-items-center">
-              <button 
-                className="btn p-0 me-3"
-                onClick={handleBack}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: '#000',
-                  fontSize: '1.5rem',
-                  cursor: 'pointer',
-                }}>
-                <FontAwesomeIcon icon={faArrowLeft} />
-              </button>
-              <h3 style={{ marginTop: '20px' }}>Job Listings: {filteredListings.length}</h3>
+            <h3 style={{ marginTop: '20px', marginLeft: '100px' }}>Job Listings: {filteredListings.length}</h3>
             </div>
-            <div className="input-group" style={{ maxWidth: '300px' }}>
+            <div className="input-group" style={{ maxWidth: '300px', marginRight: '100px' }}>
               <input
                 type="text"
                 className="form-control"
@@ -121,7 +109,7 @@ const JobseekerDashboard = () => {
                 onChange={handleSearch}
               />
               <button className="btn btn-outline-secondary">
-                <FontAwesomeIcon icon={faFilter} />
+                <FontAwesomeIcon icon={faSearch} />
               </button>
             </div>
           </div>
