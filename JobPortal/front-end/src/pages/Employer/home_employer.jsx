@@ -9,20 +9,20 @@ function HomeEmployer() {
   const [activeTab, setActiveTab] = useState('all'); // State to manage the active tab
 
   // Fetch candidates once when the component mounts
-  useEffect(() => {
-    const fetchAllCandidates = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/candidates`);
-        if (!response.ok) throw new Error('Failed to fetch candidates');
-        const data = await response.json();
-        setAllCandidates(data);
-      } catch (error) {
-        console.error('Error fetching candidates:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchAllCandidates = async () => {
+  //     try {
+  //       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/candidates`);
+  //       if (!response.ok) throw new Error('Failed to fetch candidates');
+  //       const data = await response.json();
+  //       setAllCandidates(data);
+  //     } catch (error) {
+  //       console.error('Error fetching candidates:', error);
+  //     }
+  //   };
 
-    fetchAllCandidates();
-  }, []);
+  //   fetchAllCandidates();
+  // }, []);
 
   // Handle search and update state with search parameters from SearchForm
   const handleSearch = (params) => {
