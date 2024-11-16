@@ -20,7 +20,7 @@ const server = require('http').createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: 'https://trabahadoor-front-end.onrender.com',
+  origin: 'https://trabahadoor-pesosanjose.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
 }));
@@ -52,7 +52,7 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 const corsOptions = {
-  origin: 'https://trabahadoor-front-end.onrender.com',
+  origin: 'https://trabahadoor-pesosanjose.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true,
 };
@@ -62,7 +62,7 @@ app.use(cors(corsOptions));
 // Initialize Socket.IO with CORS options
 const io = require('socket.io')(server, {
   cors: {
-    origin: 'https://trabahadoor-front-end.onrender.com',
+    origin: 'https://trabahadoor-pesosanjose.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true
   },
