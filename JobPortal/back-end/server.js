@@ -19,11 +19,27 @@ const server = require('http').createServer(app);
 // Middleware to parse JSON and cookies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-  origin: 'https://trabahadoor-pesosanjose.com',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  credentials: true
-}));
+const allowedOrigins = [
+  'https://trabahadoor-pesosanjose.com',
+  'https://trabahadoor-front-end.onrender.com',
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        // Allow the request if origin is in the list or no origin (e.g., server-to-server requests)
+        callback(null, true);
+      } else {
+        // Reject the request for unauthorized origins
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true,
+  })
+);
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 // Session configuration
@@ -49,24 +65,46 @@ const sessionMiddleware = session({
   }
 });
 
+
+
 app.use(sessionMiddleware);
 
 const corsOptions = {
-  origin: 'https://trabahadoor-pesosanjose.com',
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'https://trabahadoor-pesosanjose.com',
+      'https://trabahadoor-front-end.onrender.com',
+    ];
+
+    if (allowedOrigins.includes(origin) || !origin) {
+      // Allow the request if origin is in the list or if it's a server-to-server request (no origin)
+      callback(null, true);
+    } else {
+      // Reject the request for unauthorized origins
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true,
 };
+
 
 app.use(cors(corsOptions));
 
 // Initialize Socket.IO with CORS options
 const io = require('socket.io')(server, {
   cors: {
-    origin: 'https://trabahadoor-pesosanjose.com',
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    credentials: true
+    credentials: true,
   },
-  transports: ['websocket', 'polling']
+  transports: ['websocket', 'polling'],
 });
 
 
