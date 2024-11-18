@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet'; // Import Helmet
+import { Helmet } from 'react-helmet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding, faArchive, faHourglassHalf, faChartPie } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom'; // Assuming you are using react-router-dom for navigation
+import { useNavigate } from 'react-router-dom';
 
 const SideBar = () => {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
+  const [activeLink, setActiveLink] = useState('/admin_applicants'); // Default active link
+
   const menuItems = [
     { icon: faTachometerAlt, caption: "Dashboard", link: "/admindashboard" },
     { icon: faChartPie, caption: "Demographics", link: "/admin_demographics" },
     { icon: faHourglassHalf, caption: "Pending Confirmation", link: "/admin_unapprovedemp" },
     { icon: faBuilding, caption: "Approved Employers", link: "/admin_employers" },
-    { icon: faUsers, caption: "Job Seekers", link: "/admin_applicants", active: true },
+    { icon: faUsers, caption: "Job Seekers", link: "/admin_applicants" },
     { icon: faBriefcase, caption: "Job Listing", link: "/admin_joblistings" },
     { icon: faUser, caption: "Users", link: "/admin_users" },
     { icon: faArchive, caption: "Archived", link: "/admin_archived_users" },
@@ -66,6 +68,7 @@ const SideBar = () => {
   }, []);
 
   const handleNavigation = (link) => {
+    setActiveLink(link); // Update active link when navigating
     navigate(link);
   };
 
@@ -96,7 +99,10 @@ const SideBar = () => {
         <nav className="flex-grow-1">
           <ul className="nav flex-column">
             {menuItems.map((item, index) => (
-              <li key={index} className={`nav-item ${item.active ? 'active' : ''}`}>
+              <li
+                key={index}
+                className={`nav-item ${activeLink === item.link ? 'active' : ''} ${activeLink !== item.link ? 'hover-effect' : ''}`}
+              >
                 <button
                   onClick={() => handleNavigation(item.link)}
                   className="nav-link text-white btn btn-link"
@@ -138,6 +144,22 @@ const SideBar = () => {
           Logout
         </button>
       </aside>
+
+      {/* Hover effect styling */}
+      <style>
+        {`
+          .nav-item {
+            transition: background-color 0.3s ease;
+          }
+          .nav-item.hover-effect:hover {
+            background-color: #02538D;
+            cursor: pointer;
+          }
+          .nav-item.active {
+            background-color: #022E52;
+          }
+        `}
+      </style>
     </>
   );
 };
