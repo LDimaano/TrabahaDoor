@@ -8,8 +8,13 @@ const ApplicantCard = ({ applicant }) => {
   const navigate = useNavigate();
   const [currentPhoto] = useState(applicant.image); // State to hold the current profile picture
   const { user_id } = useParams(); 
+  
   const handleProfileUpdate = () => {
     navigate(`/admin_updateemp/${user_id}`);
+  };
+
+  const handleViewDocuments = () => {
+    navigate(`/view_documents/${user_id}`);
   };
 
   return (
@@ -34,12 +39,20 @@ const ApplicantCard = ({ applicant }) => {
         <ContactItem icon={<FontAwesomeIcon icon={faEnvelope} />} label="Email" value={applicant.email} />
         <ContactItem icon={<FontAwesomeIcon icon={faPhone} />} label="Phone" value={applicant.phone} />
         <ContactItem icon={<FontAwesomeIcon icon={faLink} />} label="Website" value={applicant.website} className="w-100" />
-        <button 
-          className="btn btn-primary mt-3" 
-          onClick={handleProfileUpdate}
-        >
-          Update Profile
-        </button>
+        <div className="d-flex mt-3">
+          <button 
+            className="btn btn-primary me-2" 
+            onClick={handleProfileUpdate}
+          >
+            Update Profile
+          </button>
+          <button 
+            className="btn btn-primary" 
+            onClick={handleViewDocuments}
+          >
+            View Documents
+          </button>
+        </div>
       </section>
     </aside>
   );

@@ -43,6 +43,7 @@ import AdminUsers from './pages/Admin/admin_users';
 import AdminArchivedUsers from './pages/Admin/admin_archived_users';
 import AdminUnapprovedEmp from './pages/Admin/admin_unapprovedemp';
 import Adminupdateemp from './pages/Admin/admin_updateemp';
+import AdminViewDocuments from './pages/Admin/view_documents';
 import Adminupdatejs from './pages/Admin/admin_updatejs';
 import Demographics from './pages/Admin/admin_demographics';
 
@@ -107,6 +108,7 @@ root.render(
         <Route path="/employerfiles/:user_id" element={<UploadDocuments />} />
         <Route path="/empdashboard" element={<EmployerDashboard />} />
         <Route path="/admin_updateemp/:user_id" element={<Adminupdateemp />} />
+        <Route path="/view_documents/:user_id" element={<AdminViewDocuments />} />
         <Route path="/admin_updatejs/:user_id" element={<Adminupdatejs />} />
         <Route path="/verify-email" element={<EmailVerification />} />
         <Route path="/unverified-account" element={<Unverified />} />

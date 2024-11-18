@@ -362,6 +362,35 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
     }
   });
 
+  router.get('/viewdocuments/:user_id', async (req, res) => {
+    const { userId } = req.params;
+
+  try {
+    const query = `
+      SELECT 
+        sec_certificate AS "SEC Certificate", 
+        business_permit AS "Business Permit", 
+        bir_certificate AS "BIR Certificate", 
+        poea_license AS "POEA License", 
+        private_recruitment_agency_license AS "Private Recruitment Agency License", 
+        contract_sub_contractor_certificate AS "Contract Sub Contractor Certificate"
+      FROM documents
+      WHERE user_id = $1;
+    `;
+
+    const result = await pool.query(query, [userId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'No documents found for this user.' });
+    }
+
+    res.json(result.rows[0]); 
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+  
 
 router.get('/joblistings/:jobId', async (req, res) => {
     const { jobId } = req.params;
