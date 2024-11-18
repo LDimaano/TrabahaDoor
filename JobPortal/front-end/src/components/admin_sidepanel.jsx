@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding, faArchive, faHourglassHalf, faChartPie } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const SideBar = () => {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  const [activeLink, setActiveLink] = useState('/admin_applicants'); // Default active link
+  const location = useLocation(); // Track the current path
+  const [activeLink, setActiveLink] = useState(location.pathname); // Set default active link based on current path
 
   const menuItems = [
     { icon: faTachometerAlt, caption: "Dashboard", link: "/admindashboard" },
@@ -67,8 +68,11 @@ const SideBar = () => {
     fetchCompanyInfo();
   }, []);
 
+  useEffect(() => {
+    setActiveLink(location.pathname); // Update active link on route change
+  }, [location.pathname]);
+
   const handleNavigation = (link) => {
-    setActiveLink(link); // Update active link when navigating
     navigate(link);
   };
 
