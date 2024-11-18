@@ -5,6 +5,7 @@ import { faEye, faTh, faList } from '@fortawesome/free-solid-svg-icons';
 
 function ApplicantJoblist() {
   const { user_id } = useParams(); 
+  console.log(user_id);
   const [viewMode, setViewMode] = useState('list');
   const [showModal, setShowModal] = useState(false);
   const [documentUrl, setDocumentUrl] = useState('');
