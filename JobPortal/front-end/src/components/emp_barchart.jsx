@@ -3,6 +3,7 @@ import { Tooltip, OverlayTrigger, Button } from 'react-bootstrap';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 function BarChart() {
   const [timeToFillData, setTimeToFillData] = useState({});
@@ -69,7 +70,8 @@ function BarChart() {
           <p className="text-muted">Showing Average Time to Fill per Industry</p>
         </div>
         <Button variant="primary" onClick={generatePDFReport}>
-          Download Report
+        <FontAwesomeIcon icon={faDownload} className="me-2" />
+        Export Data
         </Button>
       </header>
 
