@@ -28,8 +28,15 @@ function ApplicantJoblist({ user_id, fetchUsers }) {
   // Fetch documents from the backend
   useEffect(() => {
     const fetchDocuments = async () => {
+      if (!user_id) {
+        console.error('user_id is undefined');
+        setError('Invalid user ID');
+        return;
+      }
+
       setLoading(true);
       setError(null);
+
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/viewdocuments/${user_id}`);
         if (!response.ok) {
@@ -38,6 +45,7 @@ function ApplicantJoblist({ user_id, fetchUsers }) {
         const data = await response.json();
         setDocuments(data); // Assuming the API returns a single document object
       } catch (err) {
+        console.error('Error fetching documents:', err);
         setError(err.message);
       } finally {
         setLoading(false);

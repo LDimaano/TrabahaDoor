@@ -362,9 +362,9 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
     }
   });
 
-  router.get('/viewdocuments/:userId', async (req, res) => {
-    const { userId } = req.params;
-    console.log("userId for view documents", userId);
+  router.get('/viewdocuments/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+    console.log("userId for view documents", user_id);
 
   try {
     const query = `
@@ -379,7 +379,7 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
       WHERE user_id = $1;
     `;
 
-    const result = await pool.query(query, [userId]);
+    const result = await pool.query(query, [user_id]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'No documents found for this user.' });
