@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Helmet } from 'react-helmet';
 import { faHome, faClipboardList, faSignOutAlt, faHourglassStart, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
@@ -69,92 +70,97 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="p-3 d-flex flex-column" style={{ backgroundColor: '#044474', width: '250px', height: '100vh', position: 'relative' }}>
-      <div className="d-flex align-items-center justify-content-center mb-4">
-        <img
-          src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
-          alt="TrabahaDoor Logo"
-          className="img-fluid"
-          style={{ width: '30px', marginRight: '10px' }}
-        />
-        <h4 className="mb-0 text-white" style={{ fontSize: '18px' }}>TrabahaDoor</h4>
-      </div>
-      <nav className="flex-grow-1">
-        <ul className="nav flex-column">
-          <li className={`nav-item ${activeLink === '/empdashboard' ? 'active' : ''} hover-effect`}>
-            <button
-              onClick={() => handleNavigation('/empdashboard')}
-              className="btn btn-link nav-link text-white"
-            >
-              <FontAwesomeIcon icon={faTachometerAlt} className="me-2" />
-              Dashboard
-            </button>
-          </li>
-          <li className={`nav-item ${activeLink === '/applicant_joblisting' ? 'active' : ''} hover-effect`}>
-            <button
-              onClick={() => handleNavigation('/applicant_joblisting')}
-              className="btn btn-link nav-link text-white"
-            >
-              <FontAwesomeIcon icon={faClipboardList} className="me-2" />
-              Job Listing
-            </button>
-          </li>
-          <li className={`nav-item ${activeLink === '/emp_timetofill' ? 'active' : ''} hover-effect`}>
-            <button
-              onClick={() => handleNavigation('/emp_timetofill')}
-              className="btn btn-link nav-link text-white"
-            >
-              <FontAwesomeIcon icon={faHourglassStart} className="me-2" />
-              Time to fill
-            </button>
-          </li>
-        </ul>
-      </nav>
-      <div className="mt-4 text-center text-white" style={{ position: 'absolute', bottom: '80px', left: '0', right: '0' }}>
-        <img
-          src={profile_picture_url}
-          alt="User Avatar"
-          className="img-fluid rounded-circle"
-          style={{ width: '50px', borderRadius: '50%' }}
-        />
-        <div className="mt-2">
-          <p className="mb-0">{company_name}</p>
-          <small>{email}</small>
+    <>
+      <Helmet>
+        <title>TrabahaDoor - Employer</title> {/* Set the page title */}
+      </Helmet>
+      <aside className="p-3 d-flex flex-column" style={{ backgroundColor: '#044474', width: '250px', height: '100vh', position: 'relative' }}>
+        <div className="d-flex align-items-center justify-content-center mb-4">
+          <img
+            src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+            alt="TrabahaDoor Logo"
+            className="img-fluid"
+            style={{ width: '30px', marginRight: '10px' }}
+          />
+          <h4 className="mb-0 text-white" style={{ fontSize: '18px' }}>TrabahaDoor</h4>
         </div>
-      </div>
-      <button
-        onClick={handleLogout}
-        className="btn btn-danger mt-auto"
-        style={{
-          position: 'absolute',
-          bottom: '20px',
-          left: '0',
-          right: '0',
-          backgroundColor: 'transparent',
-          border: 'none',
-          color: 'white',
-        }}
-      >
-        <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
-        Logout
-      </button>
+        <nav className="flex-grow-1">
+          <ul className="nav flex-column">
+            <li className={`nav-item ${activeLink === '/empdashboard' ? 'active' : ''} hover-effect`}>
+              <button
+                onClick={() => handleNavigation('/empdashboard')}
+                className="btn btn-link nav-link text-white"
+              >
+                <FontAwesomeIcon icon={faTachometerAlt} className="me-2" />
+                Dashboard
+              </button>
+            </li>
+            <li className={`nav-item ${activeLink === '/applicant_joblisting' ? 'active' : ''} hover-effect`}>
+              <button
+                onClick={() => handleNavigation('/applicant_joblisting')}
+                className="btn btn-link nav-link text-white"
+              >
+                <FontAwesomeIcon icon={faClipboardList} className="me-2" />
+                Job Listing
+              </button>
+            </li>
+            <li className={`nav-item ${activeLink === '/emp_timetofill' ? 'active' : ''} hover-effect`}>
+              <button
+                onClick={() => handleNavigation('/emp_timetofill')}
+                className="btn btn-link nav-link text-white"
+              >
+                <FontAwesomeIcon icon={faHourglassStart} className="me-2" />
+                Time to fill
+              </button>
+            </li>
+          </ul>
+        </nav>
+        <div className="mt-4 text-center text-white" style={{ position: 'absolute', bottom: '80px', left: '0', right: '0' }}>
+          <img
+            src={profile_picture_url}
+            alt="User Avatar"
+            className="img-fluid rounded-circle"
+            style={{ width: '50px', borderRadius: '50%' }}
+          />
+          <div className="mt-2">
+            <p className="mb-0">{company_name}</p>
+            <small>{email}</small>
+          </div>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="btn btn-danger mt-auto"
+          style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '0',
+            right: '0',
+            backgroundColor: 'transparent',
+            border: 'none',
+            color: 'white',
+          }}
+        >
+          <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
+          Logout
+        </button>
 
-      {/* Hover effect styling */}
-      <style>
-        {`
-          .nav-item {
-            transition: background-color 0.3s ease;
-          }
-          .nav-item.hover-effect:hover {
-            background-color: #02538D;
-            cursor: pointer;
-          }
-          .nav-item.active {
-            background-color: #022E52;
-          }
-        `}
-      </style>
-    </aside>
+        {/* Hover effect styling */}
+        <style>
+          {`
+            .nav-item {
+              transition: background-color 0.3s ease;
+            }
+            .nav-item.hover-effect:hover {
+              background-color: #02538D;
+              cursor: pointer;
+            }
+            .nav-item.active {
+              background-color: #022E52;
+            }
+          `}
+        </style>
+      </aside>
+    </>
   );
 };
 
