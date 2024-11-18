@@ -34,14 +34,18 @@ function ApplicantJoblist() {
     const fetchDocuments = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/viewdocuments/${user_id}`);
-        if (!response.ok) {
+        if (response.status === 404) {
+          const errorData = await response.json();
+          setError(errorData.message); // "No documents found for this user."
+        } else if (!response.ok) {
           throw new Error('Failed to fetch documents');
+        } else {
+          const data = await response.json();
+          setDocuments(data); // Assuming the API returns a single document object
         }
-        const data = await response.json();
-        setDocuments(data); // Assuming the API returns a single document object
       } catch (err) {
         console.error('Error fetching documents:', err);
-        setError(err.message);
+        setError('Failed to fetch documents');
       } finally {
         setLoading(false);
       }
@@ -62,7 +66,7 @@ function ApplicantJoblist() {
   if (error) {
     return (
       <div className="text-center text-danger">
-        <p>Error: {error}</p>
+        <p>{error}</p>
       </div>
     );
   }
@@ -86,7 +90,11 @@ function ApplicantJoblist() {
           </Button>
         </div>
 
-        {viewMode === 'list' ? (
+        {Object.keys(documents).length === 0 ? (
+          <div className="text-center">
+            <p>No documents found for this user.</p>
+          </div>
+        ) : viewMode === 'list' ? (
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead>
