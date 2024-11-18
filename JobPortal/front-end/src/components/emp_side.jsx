@@ -81,15 +81,6 @@ const Sidebar = () => {
       </div>
       <nav className="flex-grow-1">
         <ul className="nav flex-column">
-          <li className={`nav-item ${activeLink === '/home_employer' ? 'active' : ''} hover-effect`}>
-            <button
-              onClick={() => handleNavigation('/home_employer')}
-              className="btn btn-link nav-link text-white"
-            >
-              <FontAwesomeIcon icon={faHome} className="me-2" />
-              Home
-            </button>
-          </li>
           <li className={`nav-item ${activeLink === '/empdashboard' ? 'active' : ''} hover-effect`}>
             <button
               onClick={() => handleNavigation('/empdashboard')}

@@ -27,7 +27,7 @@ const EmployerDashboard = () => {
       <main className="flex-grow-1 p-3">
         <Header />
         <section>
-          <h3>Dashboard</h3>
+          <h3> Employer Dashboard</h3>
 
           {/* Dashboard Grid with Components */}
           <div className="row g-4 mt-4">
