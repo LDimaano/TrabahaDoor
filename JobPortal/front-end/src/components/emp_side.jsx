@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faClipboardList, faSignOutAlt, faHourglassStart, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // Track the current path
   const [company_name, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
   const [profile_picture_url, setProfilePictureUrl] = useState('');
+  const [activeLink, setActiveLink] = useState(location.pathname); // Sync with current route
 
   useEffect(() => {
     const fetchCompanyInfo = async () => {
@@ -23,8 +25,6 @@ const Sidebar = () => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('API response data:', data);
-          
           setCompanyName(data.company_name || '');
           setEmail(data.email || '');
           setProfilePictureUrl(data.profile_picture_url || '');
@@ -38,6 +38,14 @@ const Sidebar = () => {
 
     fetchCompanyInfo();
   }, []);
+
+  useEffect(() => {
+    setActiveLink(location.pathname); // Update active link on route change
+  }, [location.pathname]);
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
 
   const handleLogout = async () => {
     try {
@@ -60,22 +68,6 @@ const Sidebar = () => {
     }
   };
 
-  const handleHomeClick = () => {
-    navigate('/home_employer');
-  };
-
-  const handleJobListingClick = () => {
-    navigate('/applicant_joblisting');
-  };
-
-  const handleTimeToFillClick = () => {
-    navigate('/emp_timetofill');
-  };
-
-  const handleDashboardClick = () => {
-    navigate('/empdashboard');
-  };
-
   return (
     <aside className="p-3 d-flex flex-column" style={{ backgroundColor: '#044474', width: '250px', height: '100vh', position: 'relative' }}>
       <div className="d-flex align-items-center justify-content-center mb-4">
@@ -89,26 +81,38 @@ const Sidebar = () => {
       </div>
       <nav className="flex-grow-1">
         <ul className="nav flex-column">
-          <li className="nav-item">
-            <button onClick={handleHomeClick} className="btn btn-link nav-link text-white">
+          <li className={`nav-item ${activeLink === '/home_employer' ? 'active' : ''} hover-effect`}>
+            <button
+              onClick={() => handleNavigation('/home_employer')}
+              className="btn btn-link nav-link text-white"
+            >
               <FontAwesomeIcon icon={faHome} className="me-2" />
               Home
             </button>
           </li>
-          <li className="nav-item">
-            <button onClick={handleDashboardClick} className="btn btn-link nav-link text-white">
+          <li className={`nav-item ${activeLink === '/empdashboard' ? 'active' : ''} hover-effect`}>
+            <button
+              onClick={() => handleNavigation('/empdashboard')}
+              className="btn btn-link nav-link text-white"
+            >
               <FontAwesomeIcon icon={faTachometerAlt} className="me-2" />
               Dashboard
             </button>
           </li>
-          <li className="nav-item">
-            <button onClick={handleJobListingClick} className="btn btn-link nav-link text-white">
+          <li className={`nav-item ${activeLink === '/applicant_joblisting' ? 'active' : ''} hover-effect`}>
+            <button
+              onClick={() => handleNavigation('/applicant_joblisting')}
+              className="btn btn-link nav-link text-white"
+            >
               <FontAwesomeIcon icon={faClipboardList} className="me-2" />
               Job Listing
             </button>
           </li>
-          <li className="nav-item">
-            <button onClick={handleTimeToFillClick} className="btn btn-link nav-link text-white">
+          <li className={`nav-item ${activeLink === '/emp_timetofill' ? 'active' : ''} hover-effect`}>
+            <button
+              onClick={() => handleNavigation('/emp_timetofill')}
+              className="btn btn-link nav-link text-white"
+            >
               <FontAwesomeIcon icon={faHourglassStart} className="me-2" />
               Time to fill
             </button>
@@ -143,6 +147,22 @@ const Sidebar = () => {
         <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
         Logout
       </button>
+
+      {/* Hover effect styling */}
+      <style>
+        {`
+          .nav-item {
+            transition: background-color 0.3s ease;
+          }
+          .nav-item.hover-effect:hover {
+            background-color: #02538D;
+            cursor: pointer;
+          }
+          .nav-item.active {
+            background-color: #022E52;
+          }
+        `}
+      </style>
     </aside>
   );
 };
