@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Modal, Button, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faTh, faList } from '@fortawesome/free-solid-svg-icons';
+import Sidebar from '../../components/admin_sidepanel';
 
 function ApplicantJoblist() {
   const { user_id } = useParams(); 
@@ -76,27 +77,49 @@ function ApplicantJoblist() {
   ];
 
   return (
-    <div>
-      <div className="d-flex justify-content-end mb-3">
-        <Button variant="outline-secondary" onClick={toggleViewMode}>
-          <FontAwesomeIcon icon={viewMode === 'list' ? faTh : faList} /> Toggle View
-        </Button>
-      </div>
+    <div className="d-flex">
+      <Sidebar /> 
+      <div className="content-container flex-grow-1 p-3">
+        <div className="d-flex justify-content-end mb-3">
+          <Button variant="outline-secondary" onClick={toggleViewMode}>
+            <FontAwesomeIcon icon={viewMode === 'list' ? faTh : faList} /> Toggle View
+          </Button>
+        </div>
 
-      {viewMode === 'list' ? (
-        <div className="table-responsive">
-          <table className="table table-bordered">
-            <thead>
-              <tr>
-                <th>Document Name</th>
-                <th>View Document</th>
-              </tr>
-            </thead>
-            <tbody>
-              {documentFields.map((field) => (
-                <tr key={field}>
-                  <td>{field}</td>
-                  <td>
+        {viewMode === 'list' ? (
+          <div className="table-responsive">
+            <table className="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Document Name</th>
+                  <th>View Document</th>
+                </tr>
+              </thead>
+              <tbody>
+                {documentFields.map((field) => (
+                  <tr key={field}>
+                    <td>{field}</td>
+                    <td>
+                      {documents[field] ? (
+                        <Button variant="link" onClick={() => handleShowModal(documents[field])}>
+                          <FontAwesomeIcon icon={faEye} /> View Document
+                        </Button>
+                      ) : (
+                        <span className="text-muted">Not Uploaded</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="row">
+            {documentFields.map((field) => (
+              <div className="col-md-4 mb-4" key={field}>
+                <div className="card h-100">
+                  <div className="card-body">
+                    <h5 className="card-title">{field}</h5>
                     {documents[field] ? (
                       <Button variant="link" onClick={() => handleShowModal(documents[field])}>
                         <FontAwesomeIcon icon={faEye} /> View Document
@@ -104,50 +127,31 @@ function ApplicantJoblist() {
                     ) : (
                       <span className="text-muted">Not Uploaded</span>
                     )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="row">
-          {documentFields.map((field) => (
-            <div className="col-md-4 mb-4" key={field}>
-              <div className="card h-100">
-                <div className="card-body">
-                  <h5 className="card-title">{field}</h5>
-                  {documents[field] ? (
-                    <Button variant="link" onClick={() => handleShowModal(documents[field])}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
-                    </Button>
-                  ) : (
-                    <span className="text-muted">Not Uploaded</span>
-                  )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
 
-      {/* Document Modal */}
-      <Modal show={showModal} onHide={handleCloseModal} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Document Viewer</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {documentUrl ? (
-            <iframe
-              src={documentUrl}
-              title="Document Viewer"
-              style={{ width: '100%', height: '500px', border: 'none' }}
-            ></iframe>
-          ) : (
-            <p>No document available.</p>
-          )}
-        </Modal.Body>
-      </Modal>
+        {/* Document Modal */}
+        <Modal show={showModal} onHide={handleCloseModal} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>Document Viewer</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {documentUrl ? (
+              <iframe
+                src={documentUrl}
+                title="Document Viewer"
+                style={{ width: '100%', height: '500px', border: 'none' }}
+              ></iframe>
+            ) : (
+              <p>No document available.</p>
+            )}
+          </Modal.Body>
+        </Modal>
+      </div>
     </div>
   );
 }
