@@ -3,7 +3,8 @@ import { Modal, Button, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faTh, faList } from '@fortawesome/free-solid-svg-icons';
 
-function ApplicantJoblist({ user_id, fetchUsers }) {
+function ApplicantJoblist() {
+  const user_id = url.split('/').pop();
   const [viewMode, setViewMode] = useState('list');
   const [showModal, setShowModal] = useState(false);
   const [documentUrl, setDocumentUrl] = useState('');
@@ -28,15 +29,6 @@ function ApplicantJoblist({ user_id, fetchUsers }) {
   // Fetch documents from the backend
   useEffect(() => {
     const fetchDocuments = async () => {
-      if (!user_id) {
-        console.error('user_id is undefined');
-        setError('Invalid user ID');
-        return;
-      }
-
-      setLoading(true);
-      setError(null);
-
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/viewdocuments/${user_id}`);
         if (!response.ok) {
