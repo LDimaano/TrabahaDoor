@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faTh, faList } from '@fortawesome/free-solid-svg-icons';
 
 function ApplicantJoblist() {
-  const user_id = url.split('/').pop();
+  const { user_id } = useParams(); 
   const [viewMode, setViewMode] = useState('list');
   const [showModal, setShowModal] = useState(false);
   const [documentUrl, setDocumentUrl] = useState('');
@@ -65,12 +65,12 @@ function ApplicantJoblist() {
   }
 
   const documentFields = [
-    "SEC Certificate",
-    "Business Permit",
-    "BIR Certificate",
-    "POEA License",
-    "Private Recruitment Agency License",
-    "Contract Sub Contractor Certificate",
+    'SEC Certificate',
+    'Business Permit',
+    'BIR Certificate',
+    'POEA License',
+    'Private Recruitment Agency License',
+    'Contract Sub Contractor Certificate',
   ];
 
   return (
