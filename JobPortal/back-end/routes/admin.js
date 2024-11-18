@@ -364,6 +364,7 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
 
   router.get('/viewdocuments/:user_id', async (req, res) => {
     const { userId } = req.params;
+    console.log("userId for view documents", userId);
 
   try {
     const query = `
