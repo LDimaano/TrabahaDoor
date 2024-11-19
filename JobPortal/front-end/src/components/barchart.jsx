@@ -71,61 +71,63 @@ function BarChart() {
           {error && <Alert variant="danger">{error}</Alert>}
 
           <div className="d-flex flex-column align-items-center">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-end",
-                height: `${maxBarHeight + 50}px`,
-                paddingBottom: "50px",
-                justifyContent: "space-between", // Evenly space bars
-                width: "100%", // Take full container width
-                maxWidth: "600px", // Optional: Limit overall chart width
-                marginTop: "20px", // Add spacing between description and chart
-              }}
-            >
-              {industries.map((industry, index) => (
-                <div
-                  key={index}
-                  className="d-flex flex-column align-items-center mx-2"
-                  style={{ width: "60px" }} // Adjust bar width here
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              height: `${maxBarHeight + 50}px`,
+              paddingBottom: "50px",
+              justifyContent: "space-between", // Evenly space bars
+              width: "100%", // Take full container width
+              maxWidth: "600px", // Optional: Limit overall chart width
+              marginTop: "20px", // Add spacing between description and chart
+            }}
+          >
+            {industries.map((industry, index) => (
+              <div
+                key={index}
+                className="d-flex flex-column align-items-center mx-2"
+                style={{ width: "60px" }} // Adjust bar width here
+              >
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
                 >
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
-                  >
-                    <div
-                      className="bar"
-                      style={{
-                        height: `${industry.scaledHeight}px`,
-                        width: "100%", // Match container width
-                        backgroundColor: "blue",
-                        borderRadius: "5px",
-                        transition: "transform 0.2s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = "scale(1.1)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = "scale(1)";
-                      }}
-                    ></div>
-                  </OverlayTrigger>
                   <div
-                    className="text-center mt-2"
+                    className="bar"
                     style={{
-                      fontSize: "0.85rem",
-                      whiteSpace: "normal", // Allow text to wrap
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      maxWidth: "60px", // Match container width
-                      wordWrap: "break-word", // Break long words
+                      height: `${industry.scaledHeight}px`,
+                      width: "100%", // Match container width
+                      backgroundColor: "blue",
+                      borderRadius: "5px",
+                      transition: "transform 0.2s ease",
                     }}
-                  >
-                    {industry.name}
-                  </div>
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "scale(1.1)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "scale(1)";
+                    }}
+                  ></div>
+                </OverlayTrigger>
+                <div
+                  className="text-center mt-2"
+                  style={{
+                    fontSize: "0.85rem",
+                    whiteSpace: "nowrap", // Prevent text wrapping
+                    overflow: "hidden",
+                    textOverflow: "ellipsis", // Add ellipsis for long text
+                    maxWidth: "60px", // Match container width
+                  }}
+                  title={industry.name} // Add tooltip for full name
+                >
+                  {industry.name.length > 9 // Truncate long names and add ellipsis
+                    ? `${industry.name.substring(0, 8)}...`
+                    : industry.name}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+          </div>
 
             {/* Legend */}
             <div className="mt-4 d-flex align-items-center">
