@@ -74,12 +74,12 @@ function BarChart() {
             <Tab eventKey="timeToFill" title="Time to Fill">
               <div className="d-flex flex-column align-items-center">
                 {/* Chart Container */}
-                <div style={{ display: "flex", alignItems: "flex-end", height: `${maxBarHeight + 20}px`, paddingBottom: "50px" }}>
+                <div style={{ display: "flex", alignItems: "flex-end", height: `${maxBarHeight + 50}px`, paddingBottom: "50px" }}>
                   {industries.map((industry, index) => (
                     <div
                       key={index}
                       className="d-flex flex-column align-items-center mx-3"
-                      style={{ width: "40px" }}
+                      style={{ width: "80px" }} // Increased width to prevent overlap
                     >
                       <OverlayTrigger
                         placement="top"
