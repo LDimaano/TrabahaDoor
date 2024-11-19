@@ -71,9 +71,9 @@ function BarChart() {
 
           <Tabs defaultActiveKey="timeToFill" id="timeToFill-tabs" className="mb-4">
             <Tab eventKey="timeToFill" title="Time to Fill">
-              <Row className="d-flex justify-content-between">
+              <Row className="d-flex justify-content-start">
                 {industries.map((industry, index) => (
-                  <Col key={index} className="text-center" xs={2}>
+                  <Col key={index} className="text-center" xs={2} style={{ width: '80px' }}>
                     <OverlayTrigger
                       placement="top"
                       overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
@@ -102,7 +102,17 @@ function BarChart() {
                         }}
                       ></div>
                     </OverlayTrigger>
-                    <span className="text-muted d-block mt-2">{industry.name}</span>
+                    <span
+                      className="text-muted d-block mt-2"
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        width: '80px',
+                      }}
+                    >
+                      {industry.name}
+                    </span>
                   </Col>
                 ))}
               </Row>
