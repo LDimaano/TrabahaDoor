@@ -10,18 +10,28 @@ def calculate_time_to_fill(data):
 
     # Iterate through job listings and calculate days to fill for each industry
     for job in data:
-        industry = job['industry_name'].strip()  # Accessing industry_name from the data
-        datecreated = datetime.strptime(job['datecreated'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
-        datefilled = datetime.strptime(job['datefilled'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
-        days_to_fill = (datefilled - datecreated).days
-        
-        # Append the time to fill for each job to the respective industry
-        industry_time_to_fill[industry].append(days_to_fill)
+        try:
+            industry = job['industry_name'].strip()  # Accessing industry_name from the data
+            datecreated = datetime.strptime(job['datecreated'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
+            datefilled = datetime.strptime(job['datefilled'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
+            days_to_fill = (datefilled - datecreated).days
+
+            # Debugging: Print the details of each job being processed
+            print(f"Processing job: {industry} | Created: {datecreated} | Filled: {datefilled} | Days to Fill: {days_to_fill}")
+
+            # Append the time to fill for each job to the respective industry
+            industry_time_to_fill[industry].append(days_to_fill)
+        except Exception as e:
+            print(f"Error processing job {job}: {str(e)}", file=sys.stderr)
+            continue
 
     # Average the days to fill for each industry
     industry_avg_time_to_fill = {
         industry: sum(days) // len(days) for industry, days in industry_time_to_fill.items()
     }
+
+    # Debugging: Print the result after processing all jobs
+    print(f"Industry Average Time to Fill: {industry_avg_time_to_fill}")
 
     return industry_avg_time_to_fill
 
@@ -29,6 +39,10 @@ def plot_time_to_fill(result):
     # Extract industries and their average time to fill
     industries = list(result.keys())
     avg_time_to_fill = list(result.values())
+
+    # Debugging: Print the data that will be plotted
+    print(f"Industries to Plot: {industries}")
+    print(f"Average Time to Fill to Plot: {avg_time_to_fill}")
 
     # Create a bar chart
     plt.figure(figsize=(12, 6))  # Adjust the figure size for better visibility
@@ -56,6 +70,10 @@ if __name__ == "__main__":
             raise ValueError("No input data received.")
         
         job_listings = json.loads(input_data)
+
+        # Debugging: Print the input data
+        print("Input Data:")
+        print(json.dumps(job_listings, indent=2))
 
         # Calculate time to fill by industry without scaling
         result = calculate_time_to_fill(job_listings)
