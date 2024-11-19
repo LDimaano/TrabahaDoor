@@ -65,8 +65,8 @@ function BarChart() {
     <Container>
       <Card className="shadow-sm p-4">
         <Card.Body>
-          <h4 className="text-dark text-center mb-3">Time to Fill Analysis</h4>
-          <p className="text-muted text-center">Showing Average Time to Fill per Industry</p>
+          <h4 className="text-dark text-center mb-4">Time to Fill Analysis</h4>
+          <p className="text-muted text-center mb-5">Showing Average Time to Fill per Industry</p>
 
           {error && <Alert variant="danger">{error}</Alert>}
 
@@ -80,6 +80,7 @@ function BarChart() {
                 justifyContent: "space-between", // Evenly space bars
                 width: "100%", // Take full container width
                 maxWidth: "600px", // Optional: Limit overall chart width
+                marginTop: "20px", // Add spacing between description and chart
               }}
             >
               {industries.map((industry, index) => (
