@@ -71,59 +71,57 @@ function BarChart() {
 
           <Tabs defaultActiveKey="timeToFill" id="timeToFill-tabs" className="mb-4">
             <Tab eventKey="timeToFill" title="Time to Fill">
-              <Row className="d-flex justify-content-start">
-                {industries.map((industry, index) => (
-                  <Col
-                    key={index}
-                    className="text-center d-flex flex-column align-items-center"
-                    xs={2}
-                    style={{ width: '80px', position: 'relative' }}
-                  >
-                    <OverlayTrigger
-                      placement="top"
-                      overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
-                    >
-                      <div
-                        className="position-absolute"
-                        style={{
-                          bottom: 0, // Align to the bottom
-                          height: `${industry.height}px`,
-                          width: '48px',
-                          cursor: 'pointer',
-                          backgroundColor: 'blue',
-                          borderRadius: '5px',
-                          transition: 'background-color 0.3s ease, transform 0.2s ease',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = 'rgba(0, 123, 255, 0.8)';
-                          e.currentTarget.style.transform = 'scale(1.1)';
-                          e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-                          e.currentTarget.style.zIndex = '1';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'blue';
-                          e.currentTarget.style.transform = 'scale(1)';
-                          e.currentTarget.style.boxShadow = 'none';
-                          e.currentTarget.style.zIndex = '0';
-                        }}
-                      ></div>
-                    </OverlayTrigger>
-                    <span
-                      className="text-muted d-block mt-2"
-                      style={{
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        width: '80px',
-                        fontSize: '0.75rem',
-                        marginTop: '10px',  // Ensure some space between the bar and the label
-                      }}
-                    >
-                      {industry.name}
-                    </span>
-                  </Col>
-                ))}
-              </Row>
+            <Row className="d-flex justify-content-start">
+  {industries.map((industry, index) => (
+    <Col
+      key={index}
+      className="text-center d-flex flex-column align-items-center"
+      xs={2}
+      style={{ width: '80px', position: 'relative', paddingBottom: '40px' }} // Add padding to ensure space for labels
+    >
+      <OverlayTrigger
+        placement="top"
+        overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
+      >
+        <div
+          className="position-relative"
+          style={{
+            height: `${industry.height}px`,
+            width: '48px',
+            cursor: 'pointer',
+            backgroundColor: 'blue',
+            borderRadius: '5px',
+            transition: 'background-color 0.3s ease, transform 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(0, 123, 255, 0.8)';
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+            e.currentTarget.style.zIndex = '1';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'blue';
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.zIndex = '0';
+          }}
+        ></div>
+      </OverlayTrigger>
+      <span
+        className="text-muted d-block mt-2"
+        style={{
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          width: '80px',
+          fontSize: '0.75rem',
+        }}
+      >
+        {industry.name}
+      </span>
+    </Col>
+  ))}
+</Row>
 
               <div className="mt-4 d-flex align-items-center">
                 <div
