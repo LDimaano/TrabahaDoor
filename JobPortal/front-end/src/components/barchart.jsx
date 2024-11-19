@@ -71,65 +71,63 @@ function BarChart() {
           {error && <Alert variant="danger">{error}</Alert>}
 
           <div className="d-flex flex-column align-items-center">
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-end",
-              height: `${maxBarHeight + 50}px`,
-              paddingBottom: "50px",
-              justifyContent: "space-between", // Evenly space bars
-              width: "100%", // Take full container width
-              maxWidth: "600px", // Optional: Limit overall chart width
-              marginTop: "20px", // Add spacing between description and chart
-            }}
-          >
-            {industries.map((industry, index) => (
-              <div
-                key={index}
-                className="d-flex flex-column align-items-center mx-2"
-                style={{ width: "60px" }} // Adjust bar width here
-              >
-                <OverlayTrigger
-                  placement="top"
-                  overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
-                >
-                  <div
-                    className="bar"
-                    style={{
-                      height: `${industry.scaledHeight}px`,
-                      width: "100%", // Match container width
-                      backgroundColor: "blue",
-                      borderRadius: "5px",
-                      transition: "transform 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "scale(1.1)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "scale(1)";
-                    }}
-                  ></div>
-                </OverlayTrigger>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-end",
+                height: `${maxBarHeight + 50}px`,
+                paddingBottom: "50px",
+                justifyContent: "space-around", 
+                width: "100%",
+                maxWidth: "600px", 
+                marginTop: "20px",
+              }}
+            >
+              {industries.map((industry, index) => (
                 <div
-                  className="text-center mt-2"
-                  style={{
-                    fontSize: "0.85rem",
-                    whiteSpace: "nowrap", // Prevent text wrapping
-                    overflow: "hidden",
-                    textOverflow: "ellipsis", // Add ellipsis for long text
-                    maxWidth: "60px", // Match container width
-                  }}
-                  title={industry.name} // Add tooltip for full name
+                  key={index}
+                  className="d-flex flex-column align-items-center"
+                  style={{ width: "70px" }} 
                 >
-                  {industry.name.length > 9 // Truncate long names and add ellipsis
-                    ? `${industry.name.substring(0, 8)}...`
-                    : industry.name}
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
+                  >
+                    <div
+                      className="bar"
+                      style={{
+                        height: `${industry.scaledHeight}px`,
+                        width: "100%", 
+                        backgroundColor: "blue",
+                        borderRadius: "5px",
+                        transition: "transform 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "scale(1.1)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "scale(1)";
+                      }}
+                    ></div>
+                  </OverlayTrigger>
+                  <div
+                    className="text-center mt-2"
+                    style={{
+                      fontSize: "0.85rem",
+                      whiteSpace: "nowrap", 
+                      overflow: "hidden",
+                      textOverflow: "ellipsis", 
+                      maxWidth: "70px", 
+                    }}
+                    title={industry.name} 
+                  >
+                    {industry.name.length > 8 
+                      ? `${industry.name.substring(0, 7)}...`
+                      : industry.name}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-            {/* Legend */}
+              ))}
+            </div>
             <div className="mt-4 d-flex align-items-center">
               <div
                 className="bg-primary"
@@ -137,8 +135,6 @@ function BarChart() {
               ></div>
               <span className="text-muted">Days</span>
             </div>
-
-            {/* Report Generation Buttons */}
             <div className="mt-4 d-flex justify-content-end">
               <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
                 Download CSV
