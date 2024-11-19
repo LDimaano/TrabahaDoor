@@ -103,16 +103,18 @@ function BarChart() {
                       ></div>
                     </OverlayTrigger>
                     <span
-                      className="text-muted d-block mt-2"
-                      style={{
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        width: '80px',
-                      }}
-                    >
-                      {industry.name}
-                    </span>
+                    className="text-muted d-block mt-2"
+                    style={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      width: '80px',
+                      fontSize: '0.75rem',  // Adjust this value as needed
+                    }}
+                  >
+                    {industry.name}
+                  </span>
+
                   </Col>
                 ))}
               </Row>
