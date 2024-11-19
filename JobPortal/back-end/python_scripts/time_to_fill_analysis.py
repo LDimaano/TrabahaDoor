@@ -10,7 +10,7 @@ def calculate_time_to_fill(data):
 
     # Iterate through job listings and calculate days to fill for each industry
     for job in data:
-        industry = job['industry_name'].strip()  # Trim any extra spaces from industry name
+        industry = job['industry_name'].strip()  # Accessing industry_name from the data
         datecreated = datetime.strptime(job['datecreated'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
         datefilled = datetime.strptime(job['datefilled'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
         days_to_fill = (datefilled - datecreated).days
@@ -31,17 +31,21 @@ def plot_time_to_fill(result):
     avg_time_to_fill = list(result.values())
 
     # Create a bar chart
-    plt.figure(figsize=(10, 6))
-    plt.bar(industries, avg_time_to_fill, color='skyblue')
+    plt.figure(figsize=(12, 6))  # Adjust the figure size for better visibility
+    bars = plt.bar(industries, avg_time_to_fill, color='skyblue')
 
     # Set chart labels and title
     plt.xlabel('Industry')
     plt.ylabel('Average Time to Fill (Days)')
     plt.title('Average Time to Fill by Industry')
-    plt.xticks(rotation=45, ha='right')  # Rotate industry names for better visibility
+
+    # Rotate industry names for better visibility
+    plt.xticks(rotation=45, ha='right', fontsize=10)
+
+    # Adjust layout to avoid clipping labels
+    plt.tight_layout()
 
     # Display the plot
-    plt.tight_layout()  # Adjust layout to avoid clipping labels
     plt.show()
 
 if __name__ == "__main__":
@@ -53,14 +57,14 @@ if __name__ == "__main__":
         
         job_listings = json.loads(input_data)
 
-        # Calculate time to fill by industry
+        # Calculate time to fill by industry without scaling
         result = calculate_time_to_fill(job_listings)
 
         # Plot the result (this could be a separate function depending on how you want to handle plots)
         plot_time_to_fill(result)
 
         # Output result as JSON
-        print(json.dumps(result))  # Ensure this is valid JSON
+        print(json.dumps(result))
     except Exception as e:
-        error_message = {"error": str(e)}  # Make sure the error is in a valid JSON format
-        print(json.dumps(error_message), file=sys.stderr)  # Send error output as JSON
+        print(f"Error: {str(e)}", file=sys.stderr)  # Log any error to stderr
+        print(json.dumps({"error": str(e)}))  # Return error as JSON
