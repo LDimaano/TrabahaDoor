@@ -31,8 +31,13 @@ function BarChart() {
     .sort((a, b) => b.height - a.height);
 
   const exportToCSV = () => {
-    const csvData = industries.map(({ name, height }) => `${name},${height}`).join('\n');
-    const blob = new Blob([`Industry,Time to Fill (days)\n${csvData}`], { type: 'text/csv;charset=utf-8;' });
+    const csvData = industries
+      .map(({ name, height }) => `${name},${height}`)
+      .join('\n');
+    const blob = new Blob(
+      [`Industry,Time to Fill (days)\n${csvData}`],
+      { type: 'text/csv;charset=utf-8;' }
+    );
     saveAs(blob, 'time_to_fill_report.csv');
   };
 
@@ -63,31 +68,39 @@ function BarChart() {
 
           {error && <Alert variant="danger">{error}</Alert>}
 
-          <Tabs defaultActiveKey="timeToFill" id="timeToFill-tabs" className="mb-4">
+          <Tabs
+            defaultActiveKey="timeToFill"
+            id="timeToFill-tabs"
+            className="mb-4"
+          >
             <Tab eventKey="timeToFill" title="Time to Fill">
               <div style={{ position: 'relative', padding: '20px 0' }}>
-                {/* X-Axis */}
                 <div
                   style={{
                     position: 'absolute',
-                    bottom: '40px',
+                    bottom: '50px',
                     left: '0',
                     right: '0',
                     height: '1px',
                     backgroundColor: '#ccc',
                   }}
                 ></div>
-
                 <Row className="justify-content-center">
                   {industries.map((industry, index) => (
-                    <Col key={index} className="text-center" style={{ width: '80px' }}>
+                    <Col
+                      key={index}
+                      className="text-center"
+                      style={{ width: '80px' }}
+                    >
                       <OverlayTrigger
                         placement="top"
-                        overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
+                        overlay={
+                          <Tooltip>{`${industry.height} days`}</Tooltip>
+                        }
                       >
                         <div
                           style={{
-                            height: `${industry.height * 5}px`, // Scale height for visibility
+                            height: `${industry.height * 5}px`, 
                             width: '48px',
                             margin: '0 auto',
                             backgroundColor: 'blue',
@@ -102,33 +115,46 @@ function BarChart() {
                           }}
                         ></div>
                       </OverlayTrigger>
-                      <span
-                        className="text-muted d-block mt-2"
-                        style={{
-                          fontSize: '0.75rem',
-                          wordWrap: 'break-word',
-                          whiteSpace: 'normal',
-                        }}
-                      >
-                        {industry.name}
-                      </span>
                     </Col>
                   ))}
                 </Row>
+                <div
+                  className="d-flex justify-content-center mt-2"
+                  style={{ gap: '30px', marginTop: '10px' }}
+                >
+                  {industries.map((industry, index) => (
+                    <span
+                      key={index}
+                      className="text-muted"
+                      style={{
+                        fontSize: '0.85rem',
+                        textAlign: 'center',
+                      }}
+                    >
+                      {industry.name}
+                    </span>
+                  ))}
+                </div>
               </div>
 
-              {/* Legend */}
               <div className="mt-4 d-flex align-items-center">
                 <div
                   className="bg-primary"
-                  style={{ width: '16px', height: '16px', borderRadius: '3px', marginRight: '8px' }}
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    borderRadius: '3px',
+                    marginRight: '8px',
+                  }}
                 ></div>
                 <span className="text-muted">Days</span>
               </div>
-
-              {/* Report Buttons */}
               <div className="mt-4 d-flex justify-content-end">
-                <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
+                <Button
+                  variant="outline-primary"
+                  className="me-2"
+                  onClick={exportToCSV}
+                >
                   Download CSV
                 </Button>
                 <Button variant="outline-secondary" onClick={exportToPDF}>
