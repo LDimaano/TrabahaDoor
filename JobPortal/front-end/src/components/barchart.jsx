@@ -65,18 +65,28 @@ function BarChart() {
     <Container>
       <Card className="shadow-sm p-4">
         <Card.Body>
-          <h4 className="text-dark">Time to Fill Analysis</h4>
-          <p className="text-muted">Showing Average Time to Fill per Industry</p>
+          <h4 className="text-dark text-center mb-3">Time to Fill Analysis</h4>
+          <p className="text-muted text-center">Showing Average Time to Fill per Industry</p>
 
           {error && <Alert variant="danger">{error}</Alert>}
 
           <div className="d-flex flex-column align-items-center">
-            <div style={{ display: "flex", alignItems: "flex-end", height: `${maxBarHeight + 50}px`, paddingBottom: "50px" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-end",
+                height: `${maxBarHeight + 50}px`,
+                paddingBottom: "50px",
+                justifyContent: "space-between", // Evenly space bars
+                width: "100%", // Take full container width
+                maxWidth: "600px", // Optional: Limit overall chart width
+              }}
+            >
               {industries.map((industry, index) => (
                 <div
                   key={index}
-                  className="d-flex flex-column align-items-center mx-3"
-                  style={{ width: "100px" }} // Increased width to give more space for labels
+                  className="d-flex flex-column align-items-center mx-2"
+                  style={{ width: "60px" }} // Adjust bar width here
                 >
                   <OverlayTrigger
                     placement="top"
@@ -86,7 +96,7 @@ function BarChart() {
                       className="bar"
                       style={{
                         height: `${industry.scaledHeight}px`,
-                        width: "100%",
+                        width: "100%", // Match container width
                         backgroundColor: "blue",
                         borderRadius: "5px",
                         transition: "transform 0.2s ease",
@@ -106,7 +116,7 @@ function BarChart() {
                       whiteSpace: "normal", // Allow text to wrap
                       overflow: "hidden",
                       textOverflow: "ellipsis",
-                      maxWidth: "100px", // Match container width
+                      maxWidth: "60px", // Match container width
                       wordWrap: "break-word", // Break long words
                     }}
                   >
