@@ -116,7 +116,7 @@ function BarChart() {
                         textOverflow: 'ellipsis',
                         width: '80px',
                         fontSize: '0.75rem',
-                        marginTop: '8px',  // Ensure some space between the bar and the label
+                        marginTop: '10px',  // Ensure some space between the bar and the label
                       }}
                     >
                       {industry.name}
