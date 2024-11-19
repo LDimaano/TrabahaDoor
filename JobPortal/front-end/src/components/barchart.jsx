@@ -70,16 +70,13 @@ function BarChart() {
 
           {error && <Alert variant="danger">{error}</Alert>}
 
-          <Tabs defaultActiveKey="timeToFill" id="timeToFill-tabs" className="mb-4">
-            <Tab eventKey="timeToFill">
               <div className="d-flex flex-column align-items-center">
-                {/* Chart Container */}
                 <div style={{ display: "flex", alignItems: "flex-end", height: `${maxBarHeight + 50}px`, paddingBottom: "50px" }}>
                   {industries.map((industry, index) => (
                     <div
                       key={index}
                       className="d-flex flex-column align-items-center mx-3"
-                      style={{ width: "80px" }} // Increased width to prevent overlap
+                      style={{ width: "80px" }} 
                     >
                       <OverlayTrigger
                         placement="top"
@@ -137,8 +134,6 @@ function BarChart() {
                   </Button>
                 </div>
               </div>
-            </Tab>
-          </Tabs>
         </Card.Body>
       </Card>
     </Container>
