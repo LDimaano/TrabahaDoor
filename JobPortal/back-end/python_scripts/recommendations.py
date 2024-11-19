@@ -37,33 +37,34 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         title_match = job_title in job_titles_set
         collaborative_match = job.get('job_id') in collaborative_filtering_jobs
 
-        # Determine match type
-        content_match = title_match or match_count > 0 or industry_match
-        if content_match and collaborative_match:
-            match_type = 'hybrid'  # Hybrid match
-        elif content_match:
-            match_type = 'content'  # Content-based match
-        elif collaborative_match:
-            match_type = 'collaborative'  # Collaborative match
-        else:
-            continue  # Skip jobs with no match
+        content_match = match_count > 0 or industry_match or title_match  # Define content match logic
 
-        # Add recommendation with match type
-        recommendations.append({
-            'job_title': job_title,
-            'industry_name': job_industry,
-            'match_count': match_count,
-            'job_id': job.get('job_id'),
-            'salaryrange': job_salary_range,
-            'jobtype': job.get('jobtype', 'Unknown Job Type'),
-            'profile_picture_url': job.get('profile_picture_url', 'Unknown picture'),
-            'industry_match': industry_match,
-            'collaborative_match': collaborative_match,
-            'title_match': title_match,
-            'salary_match': salary_match,
-            'similar_seekers': collaborative_filtering_jobs.get(job.get('job_id'), []),
-            'match_type': match_type  # Added match type for sorting
-        })
+        if content_match or collaborative_match:  # Ensure at least one content or collaborative match
+            if content_match and collaborative_match:
+                match_type = 'hybrid'  # Hybrid match
+            elif content_match:
+                match_type = 'content'  # Content-based match
+            elif collaborative_match:
+                match_type = 'collaborative'  # Collaborative match
+
+            # Add recommendation with match type
+            recommendations.append({
+                'job_title': job_title,
+                'industry_name': job_industry,
+                'match_count': match_count,
+                'job_id': job.get('job_id'),
+                'salaryrange': job_salary_range,
+                'jobtype': job.get('jobtype', 'Unknown Job Type'),
+                'profile_picture_url': job.get('profile_picture_url', 'Unknown picture'),
+                'industry_match': industry_match,
+                'collaborative_match': collaborative_match,
+                'title_match': title_match,
+                'salary_match': salary_match,
+                'similar_seekers': collaborative_filtering_jobs.get(job.get('job_id'), []),
+                'match_type': match_type  # Added match type for sorting
+            })
+        else:
+            continue  # Skip jobs with no content or collaborative match
 
     # Sort recommendations by match type (hybrid > content > collaborative), then by salary match, title match, and match count
     recommendations.sort(
