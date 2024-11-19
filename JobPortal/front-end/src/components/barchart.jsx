@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Tooltip, OverlayTrigger, Tabs, Tab, Alert, Card, Container, Button } from "react-bootstrap";
+import { Tooltip, OverlayTrigger, Alert, Card, Container, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
@@ -70,70 +70,71 @@ function BarChart() {
 
           {error && <Alert variant="danger">{error}</Alert>}
 
-              <div className="d-flex flex-column align-items-center">
-                <div style={{ display: "flex", alignItems: "flex-end", height: `${maxBarHeight + 50}px`, paddingBottom: "50px" }}>
-                  {industries.map((industry, index) => (
+          <div className="d-flex flex-column align-items-center">
+            <div style={{ display: "flex", alignItems: "flex-end", height: `${maxBarHeight + 50}px`, paddingBottom: "50px" }}>
+              {industries.map((industry, index) => (
+                <div
+                  key={index}
+                  className="d-flex flex-column align-items-center mx-3"
+                  style={{ width: "100px" }} // Increased width to give more space for labels
+                >
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
+                  >
                     <div
-                      key={index}
-                      className="d-flex flex-column align-items-center mx-3"
-                      style={{ width: "80px" }} 
-                    >
-                      <OverlayTrigger
-                        placement="top"
-                        overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
-                      >
-                        <div
-                          className="bar"
-                          style={{
-                            height: `${industry.scaledHeight}px`,
-                            width: "100%",
-                            backgroundColor: "blue",
-                            borderRadius: "5px",
-                            transition: "transform 0.2s ease",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = "scale(1.1)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = "scale(1)";
-                          }}
-                        ></div>
-                      </OverlayTrigger>
-                      <div
-                        className="text-center mt-2"
-                        style={{
-                          fontSize: "0.85rem",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          maxWidth: "80px",
-                        }}
-                      >
-                        {industry.name}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Legend */}
-                <div className="mt-4 d-flex align-items-center">
+                      className="bar"
+                      style={{
+                        height: `${industry.scaledHeight}px`,
+                        width: "100%",
+                        backgroundColor: "blue",
+                        borderRadius: "5px",
+                        transition: "transform 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "scale(1.1)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "scale(1)";
+                      }}
+                    ></div>
+                  </OverlayTrigger>
                   <div
-                    className="bg-primary"
-                    style={{ width: "16px", height: "16px", borderRadius: "3px", marginRight: "8px" }}
-                  ></div>
-                  <span className="text-muted">Days</span>
+                    className="text-center mt-2"
+                    style={{
+                      fontSize: "0.85rem",
+                      whiteSpace: "normal", // Allow text to wrap
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      maxWidth: "100px", // Match container width
+                      wordWrap: "break-word", // Break long words
+                    }}
+                  >
+                    {industry.name}
+                  </div>
                 </div>
+              ))}
+            </div>
 
-                {/* Report Generation Buttons */}
-                <div className="mt-4 d-flex justify-content-end">
-                  <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
-                    Download CSV
-                  </Button>
-                  <Button variant="outline-secondary" onClick={exportToPDF}>
-                    Download PDF
-                  </Button>
-                </div>
-              </div>
+            {/* Legend */}
+            <div className="mt-4 d-flex align-items-center">
+              <div
+                className="bg-primary"
+                style={{ width: "16px", height: "16px", borderRadius: "3px", marginRight: "8px" }}
+              ></div>
+              <span className="text-muted">Days</span>
+            </div>
+
+            {/* Report Generation Buttons */}
+            <div className="mt-4 d-flex justify-content-end">
+              <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
+                Download CSV
+              </Button>
+              <Button variant="outline-secondary" onClick={exportToPDF}>
+                Download PDF
+              </Button>
+            </div>
+          </div>
         </Card.Body>
       </Card>
     </Container>
