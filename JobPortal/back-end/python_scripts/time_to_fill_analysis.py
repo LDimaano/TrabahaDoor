@@ -56,11 +56,11 @@ if __name__ == "__main__":
         # Calculate time to fill by industry
         result = calculate_time_to_fill(job_listings)
 
-        # Plot the result
+        # Plot the result (this could be a separate function depending on how you want to handle plots)
         plot_time_to_fill(result)
 
-        # Optionally, output result as JSON
-        print(json.dumps(result))
+        # Output result as JSON
+        print(json.dumps(result))  # Ensure this is valid JSON
     except Exception as e:
-        print(f"Error: {str(e)}", file=sys.stderr)  # Log any error to stderr
-        print(json.dumps({"error": str(e)}))  # Return error as JSON
+        error_message = {"error": str(e)}  # Make sure the error is in a valid JSON format
+        print(json.dumps(error_message), file=sys.stderr)  # Send error output as JSON
