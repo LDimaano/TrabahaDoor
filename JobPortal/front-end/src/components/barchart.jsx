@@ -23,23 +23,19 @@ function BarChart() {
       });
   }, []);
 
-  // Convert the data into an array of industries and their corresponding heights
   const industries = Object.keys(timeToFillData)
     .map((industry) => ({
       name: industry,
       height: timeToFillData[industry] || 0,
     }))
-    // Sort the industries based on the height in descending order
     .sort((a, b) => b.height - a.height);
 
-  // Function to export the data as CSV
   const exportToCSV = () => {
     const csvData = industries.map(({ name, height }) => `${name},${height}`).join('\n');
     const blob = new Blob([`Industry,Time to Fill (days)\n${csvData}`], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'time_to_fill_report.csv');
   };
 
-  // Function to export the data as PDF
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(16);
@@ -47,11 +43,9 @@ function BarChart() {
     doc.setFontSize(12);
     doc.text('Industry-wise Time to Fill Data', 14, 30);
 
-    // Add table header
     doc.text('Industry', 14, 40);
     doc.text('Time to Fill (days)', 90, 40);
 
-    // Add industry data to the PDF
     industries.forEach((industry, index) => {
       doc.text(industry.name, 14, 50 + index * 10);
       doc.text(`${industry.height}`, 90, 50 + index * 10);
@@ -71,58 +65,59 @@ function BarChart() {
 
           <Tabs defaultActiveKey="timeToFill" id="timeToFill-tabs" className="mb-4">
             <Tab eventKey="timeToFill" title="Time to Fill">
-            <Row className="d-flex justify-content-start">
-  {industries.map((industry, index) => (
-    <Col
-      key={index}
-      className="text-center d-flex flex-column align-items-center"
-      xs={2}
-      style={{ width: '80px', position: 'relative', paddingBottom: '40px' }} // Add padding to ensure space for labels
-    >
-      <OverlayTrigger
-        placement="top"
-        overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
-      >
-        <div
-          className="position-relative"
-          style={{
-            height: `${industry.height}px`,
-            width: '48px',
-            cursor: 'pointer',
-            backgroundColor: 'blue',
-            borderRadius: '5px',
-            transition: 'background-color 0.3s ease, transform 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(0, 123, 255, 0.8)';
-            e.currentTarget.style.transform = 'scale(1.1)';
-            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-            e.currentTarget.style.zIndex = '1';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'blue';
-            e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.boxShadow = 'none';
-            e.currentTarget.style.zIndex = '0';
-          }}
-        ></div>
-      </OverlayTrigger>
-      <span
-        className="text-muted d-block mt-2"
-        style={{
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          width: '80px',
-          fontSize: '0.75rem',
-        }}
-      >
-        {industry.name}
-      </span>
-    </Col>
-  ))}
-</Row>
+              <div style={{ position: 'relative', padding: '20px 0' }}>
+                {/* X-Axis */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '40px',
+                    left: '0',
+                    right: '0',
+                    height: '1px',
+                    backgroundColor: '#ccc',
+                  }}
+                ></div>
 
+                <Row className="justify-content-center">
+                  {industries.map((industry, index) => (
+                    <Col key={index} className="text-center" style={{ width: '80px' }}>
+                      <OverlayTrigger
+                        placement="top"
+                        overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
+                      >
+                        <div
+                          style={{
+                            height: `${industry.height * 5}px`, // Scale height for visibility
+                            width: '48px',
+                            margin: '0 auto',
+                            backgroundColor: 'blue',
+                            borderRadius: '5px',
+                            transition: 'transform 0.2s',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'scale(1.1)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'scale(1)';
+                          }}
+                        ></div>
+                      </OverlayTrigger>
+                      <span
+                        className="text-muted d-block mt-2"
+                        style={{
+                          fontSize: '0.75rem',
+                          wordWrap: 'break-word',
+                          whiteSpace: 'normal',
+                        }}
+                      >
+                        {industry.name}
+                      </span>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
+
+              {/* Legend */}
               <div className="mt-4 d-flex align-items-center">
                 <div
                   className="bg-primary"
@@ -131,7 +126,7 @@ function BarChart() {
                 <span className="text-muted">Days</span>
               </div>
 
-              {/* Report Generation Buttons */}
+              {/* Report Buttons */}
               <div className="mt-4 d-flex justify-content-end">
                 <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
                   Download CSV
