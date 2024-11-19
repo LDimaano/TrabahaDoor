@@ -93,6 +93,7 @@ function BarChart() {
                           backgroundColor: 'blue',
                           borderRadius: '5px',
                           transition: 'background-color 0.3s ease, transform 0.2s ease',
+                          marginTop: '30px', // Added top margin to the bars
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = 'rgba(0, 123, 255, 0.8)';
