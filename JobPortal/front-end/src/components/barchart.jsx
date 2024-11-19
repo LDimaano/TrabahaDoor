@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Tooltip,
-  OverlayTrigger,
-  Tabs,
-  Tab,
-  Alert,
-  Card,
-  Container,
-  Row,
-  Col,
-  Button,
-} from "react-bootstrap";
+import { Tooltip, OverlayTrigger, Tabs, Tab, Alert, Card, Container, Row, Col, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
@@ -34,21 +23,32 @@ function BarChart() {
       });
   }, []);
 
+  // Convert the data into an array of industries and their corresponding heights
   const industries = Object.keys(timeToFillData)
     .map((industry) => ({
       name: industry,
       height: timeToFillData[industry] || 0,
     }))
+    // Sort the industries based on the height in descending order
     .sort((a, b) => b.height - a.height);
 
+  // Determine maximum height for scaling
+  const maxBarHeight = 200; // Maximum height in pixels for the tallest bar
+  const maxHeightValue = Math.max(...industries.map((industry) => industry.height));
+
+  // Scale bar heights proportionally
+  industries.forEach((industry) => {
+    industry.scaledHeight = (industry.height / maxHeightValue) * maxBarHeight;
+  });
+
+  // Function to export the data as CSV
   const exportToCSV = () => {
     const csvData = industries.map(({ name, height }) => `${name},${height}`).join("\n");
-    const blob = new Blob([`Industry,Time to Fill (days)\n${csvData}`], {
-      type: "text/csv;charset=utf-8;",
-    });
+    const blob = new Blob([`Industry,Time to Fill (days)\n${csvData}`], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, "time_to_fill_report.csv");
   };
 
+  // Function to export the data as PDF
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(16);
@@ -56,9 +56,11 @@ function BarChart() {
     doc.setFontSize(12);
     doc.text("Industry-wise Time to Fill Data", 14, 30);
 
+    // Add table header
     doc.text("Industry", 14, 40);
     doc.text("Time to Fill (days)", 90, 40);
 
+    // Add industry data to the PDF
     industries.forEach((industry, index) => {
       doc.text(industry.name, 14, 50 + index * 10);
       doc.text(`${industry.height}`, 90, 50 + index * 10);
@@ -80,44 +82,43 @@ function BarChart() {
             <Tab eventKey="timeToFill" title="Time to Fill">
               <Row className="justify-content-center">
                 {industries.map((industry, index) => (
-                  <Col
-                    key={index}
-                    className="text-center"
-                    style={{ width: "80px", display: "flex", flexDirection: "column-reverse" }}
-                  >
-                    <span
-                      className="text-muted mt-2"
-                      style={{
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        fontSize: "0.85rem",
-                      }}
-                    >
-                      {industry.name}
-                    </span>
-                    <OverlayTrigger
-                      placement="top"
-                      overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
-                    >
-                      <div
-                        className="bar"
+                  <Col key={index} className="text-center" xs={2}>
+                    <div className="d-flex flex-column align-items-center">
+                      <OverlayTrigger
+                        placement="top"
+                        overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
+                      >
+                        <div
+                          className="bar"
+                          style={{
+                            height: `${industry.scaledHeight}px`,
+                            width: "40px",
+                            backgroundColor: "blue",
+                            marginBottom: "10px",
+                            borderRadius: "5px",
+                            transition: "transform 0.2s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = "scale(1.1)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = "scale(1)";
+                          }}
+                        ></div>
+                      </OverlayTrigger>
+                      <span
+                        className="text-muted"
                         style={{
-                          height: `${industry.height}px`,
-                          width: "40px",
-                          backgroundColor: "blue",
-                          margin: "0 auto",
-                          borderRadius: "5px",
-                          transition: "transform 0.2s ease",
+                          fontSize: "0.85rem",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "80px",
                         }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = "scale(1.1)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = "scale(1)";
-                        }}
-                      ></div>
-                    </OverlayTrigger>
+                      >
+                        {industry.name}
+                      </span>
+                    </div>
                   </Col>
                 ))}
               </Row>
@@ -130,6 +131,7 @@ function BarChart() {
                 <span className="text-muted">Days</span>
               </div>
 
+              {/* Report Generation Buttons */}
               <div className="mt-4 d-flex justify-content-end">
                 <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
                   Download CSV
