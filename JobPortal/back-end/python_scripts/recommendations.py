@@ -6,7 +6,6 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     skills_set = set(skills)
     job_titles_set = set(job_titles)
 
-    # Initialize collaborative filtering jobs dictionary
     collaborative_filtering_jobs = {}
 
     # Populate collaborative filtering data if available
@@ -25,52 +24,50 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         job_title = job.get('job_title', 'Unknown Title')
         job_salary_range = job.get('salaryrange', 'unknown salary')
 
-        # Check if job salary matches any of the user's salary ranges (as strings)
-        salary_match = any(
-            user_salary == job_salary_range
-            for user_salary in jobseeker_salary
-        ) if jobseeker_salary else False
-
-        # Count skill matches and determine match type
-        match_count = len(skills_set.intersection(job_skills))
-        industry_match = (job_industry == jobseeker_industry) if jobseeker_industry else False
+        # Match evaluation: check if job matches on title or skills
         title_match = job_title in job_titles_set
+        skill_match_count = len(skills_set.intersection(job_skills))
+        
+        # Only proceed to evaluate salary if there's a match on title or skills
+        salary_match = False
+        if title_match or skill_match_count > 0:
+            if jobseeker_salary:
+                salary_match = any(
+                    user_salary == job_salary_range
+                    for user_salary in jobseeker_salary
+                )
+
+        # If there's no match on title or skills, skip this job
+        if not (title_match or skill_match_count > 0):
+            continue
+
+        industry_match = (job_industry == jobseeker_industry) if jobseeker_industry else False
         collaborative_match = job.get('job_id') in collaborative_filtering_jobs
 
-       if content_match or collaborative_match:  # Ensure at least one content or collaborative match
-    if content_match and collaborative_match:
-        match_type = 'hybrid'  # Hybrid match
-    elif content_match:
-        match_type = 'content'  # Content-based match
-    elif collaborative_match:
-        match_type = 'collaborative'  # Collaborative match
+        # Determine match type (content-based, collaborative, or hybrid)
+        if skill_match_count > 0 or collaborative_match:
+            if skill_match_count > 0 and collaborative_match:
+                match_type = 'hybrid'
+            elif skill_match_count > 0:
+                match_type = 'content'
+            elif collaborative_match:
+                match_type = 'collaborative'
 
-    # Check salary match as an additional feature, not standalone
-    if salary_match:
-        recommendations.append({
-            # Recommendation data...
-            'match_type': match_type
-        })
-else:
-    continue  # Skip jobs with no content or collaborative match
-
-
-        # Add recommendation with match type
-        recommendations.append({
-            'job_title': job_title,
-            'industry_name': job_industry,
-            'match_count': match_count,
-            'job_id': job.get('job_id'),
-            'salaryrange': job_salary_range,
-            'jobtype': job.get('jobtype', 'Unknown Job Type'),
-            'profile_picture_url': job.get('profile_picture_url', 'Unknown picture'),
-            'industry_match': industry_match,
-            'collaborative_match': collaborative_match,
-            'title_match': title_match,
-            'salary_match': salary_match,
-            'similar_seekers': collaborative_filtering_jobs.get(job.get('job_id'), []),
-            'match_type': match_type  # Added match type for sorting
-        })
+            # Add job to recommendations if it matches on title/skills (and optionally salary)
+            recommendations.append({
+                'job_title': job_title,
+                'industry_name': job_industry,
+                'match_count': skill_match_count,
+                'job_id': job.get('job_id'),
+                'salaryrange': job_salary_range,
+                'jobtype': job.get('jobtype', 'Unknown Job Type'),
+                'industry_match': industry_match,
+                'collaborative_match': collaborative_match,
+                'title_match': title_match,
+                'salary_match': salary_match,
+                'similar_seekers': collaborative_filtering_jobs.get(job.get('job_id'), []),
+                'match_type': match_type
+            })
 
     # Sort recommendations by match type (hybrid > content > collaborative), then by salary match, title match, and match count
     recommendations.sort(
@@ -84,22 +81,18 @@ else:
         reverse=True
     )
 
-    # Return the recommendations
     return recommendations
 
 if __name__ == "__main__":
     try:
-        # Read input from command line
         job_data = json.loads(sys.argv[1])
         skills = json.loads(sys.argv[2])
         jobseeker_industry = sys.argv[3]
         job_titles = json.loads(sys.argv[4])
         jobseeker_salary = json.loads(sys.argv[5])
 
-        # Generate recommendations
         recommendations = recommend_jobs(job_data, skills, jobseeker_industry, job_titles, jobseeker_salary=jobseeker_salary)
 
-        # Print the recommendations as JSON
         print(json.dumps(recommendations))
 
     except Exception as e:
