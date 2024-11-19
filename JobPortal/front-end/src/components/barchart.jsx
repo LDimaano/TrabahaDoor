@@ -71,7 +71,7 @@ function BarChart() {
           {error && <Alert variant="danger">{error}</Alert>}
 
           <Tabs defaultActiveKey="timeToFill" id="timeToFill-tabs" className="mb-4">
-            <Tab eventKey="timeToFill" title="Time to Fill">
+            <Tab eventKey="timeToFill">
               <div className="d-flex flex-column align-items-center">
                 {/* Chart Container */}
                 <div style={{ display: "flex", alignItems: "flex-end", height: `${maxBarHeight + 50}px`, paddingBottom: "50px" }}>
