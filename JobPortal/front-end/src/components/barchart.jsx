@@ -73,8 +73,8 @@ function BarChart() {
           <Tabs defaultActiveKey="timeToFill" id="timeToFill-tabs" className="mb-4">
             <Tab eventKey="timeToFill" title="Time to Fill">
               <div className="d-flex flex-column align-items-center">
-                {/* Bars */}
-                <div className="d-flex justify-content-center" style={{ paddingBottom: "50px" }}>
+                {/* Chart Container */}
+                <div style={{ display: "flex", alignItems: "flex-end", height: `${maxBarHeight + 20}px`, paddingBottom: "50px" }}>
                   {industries.map((industry, index) => (
                     <div
                       key={index}
