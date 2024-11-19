@@ -11,7 +11,7 @@ def calculate_time_to_fill(data):
     # Iterate through job listings and calculate days to fill for each industry
     for job in data:
         try:
-            industry = job['industry_name'].strip()  # Accessing industry_name from the data
+            industry = job['industry_name']  # Accessing industry_name from the data
             datecreated = datetime.strptime(job['datecreated'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
             datefilled = datetime.strptime(job['datefilled'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
             days_to_fill = (datefilled - datecreated).days
