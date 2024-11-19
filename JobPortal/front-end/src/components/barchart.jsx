@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Tooltip, OverlayTrigger, Tabs, Tab, Alert, Card, Container, Row, Col, Button } from "react-bootstrap";
+import { Tooltip, OverlayTrigger, Tabs, Tab, Alert, Card, Container, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
@@ -74,7 +74,7 @@ function BarChart() {
             <Tab eventKey="timeToFill" title="Time to Fill">
               <div className="d-flex flex-column align-items-center">
                 {/* Bars */}
-                <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center" style={{ paddingBottom: "50px" }}>
                   {industries.map((industry, index) => (
                     <div
                       key={index}
@@ -102,47 +102,40 @@ function BarChart() {
                           }}
                         ></div>
                       </OverlayTrigger>
+                      <div
+                        className="text-center mt-2"
+                        style={{
+                          fontSize: "0.85rem",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "80px",
+                        }}
+                      >
+                        {industry.name}
+                      </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Horizontal Labels */}
-                <div className="d-flex justify-content-center mt-3">
-                  {industries.map((industry, index) => (
-                    <div
-                      key={index}
-                      className="text-center mx-3"
-                      style={{
-                        fontSize: "0.85rem",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        maxWidth: "80px",
-                      }}
-                    >
-                      {industry.name}
-                    </div>
-                  ))}
+                {/* Legend */}
+                <div className="mt-4 d-flex align-items-center">
+                  <div
+                    className="bg-primary"
+                    style={{ width: "16px", height: "16px", borderRadius: "3px", marginRight: "8px" }}
+                  ></div>
+                  <span className="text-muted">Days</span>
                 </div>
-              </div>
 
-              {/* Legend */}
-              <div className="mt-4 d-flex align-items-center">
-                <div
-                  className="bg-primary"
-                  style={{ width: "16px", height: "16px", borderRadius: "3px", marginRight: "8px" }}
-                ></div>
-                <span className="text-muted">Days</span>
-              </div>
-
-              {/* Report Generation Buttons */}
-              <div className="mt-4 d-flex justify-content-end">
-                <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
-                  Download CSV
-                </Button>
-                <Button variant="outline-secondary" onClick={exportToPDF}>
-                  Download PDF
-                </Button>
+                {/* Report Generation Buttons */}
+                <div className="mt-4 d-flex justify-content-end">
+                  <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
+                    Download CSV
+                  </Button>
+                  <Button variant="outline-secondary" onClick={exportToPDF}>
+                    Download PDF
+                  </Button>
+                </div>
               </div>
             </Tab>
           </Tabs>
