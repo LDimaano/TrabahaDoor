@@ -37,16 +37,23 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         title_match = job_title in job_titles_set
         collaborative_match = job.get('job_id') in collaborative_filtering_jobs
 
-        # Determine match type
-        content_match = title_match or match_count > 0 or industry_match
-        if content_match and collaborative_match:
-            match_type = 'hybrid'  # Hybrid match
-        elif content_match:
-            match_type = 'content'  # Content-based match
-        elif collaborative_match:
-            match_type = 'collaborative'  # Collaborative match
-        else:
-            continue  # Skip jobs with no match
+       if content_match or collaborative_match:  # Ensure at least one content or collaborative match
+    if content_match and collaborative_match:
+        match_type = 'hybrid'  # Hybrid match
+    elif content_match:
+        match_type = 'content'  # Content-based match
+    elif collaborative_match:
+        match_type = 'collaborative'  # Collaborative match
+
+    # Check salary match as an additional feature, not standalone
+    if salary_match:
+        recommendations.append({
+            # Recommendation data...
+            'match_type': match_type
+        })
+else:
+    continue  # Skip jobs with no content or collaborative match
+
 
         # Add recommendation with match type
         recommendations.append({
