@@ -323,7 +323,7 @@ const getJobData = async () => {
 
     // Transform job data to include only the necessary information
     const jobData = res.rows.reduce((acc, row) => {
-      const { job_id, job_title, industry_name, skill_name, salaryrange, jobtype, profile_picture_url } = row;
+      const { job_id, company_name, job_title, industry_name, skill_name, salaryrange, jobtype, profile_picture_url } = row;
 
       if (!acc[job_id]) {
         acc[job_id] = {
