@@ -16,19 +16,24 @@ const EmployerDashboard = () => {
   };
 
   return (
-    <div className="d-flex flex-column flex-lg-row">
-      {/* Sidebar */}
-      <div className={`sidebar ${isSidebarVisible ? 'd-block' : 'd-none'} d-lg-block`}>
+    <div className="d-flex">
+      <div
+        className={`sidebar bg-primary text-white ${isSidebarVisible ? 'd-block' : 'd-none'} d-lg-block`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          bottom: 0,
+          width: '250px',
+          overflowY: 'auto',
+          zIndex: 1000
+        }}
+      >
         <Sidebar />
       </div>
-
-      {/* Main content area */}
       <main className="flex-grow-1 p-3">
         <Header />
         <section>
           <h3> Employer Dashboard</h3>
-
-          {/* Dashboard Grid with Components */}
           <div className="row g-4 mt-4">
             <div className="col-lg-6 col-md-12">
               <ChartPlaceholder1 />
@@ -45,8 +50,6 @@ const EmployerDashboard = () => {
           </div>
         </section>
       </main>
-
-      {/* Sidebar toggle button for mobile */}
       <button
         className="btn btn-primary d-lg-none position-fixed"
         style={{ top: '10px', left: '10px', zIndex: 999 }}
