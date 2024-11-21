@@ -251,11 +251,10 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
     if (experiences && Array.isArray(experiences)) {
       await pool.query(`DELETE FROM job_experience WHERE user_id = $1`, [userId]);
       for (const exp of experiences) {
-        const jobTitleValue = exp.jobTitle?.value || null;
         await pool.query(`
           INSERT INTO job_experience (user_id, jobtitle_id, salary, company, location, start_date, end_date, description)
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        `, [userId, jobTitleValue, exp.salary, exp.companyName, exp.location, exp.startDate, exp.endDate, exp.description]);
+        `, [userId, exp.jobTitle?.value, exp.salary, exp.companyName, exp.location, exp.startDate, exp.endDate, exp.description]);
       }
     }
 
