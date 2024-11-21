@@ -70,7 +70,7 @@ function BarChart() {
           <h2 className="h4 text-dark">Time to Fill Analysis</h2>
           <p className="text-muted">Showing Average Time to Fill per Industry</p>
         </div>
-        <Button variant="secondary" onClick={generatePDFReport}>
+        <Button variant="primary" onClick={generatePDFReport}>
           <FontAwesomeIcon icon={faDownload} className="me-2" />
           Export Data
         </Button>
