@@ -5,7 +5,6 @@ import ChartPlaceholder1 from '../../components/emp_chart1';
 import ChartPlaceholder2 from '../../components/emp_chart2';
 import ChartPlaceholder3 from '../../components/emp_chart3';
 import ChartPlaceholder4 from '../../components/emp_chart4';
-import ChartPlaceholder5 from '../../components/emp_chart5';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 

@@ -79,7 +79,7 @@ const ChartPlaceholder1 = () => {
   }, []);
 
   return (
-    <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '300px' }}>
+    <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '200px' }}>
       <h5 className="mb-4">Applicant Gender Distribution</h5> {/* Add title */}
       <Pie data={chartData} options={{ maintainAspectRatio: false }} />
     </div>
