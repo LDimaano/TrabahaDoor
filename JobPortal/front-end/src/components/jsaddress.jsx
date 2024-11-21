@@ -65,6 +65,9 @@ const BarChart = () => {
     doc.save('Location_Distribution_Report.pdf');
   };
 
+  // Dynamically calculate the width based on the number of labels
+  const chartWidth = chartData.labels.length * 60;  // 60px per label, adjust as needed
+
   return (
     <div style={{ position: 'relative', height: '100%', width: '100%' }}>
       <FaDownload 
@@ -78,19 +81,29 @@ const BarChart = () => {
           color: '#007bff',  
         }} 
       />
-      <Bar 
-        data={chartData} 
-        options={{
-          maintainAspectRatio: false,
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
+      
+      {/* Scrollable container for the chart */}
+      <div style={{ width: '100%', overflowX: 'auto' }}>
+        <Bar 
+          data={chartData} 
+          options={{
+            maintainAspectRatio: false,
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+              x: {
+                ticks: {
+                  autoSkip: true,
+                  maxTicksLimit: 10,
+                },
+              },
             },
-          },
-        }} 
-        style={{ height: '100%', width: '100%' }}
-      />
+          }} 
+          style={{ height: '300px', width: `${chartWidth}px` }} // Dynamically adjust width
+        />
+      </div>
     </div>
   );
 };
