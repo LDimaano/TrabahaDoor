@@ -223,47 +223,60 @@ function ProfileEditForm() {
   };
 
   const handleSubmit = async () => {
+    const user_id = sessionStorage.getItem('user_id');
+
     const profileData = {
-      user_id,
-      fullName,
-      phoneNumber,
-      dateOfBirth,
-      gender,
-      address_id: address?.value || '',
-      industry_id: industry?.value || '',
-      skills: skills.map(skill => skill?.value || ''),
-      experience: experience.map(exp => ({
-        jobTitle: exp.jobTitle?.value || '',
-        salary: exp.salaryRange?.value || '',
-        company: exp.company,
-        location: exp.location,
-        startDate: exp.startDate,
-        endDate: exp.endDate,
-        description: exp.description,
-      })),
-      profile_picture_url: ''
+        user_id,
+        fullName,
+        phoneNumber,
+        dateOfBirth,
+        gender,
+        address_id: address?.value || '',
+        industry_id: industry?.value || '',
+        skills: skills.map(skill => skill?.value || ''),
+        experiences: experience.map(exp => ({
+            jobTitle: exp.jobTitle?.value || '',
+            salary: exp.salaryRange?.value || '',
+            company: exp.company,
+            location: exp.location,
+            startDate: exp.startDate,
+            endDate: exp.endDate,
+            description: exp.description,
+        })),
+        profile_picture_url: ''
     };
 
-    console.log('Profile Data being sent:', profileData);
-      console.log('Address:', address);
-      console.log('Industry:', industry);
+    // Detailed console logs
+    console.log('experience being sent:');
+    // Log each experience item separately
+    experience.forEach((exp, index) => {
+        console.log(`Experience ${index + 1}:`, {
+            jobTitle: exp.jobTitle?.value || '',
+            salary: exp.salaryRange?.value || '',
+            company: exp.company,
+            location: exp.location,
+            startDate: exp.startDate,
+            endDate: exp.endDate,
+            description: exp.description,
+        });
+    });
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/update-jobseeker-profile/${user_id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(profileData),
-      });
-      if (!response.ok) throw new Error('Failed to update profile');
-      console.log('Profile updated successfully!');
-      navigate(`/admin_applicants`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/update-jobseeker-profile/${user_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(profileData),
+        });
+        if (!response.ok) throw new Error('Failed to update profile');
+        console.log('Profile updated successfully!');
+        navigate(`/admin_applicants`);
     } catch (error) {
-      console.error('Error updating profile:', error);
-      setError('Failed to update profile.');
+        console.error('Error updating profile:', error);
+        setError('Failed to update profile.');
     }
-  };
+};
 
   return (
     <div className="container">
