@@ -9,7 +9,7 @@ const ApplicantCard = ({ applicant }) => {
       <header className="d-flex align-items-center mb-3">
         <div style={{ position: 'relative', marginRight: '15px' }}>
           <img
-            src={currentPhoto} // Use the current photo state
+            src={currentPhoto} 
             alt="Profile"
             className="img-fluid rounded-circle shadow-sm"
             style={{ width: '150px', height: '150px', objectFit: 'cover' }}

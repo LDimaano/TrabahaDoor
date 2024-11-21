@@ -5,12 +5,10 @@ const ProfessionalInfo = ({ data }) => (
   <section className="container my-4">
     <h3 className="mb-4">Professional Info</h3>
     <div className="row">
-      {/* Current Job */}
       <div className="col-12 mb-3">
         <p><strong>Current Job:</strong> {data.currentJob || 'Not Specified'}</p>
       </div>
 
-      {/* Work Experience */}
       <div className="col-12">
         <h5>Work Experience</h5>
         {data.workExperience.length > 0 ? (
@@ -34,7 +32,6 @@ const ProfessionalInfo = ({ data }) => (
       </div>
     </div>
 
-    {/* Skills Section */}
     <div className="mt-4">
       <SkillSet skills={data.skills} />
     </div>
