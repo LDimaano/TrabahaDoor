@@ -304,6 +304,7 @@ const getJobData = async () => {
     const res = await pool.query(`
       SELECT
         joblistings.job_id,
+		    emp_profiles.company_name,
         job_titles.job_title,
         industries.industry_name,
         job_skills.skill_id,
@@ -312,6 +313,7 @@ const getJobData = async () => {
         joblistings.jobtype,
         pp.profile_picture_url
       FROM joblistings
+	    JOIN emp_profiles ON joblistings.user_id = emp_profiles.user_id
       JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
       JOIN industries ON joblistings.industry_id = industries.industry_id
       JOIN job_skills ON joblistings.job_id = job_skills.job_id
@@ -326,6 +328,7 @@ const getJobData = async () => {
       if (!acc[job_id]) {
         acc[job_id] = {
           job_id,
+          company_name,
           job_title,
           industry_name,
           required_skills: [],
