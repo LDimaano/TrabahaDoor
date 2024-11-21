@@ -12,19 +12,17 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ChartPlaceholder1 = () => {
   const [chartData, setChartData] = useState({
-    labels: [],
+    labels: ['Female', 'Male'], // Ensure you have labels for both genders
     datasets: [
       {
-        data: [],
+        data: [0, 0], // Default to 0 to avoid errors on empty data
         backgroundColor: [
-          '#ADD8E6', // Light Blue
-          '#87CEEB', // Sky Blue
-          '#4682B4', // Steel Blue
+          '#FF6384', // Red
+          '#36A2EB', // Blue
         ],
         hoverBackgroundColor: [
-          '#B0E0E6', // Powder Blue
-          '#5F9EA0', // Cadet Blue
-          '#1E90FF', // Dodger Blue
+          '#FF6384', // Red
+          '#36A2EB', // Blue
         ],
       },
     ],
@@ -60,12 +58,10 @@ const ChartPlaceholder1 = () => {
               backgroundColor: [
                 '#ADD8E6', // Light Blue
                 '#87CEEB', // Sky Blue
-                '#4682B4', // Steel Blue
               ],
               hoverBackgroundColor: [
                 '#B0E0E6', // Powder Blue
                 '#5F9EA0', // Cadet Blue
-                '#1E90FF', // Dodger Blue
               ],
             },
           ],
@@ -79,9 +75,20 @@ const ChartPlaceholder1 = () => {
   }, []);
 
   return (
-    <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '280px' }}>
+    <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '320px' }}> {/* Adjust height */}
       <h5 className="mb-4">Applicant Gender Distribution</h5> {/* Add title */}
-      <Pie data={chartData} options={{ maintainAspectRatio: false }} />
+      <Pie 
+        data={chartData} 
+        options={{
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top', // Place legend at the top
+            },
+          },
+        }} 
+      />
     </div>
   );
 };
