@@ -16,8 +16,16 @@ const ChartPlaceholder1 = () => {
     datasets: [
       {
         data: [],
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'], // Customize colors as needed
-        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        backgroundColor: [
+          '#ADD8E6', // Light Blue
+          '#87CEEB', // Sky Blue
+          '#4682B4', // Steel Blue
+        ],
+        hoverBackgroundColor: [
+          '#B0E0E6', // Powder Blue
+          '#5F9EA0', // Cadet Blue
+          '#1E90FF', // Dodger Blue
+        ],
       },
     ],
   });
@@ -49,8 +57,16 @@ const ChartPlaceholder1 = () => {
           datasets: [
             {
               data: counts,
-              backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-              hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+              backgroundColor: [
+                '#ADD8E6', // Light Blue
+                '#87CEEB', // Sky Blue
+                '#4682B4', // Steel Blue
+              ],
+              hoverBackgroundColor: [
+                '#B0E0E6', // Powder Blue
+                '#5F9EA0', // Cadet Blue
+                '#1E90FF', // Dodger Blue
+              ],
             },
           ],
         });
@@ -63,7 +79,8 @@ const ChartPlaceholder1 = () => {
   }, []);
 
   return (
-    <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '250px' }}>
+    <div className="bg-light border rounded shadow-sm p-4 text-center" style={{ height: '300px' }}>
+      <h5 className="mb-4">Applicant Gender Distribution</h5> {/* Add title */}
       <Pie data={chartData} options={{ maintainAspectRatio: false }} />
     </div>
   );

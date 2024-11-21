@@ -9,10 +9,10 @@ const BarChart = () => {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [{
-      label: 'Address of Applicants',
+      label: 'Applicant Address Distribution',
       data: [],
-      backgroundColor: 'rgba(75, 192, 192, 0.6)',
-      borderColor: 'rgba(75, 192, 192, 1)',
+      backgroundColor: [],
+      borderColor: [],
       borderWidth: 1,
     }],
   });
@@ -29,16 +29,22 @@ const BarChart = () => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const location = await response.json(); // Assuming the response is in JSON format
+        const location = await response.json();
 
-        const labels = location.map(location => location.location);
-        const counts = location.map(location => location.count);
+        const labels = location.map(item => item.location);
+        const counts = location.map(item => item.count);
+
+        // Define shades of blue for dynamic styling
+        const shadesOfBlue = ['#ADD8E6', '#87CEEB', '#4682B4', '#5F9EA0', '#1E90FF'];
 
         setChartData({
           labels,
           datasets: [{
-            ...chartData.datasets[0],
+            label: 'Applicant Address Distribution',
             data: counts,
+            backgroundColor: counts.map((_, i) => shadesOfBlue[i % shadesOfBlue.length]), // Cycle shades of blue
+            borderColor: counts.map((_, i) => shadesOfBlue[i % shadesOfBlue.length]), // Match borders
+            borderWidth: 1,
           }],
         });
       } catch (error) {
@@ -50,15 +56,19 @@ const BarChart = () => {
   }, []);
 
   return (
-    <div className="bg-light border rounded shadow-sm p-4" style={{ height: '250px' }}>
-      <Bar data={chartData} options={{
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
+    <div className="bg-light border rounded shadow-sm p-4" style={{ height: '300px' }}>
+      <h5 className="mb-4 text-center">Applicant Address Distribution</h5> {/* Title added */}
+      <Bar 
+        data={chartData} 
+        options={{
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
           },
-        },
-      }} />
+        }} 
+      />
     </div>
   );
 };

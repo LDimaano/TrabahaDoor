@@ -11,8 +11,20 @@ const BarChart = () => {
     datasets: [{
       label: 'Industries of Applicants',
       data: [],
-      backgroundColor: 'rgba(75, 192, 192, 0.6)',
-      borderColor: 'rgba(75, 192, 192, 1)',
+      backgroundColor: [
+        '#ADD8E6', // Light Blue
+        '#87CEEB', // Sky Blue
+        '#4682B4', // Steel Blue
+        '#5F9EA0', // Cadet Blue
+        '#1E90FF', // Dodger Blue
+      ],
+      borderColor: [
+        '#87CEFA', // Lighter Sky Blue
+        '#4682B4', // Steel Blue
+        '#1E90FF', // Dodger Blue
+        '#5F9EA0', // Cadet Blue
+        '#ADD8E6', // Light Blue
+      ],
       borderWidth: 1,
     }],
   });
@@ -39,6 +51,16 @@ const BarChart = () => {
           datasets: [{
             ...chartData.datasets[0],
             data: counts,
+            backgroundColor: counts.map((_, i) => {
+              // Cycle through blue shades dynamically
+              const shades = ['#ADD8E6', '#87CEEB', '#4682B4', '#5F9EA0', '#1E90FF'];
+              return shades[i % shades.length];
+            }),
+            borderColor: counts.map((_, i) => {
+              // Match border color with dynamic shades
+              const borders = ['#87CEFA', '#4682B4', '#1E90FF', '#5F9EA0', '#ADD8E6'];
+              return borders[i % borders.length];
+            }),
           }],
         });
       } catch (error) {
@@ -50,15 +72,19 @@ const BarChart = () => {
   }, []);
 
   return (
-    <div className="bg-light border rounded shadow-sm p-4" style={{ height: '250px' }}>
-      <Bar data={chartData} options={{
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
+    <div className="bg-light border rounded shadow-sm p-4" style={{ height: '300px' }}>
+      <h5 className="mb-4 text-center">Industries of Applicants</h5> {/* Title added */}
+      <Bar 
+        data={chartData} 
+        options={{
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
           },
-        },
-      }} />
+        }} 
+      />
     </div>
   );
 };
