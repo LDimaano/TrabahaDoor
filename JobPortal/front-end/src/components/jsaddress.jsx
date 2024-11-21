@@ -100,8 +100,7 @@ const BarChart = () => {
             },
             y: {
               title: {
-                display: true,
-                text: 'Location', // Add label to y-axis
+                display: true,// Add label to y-axis
               },
               grid: {
                 display: true,  // Enable gridlines for clarity
@@ -110,7 +109,7 @@ const BarChart = () => {
           },
           plugins: {
             legend: {
-              display: false,  // Hide legend if not necessary
+              display: true,  // Hide legend if not necessary
             },
             tooltip: {
               callbacks: {
