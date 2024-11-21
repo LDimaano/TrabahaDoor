@@ -1,6 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import SignupContainer from '../../components/signupcontainer'; // Adjust path as needed
+import SignupContainer from '../../components/signupcontainer'; 
 import LoginForm from '../../components/loginform';
 
 function Login() {

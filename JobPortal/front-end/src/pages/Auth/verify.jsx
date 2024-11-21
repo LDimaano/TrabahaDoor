@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Header from '../../components/header_unverified1'; // Import the Header component
+import Header from '../../components/header_unverified1'; 
 
 function EmailVerification() {
   const [message, setMessage] = useState('Verifying your email...');
   const location = useLocation();
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate(); 
 
   useEffect(() => {
-    console.log('Location search:', location.search); // Debugging output
-
     const query = new URLSearchParams(location.search);
     const token = query.get('token');
 
-    console.log('Extracted token:', token); // Debugging output
-
     if (token) {
-      // Use fetch to send the token to the backend for verification
       fetch(`${process.env.REACT_APP_API_URL}/api/users/verify-email?token=${token}`, {
         method: 'GET',
         headers: {
@@ -41,12 +36,12 @@ function EmailVerification() {
   }, [location.search]);
 
   const handleSignUpRedirect = () => {
-    navigate('/login'); // Navigate to /login when the button is clicked
+    navigate('/login'); 
   };
 
   return (
     <>
-      <Header /> {/* Render the Header component */}
+      <Header /> 
       <div className="container d-flex justify-content-center align-items-center vh-100">
         <div className="card shadow-lg p-4" style={{ maxWidth: '500px', width: '100%' }}>
           <div className="card-body text-center">

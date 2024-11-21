@@ -93,7 +93,7 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
   
       // Query job experience data
       const jobExperienceData = await pool.query(`
-        SELECT je.jobtitle_id, jt.job_title, je.company, je.start_date, je.end_date, je.description
+        SELECT je.jobtitle_id, jt.job_title, je.company, je.start_date, je.end_date, je.description, je.salary
         FROM job_experience je
         JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
         WHERE je.user_id = $1;
@@ -108,11 +108,6 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
         WHERE jss.user_id = $1
       `, [user_id]);
   
-  
-      console.log('Job Seeker Data:', jobSeekerData.rows);
-      console.log('Job Experience Data:', jobExperienceData.rows);
-      console.log('Skills Data:', skillsData.rows);
-  
       if (jobSeekerData.rows.length === 0) {
         return res.status(404).json({ message: 'Job seeker not found' });
       }
@@ -122,7 +117,8 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
         company: exp.company || 'Not Specified',
         start_date: exp.start_date ? new Date(exp.start_date).toLocaleDateString() : 'Not Provided',
         end_date: exp.end_date ? new Date(exp.end_date).toLocaleDateString() : 'Not Provided',
-        description: exp.description || 'No Description'
+        description: exp.description || 'No Description',
+        salary: exp.salary || 'Not Provided'
       }));
   
       const jobSeeker = jobSeekerData.rows[0];
