@@ -45,21 +45,22 @@ def recommend_candidates(job_postings, applicants, contact_history):
             matched_skills = job_skills.intersection(applicant_skills)
             industry_match = job_industry == applicant_industry
 
-            # Ensure at least one skill match or industry match
-            if (matched_skills or industry_match) and user_id not in seen_user_ids:
-                recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
-                skill_matches.append({
-                    'user_id': user_id,
-                    'full_name': applicant_full_name,
-                    'job_title': recommended_job_title,
-                    'matched_skills': list(matched_skills) if matched_skills else [],
-                    'industry_match': industry_match,
-                    'profile_picture_url': applicant.get('profile_picture_url', ''),
-                    'from_collaborative_filtering': False,
-                    'match_type': 'both' if matched_skills and industry_match else 'skills' if matched_skills else 'industry',
-                    'influence_tag': 'content'  # Content-based filtering
-                })
-                seen_user_ids.add(user_id)
+            # Ensure at least two skill matches or one industry match
+            if len(matched_skills) >= 2 or industry_match:
+                if user_id not in seen_user_ids:
+                    recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
+                    skill_matches.append({
+                        'user_id': user_id,
+                        'full_name': applicant_full_name,
+                        'job_title': recommended_job_title,
+                        'matched_skills': list(matched_skills) if matched_skills else [],
+                        'industry_match': industry_match,
+                        'profile_picture_url': applicant.get('profile_picture_url', ''),
+                        'from_collaborative_filtering': False,
+                        'match_type': 'both' if matched_skills and industry_match else 'skills' if matched_skills else 'industry',
+                        'influence_tag': 'content'  # Content-based filtering
+                    })
+                    seen_user_ids.add(user_id)
 
     # Now, incorporate collaborative filtering by recommending applicants contacted by similar employers
     for contact in contact_history:
@@ -97,13 +98,6 @@ def recommend_candidates(job_postings, applicants, contact_history):
         # Determine if this recommendation should be hybrid
         if rec['match_type'] == 'both' and rec['from_collaborative_filtering']:
             rec['influence_tag'] = 'hybrid'  # Hybrid filtering
-
-    # Remove candidates that do not meet the required criteria:
-    # No job title match, no skill match, no industry match, and no collaborative filtering match
-    recommendations = [
-        rec for rec in recommendations 
-        if rec['matched_skills'] or rec['industry_match'] or rec['job_title'] or rec['from_collaborative_filtering']
-    ]
 
     return recommendations
 
