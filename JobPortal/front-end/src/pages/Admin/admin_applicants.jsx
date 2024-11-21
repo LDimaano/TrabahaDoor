@@ -32,11 +32,9 @@ const ApplicantDashboard = () => {
 
         const data = await response.json();
         
-        // Check if data is not empty
         if (data && data.length > 0) {
           setApplicants(data);
         }
-        // If data is empty, do nothing and keep the current applicants state
 
       } catch (error) {
         setError(error.message);
@@ -76,7 +74,7 @@ const ApplicantDashboard = () => {
         <Sidebar />
       </div>
       <main className="flex-grow-1 p-4">
-        <AdminNavbar toggleSidebar={toggleSidebar} /> {/* Include Navbar for mobile */}
+        <AdminNavbar toggleSidebar={toggleSidebar} />
         <section>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h3>Applicants: {filteredListings.length}</h3>

@@ -4,7 +4,7 @@ import Pagination from '../../components/admin_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import Employerlist from '../../components/admin_viewemployers';
-import AdminNavbar from '../../components/AdminNavbar'; // Import the new Navbar component
+import AdminNavbar from '../../components/AdminNavbar'; 
 
 const EmployerDashboard = () => {
   const [employers, setEmployers] = useState([]);
@@ -12,7 +12,7 @@ const EmployerDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [listingsPerPage, setListingsPerPage] = useState(20);
   const [error, setError] = useState(null);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to control sidebar visibility
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); 
 
   useEffect(() => {
     const fetchEmployers = async () => {

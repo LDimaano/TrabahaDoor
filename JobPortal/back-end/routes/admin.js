@@ -52,7 +52,8 @@ router.get('/viewusers/:userId', async (req, res) => {
             LEFT JOIN profilepictures pp ON u.user_id = pp.user_id
             LEFT JOIN job_seekers js ON u.user_id = js.user_id
             LEFT JOIN emp_profiles e ON u.user_id = e.user_id
-            WHERE u.usertype IN ('jobseeker', 'employer');
+            WHERE u.usertype IN ('jobseeker', 'employer')
+			      ORDER BY u.user_id asc;
             `
         );
 
@@ -213,6 +214,7 @@ router.get('/viewemployers/:userId', async (req, res) => {
       LEFT JOIN profilepictures pp ON e.user_id = pp.user_id
       JOIN users u ON e.user_id = u.user_id
       WHERE u.approve = 'yes'
+	    ORDER BY e.company_name ASC
     `);
 
     console.log('Database query result:', result.rows);
@@ -241,6 +243,7 @@ router.get('/viewjobseekers/:userId', async (req, res) => {
                 pp.profile_picture_url
             FROM job_seekers j
             LEFT JOIN profilepictures pp ON j.user_id = pp.user_id
+			      ORDER BY j.full_name asc
             `
         );
         console.log('Database query result:', result.rows);
@@ -269,6 +272,7 @@ router.get('/viewjoblisting/:userId', async (req, res) => {
             LEFT JOIN profilepictures pp ON jl.user_id = pp.user_id
             JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
             JOIN emp_profiles e ON jl.user_id = e.user_id
+		      	ORDER BY jt.job_title asc
             `
         );
 

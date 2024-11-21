@@ -4,7 +4,7 @@ import Pagination from '../../components/admin_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import Joblist from '../../components/admin_viewjoblistings';
-import AdminNavbar from '../../components/AdminNavbar'; // Import the new Navbar component
+import AdminNavbar from '../../components/AdminNavbar'; 
 
 const JobDashboard = () => {
   const [joblisting, setJoblisting] = useState([]);
@@ -12,7 +12,7 @@ const JobDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [listingsPerPage, setListingsPerPage] = useState(20);
   const [error, setError] = useState(null);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to control sidebar visibility
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); 
 
   useEffect(() => {
     const fetchJoblistings = async () => {
@@ -32,11 +32,9 @@ const JobDashboard = () => {
 
         const data = await response.json();
 
-        // Check if data is not empty
         if (data && data.length > 0) {
           setJoblisting(data);
         }
-        // If data is empty, do nothing and keep the current joblisting state
 
       } catch (error) {
         setError(error.message);
@@ -78,7 +76,7 @@ const JobDashboard = () => {
         <Sidebar />
       </div>
       <main className="flex-grow-1 p-4">
-        <AdminNavbar toggleSidebar={toggleSidebar} /> {/* Include Navbar for mobile */}
+        <AdminNavbar toggleSidebar={toggleSidebar} /> 
         <section>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h3>Job Listings: {filteredListings.length}</h3>
