@@ -1,7 +1,7 @@
 import sys
 import json
 
-def recommend_candidates(job_postings, applicants, contact_history):
+def recommend_candidates(job_postings, applicants, contact_history, current_employer_industry, current_employer_job_titles):
     """Generate a list of recommended candidates based on job postings and collaborative filtering by contact history."""
     title_matches = []
     skill_matches = []
@@ -64,29 +64,29 @@ def recommend_candidates(job_postings, applicants, contact_history):
 
     # Now, incorporate collaborative filtering by recommending applicants contacted by similar employers
     for contact in contact_history:
+        emp_industry = contact.get('industry_name', '')  # Get the industry of the employer from the contact history
+        emp_job_listings = set(contact.get('empjoblistings', []))  # Get the job listings of the employer
         js_user_id = contact.get('js_user_id')
         full_name = contact.get('full_name')
         job_title = contact.get('job_title', "No Job Title")
         profile_picture_url = contact.get('profile_picture_url', '')
         skills = contact.get('skills', [])
-        emp_job_listings = contact.get('empjoblistings', [])  # Employer's job listings
 
-        # Check if there's at least one similar job listing between the employer's and the job postings
-        has_similar_job_title = any(job_title in job.get('job_title', '') for job in emp_job_listings)
-
-        # Only recommend applicants from contact history if there's a job title match
-        if has_similar_job_title and js_user_id not in seen_user_ids:
-            contact_matches.append({
-                'user_id': js_user_id,
-                'full_name': full_name,
-                'job_title': job_title,
-                'matched_skills': skills,
-                'profile_picture_url': profile_picture_url,
-                'from_collaborative_filtering': True,
-                'match_type': 'collaborative',
-                'influence_tag': 'collaborative'  # Collaborative filtering
-            })
-            seen_user_ids.add(js_user_id)
+        # Ensure the employer is in the same industry and has at least one similar job listing
+        if emp_industry == current_employer_industry and len(emp_job_listings.intersection(current_employer_job_titles)) > 0:
+            # Ensure jobseeker only appears once based on user_id
+            if js_user_id not in seen_user_ids:
+                contact_matches.append({
+                    'user_id': js_user_id,
+                    'full_name': full_name,
+                    'job_title': job_title,
+                    'matched_skills': skills,
+                    'profile_picture_url': profile_picture_url,
+                    'from_collaborative_filtering': True,
+                    'match_type': 'collaborative',
+                    'influence_tag': 'collaborative'  # Collaborative filtering
+                })
+                seen_user_ids.add(js_user_id)
 
     # Prioritize candidates: first title matches, then skill matches, then collaborative filtering matches
     recommendations = title_matches + skill_matches + contact_matches
@@ -113,9 +113,11 @@ if __name__ == '__main__':
         job_postings = input_json.get('job_postings', [])
         applicants = input_json.get('applicants', [])
         contact_history = input_json.get('contact_history', [])
+        current_employer_industry = input_json.get('current_employer_industry', '')
+        current_employer_job_titles = set(input_json.get('current_employer_job_titles', []))
 
         # Generate recommendations
-        recommended_candidates = recommend_candidates(job_postings, applicants, contact_history)
+        recommended_candidates = recommend_candidates(job_postings, applicants, contact_history, current_employer_industry, current_employer_job_titles)
 
         # Print only valid JSON output
         print(json.dumps(recommended_candidates))

@@ -555,28 +555,31 @@ const getApplicants = async () => {
 const getContactHistory = async (empUserId) => {
   const query = `
               SELECT 
-              ec.js_user_id, 
-              ec.emp_user_id, 
-              js.full_name, 
-              u.email, 
-              ARRAY_AGG(DISTINCT s.skill_name) AS skills,
-              jt.job_title, 
-              pp.profile_picture_url,
-              ARRAY_AGG(DISTINCT jt_posted.job_title) AS empjoblistings -- Job listings posted by emp_user_id
-          FROM emp_contact ec
-          JOIN users u ON ec.js_user_id = u.user_id
-          JOIN js_skills jk ON u.user_id = jk.user_id
-          JOIN job_seekers js ON u.user_id = js.user_id
-          JOIN skills s ON jk.skill_id = s.skill_id
-          JOIN emp_profiles ep ON ep.user_id = ec.emp_user_id
-          JOIN joblistings jl ON jl.user_id = ec.emp_user_id
-          JOIN job_titles jt ON jt.jobtitle_id = (SELECT jobtitle_id FROM job_experience WHERE user_id = u.user_id LIMIT 1)
-          LEFT JOIN profilepictures pp ON pp.user_id = u.user_id
-          LEFT JOIN joblistings jl_posted ON jl_posted.user_id = ec.emp_user_id -- Join for joblistings by emp_user_id
-          LEFT JOIN job_titles jt_posted ON jt_posted.jobtitle_id = jl_posted.jobtitle_id -- Get the job titles for those listings
-          WHERE ec.emp_user_id != 1 -- Fetching contacts from similar employers
-          GROUP BY ec.js_user_id, js.full_name, u.email, jt.job_title, pp.profile_picture_url, ec.emp_user_id
-          ORDER BY emp_user_id ASC;
+    ec.js_user_id, 
+    ec.emp_user_id,
+	ind.industry_name,
+    js.full_name, 
+    u.email, 
+    ARRAY_AGG(DISTINCT s.skill_name) AS skills,
+    jt.job_title, 
+    pp.profile_picture_url,
+    ARRAY_AGG(DISTINCT jt_posted.job_title) AS empjoblistings -- Job listings posted by emp_user_id
+        FROM emp_contact ec
+        JOIN users u ON ec.js_user_id = u.user_id
+        JOIN js_skills jk ON u.user_id = jk.user_id
+        JOIN job_seekers js ON u.user_id = js.user_id
+        JOIN skills s ON jk.skill_id = s.skill_id
+        JOIN emp_profiles ep ON ep.user_id = ec.emp_user_id
+        JOIN industries ind ON ep.industry_id = ind.industry_id
+        JOIN joblistings jl ON jl.user_id = ec.emp_user_id
+        JOIN job_titles jt ON jt.jobtitle_id = (SELECT jobtitle_id FROM job_experience WHERE user_id = u.user_id LIMIT 1)
+        LEFT JOIN profilepictures pp ON pp.user_id = u.user_id
+        LEFT JOIN joblistings jl_posted ON jl_posted.user_id = ec.emp_user_id -- Join for joblistings by emp_user_id
+        LEFT JOIN job_titles jt_posted ON jt_posted.jobtitle_id = jl_posted.jobtitle_id -- Get the job titles for those listings
+        WHERE ec.emp_user_id != 1 -- Fetching contacts from similar employers
+        GROUP BY ec.js_user_id, js.full_name, u.email, jt.job_title, pp.profile_picture_url, ec.emp_user_id,ind.industry_name
+        ORDER BY emp_user_id ASC;
+           
       `;
 
   const { rows } = await pool.query(query, [empUserId]);
