@@ -228,6 +228,16 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
       skills 
     } = req.body;
 
+    console.log('Data received for jobseeker update:');
+    console.log(`Full Name: ${fullName}`);
+    console.log(`Phone Number: ${phoneNumber}`);
+    console.log(`Date of Birth: ${dateOfBirth}`);
+    console.log(`Gender: ${gender}`);
+    console.log(`Industry ID: ${industry_id}`);
+    console.log(`Address ID: ${address_id}`);
+    console.log(`Experiences: ${JSON.stringify(experiences)}`);
+    console.log(`Skills: ${JSON.stringify(skills)}`);
+
 
     if (!userId || isNaN(parseInt(userId))) {
       return res.status(400).json({ error: 'Invalid or missing userId' });
@@ -247,33 +257,20 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
 
     // Update job experiences
     if (experiences && Array.isArray(experiences)) {
+      await pool.query(`DELETE FROM job_experience WHERE user_id = $1`, [userId]);
       for (const exp of experiences) {
-        const jobTitleValue = exp.jobTitleId?.value || null; 
-        if (exp.experienceId) {
-          await pool.query(`
-            UPDATE job_experience
-            SET jobtitle_id = $1,
-                salary = $2,
-                company = $3,
-                location = $4,
-                start_date = $5,
-                end_date = $6,
-                description = $7
-            WHERE experience_id = $8 AND user_id = $9
-          `, [jobTitleValue, exp.salary, exp.companyName, exp.location, exp.startDate, exp.endDate, exp.description, exp.experienceId, userId]);
-        } else {
-          await pool.query(`
-            INSERT INTO job_experience (user_id, jobtitle_id, salary, company, location, start_date, end_date, description)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-          `, [userId, jobTitleValue, exp.salary, exp.companyName, exp.location, exp.startDate, exp.endDate, exp.description]);
-        }
+        const jobTitleValue = exp.jobTitleId?.value || null;
+        await pool.query(`
+          INSERT INTO job_experience (user_id, jobtitle_id, salary, company, location, start_date, end_date, description)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `, [userId, jobTitleValue, exp.salary, exp.companyName, exp.location, exp.startDate, exp.endDate, exp.description]);
       }
     }
+
 
     // Update skills
     if (skills && Array.isArray(skills)) {
       await pool.query(`DELETE FROM js_skills WHERE user_id = $1`, [userId]);
-
       for (const skillId of skills) {
         await pool.query(`
           INSERT INTO js_skills (user_id, skill_id)

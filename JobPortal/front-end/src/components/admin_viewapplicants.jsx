@@ -5,7 +5,7 @@ import { faEye, faTh, faList } from '@fortawesome/free-solid-svg-icons';
 
 function ApplicantJoblist({ currentListings }) {
   const navigate = useNavigate();
-  const [viewMode, setViewMode] = useState('list'); // Default view mode is 'list'
+  const [viewMode, setViewMode] = useState('list'); 
 
   const handleSeeJs = (userId) => {
     navigate(`/userjs_profile/${userId}`);
@@ -17,7 +17,6 @@ function ApplicantJoblist({ currentListings }) {
 
   return (
     <div>
-      {/* View toggle button positioned at the upper right */}
       <div className="d-flex justify-content-end mb-3">
         <button 
           className="btn btn-outline-secondary" 
@@ -27,8 +26,6 @@ function ApplicantJoblist({ currentListings }) {
           <FontAwesomeIcon icon={viewMode === 'list' ? faTh : faList} className="ms-2" />
         </button>
       </div>
-
-      {/* Render listings based on selected view mode */}
       {viewMode === 'grid' ? (
         <div className="row">
           {currentListings.map((listing) => (
