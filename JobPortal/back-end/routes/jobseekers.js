@@ -213,30 +213,31 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
   }
 });
 
-// Route to update job seeker profile, experiences, and skills
 router.put('/update-jobseeker-profile/:userId', async (req, res) => {
+  const client = await pool.connect();
   try {
     const { userId } = req.params;
     const {
       fullName,
       phoneNumber,
       dateOfBirth,
-      gender, 
-      industry_id, 
-      address_id, 
-      experiences, 
-      skills 
+      gender,
+      industry_id,
+      address_id,
+      experiences,
+      skills
     } = req.body;
 
     console.log('Received experiences:', experiences);
-
 
     if (!userId || isNaN(parseInt(userId))) {
       return res.status(400).json({ error: 'Invalid or missing userId' });
     }
 
+    await client.query('BEGIN');
+
     // Update job seeker profile
-    await pool.query(`
+    await client.query(`
       UPDATE job_seekers
       SET full_name = $1,
           phone_number = $2,
@@ -249,31 +250,37 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
 
     // Update job experiences
     if (experiences && Array.isArray(experiences)) {
-      await pool.query(`DELETE FROM job_experience WHERE user_id = $1`, [userId]);
+      await client.query(`DELETE FROM job_experience WHERE user_id = $1`, [userId]);
       for (const exp of experiences) {
-        await pool.query(`
+        if (!exp.jobTitle) {
+          throw new Error(`Job title ID is required for all experiences.`);
+        }
+        await client.query(`
           INSERT INTO job_experience (user_id, jobtitle_id, salary, company, location, start_date, end_date, description)
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        `, [userId, exp.jobTitle?.value, exp.salary, exp.companyName, exp.location, exp.startDate, exp.endDate, exp.description]);
+        `, [userId, exp.jobTitle, exp.salary, exp.company, exp.location, exp.startDate, exp.endDate, exp.description]);
       }
     }
 
-
     // Update skills
     if (skills && Array.isArray(skills)) {
-      await pool.query(`DELETE FROM js_skills WHERE user_id = $1`, [userId]);
+      await client.query(`DELETE FROM js_skills WHERE user_id = $1`, [userId]);
       for (const skillId of skills) {
-        await pool.query(`
+        await client.query(`
           INSERT INTO js_skills (user_id, skill_id)
           VALUES ($1, $2)
         `, [userId, skillId]);
       }
     }
 
+    await client.query('COMMIT');
     res.json({ message: 'Job seeker profile updated successfully' });
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Error updating job seeker profile:', error.message);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error: ' + error.message });
+  } finally {
+    client.release();
   }
 });
 
