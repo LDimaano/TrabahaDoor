@@ -24,8 +24,15 @@ const GenderDistributionChart = () => {
           datasets: [
             {
               data: counts,
-              backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
-              hoverBackgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
+              backgroundColor: [
+                '#87CEEB', // Sky Blue
+                '#4169E1', // Royal Blue
+                '#0000CD', // Medium Blue
+              ], 
+              // Optionally, you can also use the same shades of blue for borders
+              hoverBackgroundColor: [
+                '#87CEEB', '#4169E1', '#0000CD',
+              ],
             },
           ],
         });
