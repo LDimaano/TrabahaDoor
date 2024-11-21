@@ -41,7 +41,7 @@ const EmployerDashboard = () => {
           {/* Dashboard Grid with Components */}
           <div className="row g-4 mt-4">
             <div className="col-lg-6 col-md-12 d-flex justify-content-center align-items-center">
-              <ChartPlaceholder1 style={{ width: '100%', height: '100%' }} />
+            <ChartPlaceholder1 style={{ width: '80%', height: '80%' }} />
             </div>
             <div className="col-lg-6 col-md-12 d-flex justify-content-center align-items-center">
               <ChartPlaceholder2 style={{ width: '100%', height: '100%' }} />
