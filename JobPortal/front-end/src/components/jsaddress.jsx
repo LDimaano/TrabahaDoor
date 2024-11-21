@@ -13,8 +13,17 @@ const BarChart = () => {
     datasets: [{
       label: 'Address of Jobseekers',
       data: [],
-      backgroundColor: '#007bff',  // Changed to the desired blue color
-      borderColor: '#007bff',      // Changed to the desired blue color
+      backgroundColor: [
+        '#ADD8E6', // Light Blue
+        '#87CEEB', // Sky Blue
+        '#1E90FF', // Dodger Blue
+        '#4169E1', // Royal Blue
+        '#0000CD', // Medium Blue
+      ], 
+      // Optionally, you can also use the same shades of blue for borders
+      borderColor: [
+        '#ADD8E6', '#87CEEB', '#1E90FF', '#4169E1', '#0000CD',
+      ],
       borderWidth: 1,
     }],
   });
