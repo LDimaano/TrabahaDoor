@@ -69,14 +69,14 @@ const BarChart = () => {
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Number of Applicants',
+             
               },
               maxBarThickness: 20, // Limit the bar width to prevent overflow
             },
             y: { 
               title: {
                 display: true,
-                text: 'Applicant Locations',
+                
               },
               ticks: {
                 autoSkip: true, // Skip some labels on the y-axis to avoid overlap
