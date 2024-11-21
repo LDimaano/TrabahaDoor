@@ -45,6 +45,7 @@ def recommend_candidates(job_postings, applicants, contact_history):
             matched_skills = job_skills.intersection(applicant_skills)
             industry_match = job_industry == applicant_industry
 
+            # Ensure at least one skill match or industry match
             if (matched_skills or industry_match) and user_id not in seen_user_ids:
                 recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
                 skill_matches.append({
@@ -85,14 +86,24 @@ def recommend_candidates(job_postings, applicants, contact_history):
     # Prioritize candidates: first title matches, then skill matches, then collaborative filtering matches
     recommendations = title_matches + skill_matches + contact_matches
 
-    # Filter recommendations to ensure only those with matches are returned
-    recommendations = [rec for rec in recommendations if rec['matched_skills'] or rec['industry_match']]
+    # Filter recommendations to ensure only those with relevant matches are returned
+    recommendations = [
+        rec for rec in recommendations 
+        if rec['matched_skills'] or rec['industry_match'] or rec['job_title']  # Ensure at least one match exists
+    ]
 
     # Set influence_tag for hybrid matches
     for rec in recommendations:
         # Determine if this recommendation should be hybrid
         if rec['match_type'] == 'both' and rec['from_collaborative_filtering']:
             rec['influence_tag'] = 'hybrid'  # Hybrid filtering
+
+    # Remove candidates that do not meet the required criteria:
+    # No job title match, no skill match, no industry match, and no collaborative filtering match
+    recommendations = [
+        rec for rec in recommendations 
+        if rec['matched_skills'] or rec['industry_match'] or rec['job_title'] or rec['from_collaborative_filtering']
+    ]
 
     return recommendations
 
