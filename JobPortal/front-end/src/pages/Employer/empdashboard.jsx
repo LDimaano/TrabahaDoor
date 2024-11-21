@@ -17,23 +17,27 @@ const EmployerDashboard = () => {
 
   return (
     <div className="d-flex">
+      {/* Sidebar */}
       <div
-        className={`sidebar bg-primary text-white ${isSidebarVisible ? 'd-block' : 'd-none'} d-lg-block`}
+        className={`sidebar bg-primary text-white ${isSidebarVisible ? 'slide-in' : 'slide-out'} d-lg-block`}
         style={{
           position: 'fixed',
           top: 0,
           bottom: 0,
           width: '250px',
           overflowY: 'auto',
-          zIndex: 1000
+          zIndex: 1000,
+          transition: 'transform 0.3s ease-in-out',
         }}
       >
         <Sidebar />
       </div>
-      <main className="flex-grow-1 p-3">
+
+      {/* Main Content */}
+      <main className="flex-grow-1 p-3" style={{ marginLeft: isSidebarVisible || window.innerWidth >= 992 ? '250px' : '0' }}>
         <Header />
         <section>
-          <h3> Employer Dashboard</h3>
+          <h3>Employer Dashboard</h3>
           <div className="row g-4 mt-4">
             <div className="col-lg-6 col-md-12">
               <ChartPlaceholder1 />
@@ -50,13 +54,23 @@ const EmployerDashboard = () => {
           </div>
         </section>
       </main>
+
+      {/* Toggle Sidebar Button */}
       <button
         className="btn btn-primary d-lg-none position-fixed"
-        style={{ top: '10px', left: '10px', zIndex: 999 }}
+        style={{ top: '15px', left: '15px', zIndex: 999 }}
         onClick={toggleSidebar}
       >
         <FontAwesomeIcon icon={faBars} />
       </button>
+      <style jsx>{`
+        .slide-in {
+          transform: translateX(0);
+        }
+        .slide-out {
+          transform: translateX(-100%);
+        }
+      `}</style>
     </div>
   );
 };
