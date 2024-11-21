@@ -72,14 +72,15 @@ const BarChart = () => {
   }, []);
 
   return (
-    <div className="bg-light border rounded shadow-sm p-4" style={{ height: '300px' }}>
+    <div className="bg-light border rounded shadow-sm p-4" style={{ height: '400px' }}>
       <h5 className="mb-4 text-center">Industries of Applicants</h5> {/* Title added */}
       <Bar 
         data={chartData} 
         options={{
+          indexAxis: 'y', // Switch to horizontal bar chart
           maintainAspectRatio: false,
           scales: {
-            y: {
+            x: { // For horizontal bars, the x-axis is now the "value" axis
               beginAtZero: true,
             },
           },
