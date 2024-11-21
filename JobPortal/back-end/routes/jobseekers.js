@@ -228,15 +228,7 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
       skills 
     } = req.body;
 
-    console.log('Data received for jobseeker update:');
-    console.log(`Full Name: ${fullName}`);
-    console.log(`Phone Number: ${phoneNumber}`);
-    console.log(`Date of Birth: ${dateOfBirth}`);
-    console.log(`Gender: ${gender}`);
-    console.log(`Industry ID: ${industry_id}`);
-    console.log(`Address ID: ${address_id}`);
-    console.log(`Experiences: ${JSON.stringify(experiences)}`);
-    console.log(`Skills: ${JSON.stringify(skills)}`);
+    console.log('Received experiences:', experiences);
 
 
     if (!userId || isNaN(parseInt(userId))) {
