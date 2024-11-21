@@ -68,27 +68,31 @@ const ChartPlaceholder1 = () => {
 
   return (
     <div
-      className="bg-light border rounded shadow-sm p-4 text-center"
-      style={{
-        height: "320px",
-        overflow: "hidden", // Prevents content from overflowing
-      }}
-    >
-      <h5 className="mb-4">Applicant Gender Distribution</h5>
-      <Pie
-        data={chartData}
-        options={{
-          maintainAspectRatio: true, // Preserves the aspect ratio of the chart
-          responsive: true, // Ensures the chart resizes with the container
-          plugins: {
-            legend: {
-              display: true,
-              position: "top",
-            },
+    className="bg-light border rounded shadow-sm p-4 text-center"
+    style={{
+      height: "400px",
+      overflow: "hidden", // Prevents content from overflowing
+      display: 'flex', // Enables flexbox layout
+      justifyContent: 'center', // Centers horizontally
+      alignItems: 'center', // Centers vertically
+    }}
+  >
+    <h5 className="mb-4">Applicant Gender Distribution</h5>
+    <Pie
+      data={chartData}
+      options={{
+        maintainAspectRatio: true, // Preserves the aspect ratio of the chart
+        responsive: true, // Ensures the chart resizes with the container
+        plugins: {
+          legend: {
+            display: true,
+            position: "top",
           },
-        }}
-      />
-    </div>
+        },
+      }}
+    />
+  </div>
+
   ); 
 };
 
