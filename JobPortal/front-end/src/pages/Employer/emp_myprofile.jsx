@@ -70,6 +70,9 @@ const MyProfile = () => {
 
   return (
     <div className="d-flex flex-column min-vh-100">
+      <Helmet>
+        <title>TrabahaDoor - Employer</title> {/* Set the page title */}
+      </Helmet>
       <Header />
       <main className="flex-grow-1 p-4 container">
         <section>

@@ -17,6 +17,9 @@ const EmployerDashboard = () => {
 
   return (
     <div className="d-flex">
+      <Helmet>
+        <title>TrabahaDoor - Employer</title> {/* Set the page title */}
+      </Helmet>
       {/* Sidebar */}
       <div
         className={`sidebar bg-primary text-white ${isSidebarVisible ? 'slide-in' : 'slide-out'} d-lg-block`}

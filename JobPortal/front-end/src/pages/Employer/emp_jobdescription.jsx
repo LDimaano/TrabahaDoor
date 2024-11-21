@@ -39,6 +39,9 @@ const JobDescription = () => {
 
   return (
     <div className="d-flex">
+      <Helmet>
+        <title>TrabahaDoor - Employer</title> {/* Set the page title */}
+      </Helmet>
       {/* Sidebar with responsive design */}
       <div className="d-none d-md-block">
         <Sidebar />

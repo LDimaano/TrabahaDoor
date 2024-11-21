@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../../components/empheader';
 import SearchForm from '../../components/searchform_emp';
 import CandidateList from '../../components/candidatelist';
+import { Helmet } from 'react-helmet';
 
 function HomeEmployer() {
   const [allCandidates, setAllCandidates] = useState([]); // Store all fetched candidates
@@ -31,6 +32,9 @@ function HomeEmployer() {
 
   return (
     <div className="container">
+      <Helmet>
+        <title>TrabahaDoor - Employer</title> {/* Set the page title */}
+      </Helmet>
       <Header />
       <main className="row mt-4">
         <div className="col-md-12 text-center">
