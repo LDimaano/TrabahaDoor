@@ -7,16 +7,15 @@ import Header from '../../components/empheader';
 import ApplicantProfile from '../../components/app_profile';
 import ApplicantCard from '../../components/app_cardforemp';
 
-// Modal Component
 const ConfirmModal = ({ show, onClose, onConfirm }) => {
   const [message, setMessage] = useState('');
 
   if (!show) return null;
 
   const handleConfirm = () => {
-    onConfirm(message); // Call onConfirm with the message
-    setMessage(''); // Clear the message input
-    onClose(); // Close the modal after confirming
+    onConfirm(message); 
+    setMessage(''); 
+    onClose(); 
   };
 
   return (
@@ -36,9 +35,9 @@ const ConfirmModal = ({ show, onClose, onConfirm }) => {
         backgroundColor: '#fff',
         padding: '20px',
         borderRadius: '8px',
-        maxWidth: '90%', // Adjust width for mobile responsiveness
+        maxWidth: '90%', 
         width: '500px',
-        margin: '0 20px', // Margin for smaller screens
+        margin: '0 20px', 
       }}>
         <h5>Confirm Contact</h5>
         <p>Are you sure you want to contact this applicant?</p>
@@ -72,7 +71,7 @@ const ConfirmModal = ({ show, onClose, onConfirm }) => {
             Cancel
           </button>
           <button 
-            onClick={handleConfirm} // Use handleConfirm for the confirm action
+            onClick={handleConfirm} 
             style={{
               backgroundColor: '#007bff',
               color: '#fff',
