@@ -48,7 +48,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // Set to true if using HTTPS
+    secure: false, 
     httpOnly: true,
     maxAge: 60 * 60 * 1000 // 1 hour session expiration
   }
@@ -59,13 +59,11 @@ const sessionMiddleware = session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // Set to true if using HTTPS
+    secure: false, 
     httpOnly: true,
     maxAge: 60 * 60 * 1000 // 1 hour session expiration
   }
 });
-
-
 
 app.use(sessionMiddleware);
 
@@ -106,7 +104,6 @@ const io = require('socket.io')(server, {
   },
   transports: ['websocket', 'polling'],
 });
-
 
 // Use the session middleware with Socket.IO
 io.use(sharedSession(sessionMiddleware, {
@@ -160,7 +157,7 @@ const getContentType = (fileName) => {
     case 'pdf':
       return 'application/pdf';
     default:
-      return null; // Return null for unsupported types
+      return null; 
   }
 };
 
@@ -179,7 +176,7 @@ const uploadFileToS3 = async (fileBuffer, fileName) => {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileName,
     Body: fileBuffer,
-    ContentType: contentType, // Change according to your file type
+    ContentType: contentType, 
   });
 
   try {
@@ -195,7 +192,6 @@ const uploadFileToS3 = async (fileBuffer, fileName) => {
 
 // Profile picture upload endpoint
 app.post('/api/upload-profile-picture/:userId', upload.single('profilePicture'), async (req, res) => {
-  console.log('Request received to upload profile picture');
   try {
     const userId = req.params.userId;
     if (!userId) {
@@ -327,20 +323,18 @@ const getJobData = async () => {
     const jobData = res.rows.reduce((acc, row) => {
       const { job_id, job_title, industry_name, skill_name, salaryrange, jobtype, profile_picture_url } = row;
 
-      // Create a job object if it doesn't already exist
       if (!acc[job_id]) {
         acc[job_id] = {
           job_id,
           job_title,
           industry_name,
-          required_skills: [],// Initialize an array for skills
+          required_skills: [],
           salaryrange,
           jobtype,
           profile_picture_url  
         };
       }
 
-      // Add skill to the job's required skills
       if (skill_name) {
         acc[job_id].required_skills.push(skill_name);
       }
@@ -351,7 +345,7 @@ const getJobData = async () => {
     // Log the filtered job data for debugging
     console.log('Fetched Job Data for Algorithm:', JSON.stringify(Object.values(jobData), null, 2));
 
-    return Object.values(jobData);  // Return as an array
+    return Object.values(jobData); 
   } catch (err) {
     console.error('Error fetching job data:', err);
     throw err;
@@ -359,19 +353,19 @@ const getJobData = async () => {
 };
 
 app.get('/api/getskills/:userId', async (req, res) => {
-  const { userId } = req.params; // Get userId from request parameters
+  const { userId } = req.params; 
 
   try {
     const skills = await pool.query(`
       SELECT skills.skill_name, js_skills.skill_id
       FROM js_skills
       JOIN skills ON js_skills.skill_id = skills.skill_id
-      WHERE js_skills.user_id = $1`, [userId]); // Use parameterized query
+      WHERE js_skills.user_id = $1`, [userId]);
 
     // Log the retrieved skills for debugging
     console.log('Retrieved Skills for User:', userId, JSON.stringify(skills.rows, null, 2));
 
-    res.json(skills.rows); // Respond with the retrieved skills
+    res.json(skills.rows); 
   } catch (err) {
     console.error('Error fetching skills:', err);
     res.status(500).json({ error: 'Error fetching skills' });
@@ -401,10 +395,9 @@ app.post('/api/recommend', async (req, res) => {
   const jobSeekerSkills = req.body.skills;
   const jobSeekerIndustry = req.body.industry;
   const jobSeekerJobTitles = req.body.jobTitles;
-  const jobSeekerSalary = req.body.salaryRange; // Added salary range
+  const jobSeekerSalary = req.body.salaryRange;
 
   try {
-    // Fetch job data
     const jobData = await getJobData();
 
     // Log job data and jobseeker details for debugging
@@ -412,7 +405,7 @@ app.post('/api/recommend', async (req, res) => {
     console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
     console.log('Job Seeker Industry:', jobSeekerIndustry);
     console.log('Job Seeker Job Titles:', JSON.stringify(jobSeekerJobTitles, null, 2));
-    console.log('Job Seeker Salary Range:', jobSeekerSalary); // Log salary range
+    console.log('Job Seeker Salary Range:', jobSeekerSalary); 
 
     // Spawn the Python process to generate recommendations
     const pythonProcess = spawn('python', [
@@ -421,7 +414,7 @@ app.post('/api/recommend', async (req, res) => {
       JSON.stringify(jobSeekerSkills), 
       jobSeekerIndustry,
       JSON.stringify(jobSeekerJobTitles),
-      JSON.stringify(jobSeekerSalary) // Pass salary range to Python
+      JSON.stringify(jobSeekerSalary) 
     ]);
 
     let pythonOutput = '';
@@ -429,7 +422,7 @@ app.post('/api/recommend', async (req, res) => {
     // Collect output from Python process
     pythonProcess.stdout.on('data', (data) => {
       pythonOutput += data.toString();
-      console.log('Raw Python Output:', data.toString()); // Log the raw output
+      console.log('Raw Python Output:', data.toString()); 
     });
 
     // Log any errors from Python process
@@ -447,7 +440,6 @@ app.post('/api/recommend', async (req, res) => {
         return res.status(500).send('No recommendations returned from Python.');
       }
       try {
-        // Parse the Python output
         const recommendations = JSON.parse(pythonOutput);
         res.json({ recommendations });
       } catch (parseError) {
@@ -498,7 +490,7 @@ const getJobPostings = async (userId) => {
         job_id,
         job_title,
         industry_name,
-        required_skills: [], // Initialize an array for skills
+        required_skills: [], 
         salaryrange,
         jobtype,
         profile_picture_url
@@ -514,7 +506,7 @@ const getJobPostings = async (userId) => {
   }, {});
 
   console.log(`Retrieved ${Object.keys(joblistingData).length} job postings for user ${userId}`);
-  return Object.values(joblistingData); // Return as an array
+  return Object.values(joblistingData); 
 };
 
 // Function to get applicants
@@ -548,8 +540,8 @@ const getApplicants = async () => {
 		js.industry_id,
     i.industry_name`;
     
-  const { rows } = await pool.query(query); // Execute the query
-  return rows; // Return the retrieved applicants
+  const { rows } = await pool.query(query); 
+  return rows; 
 };
 
 const getContactHistory = async (empUserId) => {
@@ -581,7 +573,7 @@ const getContactHistory = async (empUserId) => {
     ORDER BY emp_user_id ASC;
   `;
 
-  const { rows } = await pool.query(query, [empUserId]);  // Pass empUserId as the parameter
+  const { rows } = await pool.query(query, [empUserId]);  
   return rows;
 };
 
@@ -598,10 +590,6 @@ app.post('/api/recommend-candidates', async (req, res) => {
     const jobPostings = await getJobPostings(userId); // Fetch job postings for the user
     const applicants = await getApplicants(); // Fetch applicants
     const contactHistory = await getContactHistory(userId); // Fetch contact history from other employers
-
-    console.log('Job Postings:', jobPostings);
-    console.log('Applicants:', applicants);
-    console.log('Contact History:', contactHistory); // Debugging contact history
 
     if (jobPostings.length === 0 || applicants.length === 0) {
       return res.status(404).json({ error: 'No job postings or applicants found.' });
@@ -649,7 +637,6 @@ app.post('/api/recommend-candidates', async (req, res) => {
 //time to fill analysis
 app.get('/api/timetofill', async (req, res) => {
   try {
-    // SQL query to join joblistings and industries and retrieve industry_name, datecreated, and datefilled
     const jobListings = await pool.query(`
       SELECT
         i.industry_name, 
@@ -659,9 +646,6 @@ app.get('/api/timetofill', async (req, res) => {
       JOIN industries i ON i.industry_id = jl.industry_id
       WHERE jl.datefilled IS NOT NULL
     `);
-
-    // Log the job listings to console to verify the dates
-    console.log('Job Listings:', jobListings.rows); // Log the output
 
     const python = spawn('python', ['python_scripts/time_to_fill_analysis.py']);
 
@@ -687,7 +671,7 @@ app.get('/api/timetofill', async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('Error fetching job listings:', err.message); // Log error messages
+    console.error('Error fetching job listings:', err.message); 
     res.status(500).send('Server Error');
   }
 });
@@ -699,7 +683,6 @@ app.get('/api/timetofillemp/:userId', async (req, res) => {
     return res.status(400).json({ message: 'Invalid user ID' });
   }
   try {
-    // SQL query to join joblistings and industries and retrieve industry_name, datecreated, and datefilled
     const jobListings = await pool.query(`
       SELECT
         i.industry_name, 
@@ -709,9 +692,6 @@ app.get('/api/timetofillemp/:userId', async (req, res) => {
       JOIN industries i ON i.industry_id = jl.industry_id
       WHERE jl.user_id = $1 AND jl.datefilled IS NOT NULL
     `, [userId]);
-
-    // Log the job listings to console to verify the dates
-    console.log('Job Listings:', jobListings.rows);
 
     const python = spawn('python', ['python_scripts/time_to_fill_analysis.py']);
 
@@ -745,9 +725,7 @@ app.get('/api/timetofillemp/:userId', async (req, res) => {
 app.get('/api/allnotifications/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log('Received userId:', userId);
-    
-    // Input validation
+
     if (!userId || isNaN(userId)) {
       return res.status(400).json({ message: 'Invalid user ID' });
     }
@@ -781,8 +759,6 @@ app.get('/api/allnotifications/:userId', async (req, res) => {
       date_applied: row.date_applied,
       profile_picture: row.profile_picture_url
     }));
-
-    // Return all notifications (can filter or paginate in the frontend)
     res.json({ notifications });
   } catch (error) {
     console.error('Error fetching notifications:', error);
@@ -795,20 +771,16 @@ app.get('/api/allnotifications/:userId', async (req, res) => {
 app.post('/api/notifications/mark-as-viewed/:userId', async (req, res) => {
   const { jobIds } = req.body;
   const { userId } = req.params;
-  // Optional chaining to avoid crashes
 
-  // Check if the user is authenticated
   if (!userId || isNaN(userId)) {
     return res.status(400).json({ message: 'Invalid user ID' });
   }
 
-  // Check if any job IDs are provided
   if (!jobIds || jobIds.length === 0) {
     return res.status(400).json({ error: 'No job IDs provided' });
   }
 
   try {
-    // Update applications where job_id is in the list and status is 'new'
     await pool.query(
       `UPDATE applications
        SET status = 'viewed'
@@ -826,7 +798,6 @@ app.post('/api/notifications/mark-as-viewed/:userId', async (req, res) => {
 
 app.get('/api/jsnotifications/:userId', async (req, res) => {
   try {
-    // Fetch application-related notifications
     const { userId } = req.params;
     if (!userId || isNaN(userId)) {
       return res.status(400).json({ message: 'Invalid user ID' });
@@ -851,7 +822,6 @@ app.get('/api/jsnotifications/:userId', async (req, res) => {
       [userId]
     );
 
-    // Fetch employer contact notifications
     const contactResult = pool.query(
       `
       SELECT
@@ -867,7 +837,6 @@ app.get('/api/jsnotifications/:userId', async (req, res) => {
       [userId]
     );
 
-    // Wait for both queries to complete
     const [applicationResultData, contactResultData] = await Promise.all([applicationResult, contactResult]);
 
     // Format application notifications
@@ -904,7 +873,7 @@ app.get('/api/jsnotifications/:userId', async (req, res) => {
 
 
 app.patch('/api/jsnotifications/mark-as-viewed/:userId', async (req, res) => {
-  const { applicationIds, contactIds } = req.body; // Update to include contactIds
+  const { applicationIds, contactIds } = req.body; 
   const { userId } = req.params;
     
   if (!userId || isNaN(userId)) {
@@ -933,11 +902,8 @@ app.patch('/api/jsnotifications/mark-as-viewed/:userId', async (req, res) => {
         `UPDATE emp_contact
          SET notifstatus = 'read'
          WHERE js_user_id = $1 AND notifstatus = 'new';`,
-        [userId] // Use the contactIds parameter
+        [userId] 
       );
-
-      console.log('Rows affected in emp_contact:', contactResult.rowCount);
-    
 
     res.status(200).json({ message: 'Notifications marked as viewed' });
   } catch (error) {
@@ -1022,9 +988,6 @@ app.get('/api/alljsnotifications/:userId', async (req, res) => {
     // Combine both notification types
     const notifications = [...applicationNotifications, ...contactNotifications];
 
-    // Log the fetched notifications
-    console.log('Fetched notifications:', notifications);
-
     // Return all notifications
     res.json({ notifications });
 
@@ -1037,8 +1000,8 @@ app.get('/api/alljsnotifications/:userId', async (req, res) => {
 // API endpoint to update application status
 app.post('/api/applications/:applicationId/status', async (req, res) => {
   const applicationId = req.params.applicationId;
-  const { status } = req.body; // e.g., 'in review', 'interview', 'hired', etc.
-  const userId = req.session.user.user_id; // Fetch the employer's user ID from the session
+  const { status } = req.body; 
+  const userId = req.session.user.user_id; 
 
   // Check if the employer's user ID is available in the session
   if (!userId) {
@@ -1046,7 +1009,7 @@ app.post('/api/applications/:applicationId/status', async (req, res) => {
   }
 
   try {
-      // Step 1: Update the application status
+      // Update the application status
       const result = await pool.query(
           `UPDATE applications
            SET status = $1
@@ -1054,12 +1017,11 @@ app.post('/api/applications/:applicationId/status', async (req, res) => {
           [status, applicationId, userId]
       );
 
-      // If no rows were updated, the application might not exist or be unauthorized
       if (result.rowCount === 0) {
           return res.status(404).json({ error: 'Application not found or unauthorized' });
       }
 
-      // Step 2: Fetch the job seeker’s user ID, email, job title, and full name
+      // Fetch the job seeker’s user ID, email, job title, and full name
       const appResult = await pool.query(
           `SELECT u.user_id, u.email, js.full_name, jt.job_title
            FROM users u
@@ -1078,7 +1040,7 @@ app.post('/api/applications/:applicationId/status', async (req, res) => {
           const jobSeekerName = appResult.rows[0].full_name; // The job seeker's full name
           const jobTitle = appResult.rows[0].job_title; // The job title they applied for
 
-          // Step 3: Emit notification to the job seeker using Socket.io
+          // Emit notification to the job seeker using Socket.io
           const notification = {
               message: `${jobSeekerName}, Your application for ${jobTitle} has been updated to ${status}`,
               application_id: applicationId,
@@ -1086,7 +1048,7 @@ app.post('/api/applications/:applicationId/status', async (req, res) => {
           };
           io.to(jobSeekerId).emit('newNotification', notification);
 
-          // Step 4: Send an email notification to the job seeker
+          // Send an email notification to the job seeker
           await sendStatusUpdateEmail(jobSeekerEmail, jobSeekerName, jobTitle, status);
       }
 
@@ -1144,7 +1106,6 @@ app.get('/api/industries', async (req, res) => {
 });
 
 
-// Use routes
 const userRoutes = require('./routes/users');
 const jobSeekerRoutes = require('./routes/jobseekers');
 const employerRoutes = require('./routes/employers');
@@ -1165,10 +1126,10 @@ console.log('Database URL:', process.env.DATABASE_URL );
 console.log('API URL:', process.env.REACT_APP_API_URL); 
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../front-end/build', 'index.html')); // Adjust the path if necessary
+  res.sendFile(path.join(__dirname, '../front-end/build', 'index.html')); 
 });
 
-const PORT = process.env.PORT || 3000; // Default to 3000 if process.env.PORT is not defined
+const PORT = process.env.PORT || 3000; 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
