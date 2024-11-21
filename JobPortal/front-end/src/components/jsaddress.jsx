@@ -81,9 +81,13 @@ const BarChart = () => {
           color: '#007bff',  
         }} 
       />
-      
+
       {/* Scrollable container for the chart */}
-      <div style={{ width: '100%', overflowX: 'auto' }}>
+      <div style={{ 
+        width: '100%', 
+        overflowX: 'auto',  // Allow horizontal scrolling
+        paddingBottom: '20px', // Optional: adds space for the x-axis labels to show without cutting off
+      }}>
         <Bar 
           data={chartData} 
           options={{
@@ -96,7 +100,9 @@ const BarChart = () => {
               x: {
                 ticks: {
                   autoSkip: true,
-                  maxTicksLimit: 10,
+                  maxTicksLimit: 10, // Limit the number of ticks displayed
+                  maxRotation: 45, // Rotate the labels for better fit
+                  minRotation: 45, 
                 },
               },
             },
