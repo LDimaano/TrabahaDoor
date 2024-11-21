@@ -1,3 +1,11 @@
+import React, { useEffect, useState } from 'react';
+import { Bar } from 'react-chartjs-2';
+import { Chart, registerables } from 'chart.js';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import { FaDownload } from 'react-icons/fa';
+
+Chart.register(...registerables);
 const BarChart = () => {
   const [chartData, setChartData] = useState({
     labels: [],
