@@ -56,26 +56,44 @@ const BarChart = () => {
   }, []);
 
   return (
-    <div className="bg-light border rounded shadow-sm p-4" style={{ height: '400px' }}> {/* Increased height for better layout */}
-      <h5 className="mb-4 text-center">Job Title of Applicants</h5> {/* Chart Title */}
+    <div className="bg-light border rounded shadow-sm p-4" style={{ height: '400px', width: '100%' }}>
+      <h5 className="mb-4 text-center">Job Title of Applicants</h5>
       <Bar 
         data={chartData} 
         options={{
-          indexAxis: 'y', // Switch to horizontal bar chart
-          maintainAspectRatio: false,
+          responsive: true, // Ensure the chart is responsive
+          maintainAspectRatio: false, // Allow the chart to adjust based on container size
+          indexAxis: 'y', // Horizontal bar chart
           scales: {
-            x: { // The x-axis for values
+            x: { 
               beginAtZero: true,
               title: {
                 display: true,
                 text: 'Number of Applicants',
               },
+              maxBarThickness: 20, // Limit the bar width to prevent overflow
             },
-            y: { // The y-axis for job titles
+            y: { 
               title: {
                 display: true,
                 text: 'Job Titles',
               },
+              ticks: {
+                autoSkip: true, // Skip some labels on the y-axis to avoid overlap
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              position: 'top', // Position the legend at the top to avoid crowding
+            },
+          },
+          layout: {
+            padding: {
+              top: 10,
+              left: 10,
+              right: 10,
+              bottom: 10, // Add padding to ensure the content fits
             },
           },
         }} 
