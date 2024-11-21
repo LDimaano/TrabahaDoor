@@ -1,12 +1,3 @@
-import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Chart, registerables } from 'chart.js';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import { FaDownload } from 'react-icons/fa';
-
-Chart.register(...registerables);
-
 const BarChart = () => {
   const [chartData, setChartData] = useState({
     labels: [],
@@ -20,7 +11,6 @@ const BarChart = () => {
         '#4169E1', // Royal Blue
         '#0000CD', // Medium Blue
       ], 
-      // Optionally, you can also use the same shades of blue for borders
       borderColor: [
         '#ADD8E6', '#87CEEB', '#1E90FF', '#4169E1', '#0000CD',
       ],
@@ -59,18 +49,15 @@ const BarChart = () => {
     const doc = new jsPDF();
     doc.text('Location Distribution Report', 14, 10);
 
-    // Define table columns and data
     const tableColumn = ["Location", "Count"];
     const tableRows = chartData.labels.map((label, index) => [label, chartData.datasets[0].data[index]]);
 
-    // Add table to PDF
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 20,
     });
 
-    // Save the PDF
     doc.save('Location_Distribution_Report.pdf');
   };
 
@@ -92,14 +79,39 @@ const BarChart = () => {
         options={{
           maintainAspectRatio: false,
           responsive: true,
-          indexAxis: 'y',  // Makes the chart horizontal
+          indexAxis: 'y',  
           scales: {
             x: {
-              beginAtZero: true,  // Ensures the x-axis starts at 0
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Count of Jobseekers', // Add label to x-axis
+              },
+              grid: {
+                display: true,  // Enable gridlines for clarity
+              },
             },
             y: {
-              beginAtZero: true,  // Ensures the y-axis starts at 0
+              title: {
+                display: true,
+                text: 'Location', // Add label to y-axis
+              },
+              grid: {
+                display: true,  // Enable gridlines for clarity
+              },
             },
+          },
+          plugins: {
+            legend: {
+              display: false,  // Hide legend if not necessary
+            },
+            tooltip: {
+              callbacks: {
+                label: (tooltipItem) => {
+                  return `Count: ${tooltipItem.raw}`;  // Show count in tooltip
+                }
+              }
+            }
           },
         }} 
         style={{ height: '100%', width: '100%' }}
