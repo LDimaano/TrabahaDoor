@@ -10,7 +10,7 @@ const BarChart = () => {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [{
-      label: 'Address of Jobseekers',
+      label: 'Count of Jobseekers',
       data: [],
       backgroundColor: [
         '#ADD8E6', // Light Blue
@@ -92,8 +92,7 @@ const BarChart = () => {
             x: {
               beginAtZero: true,
               title: {
-                display: true,
-                text: 'Count of Jobseekers', // Add label to x-axis
+                display: true, // Add label to x-axis
               },
               grid: {
                 display: true,  // Enable gridlines for clarity

@@ -11,7 +11,7 @@ const BarChart = () => {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [{
-      label: 'Industries of Jobseekers',
+      label: 'Count of Jobseekers',
       data: [],
       backgroundColor: [
         '#ADD8E6', // Light Blue

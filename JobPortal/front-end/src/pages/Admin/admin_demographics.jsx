@@ -34,7 +34,7 @@ function Demographics() {
 
           <div className="col-lg-6 col-md-12 mb-3">
             <div className="bg-white border rounded shadow-sm p-3 h-100">
-              <h5 className="mb-3">Jobseeker's Address Distribution</h5>
+              <h5 className="mb-3">Jobseeker Address Distribution</h5>
               <div style={{ height: 'calc(100% - 3rem)', width: '100%' }}>
                 <LocationDistributionChart />
               </div>
@@ -45,7 +45,7 @@ function Demographics() {
         <div className="row gx-2 mb-4">
           <div className="col-lg-12 mb-3">
             <div className="bg-white border rounded shadow-sm p-3 h-100">
-              <h5 className="mb-3">Jobseeker's Industry Distribution</h5>
+              <h5 className="mb-3">Jobseeker Industry Distribution</h5>
               <div style={{ height: 'calc(100% - 3rem)', width: '100%' }}>
                 <JsIndustryDistributionChart/>
               </div>
@@ -56,7 +56,7 @@ function Demographics() {
         <div className="row gx-2 mb-4">
           <div className="col-lg-12 mb-3">
             <div className="bg-white border rounded shadow-sm p-3 h-100">
-              <h5 className="mb-3">Employer's Industry Distribution</h5>
+              <h5 className="mb-3">Employer Industry Distribution</h5>
               <div style={{ height: 'calc(100% - 3rem)', width: '100%' }}>
                 <EmpIndustryDistributionChart/>
               </div>
