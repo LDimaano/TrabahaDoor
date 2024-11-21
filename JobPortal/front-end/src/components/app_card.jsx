@@ -6,26 +6,26 @@ import ProfilePictureModal from './profilepicturemodal';
 
 const ApplicantCard = ({ applicant }) => {
   const navigate = useNavigate();
-  const [currentPhoto, setCurrentPhoto] = useState(applicant.image); // State to hold the current profile picture
-  const [showModal, setShowModal] = useState(false); // State to control profile picture modal visibility
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // State to control delete confirmation modal visibility
-  const [password, setPassword] = useState(''); // State to hold the entered password
-  const [errorMessage, setErrorMessage] = useState(''); // State to hold error messages
-  const [successMessage, setSuccessMessage] = useState(''); // State to hold success messages
+  const [currentPhoto, setCurrentPhoto] = useState(applicant.image); 
+  const [showModal, setShowModal] = useState(false); 
+  const [showDeleteModal, setShowDeleteModal] = useState(false); 
+  const [password, setPassword] = useState(''); 
+  const [errorMessage, setErrorMessage] = useState(''); 
+  const [successMessage, setSuccessMessage] = useState(''); 
 
   const handleProfileUpdate = () => {
-    const userId = sessionStorage.getItem('user_id'); // Retrieve userId from sessionStorage
+    const userId = sessionStorage.getItem('user_id'); 
     if (userId) {
-      navigate(`/js_profile_edit/${userId}`); // Navigate to profile update page
+      navigate(`/js_profile_edit/${userId}`); 
     } else {
-      console.error('User ID not found in session storage'); // Handle missing userId
+      console.error('User ID not found in session storage'); 
     }
   };
 
   // Callback to update the profile picture
   const handleUpdatePhoto = (newPhotoUrl) => {
-    setCurrentPhoto(newPhotoUrl); // Update the current photo state
-    setShowModal(false); // Close the modal
+    setCurrentPhoto(newPhotoUrl); 
+    setShowModal(false); 
   };
 
   // Handle account deletion with password confirmation
@@ -41,15 +41,15 @@ const ApplicantCard = ({ applicant }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ userId, password }), // Send userId and password for confirmation
+      body: JSON.stringify({ userId, password }), 
     })
       .then(response => {
         if (response.ok) {
-          setSuccessMessage('Account deleted successfully.'); // Set success message
+          setSuccessMessage('Account deleted successfully.'); 
           setTimeout(() => {
             sessionStorage.clear();
-            navigate('/'); // Navigate after showing the success message
-          }, 2000); // Delay to show success message before redirecting
+            navigate('/'); 
+          }, 2000); 
         } else {
           response.json().then(data => setErrorMessage(data.message || 'Failed to delete account.'));
         }
@@ -62,7 +62,7 @@ const ApplicantCard = ({ applicant }) => {
       <header className="d-flex align-items-center mb-3">
         <div style={{ position: 'relative', marginRight: '15px' }}>
           <img
-            src={currentPhoto} // Use the current photo state
+            src={currentPhoto} 
             alt="Profile"
             className="img-fluid rounded-circle shadow-sm"
             style={{ width: '150px', height: '150px', objectFit: 'cover' }}
@@ -81,9 +81,9 @@ const ApplicantCard = ({ applicant }) => {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            onClick={() => setShowModal(true)} // Open modal on button click
+            onClick={() => setShowModal(true)} 
           >
-            <FontAwesomeIcon icon={faPen} size="sm" /> {/* Use a pencil icon */}
+            <FontAwesomeIcon icon={faPen} size="sm" /> 
           </button>
         </div>
         <div>
@@ -109,27 +109,25 @@ const ApplicantCard = ({ applicant }) => {
   className="btn btn-primary mt-3"
   onClick={handleProfileUpdate}
   style={{
-    width: '100%', // Makes the button take up the full width
-    padding: '6px 15px', // Smaller padding for a more compact button
-    fontSize: '14px', // Smaller font size for a less prominent button
-    marginRight: '30px', // Space between buttons (if there is any other button)
-    display: 'block', // Makes the button block-level
+    width: '100%', 
+    padding: '6px 15px', 
+    fontSize: '14px', 
+    marginRight: '30px', 
+    display: 'block', 
   }}
 >
   Update Profile
 </button>
 
-  
-  {/* Render the modal if showModal is true */}
   {showModal && <ProfilePictureModal onClose={() => setShowModal(false)} onUpdate={handleUpdatePhoto} />}
   
   <button
     className="btn btn-outline-secondary mt-3"
-    onClick={() => setShowDeleteModal(true)} // Show the delete confirmation modal
+    onClick={() => setShowDeleteModal(true)} 
     style={{
-      width: 'auto', // Same width as the update button
-      padding: '6px 15px', // Smaller padding for a more compact button
-      fontSize: '14px', // Smaller font size for less attention
+      width: 'auto', 
+      padding: '6px 15px', 
+      fontSize: '14px', 
     }}
   >
     Delete Account
@@ -180,7 +178,7 @@ const ApplicantCard = ({ applicant }) => {
               }}
             />
             {errorMessage && <p className="text-danger">{errorMessage}</p>}
-            {successMessage && <p className="text-success">{successMessage}</p>} {/* Display success message */}
+            {successMessage && <p className="text-success">{successMessage}</p>} 
             <div className="d-flex justify-content-end mt-4">
               <button 
                 className="btn btn-secondary me-2" 
