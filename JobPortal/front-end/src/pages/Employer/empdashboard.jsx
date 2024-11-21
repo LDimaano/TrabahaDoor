@@ -16,31 +16,41 @@ const EmployerDashboard = () => {
   };
 
   return (
-    <div className="d-flex flex-column flex-lg-row">
+    <div className="d-flex">
       {/* Sidebar */}
-      <div className={`sidebar ${isSidebarVisible ? 'd-block' : 'd-none'} d-lg-block`}>
+      <div
+        className={`sidebar bg-primary text-white ${isSidebarVisible ? 'd-block' : 'd-none'} d-lg-block`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          bottom: 0,
+          width: '250px',
+          overflowY: 'auto',
+          zIndex: 1000
+        }}
+      >
         <Sidebar />
       </div>
 
       {/* Main content area */}
-      <main className="flex-grow-1 p-3">
+      <main className="flex-grow-1 p-3" style={{ marginLeft: '250px' }}>
         <Header />
         <section>
-          <h3> Employer Dashboard</h3>
+          <h3>Employer Dashboard</h3>
 
           {/* Dashboard Grid with Components */}
           <div className="row g-4 mt-4">
-            <div className="col-lg-6 col-md-12">
-              <ChartPlaceholder1 />
+            <div className="col-lg-6 col-md-12 d-flex justify-content-center align-items-center">
+              <ChartPlaceholder1 style={{ width: '100%', height: '100%' }} />
             </div>
-            <div className="col-lg-6 col-md-12">
-              <ChartPlaceholder2 />
+            <div className="col-lg-6 col-md-12 d-flex justify-content-center align-items-center">
+              <ChartPlaceholder2 style={{ width: '100%', height: '100%' }} />
             </div>
-            <div className="col-lg-6 col-md-12">
-              <ChartPlaceholder3 />
+            <div className="col-lg-6 col-md-12 d-flex justify-content-center align-items-center">
+              <ChartPlaceholder3 style={{ width: '100%', height: '100%' }} />
             </div>
-            <div className="col-lg-6 col-md-12">
-              <ChartPlaceholder4 />
+            <div className="col-lg-6 col-md-12 d-flex justify-content-center align-items-center">
+              <ChartPlaceholder4 style={{ width: '100%', height: '100%' }} />
             </div>
           </div>
         </section>
