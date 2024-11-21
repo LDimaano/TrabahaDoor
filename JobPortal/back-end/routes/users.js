@@ -1,11 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-
-
-// Registration endpoint
 const jwt = require('jsonwebtoken');
-const {sendVerificationEmail} = require('../mailer'); // Ensure the correct path to mailer.js
+const {sendVerificationEmail} = require('../mailer'); 
 const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 router.post('/submit-form', async (req, res) => {
@@ -31,7 +28,7 @@ router.post('/submit-form', async (req, res) => {
     const verificationLink = `https://trabahadoor-front-end.onrender.com/verify-email?token=${token}`;
 
     // Send the verification email
-    await sendVerificationEmail(email, verificationLink); // Await the async function call
+    await sendVerificationEmail(email, verificationLink); 
 
     // Set session data
     req.session.user = {
@@ -54,7 +51,7 @@ router.post('/submit-form', async (req, res) => {
       });
     });
   } catch (error) {
-    if (error.code === '23505') {  // PostgreSQL unique violation error code
+    if (error.code === '23505') {  
       res.status(409).json({ error: 'Email is already in use.' });
     } else {
       console.error('Error inserting data:', error);
@@ -65,8 +62,6 @@ router.post('/submit-form', async (req, res) => {
 
 
 router.get('/verify-email', async (req, res) => {
-  console.log('Verify email endpoint hit'); // Debugging output
-
   const { token } = req.query;
 
   if (!token) {
@@ -78,21 +73,18 @@ router.get('/verify-email', async (req, res) => {
     const decoded = jwt.verify(token, SECRET_KEY);
     const email = decoded.email;
 
-    console.log('Decoded email:', email); // Debugging output
-
-    // Use raw SQL to update the 'is_verified' status directly
     const result = await pool.query(
       'UPDATE users SET is_verified = true WHERE email = $1 RETURNING *',
-      [email] // Safely pass the email to avoid SQL injection
+      [email] 
     );
 
-    if (result.rowCount === 0) {  // No rows affected, meaning no user was found with that email
+    if (result.rowCount === 0) {  
       return res.status(404).json({ message: 'User not found' });
     }
 
     res.status(200).json({ message: 'Email verified successfully!' });
   } catch (error) {
-    console.log('Error verifying token:', error); // Debugging output
+    console.log('Error verifying token:', error); 
     res.status(400).json({ message: 'Invalid or expired token.' });
   }
 });
@@ -134,8 +126,6 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ message: 'Session save error' });
       }
 
-      console.log('Session created:', req.session); // Log the session
-
       // Determine redirect URL based on user data
       const redirectUrl = (() => {
         if (user.usertype === 'jobseeker') {
@@ -171,7 +161,7 @@ router.post('/login', async (req, res) => {
           user_id: user.user_id,
           email: user.email,
           usertype: user.usertype,
-          approve: user.approve, // Include approve in response
+          approve: user.approve, 
         },
       });
     });
@@ -181,8 +171,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
-
 // Logout endpoint
 router.post('/logout', (req, res) => {
   req.session.destroy((err) => {
@@ -190,9 +178,6 @@ router.post('/logout', (req, res) => {
       console.error('Error destroying session:', err);
       return res.status(500).json({ message: 'Failed to log out' });
     }
-
-
-    // Clear the session cookie
     res.clearCookie('connect.sid');
     res.status(200).json({ message: 'Logged out successfully' });
   });

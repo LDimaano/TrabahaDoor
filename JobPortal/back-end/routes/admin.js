@@ -6,7 +6,6 @@ const { sendActivationEmail } = require('../mailer');
 router.get('/infoadmin/:userId', async (req, res) => {
     try {
       const { userId } = req.params;
-      // Input validation
       if (!userId || isNaN(userId)) {
         return res.status(400).json({ message: 'Invalid user ID' });
       }
@@ -23,8 +22,8 @@ router.get('/infoadmin/:userId', async (req, res) => {
       console.log('Database query result:', result.rows);
   
       if (result.rows.length > 0) {
-        const { email } = result.rows[0]; // Destructure company_name and email
-        res.json({ email }); // Send both company_name and email in the response
+        const { email } = result.rows[0]; 
+        res.json({ email }); 
       } else {
         res.status(404).json({ message: 'User not found' });
       }
@@ -68,9 +67,8 @@ router.get('/viewusers/:userId', async (req, res) => {
 
 router.get('/applicantprofile/:user_id', async (req, res) => {
     try {
-      const { user_id } = req.params; // Extract user_id from the request parameters
-  
-  
+      const { user_id } = req.params; 
+
       // Query job seeker data
       const jobSeekerData = await pool.query(`
          SELECT 
@@ -115,14 +113,10 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
       console.log('Job Experience Data:', jobExperienceData.rows);
       console.log('Skills Data:', skillsData.rows);
   
-  
-      // Check if the job seeker data exists
       if (jobSeekerData.rows.length === 0) {
         return res.status(404).json({ message: 'Job seeker not found' });
       }
   
-  
-      // Process the fetched job experience data
       const jobExperiences = jobExperienceData.rows.map(exp => ({
         job_title: exp.job_title || 'Not Specified',
         company: exp.company || 'Not Specified',
@@ -131,12 +125,9 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
         description: exp.description || 'No Description'
       }));
   
-  
       const jobSeeker = jobSeekerData.rows[0];
       const jobTitle = jobExperiences.length > 0 ? jobExperiences[0].job_title : 'Not Specified';
   
-  
-      // Send the response with all the data
       res.json({
         jobSeeker: {
           full_name: jobSeeker.full_name || 'Not Provided',
@@ -150,7 +141,7 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
           job_title: jobTitle
         },
         jobExperience: jobExperiences,
-        skills: skillsData.rows.map(skill => skill.skill_name) // Extract skill names
+        skills: skillsData.rows.map(skill => skill.skill_name)
       });
     } catch (error) {
       console.error('Error fetching job seeker data:', error.message);
@@ -161,9 +152,6 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
   router.get('/employerprofile/:user_id', async (req, res) => {
     try {
         const { user_id } = req.params;
-
-        // Log the user_id to check if it's being passed correctly
-        console.log('Fetched user_id param:', user_id);
 
         const EmployerData = await pool.query(`
             SELECT 
@@ -233,7 +221,6 @@ router.get('/viewemployers/:userId', async (req, res) => {
 
     console.log('Database query result:', result.rows);
 
-    // Return an empty array if there are no results
     res.json(result.rows.length ? result.rows : []);
   } catch (error) {
     console.error('Error fetching employers:', error);
@@ -355,7 +342,7 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
         [jobId]
       );
   
-      res.json(result.rows);  // Always return the rows, even if it's an empty array.
+      res.json(result.rows);
     } catch (error) {
       console.error('Error fetching applicants:', error);
       res.status(500).json({ message: 'Server error' });
@@ -439,8 +426,6 @@ router.get('/joblistings/:jobId', async (req, res) => {
     }
   });
   
-
-  // GET /topindustries - Fetch top 5 industries with the highest number of job listings
   router.get('/topindustries', async (req, res) => {
     try {
         const result = await pool.query(`
@@ -453,10 +438,7 @@ router.get('/joblistings/:jobId', async (req, res) => {
             ORDER BY job_count DESC;
         `);
         
-        // Log the result from the SQL query
-        console.log('Top industries result:', result.rows);
-
-        res.json(result.rows); // Send the result back as JSON
+        res.json(result.rows); 
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -476,11 +458,8 @@ router.get('/topcompanies', async (req, res) => {
             GROUP BY e.company_name, pp.profile_picture_url
             ORDER BY job_count DESC;
         `);
-        
-        // Log the result from the SQL query
-        console.log('Top companies result:', result.rows);
 
-        res.json(result.rows); // Send the result back as JSON
+        res.json(result.rows); 
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -504,7 +483,6 @@ router.get('/dashboard-data', async (req, res) => {
     const jobListingResult = await pool.query(jobListingCountQuery);
     console.log('Job Listing Result:', jobListingResult.rows);
 
-    // Send the result back as JSON
     res.json({
       jobSeekerCount: jobSeekerResult.rows[0].count,
       employerCount: employerResult.rows[0].count,
@@ -539,7 +517,6 @@ router.get('/viewarchivedusers/:userId', async (req, res) => {
 
     console.log('Database archived user result:', result.rows);
 
-    // Return an empty array if there are no results
     res.json(result.rows.length ? result.rows : []);
   } catch (error) {
     console.error('Error fetching archived users:', error);

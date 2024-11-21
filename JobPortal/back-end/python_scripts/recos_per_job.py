@@ -5,17 +5,17 @@ def recommend_candidates(job_postings, applicants):
     recommendations_with_title_match = {}
     recommendations_with_skill_match = {}
     recommendations_with_industry_match = {}
-    seen_user_ids = set()  # Track user IDs already added to avoid duplicates
+    seen_user_ids = set()  
 
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
         job_title = job.get('job_title', 'No Job Title Provided')
-        job_industry = job.get('industry', 'No Industry Provided')  # Industry field of job posting
+        job_industry = job.get('industry', 'No Industry Provided')  
 
         for applicant in applicants:
             user_id = applicant.get('user_id')
             if user_id in seen_user_ids:
-                continue  # Skip if this user_id has already been added
+                continue  
 
             applicant_titles = applicant.get('job_titles', [])
             applicant_skills = set(applicant.get('skills', []))

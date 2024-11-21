@@ -7,10 +7,9 @@ const { spawn } = require('child_process');
 
 
 router.get('/applicantlist', async (req, res) => {
-  const { jobTitle, selectedIndustry } = req.query; // Get query parameters
+  const { jobTitle, selectedIndustry } = req.query; 
 
   try {
-    // Base query with initial SELECT statement
     let query = `
       SELECT
         js.full_name,
@@ -30,9 +29,8 @@ router.get('/applicantlist', async (req, res) => {
     JOIN industries i ON js.industry_id = i.industry_id
     `;
 
-    // Initialize an array to hold values for prepared statements
     const values = [];
-    let whereClauses = []; // Array to hold WHERE clauses
+    let whereClauses = []; 
 
     // Check if jobTitle is provided and add to query
     if (jobTitle) {
@@ -51,7 +49,6 @@ router.get('/applicantlist', async (req, res) => {
       query += ' WHERE ' + whereClauses.join(' AND ');
     }
 
-    // Grouping remains as it is
     query += `
       GROUP BY
       js.full_name,
@@ -73,10 +70,8 @@ router.get('/applicantlist', async (req, res) => {
 
 router.get('/applicantprofile/:user_id', async (req, res) => {
   try {
-    const { user_id } = req.params; // Extract user_id from the request parameters
+    const { user_id } = req.params; 
 
-
-    // Query job seeker data
     const jobSeekerData = await pool.query(`
        SELECT 
         js.full_name, 
@@ -98,7 +93,6 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
     `, [user_id]);
 
 
-    // Query job experience data
     const jobExperienceData = await pool.query(`
       SELECT je.jobtitle_id, jt.job_title, je.company, je.start_date, je.end_date, je.description
       FROM job_experience je
@@ -107,7 +101,6 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
     `, [user_id]);
 
 
-    // Query skills data
     const skillsData = await pool.query(`
       SELECT s.skill_name
       FROM js_skills jss
@@ -120,14 +113,10 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
     console.log('Job Experience Data:', jobExperienceData.rows);
     console.log('Skills Data:', skillsData.rows);
 
-
-    // Check if the job seeker data exists
     if (jobSeekerData.rows.length === 0) {
       return res.status(404).json({ message: 'Job seeker not found' });
     }
 
-
-    // Process the fetched job experience data
     const jobExperiences = jobExperienceData.rows.map(exp => ({
       job_title: exp.job_title || 'Not Specified',
       company: exp.company || 'Not Specified',
@@ -140,8 +129,6 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
     const jobSeeker = jobSeekerData.rows[0];
     const jobTitle = jobExperiences.length > 0 ? jobExperiences[0].job_title : 'Not Specified';
 
-
-    // Send the response with all the data
     res.json({
       jobSeeker: {
         full_name: jobSeeker.full_name || 'Not Provided',
@@ -155,7 +142,7 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
         job_title: jobTitle
       },
       jobExperience: jobExperiences,
-      skills: skillsData.rows.map(skill => skill.skill_name) // Extract skill names
+      skills: skillsData.rows.map(skill => skill.skill_name) 
     });
   } catch (error) {
     console.error('Error fetching job seeker data:', error.message);
@@ -163,7 +150,6 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
   }
 });
 
-//fetching applied applicants
 router.get('/appliedapplicants/:jobId', async (req, res) => {
   const jobId = req.params.jobId;
   try {
@@ -191,7 +177,7 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
       [jobId]
     );
 
-    res.json(result.rows);  // Always return the rows, even if it's an empty array.
+    res.json(result.rows);
   } catch (error) {
     console.error('Error fetching applicants:', error);
     res.status(500).json({ message: 'Server error' });
@@ -207,7 +193,7 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
   const allowedStages = ['Received', 'In review', 'For interview', 'Filled'];
 
   try {
-    // Step 1: Validate input
+    // Validate input
     if (!userId || !hiringStage || !jobId) {
       return res.status(400).json({ error: 'Invalid input: userId, jobId, and hiringStage are required.' });
     }
@@ -217,7 +203,7 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
       return res.status(400).json({ error: `Invalid hiring stage: ${hiringStage}. Must be one of ${allowedStages.join(', ')}.` });
     }
 
-    // Step 2: Update status and notif_status in the applications table
+    // Update status and notif_status in the applications table
     let updateAppQuery = `
       UPDATE applications 
       SET status = $1, notif_status = $2 
@@ -232,7 +218,7 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
       return res.status(404).json({ error: `No record found for userId ${userId} and jobId ${jobId}.` });
     }
 
-    // Step 3: If hiring stage is "Filled", update the datefilled in the joblistings table
+    // If hiring stage is "Filled", update the datefilled in the joblistings table
     if (hiringStage === 'Filled') {
       await pool.query(
         'UPDATE joblistings SET datefilled = CURRENT_DATE WHERE job_id = $1',
@@ -240,7 +226,7 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
       );
     }
 
-    // Step 4: Fetch job seeker email, name, and job title for the application
+    // Fetch job seeker email, name, and job title for the application
     const appResult = await pool.query(
       `SELECT u.email, js.full_name, jt.job_title
        FROM users u
@@ -261,10 +247,10 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
     const jobSeekerName = appResult.rows[0].full_name;
     const jobTitle = appResult.rows[0].job_title;
 
-    // Step 5: Send email notification to the job seeker
+    // Send email notification to the job seeker
     await sendStatusUpdateEmail(jobSeekerEmail, jobSeekerName, jobTitle, hiringStage);
 
-    // Step 6: Emit real-time notification via Socket.io if user is connected
+    // Emit real-time notification via Socket.io if user is connected
     const notification = {
       message: `Your application for ${jobTitle} has been updated to ${hiringStage}`,
       job_id: jobId,
@@ -275,7 +261,7 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
       io.to(userId).emit('newNotification', notification);
     }
 
-    // Step 7: Send success response
+    // Send success response
     res.status(200).json({ message: 'Hiring stage updated, email sent, and notification sent successfully.' });
 
   } catch (error) {
@@ -318,18 +304,17 @@ const getJobPostings = async (userId) => {
     return [];
   }
 
-  // Transform job data to include only the necessary information
   const joblistingData = rows.map(row => ({
     job_id: row.job_id,
     job_title: row.job_title,
     industry_name: row.industry_name,
     salaryrange: row.salaryrange,
     jobtype: row.jobtype,
-    required_skills: row.required_skills || [] // Ensure skills is an array
+    required_skills: row.required_skills || [] 
   }));
 
   console.log(`Retrieved ${joblistingData.length} job postings for user ${userId}`);
-  return joblistingData; // Return as an array
+  return joblistingData; 
 };
 
 const getApplicantsForJob = async (jobId) => {
@@ -379,7 +364,6 @@ const getApplicantsForJob = async (jobId) => {
   try {
     const { rows } = await pool.query(query, [jobId]);
 
-    // Extract relevant data for the algorithm
     const relevantData = rows.map(row => ({
       user_id: row.user_id,
       email: row.email || '',
@@ -389,7 +373,7 @@ const getApplicantsForJob = async (jobId) => {
       resume: row.resume,
       additional_info: row.additional_info,
       industry: row.industry_id,
-      full_name: row.full_name || 'No Name Provided', // Include full_name for matching
+      full_name: row.full_name || 'No Name Provided', 
       phone_number: row.phone_number || '',
       status: row.status || '',
       date_applied: row.date_applied || '',
@@ -403,7 +387,6 @@ const getApplicantsForJob = async (jobId) => {
   }
 };
 
-// New endpoint for recommending candidates based on jobId
 router.post('/recommend-candidates/:jobId', async (req, res) => {
   const { jobId } = req.params;
   const { userId } = req.body;

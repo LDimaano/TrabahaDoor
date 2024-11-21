@@ -18,7 +18,7 @@ const getContentType = (fileName) => {
     case 'pdf':
       return 'application/pdf';
     default:
-      return null; // Return null for unsupported types
+      return null; 
   }
 };
 
@@ -31,7 +31,7 @@ const s3Client = new S3Client({
 });
 
 const uploadFileToS3 = async (fileBuffer, fileName) => {
-  const contentType = getContentType(fileName); // Make sure this function is defined to return the correct content type
+  const contentType = getContentType(fileName); 
   const command = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileName,
@@ -111,16 +111,11 @@ router.post('/employer-profile', async (req, res) => {
     description,
   } = req.body;
 
-  // Log the request body to verify data
-  console.log('Request body:', req.body);
-
-  // Check that user_id is provided
   if (!user_id) {
     return res.status(400).json({ error: 'User ID is required' });
   }
 
   try {
-    // Insert the data into the emp_profiles table and return the inserted row
     const newEmpProfile = await pool.query(
       `INSERT INTO emp_profiles (
         user_id, company_name, contact_person, contact_number, website, industry_id,
@@ -142,7 +137,6 @@ router.post('/employer-profile', async (req, res) => {
       ]
     );
 
-    // Update the users table to set 'is_complete' to true for the given user_id
     await pool.query(
       `UPDATE users
        SET is_complete = true
@@ -150,7 +144,6 @@ router.post('/employer-profile', async (req, res) => {
       [user_id]
     );
 
-    // Send the newly created profile back as the response
     res.json(newEmpProfile.rows[0]);
   } catch (err) {
     console.error('Error inserting profile:', err.message);
@@ -163,7 +156,6 @@ router.get('/user-infoemp/:userId', async (req, res) => {
     const { userId } = req.params;
     console.log('Received userId:', userId);
     
-    // Input validation
     if (!userId || isNaN(userId)) {
       return res.status(400).json({ message: 'Invalid user ID' });
     }
@@ -187,8 +179,8 @@ router.get('/user-infoemp/:userId', async (req, res) => {
 
 
     if (result.rows.length > 0) {
-      const { company_name, email, contact_person, profile_picture_url } = result.rows[0]; // Destructure company_name and email
-      res.json({ company_name, email, contact_person, profile_picture_url }); // Send both company_name and email in the response
+      const { company_name, email, contact_person, profile_picture_url } = result.rows[0]; 
+      res.json({ company_name, email, contact_person, profile_picture_url }); 
     } else {
       res.status(404).json({ message: 'User not found' });
     }
@@ -202,11 +194,8 @@ router.get('/user-infoemp/:userId', async (req, res) => {
 //fetch info for update
 router.get('/fetchemployer-profile/:userId', async (req, res) => {
   try {
-    // Log the userId to see if it's being passed correctly
     const { userId } = req.params;
-    console.log('Received userId:', userId);
 
-    // Continue with the query if userId is valid
     if (!userId || isNaN(parseInt(userId))) {
       return res.status(400).json({ error: 'Invalid or missing userId' });
     }
@@ -264,16 +253,11 @@ router.put('/employer-profile/:userId', async (req, res) => {
 
   const userId = req.params.userId;
 
-  // Log the request body to verify data
-  console.log('Request body for update:', req.body);
-
-  // Check that userId is provided
   if (!userId) {
     return res.status(400).json({ error: 'User ID is required' });
   }
 
   try {
-    // Update the data in the profiles table
     const updatedEmpProfile = await pool.query(
       `UPDATE emp_profiles SET
         company_name = $1,
@@ -301,12 +285,10 @@ router.put('/employer-profile/:userId', async (req, res) => {
       ]
     );
 
-    // Check if the update was successful
     if (updatedEmpProfile.rowCount === 0) {
       return res.status(404).json({ error: 'Profile not found' });
     }
 
-    // Send the updated profile back as the response
     res.json(updatedEmpProfile.rows[0]);
   } catch (err) {
     console.error('Error updating profile:', err.message);
@@ -317,11 +299,8 @@ router.put('/employer-profile/:userId', async (req, res) => {
 //fetch employer profile for admin update
 router.get('/fetchemployer-profileforadmin/:user_id', async (req, res) => {
   try {
-    // Log the userId to see if it's being passed correctly
     const { user_id } = req.params;
-    console.log('Received user_id for admin update:', user_id);
 
-    // Continue with the query if userId is valid
     if (!user_id || isNaN(parseInt(user_id))) {
       return res.status(400).json({ error: 'Invalid or missing user_id' });
     }
@@ -387,8 +366,6 @@ router.get('/employerprofile/:userId', async (req, res) => {
       LEFT JOIN profilepictures pp ON e.user_id = pp.user_id
       WHERE e.user_id = $1
     `, [userId]);
-
-    console.log('Fetched employer data:', EmployerData.rows);
    
     const employer = EmployerData.rows[0] || {};
    
@@ -434,7 +411,6 @@ router.get('/joblistings/:userId', async (req, res) => {
           `,
       [userId]
     );
-    console.log('Database query result:', result.rows);
     
     if (result.rows.length > 0) {
       res.json(result.rows);
@@ -468,7 +444,7 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
 
     // Emit notification to job seeker
     const application = result.rows[0];
-    const jobSeekerId = application.user_id; // This should be the job seeker's user ID
+    const jobSeekerId = application.user_id; 
 
     // Fetch job title for notification
     const jobResult = await pool.query(
@@ -499,10 +475,6 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
 
 router.get('/jsemployerprofile/:userId', async (req, res) => {
   const { userId } = req.params;
-
-  // Log the entire request object to debug why userId is undefined
-  console.log('Request Params:', req.params);
-  console.log('Received userId from params:', userId);
   
   try {
     const EmployerData = await pool.query(`
@@ -524,8 +496,6 @@ router.get('/jsemployerprofile/:userId', async (req, res) => {
       LEFT JOIN profilepictures pp ON e.user_id = pp.user_id
       WHERE e.user_id = $1
     `, [userId]);
-
-    console.log('Fetched employer data:', EmployerData.rows);
 
     const employer = EmployerData.rows[0] || {};
 
@@ -555,7 +525,6 @@ router.delete('/deljoblistings/:jobId', async (req, res) => {
   const { jobId } = req.params;
   console.log(`Deleting job with ID: ${jobId}`);
   try {
-      // Archive joblistings data
       await pool.query(`
           INSERT INTO archived_joblistings (job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled)
           SELECT job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled
@@ -563,7 +532,6 @@ router.delete('/deljoblistings/:jobId', async (req, res) => {
           WHERE job_id = $1
       `, [jobId]);
 
-      // Archive job_skills data
       await pool.query(`
           INSERT INTO archived_job_skills (job_id, skill_id, user_id)
           SELECT job_id, skill_id, user_id
@@ -571,7 +539,6 @@ router.delete('/deljoblistings/:jobId', async (req, res) => {
           WHERE job_id = $1
       `, [jobId]);
 
-      // Delete job_skills, applications, and joblistings data
       await pool.query('DELETE FROM job_skills WHERE job_id = $1', [jobId]);
       await pool.query('DELETE FROM applications WHERE job_id = $1', [jobId]);
       await pool.query('DELETE FROM joblistings WHERE job_id = $1', [jobId]);
@@ -596,7 +563,6 @@ async function deleteUserAndArchive(userId, password) {
       throw new Error('Invalid password');
     }
 
-    // Archive employer profiles data
     await client.query(`
       INSERT INTO archived_emp_profiles (user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description)
       SELECT user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description
@@ -604,7 +570,6 @@ async function deleteUserAndArchive(userId, password) {
       WHERE user_id = $1
     `, [userId]);
 
-    // Archive users data
     await client.query(`
       INSERT INTO archived_users (user_id, email, password, usertype)
       SELECT user_id, email, password, usertype
@@ -612,7 +577,6 @@ async function deleteUserAndArchive(userId, password) {
       WHERE user_id = $1
     `, [userId]);
 
-    // Archive profile pictures data
     await client.query(`
       INSERT INTO archived_profilepictures (user_id, profile_picture_url)
       SELECT user_id, profile_picture_url
@@ -620,7 +584,6 @@ async function deleteUserAndArchive(userId, password) {
       WHERE user_id = $1
     `, [userId]);
 
-    // Archive existing Joblisting
     await client.query(`
       INSERT INTO archived_joblistings (job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled)
       SELECT job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled
@@ -628,7 +591,6 @@ async function deleteUserAndArchive(userId, password) {
       WHERE user_id = $1
     `, [userId]);
 
-    // Archive existing job_skills
     await client.query(`
       INSERT INTO archived_job_skills (job_id, skill_id, user_id)
       SELECT job_id, skill_id, user_id
@@ -636,13 +598,10 @@ async function deleteUserAndArchive(userId, password) {
       WHERE user_id = $1
     `, [userId]);
 
-    // Delete from dependent tables first
     await client.query('DELETE FROM job_skills WHERE user_id = $1', [userId]);
     await client.query('DELETE FROM joblistings WHERE user_id = $1', [userId]);
     await client.query('DELETE FROM emp_profiles WHERE user_id = $1', [userId]);
     await client.query('DELETE FROM profilepictures WHERE user_id = $1', [userId]);
-
-    // Delete from users table last
     await client.query('DELETE FROM users WHERE user_id = $1', [userId]);
 
     await client.query('COMMIT');
@@ -658,9 +617,6 @@ async function deleteUserAndArchive(userId, password) {
 
 router.delete('/delete', async (req, res) => {
   const { userId, password } = req.body;
-
-  console.log('User ID archive:', userId);
-  console.log('Password archive:', password);
 
   if (!userId) {
     return res.status(401).json({ message: 'User not logged in' });
@@ -690,7 +646,6 @@ router.post('/upload/:user_id', uploadDocuments, async (req, res) => {
 
     const fileUploadPromises = [];
 
-    // Loop through each file type and upload to S3
     const fileTypes = [
       'sec_certificate',
       'business_permit',
@@ -708,13 +663,12 @@ router.post('/upload/:user_id', uploadDocuments, async (req, res) => {
         const uniqueFileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${file.originalname}`;
         const uploadPromise = uploadFileToS3(file.buffer, uniqueFileName)
           .then(url => {
-            urls[type] = url; // Store the URL for this file
+            urls[type] = url; 
           });
         fileUploadPromises.push(uploadPromise);
       }
     }
 
-    // Wait for all file uploads to finish
     await Promise.all(fileUploadPromises);
 
     const query = `
@@ -763,7 +717,7 @@ router.get('/gender-distribution/:userId', async (req, res) => {
     
     const { rows } = await pool.query(query, [userId]);
 
-    res.json(rows); // Send the data as JSON
+    res.json(rows); 
   } catch (error) {
     console.error('Error fetching gender distribution:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -796,7 +750,7 @@ router.get('/industry-distribution/:userId', async (req, res) => {
 
     const { rows } = await pool.query(query, [userId]);
 
-    res.json(rows); // Send the data as JSON
+    res.json(rows); 
   } catch (error) {
     console.error('Error fetching industry distribution:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -827,7 +781,7 @@ router.get('/location-distribution/:userId', async (req, res) => {
     `;
     const { rows } = await pool.query(query, [userId]);
 
-    res.json(rows); // Send the data as JSON
+    res.json(rows); 
   } catch (error) {
     console.error('Error fetching location distribution:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -858,7 +812,7 @@ router.get('/applicants-distribution/:userId', async (req, res) => {
     `;
     const { rows } = await pool.query(query, [userId]);
 
-    res.json(rows); // Send the data as JSON
+    res.json(rows); 
   } catch (error) {
     console.error('Error fetching applicants distribution:', error);
     res.status(500).json({ error: 'Internal server error' });

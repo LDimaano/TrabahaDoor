@@ -5,21 +5,17 @@ const pool = require('../db');
 
 router.post('/profile', async (req, res) => {
   const {
-    user_id, // This should be the user_id from the users table
+    user_id, 
     fullName,
     phoneNumber,
     dateOfBirth,
     gender,
     address_id, 
     industry_id,
-    experience, // Array of experience objects
-    skills // Array of skill IDs or skill objects containing skill_id
+    experience,
+    skills 
   } = req.body;
 
-  // Log the request body to verify data
-  console.log('Received request body:', req.body);
-
-  // Check that user_id and address_id are provided
   if (!user_id) {
     return res.status(400).json({ error: 'User ID is required' });
   }
@@ -28,7 +24,6 @@ router.post('/profile', async (req, res) => {
   }
 
   try {
-    // Insert the profile data into the job_seekers table
     const newProfileResult = await pool.query(
       `INSERT INTO job_seekers (
         user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id
@@ -40,7 +35,6 @@ router.post('/profile', async (req, res) => {
 
     const profileId = newProfileResult.rows[0].jsid;
 
-    // Insert experience data
     for (const exp of experience) {
       await pool.query(
         `INSERT INTO job_experience (
@@ -51,7 +45,6 @@ router.post('/profile', async (req, res) => {
       );
     }
 
-    // Insert skills data - assuming skills array contains skill_id directly
     for (const skill_id of skills) {
       await pool.query(
         `INSERT INTO js_skills (
@@ -62,7 +55,6 @@ router.post('/profile', async (req, res) => {
       );
     }
 
-    // Update the users table to set 'is_complete' to true for the given user_id
     await pool.query(
       `UPDATE users
        SET is_complete = true
@@ -70,10 +62,8 @@ router.post('/profile', async (req, res) => {
       [user_id]
     );
 
-    // Send a successful response
     res.json({ message: 'Profile created successfully', profileId });
   } catch (err) {
-    // Log error message
     console.error('Error inserting profile:', err.message);
     res.status(500).send('Server Error');
   }
@@ -98,9 +88,7 @@ router.get('/user/skills/:userId', async (req, res) => {
 router.get('/user-info/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log('Received userId:', userId);
-    
-    // Input validation
+
     if (!userId || isNaN(userId)) {
       return res.status(400).json({ message: 'Invalid user ID' });
     }
@@ -128,8 +116,6 @@ router.get('/user-info/:userId', async (req, res) => {
       [userId]
     );
 
-    console.log('Database query result:', result.rows);
-
     if (result.rows.length > 0) {
       const userInfo = result.rows[0];
       const response = {
@@ -152,9 +138,7 @@ router.get('/user-info/:userId', async (req, res) => {
 router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log('Received userId:', userId);
 
-    // Validate userId
     if (!userId || isNaN(parseInt(userId))) {
       return res.status(400).json({ error: 'Invalid or missing userId' });
     }
@@ -171,8 +155,6 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
       WHERE js.user_id = $1
     `, [userId]);
 
-    console.log('Fetched job seeker data:', jobSeekerData.rows);
-
     const jobSeeker = jobSeekerData.rows[0] || {};
 
     // Query to fetch job experiences
@@ -184,8 +166,6 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
       JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
       WHERE je.user_id = $1
     `, [userId]);
-
-    console.log('Fetched job experience data:', jobExperienceData.rows);
 
     const jobExperiences = jobExperienceData.rows.map(exp => ({
       jobTitleId: exp.jobtitle_id || 'Not Provided',
@@ -213,8 +193,6 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
       skillName: skill.skill_name || 'Not Provided',
     }));
 
-    console.log('Fetched skills:', skills);
-
     res.json({
       jobSeeker: {
         fullName: jobSeeker.full_name || 'Not Provided',
@@ -226,7 +204,7 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
         address_id: jobSeeker.address_id || 'Not Provided',
         address_name: jobSeeker.location || 'Not Provided',
         experiences: jobExperiences,
-        skills: skills, // Include skills in the response
+        skills: skills, 
       },
     });
   } catch (error) {
@@ -243,18 +221,17 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
       fullName,
       phoneNumber,
       dateOfBirth,
-      gender, // Dropdown format
-      industry_id, // Dropdown format
-      address_id, // Dropdown format
-      experiences, // Array of experiences with dropdown jobTitle
-      skills // Array of skill IDs
+      gender, 
+      industry_id, 
+      address_id, 
+      experiences, 
+      skills 
     } = req.body;
 
-    // Validate userId
+
     if (!userId || isNaN(parseInt(userId))) {
       return res.status(400).json({ error: 'Invalid or missing userId' });
     }
-
 
     // Update job seeker profile
     await pool.query(`
@@ -271,9 +248,8 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
     // Update job experiences
     if (experiences && Array.isArray(experiences)) {
       for (const exp of experiences) {
-        const jobTitleValue = exp.jobTitleId?.value || null; // Extract job title value
+        const jobTitleValue = exp.jobTitleId?.value || null; 
         if (exp.experienceId) {
-          // Update existing experience
           await pool.query(`
             UPDATE job_experience
             SET jobtitle_id = $1,
@@ -286,7 +262,6 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
             WHERE experience_id = $8 AND user_id = $9
           `, [jobTitleValue, exp.salary, exp.companyName, exp.location, exp.startDate, exp.endDate, exp.description, exp.experienceId, userId]);
         } else {
-          // Insert new experience
           await pool.query(`
             INSERT INTO job_experience (user_id, jobtitle_id, salary, company, location, start_date, end_date, description)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -297,10 +272,8 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
 
     // Update skills
     if (skills && Array.isArray(skills)) {
-      // Remove existing skills
       await pool.query(`DELETE FROM js_skills WHERE user_id = $1`, [userId]);
 
-      // Insert new skills
       for (const skillId of skills) {
         await pool.query(`
           INSERT INTO js_skills (user_id, skill_id)
@@ -317,13 +290,10 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
 });
 
 //fetch info for admin update
-
 router.get('/fetchjobseeker-profileadmin/:user_id', async (req, res) => {
   try {
     const { user_id } = req.params;
-    console.log('Received userid for admin js update:', user_id);
 
-    // Validate userId
     if (!user_id || isNaN(parseInt(user_id))) {
       return res.status(400).json({ error: 'Invalid or missing userId' });
     }
@@ -340,11 +310,8 @@ router.get('/fetchjobseeker-profileadmin/:user_id', async (req, res) => {
       WHERE js.user_id = $1
     `, [user_id]);
 
-    console.log('Fetched job seeker data:', jobSeekerData.rows);
-
     const jobSeeker = jobSeekerData.rows[0] || {};
 
-    // Query to fetch job experiences
     const jobExperienceData = await pool.query(`
       SELECT
         je.*,
@@ -353,8 +320,6 @@ router.get('/fetchjobseeker-profileadmin/:user_id', async (req, res) => {
       JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
       WHERE je.user_id = $1
     `, [user_id]);
-
-    console.log('Fetched job experience data:', jobExperienceData.rows);
 
     const jobExperiences = jobExperienceData.rows.map(exp => ({
       jobTitleId: exp.jobtitle_id || 'Not Provided',
@@ -382,8 +347,6 @@ router.get('/fetchjobseeker-profileadmin/:user_id', async (req, res) => {
       skillName: skill.skill_name || 'Not Provided',
     }));
 
-    console.log('Fetched skills:', skills);
-
     res.json({
       jobSeeker: {
         fullName: jobSeeker.full_name || 'Not Provided',
@@ -395,7 +358,7 @@ router.get('/fetchjobseeker-profileadmin/:user_id', async (req, res) => {
         address_id: jobSeeker.address_id || 'Not Provided',
         address_name: jobSeeker.location || 'Not Provided',
         experiences: jobExperiences,
-        skills: skills, // Include skills in the response
+        skills: skills, 
       },
     });
   } catch (error) {
@@ -404,15 +367,10 @@ router.get('/fetchjobseeker-profileadmin/:user_id', async (req, res) => {
   }
 });
 
-
-
 router.get('/job-seeker/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log(`userID for update: ${userId}`);
 
-
-    // Query job seeker data with address location
     const jobSeekerData = await pool.query(`
       SELECT 
         js.full_name, 
@@ -432,8 +390,6 @@ router.get('/job-seeker/:userId', async (req, res) => {
       LEFT JOIN profilepictures pp ON js.user_id = pp.user_id
       WHERE js.user_id = $1
     `, [userId]);
-
-    console.log('Fetched job seeker data:', jobSeekerData.rows);
     
     // Query job experience data
     const jobExperienceData = await pool.query(`
@@ -463,7 +419,6 @@ router.get('/job-seeker/:userId', async (req, res) => {
 
     // Process job seeker data
     const jobSeeker = jobSeekerData.rows[0] || {};
-    // Assuming job_title from the first job experience or a fallback value
     const jobTitle = jobExperiences.length > 0 ? jobExperiences[0].job_title : 'Not Specified';
     res.json({
       jobSeeker: {
@@ -475,17 +430,16 @@ router.get('/job-seeker/:userId', async (req, res) => {
         address: jobSeeker.location || 'Address not provided',
         industry: jobSeeker.industry_name || 'Industry not provided',
         image: jobSeeker.profile_picture_url  || 'No Image',
-        job_title: jobTitle // Set the job title from the first job experience
+        job_title: jobTitle 
       },
-      jobExperience: jobExperiences, // Return all job experiences
-      skills: skillsData.rows // Return all skills
+      jobExperience: jobExperiences, 
+      skills: skillsData.rows 
     });
   } catch (error) {
     console.error('Error fetching job seeker data:', error.message);
     res.status(500).send('Server error');
   }
 });
-
 
 // fetching jobseeker's joblistings
 router.get('/getUserJobListings', async (req, res) => {
@@ -494,7 +448,6 @@ router.get('/getUserJobListings', async (req, res) => {
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-
   const query = ` 
     SELECT 
       jl.job_id,
@@ -511,7 +464,6 @@ router.get('/getUserJobListings', async (req, res) => {
     JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
     WHERE a.user_id = $1
   `;
-
   try {
     const result = await pool.query(query, [userId]);
     res.status(200).json(result.rows);
@@ -536,14 +488,9 @@ router.delete('/deleteApplication', async (req, res) => {
   }
 });
 
-
-
 //get emp joblistings
 router.get('/jsempjoblistings/:userId', async (req, res) => {
   const { userId } = req.params;
-
-  console.log('Request Params:', req.params);
-  console.log('Received userId from params:', userId);
 
   try {
     const EmpJoblisting = await pool.query(`
@@ -557,8 +504,6 @@ router.get('/jsempjoblistings/:userId', async (req, res) => {
       LEFT JOIN profilepictures pp ON jl.user_id = pp.user_id
       WHERE jl.user_id = $1
     `, [userId]);
-
-    console.log('Fetched job listing data:', EmpJoblisting.rows);
 
     res.status(200).json(EmpJoblisting.rows);
   } catch (error) {
@@ -641,9 +586,6 @@ async function deleteUserAndArchive(userId, password) {
 
 router.delete('/delete', async (req, res) => {
   const { userId, password } = req.body;
-
-  console.log('User ID archive:', userId);
-  console.log('Password archive:', password);
 
   if (!userId) {
     return res.status(401).json({ message: 'User not logged in' });

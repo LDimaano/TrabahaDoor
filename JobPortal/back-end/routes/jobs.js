@@ -8,10 +8,10 @@ const path = require('path');
 const multerS3 = require('multer-s3');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
-// Method to set io instance
-let io; // Declare io variable outside to be accessible
+
+let io; 
 router.setIo = (_io) => {
-  io = _io; // Set the io instance
+  io = _io; 
 };
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -27,7 +27,7 @@ const getContentType = (fileName) => {
     case 'pdf':
       return 'application/pdf';
     default:
-      return null; // Return null for unsupported types
+      return null; 
   }
 };
 
@@ -66,15 +66,12 @@ router.post('/applications', upload.single('resume'), async (req, res) => {
   const { jobId, user_id, additionalInfo } = req.body;
 
   try {
-    // Ensure that the file is provided
     if (!req.file) {
       return res.status(400).json({ error: 'Resume file is required' });
     }
 
-    // Upload the file to S3 and get the URL
     const resumeUrl = await uploadFileToS3(req.file.buffer, req.file.originalname);
 
-    // Ensure that all required data is present
     if (!jobId || !user_id || !resumeUrl) {
       return res.status(400).json({ error: 'Job ID, user ID, and resume are required' });
     }
@@ -82,7 +79,7 @@ router.post('/applications', upload.single('resume'), async (req, res) => {
     const result = await pool.query(
       `INSERT INTO applications (job_id, user_id, resume, additional_info, status)
       VALUES ($1, $2, $3, $4, 'new')`,
-      [jobId, user_id, resumeUrl, additionalInfo] // Include resumeUrl in your query
+      [jobId, user_id, resumeUrl, additionalInfo] 
     );
 
     if (result.rowCount === 1) {
@@ -92,17 +89,14 @@ router.post('/applications', upload.single('resume'), async (req, res) => {
         });
       }
 
-      // Fetch employer's email, job_title, and applicant's full name from the database
       const employerData = await getEmployerEmailByJobId(jobId);
 
       if (employerData) {
-        // Send the email notification
         const applicationData = {
           job_title: employerData.job_title,
-          full_name: employerData.full_name, // Job seeker's full name
+          full_name: employerData.full_name, 
         };
 
-        // Pass employerEmail, fullName, and jobTitle to the email sending function
         await sendApplicationEmail(employerData.email, applicationData.full_name, applicationData.job_title);
       }
 
@@ -126,7 +120,7 @@ router.post('/joblistings', async (req, res) => {
     Responsibilities,
     JobDescription,
     Qualifications,
-    skills // Array of skill IDs
+    skills 
   } = req.body;
 
   console.log('Received request body:', req.body);
@@ -179,16 +173,14 @@ const getEmployerEmailByJobId = async (jobId) => {
       [jobId]
   );
 
-  return result.rows[0]; // Return the entire row (email, job_title, full_name)
+  return result.rows[0]; 
 };
 
 //fetch jobinformation
 router.get('/fetch-jobinfo/:job_id', async (req, res) => {
   try {
     const { job_id } = req.params;
-    console.log('Received jobId:', job_id);
-
-    // Validate job_id
+    
     if (!job_id || isNaN(parseInt(job_id))) {
       return res.status(400).json({ error: 'Invalid or missing job_id' });
     }
@@ -203,8 +195,6 @@ router.get('/fetch-jobinfo/:job_id', async (req, res) => {
       JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
       WHERE job_id = $1
       `,[job_id]);
-
-    console.log('Fetched job info data:', jobInfo.rows);
 
     const JobDescription = jobInfo.rows[0] || {};
 
@@ -222,7 +212,6 @@ router.get('/fetch-jobinfo/:job_id', async (req, res) => {
       skillId: skill.skill_id || 'Not Provided',
       skillName: skill.skill_name || 'Not Provided',
     }));
-    console.log('Fetched skills:', skills);
 
     res.json({
       JobDescription: {
@@ -260,13 +249,10 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
   } = req.body;
 
   const { job_id } = req.params;
-  console.log(`Job ID for update: ${job_id}`);
 
   const userId = user_id
-  console.log(`userID for update: ${userId}`);
 
   try {
-    // Update the job listing in the joblistings table
     const updateJob = `
       UPDATE joblistings 
       SET jobtitle_id = $1, industry_id = $2, salaryrange = $3, responsibilities = $4, 
@@ -286,17 +272,13 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
       job_id,
     ]);
 
-    // If no rows are returned, job doesn't exist or user is not authorized
     if (jobResult.rows.length === 0) {
       return res.status(404).json({ error: 'Job not found or unauthorized action.' });
     }
 
-    // Update job skills if needed (assuming you have a separate job_skills table)
     if (skills.length > 0) {
-      // First delete existing skills related to the job
       await pool.query('DELETE FROM job_skills WHERE job_id = $1', [job_id]);
 
-      // Insert updated skills with user_id
       const insertSkillsQuery = `
         INSERT INTO job_skills (job_id, skill_id, user_id) 
         SELECT $1, unnest($2::int[]), $3;
@@ -315,33 +297,21 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
 router.post('/applications/check', async (req, res) => {
   const { user_id, jobId } = req.body;
 
-  // Debugging logs to check values
-  console.log('Received request to check application status');
-  console.log('user_id:', user_id);
-  console.log('jobId:', jobId);
-
   if (!user_id || !jobId) {
       console.error('Missing required parameters');
       return res.status(400).json({ message: 'Missing required parameters' });
   }
 
   try {
-      // Query the database to check if the user has already applied for this job
       const result = await pool.query(
           'SELECT * FROM applications WHERE user_id = $1 AND job_id = $2',
           [user_id, jobId]
       );
 
-      // Log the result of the query
-      console.log('Query result:', result.rows);
-
       if (result.rows.length > 0) {
-          // If the result contains any rows, it means the user has already applied
           console.log('User has already applied');
           return res.json({ applied: true });
       }
-
-      // No application found, so the user has not applied yet
       console.log('User has not applied yet');
       res.json({ applied: false });
   } catch (error) {
@@ -378,7 +348,7 @@ router.get('/postedjobs', async (req, res) => {
     // Search by either job title or company name using a single searchQuery
     if (searchQuery) {
       query += ` AND (job_titles.job_title ILIKE $${values.length + 1} OR emp_profiles.company_name ILIKE $${values.length + 1})`; 
-      values.push(`%${searchQuery}%`); // Use ILIKE for case-insensitive matching
+      values.push(`%${searchQuery}%`); 
     }
 
     // Filter by selected industry
@@ -398,7 +368,6 @@ router.get('/postedjobs', async (req, res) => {
 // Get job details by job ID
 router.get('/joblistings/:jobId', async (req, res) => {
   const { jobId } = req.params;
-  console.log(`Fetching job details for Job ID: ${jobId}`);
 
   const jobQuery = `
     SELECT jl.*, jt.job_title, ep.company_name, i.industry_name, pp.profile_picture_url
@@ -418,18 +387,13 @@ router.get('/joblistings/:jobId', async (req, res) => {
   `;
 
   try {
-    console.log('Executing job query...');
     const jobResult = await pool.query(jobQuery, [jobId]);
-    console.log('Job query result:', jobResult.rows);
 
     if (jobResult.rows.length === 0) {
       console.warn(`Job not found for Job ID: ${jobId}`);
       return res.status(404).json({ error: 'Job not found' });
     }
-
-    console.log('Executing skills query...');
     const skillsResult = await pool.query(skillsQuery, [jobId]);
-    console.log('Skills query result:', skillsResult.rows);
 
     const jobData = jobResult.rows[0];
     const skills = skillsResult.rows.map(row => row.skill_name);

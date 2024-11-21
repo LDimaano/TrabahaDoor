@@ -55,12 +55,11 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     """Main recommendation pipeline."""
     recommendations = []
 
-    # Stage 1: Extract job data
+    # Extract job data
     job_info = extract_job_data(job_data)
     skills_set = set(skills)
     job_titles_set = set(job_titles)
 
-    # Initialize collaborative filtering jobs dictionary
     collaborative_filtering_jobs = {}
     if similar_jobseekers:
         for jobseeker in similar_jobseekers:
@@ -70,19 +69,19 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
                     collaborative_filtering_jobs[job_id] = []
                 collaborative_filtering_jobs[job_id].append(jobseeker['user_id'])
 
-    # Stage 2: Iterate through job data
+    # Iterate through job data
     for job in job_info:
         skill_match, title_match = match_skills_and_titles(job, skills_set, job_titles_set)
-        
-        # Stage 3: Check for salary match (only if skills or title match)
+ 
+        # Check for salary match
         salary_match = False
         if skill_match or title_match:
             salary_match = check_salary_match(job, jobseeker_salary)
         
-        # Stage 4: Check collaborative filtering match
+        # Check collaborative filtering match
         collaborative_match = check_collaborative_filtering(job, collaborative_filtering_jobs)
         
-        # Stage 5: Only add recommendation if there's a match
+        # Only add recommendation if there's a match
         if skill_match or title_match or collaborative_match:
             match_count = len(skills_set.intersection(job.get('required_skills', set())))
             industry_match = (job['industry_name'] == jobseeker_industry) if jobseeker_industry else False
@@ -105,7 +104,6 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
 
 if __name__ == "__main__":
     try:
-        # Read input from command line
         job_data = json.loads(sys.argv[1])
         skills = json.loads(sys.argv[2])
         jobseeker_industry = sys.argv[3]
@@ -115,7 +113,6 @@ if __name__ == "__main__":
         # Generate recommendations
         recommendations = recommend_jobs(job_data, skills, jobseeker_industry, job_titles, jobseeker_salary=jobseeker_salary)
 
-        # Print the recommendations as JSON
         print(json.dumps(recommendations))
 
     except Exception as e:
