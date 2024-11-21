@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 function SearchForm({ onSearch }) {
   const [industryOptions, setIndustryOptions] = useState([]);
   const [error, setError] = useState(null);
-  const [jobTitle, setJobTitle] = useState(''); // State for job title/keyword
-  const [selectedIndustry, setSelectedIndustry] = useState(''); // State for selected industry
+  const [jobTitle, setJobTitle] = useState(''); 
+  const [selectedIndustry, setSelectedIndustry] = useState(''); 
 
   const fetchIndustries = async () => {
     try {
@@ -24,32 +24,29 @@ function SearchForm({ onSearch }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const searchType = jobTitle ? "jobTitle" : "companyName"; // Determine search type based on job title input
-    onSearch({ jobTitle, selectedIndustry, searchType }); // Pass search type to parent
+    const searchType = jobTitle ? "jobTitle" : "companyName"; 
+    onSearch({ jobTitle, selectedIndustry, searchType }); 
   };
 
   // Handle clearing filters for job title
   const handleClearJobTitle = () => {
-    setJobTitle(''); // Reset job title
-    onSearch({ jobTitle: '', selectedIndustry }); // Pass empty parameters to reset search
+    setJobTitle(''); 
+    onSearch({ jobTitle: '', selectedIndustry }); 
   };
 
   // Handle clearing filters for selected industry
   const handleClearIndustry = () => {
-    setSelectedIndustry(''); // Reset selected industry
-    onSearch({ jobTitle, selectedIndustry: '' }); // Pass empty industry to parent
+    setSelectedIndustry(''); 
+    onSearch({ jobTitle, selectedIndustry: '' }); 
   };
 
-  // Determine if the job title field has a value
   const isJobTitleActive = jobTitle !== '';
-  // Determine if the industry dropdown has a value
   const isIndustryActive = selectedIndustry !== '';
 
   return (
     <section className="container my-4">
       <form className="row g-3" onSubmit={handleSubmit}>
         <div className="col-md-6 position-relative">
-          {/* Clear Filters button shown if job title field is active */}
           {isJobTitleActive && (
             <button
               type="button"
@@ -59,21 +56,21 @@ function SearchForm({ onSearch }) {
               style={{
                 width: '30px',
                 height: '30px',
-                left: '10px', // Position it to the left of the input
-                top: '50%', // Center vertically
-                transform: 'translateY(-50%)', // Adjust for proper vertical centering
-                padding: '0', // No padding
-                backgroundColor: 'transparent', // Transparent background
-                border: 'none', // No border
+                left: '10px', 
+                top: '50%', 
+                transform: 'translateY(-50%)', 
+                padding: '0', 
+                backgroundColor: 'transparent', 
+                border: 'none', 
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'gray', // Gray color for the icon
+                color: 'gray', 
                 fontSize: '14px',
-                cursor: 'pointer', // Cursor pointer on hover
+                cursor: 'pointer', 
               }}
             >
-              <i className="fas fa-times"></i> {/* X icon */}
+              <i className="fas fa-times"></i> 
             </button>
           )}
           <input
@@ -81,15 +78,14 @@ function SearchForm({ onSearch }) {
             className="form-control"
             placeholder="Job title or Company name"
             value={jobTitle}
-            onChange={(e) => setJobTitle(e.target.value)} // Update job title state
+            onChange={(e) => setJobTitle(e.target.value)} 
             aria-label="Job title or keyword"
             style={{
-              paddingLeft: isJobTitleActive ? '40px' : '10px', // Add padding to avoid overlap with the X icon
+              paddingLeft: isJobTitleActive ? '40px' : '10px', 
             }}
           />
         </div>
         <div className="col-md-4 position-relative">
-          {/* Clear Filters button shown if industry dropdown is active */}
           {isIndustryActive && (
             <button
               type="button"
@@ -99,30 +95,30 @@ function SearchForm({ onSearch }) {
               style={{
                 width: '30px',
                 height: '30px',
-                left: '10px', // Position it to the left of the dropdown
-                top: '50%', // Center vertically
-                transform: 'translateY(-50%)', // Adjust for proper vertical centering
-                padding: '0', // No padding
-                backgroundColor: 'transparent', // Transparent background
-                border: 'none', // No border
+                left: '10px',
+                top: '50%', 
+                transform: 'translateY(-50%)', 
+                padding: '0', 
+                backgroundColor: 'transparent',
+                border: 'none', 
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'gray', // Gray color for the icon
+                color: 'gray',
                 fontSize: '14px',
-                cursor: 'pointer', // Cursor pointer on hover
+                cursor: 'pointer', 
               }}
             >
-              <i className="fas fa-times"></i> {/* X icon */}
+              <i className="fas fa-times"></i> 
             </button>
           )}
           <select
             className="form-select"
             value={selectedIndustry}
-            onChange={(e) => setSelectedIndustry(e.target.value)} // Update selected industry state
+            onChange={(e) => setSelectedIndustry(e.target.value)} 
             aria-label="Select Industry"
             style={{
-              paddingLeft: isIndustryActive ? '40px' : '10px', // Add padding to avoid overlap with the X icon
+              paddingLeft: isIndustryActive ? '40px' : '10px', 
             }}
           >
             <option value="">Select Industry</option>

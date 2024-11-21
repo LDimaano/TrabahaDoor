@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import JobListItem from './joblistitem';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
-import '../css/pagination.css'; // Ensure you import the custom CSS
+import '../css/pagination.css'; 
 
 function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQuery, searchType, isRecommended }) {
   const [jobs, setJobs] = useState([]);
@@ -13,7 +13,6 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   const jobsPerPage = 5;
 
   useEffect(() => {
-    // Fetch jobs based on search and filter parameters
     const fetchJobs = async () => {
       let url = `${process.env.REACT_APP_API_URL}/api/jobs/postedjobs`;
       const params = new URLSearchParams();
@@ -69,7 +68,6 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
     if (isRecommended && userSkills.length > 0 && userProfile && userProfile.industryName) {
       const fetchRecommendedJobs = async () => {
         try {
-          // Validate userProfile data
           if (!Array.isArray(userProfile.jobTitles)) {
             console.error('Invalid jobTitles:', userProfile.jobTitles);
             return;
@@ -90,7 +88,6 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
             }),
           });
   
-          // Check if response is okay
           if (!response.ok) {
             const errorText = await response.text();
             console.error('Error fetching recommended jobs:', errorText);
@@ -99,7 +96,6 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   
           const recommendedJobsData = await response.json();
   
-          // Ensure the response data structure is correct
           if (recommendedJobsData && recommendedJobsData.recommendations) {
             setRecommendedJobs(recommendedJobsData.recommendations);
           } else {

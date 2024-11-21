@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Tag from './jstag'; // Assuming you have a Tag component
+import Tag from './jstag'; 
 
 function JobListItem({ job }) {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ function JobListItem({ job }) {
   };
 
   const itemStyle = {
-    marginBottom: '0.5rem', // Reduces space between items
+    marginBottom: '0.5rem', 
   };
 
   return (
@@ -28,7 +28,7 @@ function JobListItem({ job }) {
           <h6 style={itemStyle}>{job.company_name}</h6> 
           <p style={itemStyle}>{job.industry_name}</p>
           <p style={itemStyle}>{job.salaryrange}</p> 
-          <Tag>{job.jobtype}</Tag> {/* Use the Tag component for jobtype */}
+          <Tag>{job.jobtype}</Tag> 
         </div>
       </div>
       <button className="btn btn-primary" onClick={handleApplyClick}>

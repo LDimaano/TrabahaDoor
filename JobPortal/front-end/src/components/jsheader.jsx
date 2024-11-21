@@ -12,9 +12,7 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const userId = sessionStorage.getItem('user_id');
-  console.log('User ID from sessionStorage:', userId);
 
-  // Fetch user full name
   useEffect(() => {
     const userId = sessionStorage.getItem('user_id');
     const fetchFullName = async () => {
@@ -73,7 +71,6 @@ function Header() {
   const fetchNotifications = async () => {
     const userId = sessionStorage.getItem('user_id');
      
-    // Check if userId exists before making the fetch request
      if (!userId) {
       console.error('User ID not found in session storage');
       return;
@@ -124,8 +121,8 @@ function Header() {
         });
 
         if (response.ok) {
-          await fetchNotifications(); // Re-fetch notifications after marking them as viewed
-          setNotificationCount(0); // Reset the count after marking as viewed
+          await fetchNotifications(); 
+          setNotificationCount(0); 
         } else {
           const errorData = await response.json();
           console.error('Failed to mark notifications as viewed:', response.statusText, errorData);

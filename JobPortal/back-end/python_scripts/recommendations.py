@@ -8,6 +8,7 @@ def extract_job_data(job_data):
         job_info.append({
             'job_id': job.get('job_id'),
             'required_skills': set(job.get('required_skills', [])),
+            'company_name':job.get('company_name', 'Unknown Company name'),
             'industry_name': job.get('industry_name', 'Unknown Industry'),
             'job_title': job.get('job_title', 'Unknown Title'),
             'salaryrange': job.get('salaryrange', 'unknown salary'),
@@ -38,6 +39,7 @@ def generate_recommendation(job, match_count, industry_match, title_match, salar
     """Stage 5: Generate a job recommendation."""
     return {
         'job_title': job['job_title'],
+        'company_name': job['company_name'],
         'industry_name': job['industry_name'],
         'match_count': match_count,
         'job_id': job['job_id'],

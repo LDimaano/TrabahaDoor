@@ -8,11 +8,11 @@ function HomeJobSeeker() {
   const [filters, setFilters] = useState({
     employmentTypes: [],
     salaryRanges: [],
-    industry: '' // Add industry to the initial state
+    industry: '' 
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [userSkills, setUserSkills] = useState([]);
-  const [activeTab, setActiveTab] = useState('all'); // New state for active tab
+  const [activeTab, setActiveTab] = useState('all'); 
 
   const handleFilterChange = (filterType, selectedItems) => {
     setFilters(prevFilters => ({
@@ -28,21 +28,20 @@ function HomeJobSeeker() {
     }
   };
 
-  // Inline styles for the title
   const titleStyle = {
-    fontSize: '2rem', // Font size
-    fontWeight: '700', // Font weight
-    color: '#333', // Darker text color
-    textAlign: 'center', // Center the text
-    margin: '2rem 0', // Margin above and below
-    position: 'relative', // Position relative for pseudo-elements
+    fontSize: '2rem', 
+    fontWeight: '700', 
+    color: '#333', 
+    textAlign: 'center', 
+    margin: '2rem 0', 
+    position: 'relative', 
   };
 
   const subtitleStyle = {
-    fontSize: '1.2rem', // Smaller font size for the subtitle
-    color: '#666', // Lighter text color
-    textAlign: 'center', // Center the subtitle
-    marginTop: '0.5rem', // Space above the subtitle
+    fontSize: '1.2rem',
+    color: '#666', 
+    textAlign: 'center', 
+    marginTop: '0.5rem', 
   };
 
   return (
@@ -55,13 +54,10 @@ function HomeJobSeeker() {
         </div>
         <SearchForm onSearch={handleSearchChange} />
         <div className="row mt-3">
-          {/* Filter Section (taking 3 columns) */}
           <div className="col-md-3">
             <FilterSection onFilterChange={handleFilterChange} />
           </div>
-          {/* Job List (taking 9 columns, entire remaining width) */}
           <div className="col-md-9">
-            {/* Tab Interface */}
             <div className="nav nav-tabs mb-3">
               <button 
                 className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`} 
@@ -76,8 +72,6 @@ function HomeJobSeeker() {
                 All Jobs
               </button>
             </div>
-
-            {/* Conditional Rendering of Job Lists */}
             <JobList filters={filters} searchQuery={searchQuery} userSkills={userSkills} isRecommended={activeTab === 'recommended'} />
           </div>
         </div>

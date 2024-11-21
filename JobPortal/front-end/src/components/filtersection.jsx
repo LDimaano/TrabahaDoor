@@ -27,7 +27,7 @@ function FilterSection({ onFilterChange }) {
   };
 
   return (
-    <div className="col-md-6"> {/* Adjusted to col-md-6 for more space */}
+    <div className="col-md-6">
       <FilterGroup
         title="Employment Type"
         items={employmentTypes}
