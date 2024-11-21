@@ -38,17 +38,18 @@ const EmployerDashboard = () => {
         <Header />
         <section>
           <h3>Employer Dashboard</h3>
-          <div className="row g-4 mt-4">
-            <div className="col-lg-6 col-md-12">
+          <div className="row g-3 mt-4">
+            {/* Adjusted col sizes for smaller placeholders */}
+            <div className="col-lg-3 col-md-6 col-sm-12">
               <ChartPlaceholder1 />
             </div>
-            <div className="col-lg-6 col-md-12">
+            <div className="col-lg-3 col-md-6 col-sm-12">
               <ChartPlaceholder2 />
             </div>
-            <div className="col-lg-6 col-md-12">
+            <div className="col-lg-3 col-md-6 col-sm-12">
               <ChartPlaceholder3 />
             </div>
-            <div className="col-lg-6 col-md-12">
+            <div className="col-lg-3 col-md-6 col-sm-12">
               <ChartPlaceholder4 />
             </div>
           </div>
@@ -63,6 +64,7 @@ const EmployerDashboard = () => {
       >
         <FontAwesomeIcon icon={faBars} />
       </button>
+
       <style jsx>{`
         .slide-in {
           transform: translateX(0);
