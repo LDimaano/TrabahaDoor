@@ -78,11 +78,12 @@ const ChartPlaceholder1 = () => {
       <Pie
         data={chartData}
         options={{
-          maintainAspectRatio: false, // Ensures the chart stretches to fit container
+          maintainAspectRatio: true, // Preserves the aspect ratio of the chart
+          responsive: true, // Ensures the chart resizes with the container
           plugins: {
             legend: {
               display: true,
-              position: "top", // Position legend properly
+              position: "top",
             },
           },
         }}
