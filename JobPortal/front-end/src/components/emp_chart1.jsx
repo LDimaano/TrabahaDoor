@@ -68,21 +68,19 @@ const ChartPlaceholder1 = () => {
 
   return (
     <div
-    className="bg-light border rounded shadow-sm p-4 text-center"
-    style={{
-      height: "400px",
-      overflow: "hidden", // Prevents content from overflowing
-      display: 'flex', // Enables flexbox layout
-      justifyContent: 'center', // Centers horizontally
-      alignItems: 'center', // Centers vertically
-    }}
-  >
-    <h5 className="mb-4">Applicant Gender Distribution</h5>
+  className="d-flex flex-column align-items-center bg-light border rounded shadow-sm p-4"
+  style={{
+    height: "100%", // Allow the parent container to control height
+    minHeight: "320px", // Prevent the chart from collapsing
+  }}
+>
+  <h5 className="mb-4">Applicant Gender Distribution</h5>
+  <div style={{ flex: 1, width: "100%", position: "relative" }}>
     <Pie
       data={chartData}
       options={{
-        maintainAspectRatio: true, // Preserves the aspect ratio of the chart
-        responsive: true, // Ensures the chart resizes with the container
+        maintainAspectRatio: false, // Fills the container dynamically
+        responsive: true,
         plugins: {
           legend: {
             display: true,
@@ -92,7 +90,7 @@ const ChartPlaceholder1 = () => {
       }}
     />
   </div>
-
+</div>
   ); 
 };
 
