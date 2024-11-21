@@ -82,9 +82,13 @@ const BarChart = () => {
         data={chartData} 
         options={{
           maintainAspectRatio: false,
+          indexAxis: 'y',  // This makes the bars horizontal
           scales: {
+            x: {
+              beginAtZero: true,  // Ensure the x-axis starts at 0
+            },
             y: {
-              beginAtZero: true,
+              beginAtZero: true,  // Ensure the y-axis starts at 0
             },
           },
         }} 
