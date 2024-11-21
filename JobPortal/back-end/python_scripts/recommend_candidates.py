@@ -69,9 +69,13 @@ def recommend_candidates(job_postings, applicants, contact_history):
         job_title = contact.get('job_title', "No Job Title")
         profile_picture_url = contact.get('profile_picture_url', '')
         skills = contact.get('skills', [])
+        emp_job_listings = contact.get('empjoblistings', [])  # Employer's job listings
 
-        # Ensure jobseeker only appears once based on user_id
-        if js_user_id not in seen_user_ids:
+        # Check if there's at least one similar job listing between the employer's and the job postings
+        has_similar_job_title = any(job_title in job.get('job_title', '') for job in emp_job_listings)
+
+        # Only recommend applicants from contact history if there's a job title match
+        if has_similar_job_title and js_user_id not in seen_user_ids:
             contact_matches.append({
                 'user_id': js_user_id,
                 'full_name': full_name,
