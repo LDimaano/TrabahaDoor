@@ -19,7 +19,7 @@ function Demographics() {
       </div>
       <main className="flex-grow-1 p-4">
         <section className="py-2">
-          <h2 className="text-start fs-4">User Dashboard Overview</h2>
+          <h2 className="text-start fs-4">Admin Dashboard</h2>
         </section>
 
         <div className="row gx-2 mb-4">
