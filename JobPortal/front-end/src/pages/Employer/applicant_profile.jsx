@@ -166,7 +166,6 @@ const MyProfile = () => {
           skills: data.skills || [],
           description: firstJobExperience.description || 'No Description', 
           company: firstJobExperience.company || 'No Company Provided',
-          salary: firstJobExperience.salary || 'Not Specified',
         });
 
         setIsLoading(false);

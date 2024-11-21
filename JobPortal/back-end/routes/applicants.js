@@ -111,14 +111,14 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
     if (jobSeekerData.rows.length === 0) {
       return res.status(404).json({ message: 'Job seeker not found' });
     }
-
+    console.log(jobExperienceData.rows);
     const jobExperiences = jobExperienceData.rows.map(exp => ({
       job_title: exp.job_title || 'Not Specified',
       company: exp.company || 'Not Specified',
-      salary: exp.salary || 'Not Specified',
       start_date: exp.start_date ? new Date(exp.start_date).toLocaleDateString() : 'Not Provided',
       end_date: exp.end_date ? new Date(exp.end_date).toLocaleDateString() : 'Not Provided',
-      description: exp.description || 'No Description'
+      description: exp.description || 'No Description',
+      salary: exp.salary || 'Not Provided'
     }));
 
 
