@@ -94,7 +94,14 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
 
 
     const jobExperienceData = await pool.query(`
-      SELECT je.jobtitle_id, jt.job_title, je.company, je.salary, je.start_date, je.end_date, je.description
+      SELECT 
+      je.jobtitle_id, 
+      jt.job_title, 
+      je.company, 
+      je.start_date, 
+      je.end_date, 
+      je.description,
+      je.salary 
       FROM job_experience je
       JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
       WHERE je.user_id = $1;
