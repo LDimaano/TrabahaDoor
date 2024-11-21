@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // For navigation
+import { Helmet } from "react-helmet";
+import { useNavigate } from 'react-router-dom'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Header from '../../components/empheader';
@@ -7,10 +8,10 @@ import EmployerProfile from '../../components/emp_profile';
 import EmployerCard from '../../components/emp_card';
 
 const MyProfile = () => {
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate(); 
 
   const handleBack = () => {
-    navigate(-1); // Navigate back
+    navigate(-1); 
   };
   
   const [employerData, setEmployerData] = useState({});
@@ -18,7 +19,7 @@ const MyProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const userId = sessionStorage.getItem('user_id'); // Fetch user ID from session
+    const userId = sessionStorage.getItem('user_id'); 
   
     const fetchEmployerData = async () => {
       try {
