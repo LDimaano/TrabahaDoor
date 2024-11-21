@@ -56,7 +56,13 @@ const BarChart = () => {
   }, []);
 
   return (
-    <div className="bg-light border rounded shadow-sm p-4" style={{ height: '400px' }}> {/* Increased height for better layout */}
+    <div
+  className="d-flex flex-column align-items-center bg-light border rounded shadow-sm p-4"
+  style={{
+    height: "100%", // Allow the parent container to control height
+    minHeight: "320px", // Prevent the chart from collapsing
+  }}
+>
       <h5 className="mb-4 text-center">Job Title of Applicants</h5> {/* Chart Title */}
       <Bar 
         data={chartData} 
