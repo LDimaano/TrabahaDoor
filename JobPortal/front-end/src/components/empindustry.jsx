@@ -48,10 +48,10 @@ const BarChart = () => {
 
   const downloadPDF = () => {
     const doc = new jsPDF();
-    doc.text('Location Distribution Report', 14, 10);
+    doc.text('Industry Distribution Report', 14, 10);
 
     // Define table columns and data
-    const tableColumn = ["Location", "Count"];
+    const tableColumn = ["Industry", "Count"];
     const tableRows = chartData.labels.map((label, index) => [label, chartData.datasets[0].data[index]]);
 
     // Add table to PDF
@@ -66,8 +66,8 @@ const BarChart = () => {
   };
 
   return (
-    <div style={{ position: 'relative' }}>
-       <FaDownload 
+    <div style={{ position: 'relative', height: '400px' }}>
+      <FaDownload 
         onClick={downloadPDF} 
         style={{
           position: 'absolute',
@@ -82,12 +82,17 @@ const BarChart = () => {
         data={chartData} 
         options={{
           maintainAspectRatio: false,
+          indexAxis: 'y', // This makes the chart horizontal
           scales: {
+            x: {
+              beginAtZero: true, // Ensure x-axis starts at 0 for horizontal bars
+            },
             y: {
               beginAtZero: true,
             },
           },
         }} 
+        style={{ height: '100%', width: '100%' }}
       />
     </div>
   );
