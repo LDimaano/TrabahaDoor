@@ -65,8 +65,8 @@ function BarChart() {
     <Container>
       <Card className="shadow-sm p-4">
         <Card.Body>
-          <h4 className="text-dark text-center mb-4">Time to Fill Analysis</h4>
-          <p className="text-muted text-center mb-5">Showing Average Time to Fill per Industry</p>
+        <h4 className="text-dark text-left mb-4">Time to Fill Analysis</h4>
+        <p className="text-muted text-left mb-5">Showing Average Time to Fill per Industry</p>
 
           {error && <Alert variant="danger">{error}</Alert>}
 
@@ -128,14 +128,15 @@ function BarChart() {
                 </div>
               ))}
             </div>
-            <div className="mt-4 d-flex align-items-center">
-              <div
-                className="bg-primary"
-                style={{ width: "16px", height: "16px", borderRadius: "3px", marginRight: "8px" }}
-              ></div>
-              <span className="text-muted">Days</span>
-            </div>
-            <div className="mt-4 d-flex justify-content-end">
+            <div className="mt-4 d-flex align-items-center justify-content-start">
+  <div
+    className="bg-primary"
+    style={{ width: "16px", height: "16px", borderRadius: "3px", marginRight: "8px" }}
+  ></div>
+  <span className="text-muted">Days</span>
+</div>
+
+            <div className="mt-4 d-flex justify-content-start">
               <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
                 Download CSV
               </Button>
@@ -143,6 +144,7 @@ function BarChart() {
                 Download PDF
               </Button>
             </div>
+
           </div>
         </Card.Body>
       </Card>
