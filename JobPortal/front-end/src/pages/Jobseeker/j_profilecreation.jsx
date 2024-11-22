@@ -158,19 +158,15 @@ const handleModalCancel = () => {
   
   
 const handleSubmit = async (e) => {
+  e.preventDefault(); // Prevent form submission default behavior
 
   // Ensure user ID is available
   const user_id = window.location.pathname.split('/')[2];
 
   // Default profile picture URL if no photo is set
   const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/jobseeker.png";
-  
-  // If photo is not set, use default profile picture
-  if (!photo) {
-    setPhoto(defaultProfilePictureUrl); // Use default profile picture if no file is uploaded
-  }
 
-  // Proceed with profile data submission
+  // Prepare the profile data
   const profileData = {
     user_id,
     fullName,
@@ -189,11 +185,11 @@ const handleSubmit = async (e) => {
       endDate: exp.endDate,
       description: exp.description,
     })),
-    profile_picture_url: photo, // Ensure this is populated correctly (default or uploaded)
+    profile_picture_url: photo || defaultProfilePictureUrl, // Use default if photo is null/undefined
   };
 
   console.log(profileData);
-  
+
   try {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/profile`, {
       method: 'POST',
@@ -210,6 +206,7 @@ const handleSubmit = async (e) => {
     const responseBody = await response.json();
     console.log('Profile created successfully:', responseBody);
 
+    // Redirect to login after 1 second
     setTimeout(() => {
       navigate('/login');
     }, 1000);
@@ -218,6 +215,7 @@ const handleSubmit = async (e) => {
     setError('Failed to submit the profile. Please try again.');
   }
 };
+
 
   
   useEffect(() => {
