@@ -42,29 +42,40 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
 
   const handleConfirmStatusChange = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/${selectedJobId}/status`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }), // Send the new status
-      });
-  
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to update job status');
-      }
-  
-      const data = await response.json();
-      console.log(`Job ${selectedJobId} status updated to:`, data.status);
-      alert(`Job status updated to: ${data.status}`);
-      setShowStatusModal(false); // Close the modal after success
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/${selectedJobId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: newStatus }), // Send the new status
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to update job status');
+        }
+
+        const data = await response.json();
+        console.log(`Job ${selectedJobId} status updated to:`, data.status);
+
+        // Update UI to reflect the new status without refreshing
+        setCurrentListings((prevListings) => 
+            prevListings.map((listing) => 
+                listing.job_id === selectedJobId 
+                    ? { ...listing, status: newStatus } 
+                    : listing
+            )
+        );
+
+        // Set success message
+        setSuccessMessage('Job status updated successfully!');
+        setShowStatusModal(false); 
     } catch (error) {
-      console.error('Error updating job status:', error);
-      alert('Failed to update job status. Please try again.');
-      setShowStatusModal(false); // Close the modal even on failure
+        console.error('Error updating job status:', error);
+        setShowStatusModal(false); 
     }
-  };
+};
+
   
   
 
