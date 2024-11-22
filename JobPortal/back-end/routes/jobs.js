@@ -347,7 +347,7 @@ router.get('/postedjobs', async (req, res) => {
     JOIN industries ON joblistings.industry_id = industries.industry_id
     JOIN emp_profiles ON joblistings.user_id = emp_profiles.user_id
     LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
-    WHERE 1=1 AND joblistings.status = 'Hiring'
+    WHERE joblistings.status = 'Hiring'
     ORDER BY joblistings.datecreated DESC;
     `;
 

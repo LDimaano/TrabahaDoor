@@ -69,6 +69,9 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
 
         // Set success message
         setSuccessMessage('Job status updated successfully!');
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 3000);
         setShowStatusModal(false); 
     } catch (error) {
         console.error('Error updating job status:', error);
