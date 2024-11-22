@@ -337,80 +337,48 @@ router.get('/applications/filledCount/:userId', async (req, res) => {
 const path = require('path');
 
 // Function to calculate time to fill and send to Python
-async function calculateTimeToFillForEmployer(userId) {
-  const query = `
-    SELECT jl.job_id, jt.job_title, jl.positions,  COUNT(*) AS filled_count, jl.datecreated, jl.datefilled
+//time to fill analysis-emp side
+router.get('/timetofillemp/:userId', async (req, res) => {
+  const { userId } = req.params;
+  if (!userId || isNaN(userId)) {
+    return res.status(400).json({ message: 'Invalid user ID' });
+  }
+  try {
+    const jobListings = await pool.query(`
+      SELECT jl.job_id, jt.job_title, jl.positions,  COUNT(*) AS filled_count, jl.datecreated, jl.datefilled
       FROM applications a
       JOIN joblistings jl ON a.job_id = jl.job_id
       JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
       WHERE jl.user_id = $1 AND a.status = 'Filled'
       GROUP BY jl.job_id, jt.job_title, jl.positions
       ORDER BY filled_count DESC;
-  `;
+    `, [userId]);
 
-  try {
-    // Get filled job data
-    const result = await pool.query(query, [userId]);
+    const python = spawn('python', [path.join(__dirname, '..', 'python_scripts', 'time_to_fill_emp.py')]);
+    // Send data to Python script
+    python.stdin.write(JSON.stringify(jobListings.rows));
+    python.stdin.end();
 
-    // Prepare the data to be sent to Python
-    const jobData = result.rows.map(row => ({
-      job_id: row.job_id,
-      job_title: row.job_title,
-      datecreated: row.datecreated,
-      datefilled: row.datefilled,
-      positions: row.positions,
-      filled_count: row.filled_count,
-    }));
-
-    // Send data to Python for "time to fill" calculation
-    return new Promise((resolve, reject) => {
-      const pythonProcess = spawn('python', [
-        path.join(__dirname, '..', 'python_scripts', 'time_to_fill_emp.py'),
-      ]);      
-
-      // Send job data to Python
-      pythonProcess.stdin.write(JSON.stringify(jobData));
-      pythonProcess.stdin.end();
-
-      let resultData = '';
-
-      pythonProcess.stdout.on('data', (data) => {
-        resultData += data.toString();
-      });
-
-      pythonProcess.stderr.on('data', (error) => {
-        console.error('Error in Python process:', error.toString());
-      });
-
-      pythonProcess.on('close', (code) => {
-        if (code === 0) {
-          resolve(JSON.parse(resultData));
-        } else {
-          reject(new Error('Python process failed'));
-        }
-      });
+    // Capture output from Python
+    let dataToSend = '';
+    python.stdout.on('data', (data) => {
+      dataToSend += data.toString();
     });
 
-  } catch (error) {
-    console.error('Error fetching job data for time to fill calculation:', error);
-    throw error;
-  }
-}
-
-// di pa to nalalagay sa frontend
-router.get('/applications/timeToFill/:userId', async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const timeToFill = await calculateTimeToFillForEmployer(userId);
-
-    res.status(200).json({
-      userId,
-      timeToFill,
+    python.on('close', (code) => {
+      // Log the output from Python before sending the response
+      console.log('Output from Python script time to fill empside:', dataToSend);
+      try {
+        const result = JSON.parse(dataToSend); // Try parsing the Python output
+        res.json(result); // Send the parsed result to the client
+      } catch (error) {
+        console.error('Failed to parse Python output as JSON', error);
+        res.status(500).json({ error: 'Failed to process the data' });
+      }
     });
-  } catch (error) {
-    console.error('Error calculating time to fill:', error);
-    res.status(500).json({ error: 'Failed to calculate time to fill analysis' });
+  } catch (err) {
+    console.error('Error fetching job listings:', err.message);
+    res.status(500).send('Server Error');
   }
 });
 

@@ -14,7 +14,7 @@ function BarChart() {
     const fetchData = async () => {
       const userId = sessionStorage.getItem('user_id');
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/applications/timetoFill/${userId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/timetofillemp/${userId}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -37,12 +37,12 @@ function BarChart() {
     fetchData();
   }, []);
 
-  const industries = Object.keys(timeToFillData)
-    .map((industry) => ({
-      name: industry,
-      height: timeToFillData[industry] || 0,
+  const jobTitles = Object.keys(timeToFillData)
+    .map((job_title) => ({
+      name: job_title,
+      height: timeToFillData[job_title] || 0,
     }))
-    .sort((a, b) => b.height - a.height); 
+    .sort((a, b) => b.height - a.height);
 
   const generatePDFReport = () => {
     const doc = new jsPDF();
@@ -50,12 +50,12 @@ function BarChart() {
     doc.setFontSize(16);
     doc.text('Time to Fill Analysis Report', 20, 20);
     doc.setFontSize(12);
-    doc.text('Average Time to Fill per Industry', 20, 30);
+    doc.text('Average Time to Fill per Job Title', 20, 30);
 
-    const tableData = industries.map((industry) => [industry.name, `${industry.height} days`]);
+    const tableData = jobTitles.map((job_title) => [job_title.name, `${job_title.height} days`]);
 
     doc.autoTable({
-      head: [['Industry', 'Average Time to Fill (days)']],
+      head: [['Job Title', 'Average Time to Fill (days)']],
       body: tableData,
       startY: 40,
     });
@@ -68,7 +68,7 @@ function BarChart() {
       <header className="mb-4 d-flex justify-content-between align-items-center">
         <div>
           <h2 className="h4 text-dark">Time to Fill Analysis</h2>
-          <p className="text-muted">Showing Average Time to Fill per Industry</p>
+          <p className="text-muted">Showing Average Time to Fill per Job Title</p>
         </div>
         <Button variant="primary" onClick={generatePDFReport}>
           <FontAwesomeIcon icon={faDownload} className="me-2" />
@@ -83,16 +83,16 @@ function BarChart() {
       </nav>
 
       <div className="d-flex justify-content-between">
-        {industries.map((industry, index) => (
+        {jobTitles.map((job_title, index) => (
           <div key={index} className="text-center">
             <OverlayTrigger
               placement="top"
-              overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
+              overlay={<Tooltip>{`${job_title.height} days`}</Tooltip>}
             >
               <div
                 className="position-relative"
                 style={{
-                  height: `${industry.height}px`,
+                  height: `${job_title.height}px`,
                   width: '48px',
                   cursor: 'pointer',
                   backgroundColor: 'blue',
@@ -101,7 +101,7 @@ function BarChart() {
                 }}
               ></div>
             </OverlayTrigger>
-            <span className="text-muted d-block mt-2">{industry.name}</span>
+            <span className="text-muted d-block mt-2">{job_title.name}</span>
           </div>
         ))}
       </div>
