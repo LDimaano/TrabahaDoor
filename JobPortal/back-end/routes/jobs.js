@@ -332,21 +332,24 @@ router.get('/postedjobs', async (req, res) => {
 
   try {
     let query = `
-      SELECT
+        SELECT
         joblistings.job_id,
         job_titles.job_title,
         emp_profiles.company_name,
         industries.industry_name,
         joblistings.salaryrange,
+        joblistings.datecreated,
         joblistings.jobtype,
         pp.profile_picture_url,
         industries.industry_id
-      FROM joblistings
-      JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
-      JOIN industries ON joblistings.industry_id = industries.industry_id
-      JOIN emp_profiles ON joblistings.user_id = emp_profiles.user_id
-      LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
-      WHERE 1=1
+    FROM joblistings
+    JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
+    JOIN industries ON joblistings.industry_id = industries.industry_id
+    JOIN emp_profiles ON joblistings.user_id = emp_profiles.user_id
+    LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
+    WHERE 1=1
+    ORDER BY joblistings.datecreated DESC;
+
     `;
 
     const values = [];
