@@ -13,40 +13,51 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
   const [selectedJobId, setSelectedJobId] = useState(null); // Track which job to delete
   const [successMessage, setSuccessMessage] = useState(''); 
 
-  // Function to update job status
-  const handleStatusChange = async (jobId, newStatus) => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/employers/updatejobstatus/${jobId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // Include cookies if necessary
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
+  // Function to navigate to the job description page using jobId
+  const handleApplyClick = (jobId) => {
+    navigate(`/emp_jobdescription/${jobId}`);
+  };
+  
+  const handleSeeApplicants = (jobId) => {
+    navigate(`/applicantlist/${jobId}`);
+  };
 
+  const showDeleteConfirmation = (jobId) => {
+    setSelectedJobId(jobId);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDeleteJob= () => {
+    handleDeleteJob();
+    setShowDeleteModal(false);
+  };
+
+
+  // Function to handle job deletion
+  const handleDeleteJob = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/deljoblistings/${selectedJobId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // If you have cookies/sessions
+      });
+  
       if (response.ok) {
-        setCurrentListings((prevListings) =>
-          prevListings.map((listing) =>
-            listing.job_id === jobId ? { ...listing, status: newStatus } : listing
-          )
-        );
-        setSuccessMessage('Job status updated successfully!');
+        setCurrentListings((prevListings) => prevListings.filter(listing => listing.job_id !== selectedJobId));
+        setSuccessMessage('Job deleted successfully!');
         setTimeout(() => {
           setSuccessMessage('');
         }, 3000);
+        console.log(`Job ${selectedJobId} deleted successfully.`);
       } else {
-        console.error(`Failed to update job status: ${response.statusText}`);
+        console.error(`Failed to delete job ${selectedJobId}: ${response.statusText}`);
       }
     } catch (error) {
-      console.error(`Error updating job status:`, error);
+      console.error(`Error deleting job ${selectedJobId}:`, error);
     }
-  };
-
-  // Other functions...
+  };  
 
   // Get current listings
   const indexOfLastListing = currentPage * listingsPerPage;
@@ -125,7 +136,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
         paginate={paginate} 
         currentPage={currentPage}
       />
-      
+
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div 
