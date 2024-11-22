@@ -63,6 +63,9 @@ function BarChart() {
     doc.save('TimeToFillReport.pdf');
   };
 
+  // Calculate bar width based on the number of job titles
+  const barWidth = jobTitles.length > 0 ? `${100 / jobTitles.length}%` : '48px';
+
   return (
     <section className="card border-light shadow-sm p-4">
       <header className="mb-4 d-flex justify-content-between align-items-center">
@@ -82,7 +85,8 @@ function BarChart() {
         <button className="nav-link active" aria-current="page">Time to Fill</button>
       </nav>
 
-      <div className="d-flex justify-content-between">
+      {/* Fixed height container for the bar chart */}
+      <div className="d-flex justify-content-between" style={{ height: '300px', overflow: 'auto' }}>
         {jobTitles.map((job_title, index) => (
           <div key={index} className="text-center">
             <OverlayTrigger
@@ -92,8 +96,8 @@ function BarChart() {
               <div
                 className="position-relative"
                 style={{
-                  height: `${job_title.height}px`,
-                  width: '48px',
+                  height: `${job_title.height}px`, // Bar height based on time to fill
+                  width: barWidth, // Dynamic width
                   cursor: 'pointer',
                   backgroundColor: 'blue',
                   border: '2px solid rgba(0, 0, 123, 0.5)',
