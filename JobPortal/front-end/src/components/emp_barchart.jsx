@@ -66,6 +66,9 @@ function BarChart() {
   // Calculate max height to normalize the bar height for scaling
   const maxHeight = Math.max(...jobTitles.map((job_title) => job_title.height));
   const maxBarHeight = 200; // Max bar height in pixels
+  
+  // Calculate the width of each bar based on the number of job titles
+  const barWidth = 100 / jobTitles.length; // Percentage width based on the number of bars
 
   return (
     <section className="card border-light shadow-sm p-4">
@@ -111,6 +114,7 @@ function BarChart() {
                 display: 'flex',
                 flexDirection: 'column', // Make sure the text is centered below the bar
                 alignItems: 'center',
+                width: `${barWidth}%`, // Dynamically set the width of the bar
               }}
             >
               <OverlayTrigger
@@ -128,7 +132,7 @@ function BarChart() {
                   }}
                 ></div>
               </OverlayTrigger>
-              <span className="text-muted d-block mt-2">{job_title.name}</span>
+              {/* <span className="text-muted d-block mt-2">{job_title.name}</span> */}
             </div>
           );
         })}
