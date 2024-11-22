@@ -11,13 +11,15 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
   const [listingsPerPage] = useState(5); // Set the number of listings per page
   const [showDeleteModal, setShowDeleteModal] = useState(false); // Track modal visibility
   const [selectedJobId, setSelectedJobId] = useState(null); // Track which job to delete
-  const [successMessage, setSuccessMessage] = useState(''); 
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showStatusModal, setShowStatusModal] = useState(false); // Track status change modal visibility
+  const [newStatus, setNewStatus] = useState(''); // Track the new status value for the job
 
   // Function to navigate to the job description page using jobId
   const handleApplyClick = (jobId) => {
     navigate(`/emp_jobdescription/${jobId}`);
   };
-  
+
   const handleSeeApplicants = (jobId) => {
     navigate(`/applicantlist/${jobId}`);
   };
@@ -27,40 +29,47 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDeleteJob= () => {
+  const handleConfirmDeleteJob = () => {
     handleDeleteJob();
     setShowDeleteModal(false);
   };
 
-  const handleStatusChange = async (jobId, newStatus) => {
+  const handleStatusChange = (jobId, newStatus) => {
+    setSelectedJobId(jobId);
+    setNewStatus(newStatus); // Set the new status value
+    setShowStatusModal(true); // Show the confirmation modal
+  };
+
+  const handleConfirmStatusChange = async () => {
     try {
-      // Send a PATCH request to update the job status in the backend
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/${jobId}/status`, {
+      // Send a PATCH request to update the status
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/${selectedJobId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Include credentials if necessary (e.g., for cookies)
-        body: JSON.stringify({ status: newStatus }), // Send the new status in the request body
+        credentials: 'include',
+        body: JSON.stringify({ status: newStatus }),
       });
-  
+
       if (response.ok) {
         // Update the status in the current listings in the frontend
         setCurrentListings((prevListings) =>
           prevListings.map((listing) =>
-            listing.job_id === jobId ? { ...listing, status: newStatus } : listing
+            listing.job_id === selectedJobId ? { ...listing, status: newStatus } : listing
           )
         );
-  
-        console.log(`Job ${jobId} status updated to: ${newStatus}`);
+        console.log(`Job ${selectedJobId} status updated to: ${newStatus}`);
       } else {
-        console.error(`Failed to update status for job ${jobId}: ${response.statusText}`);
+        console.error(`Failed to update status for job ${selectedJobId}: ${response.statusText}`);
       }
     } catch (error) {
-      console.error(`Error updating status for job ${jobId}:`, error);
+      console.error(`Error updating status for job ${selectedJobId}:`, error);
     }
+
+    // Close the modal after confirming
+    setShowStatusModal(false);
   };
-  
 
   // Function to handle job deletion
   const handleDeleteJob = async () => {
@@ -72,7 +81,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
         },
         credentials: 'include', // If you have cookies/sessions
       });
-  
+
       if (response.ok) {
         setCurrentListings((prevListings) => prevListings.filter(listing => listing.job_id !== selectedJobId));
         setSuccessMessage('Job deleted successfully!');
@@ -86,7 +95,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
     } catch (error) {
       console.error(`Error deleting job ${selectedJobId}:`, error);
     }
-  };  
+  };
 
   // Get current listings
   const indexOfLastListing = currentPage * listingsPerPage;
@@ -158,7 +167,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
           ))}
         </tbody>
       </table>
-      
+
       <Pagination 
         listingsPerPage={listingsPerPage} 
         totalListings={totalListings} 
@@ -214,29 +223,57 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
           </div>
         </div>
       )}
+
+      {/* Job Status Confirmation Modal */}
+      {showStatusModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            right: '0',
+            bottom: '0',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: '9999',
+          }}
+        >
+          <div 
+            style={{
+              backgroundColor: 'white',
+              padding: '20px',
+              borderRadius: '8px',
+              width: '400px',
+              maxWidth: '90%',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <h4 className="mb-3">Confirm Status Change</h4>
+            <p>Are you sure you want to change the job status to: {newStatus}?</p>
+
+            <div className="d-flex justify-content-end mt-4">
+              <button 
+                className="btn btn-secondary me-2" 
+                onClick={() => setShowStatusModal(false)}
+                style={{ padding: '10px 20px' }}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-primary" 
+                onClick={handleConfirmStatusChange}
+                style={{ padding: '10px 20px' }}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
-const Pagination = ({ listingsPerPage, totalListings, paginate, currentPage }) => {
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(totalListings / listingsPerPage); i++) {
-    pageNumbers.push(i);
-  }
-
-  return (
-    <nav>
-      <ul className="pagination justify-content-center">
-        {pageNumbers.map(number => (
-          <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-            <a onClick={() => paginate(number)} href="javascript:void(0)" className="page-link">
-              {number}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-};
 
 export default ApplicantJoblist;
