@@ -343,7 +343,7 @@ async function calculateTimeToFillForEmployer(userId) {
       FROM applications a
       JOIN joblistings jl ON a.job_id = jl.job_id
       JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
-      WHERE jl.user_id = 21 AND a.status = 'Filled'
+      WHERE jl.user_id = $1 AND a.status = 'Filled'
       GROUP BY jl.job_id, jt.job_title, jl.positions
       ORDER BY filled_count DESC;
   `;
