@@ -42,7 +42,7 @@ function BarChart() {
       name: industry,
       height: timeToFillData[industry] || 0,
     }))
-    .sort((a, b) => b.height - a.height); // Sort in descending order by height (days)
+    .sort((a, b) => b.height - a.height); 
 
   const generatePDFReport = () => {
     const doc = new jsPDF();

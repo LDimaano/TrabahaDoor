@@ -339,12 +339,13 @@ const path = require('path');
 // Function to calculate time to fill and send to Python
 async function calculateTimeToFillForEmployer(userId) {
   const query = `
-    SELECT jl.job_id, jl.industry_name, jl.datecreated, a.datefilled, jl.positions, COUNT(*) AS filled_count
-    FROM applications a
-    JOIN joblistings jl ON a.job_id = jl.job_id
-    WHERE jl.user_id = $1 AND a.status = 'Filled'
-    GROUP BY jl.job_id, jl.industry_name, jl.datecreated, a.datefilled, jl.positions
-    ORDER BY jl.datecreated;
+    SELECT jl.job_id, jt.job_title, jl.positions,  COUNT(*) AS filled_count, jl.datecreated, jl.datefilled
+      FROM applications a
+      JOIN joblistings jl ON a.job_id = jl.job_id
+      JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
+      WHERE jl.user_id = 21 AND a.status = 'Filled'
+      GROUP BY jl.job_id, jt.job_title, jl.positions
+      ORDER BY filled_count DESC;
   `;
 
   try {
@@ -354,7 +355,7 @@ async function calculateTimeToFillForEmployer(userId) {
     // Prepare the data to be sent to Python
     const jobData = result.rows.map(row => ({
       job_id: row.job_id,
-      industry_name: row.industry_name,
+      job_title: row.job_title,
       datecreated: row.datecreated,
       datefilled: row.datefilled,
       positions: row.positions,

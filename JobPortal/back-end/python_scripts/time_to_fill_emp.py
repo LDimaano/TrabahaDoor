@@ -16,7 +16,7 @@ def calculate_time_to_fill(job_data):
 
             result.append({
                 'job_id': job['job_id'],
-                'industry_name': job['industry_name'],
+                'job_title': job['job_title'],
                 'days_to_fill': days_to_fill
             })
 
