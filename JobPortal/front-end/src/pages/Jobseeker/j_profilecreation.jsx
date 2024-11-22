@@ -100,8 +100,12 @@ function ProfileCreation() {
   
     const userId = window.location.pathname.split('/')[2];
     
+    // Default profile picture URL
+    const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/jobseeker.png";
+  
     if (!file) {
-      console.error('No file selected');
+      console.log('No file selected, using default profile picture');
+      setPhoto(defaultProfilePictureUrl); // Set the default photo URL in state
       return;
     }
   
@@ -126,6 +130,7 @@ function ProfileCreation() {
       console.error('Error uploading profile picture:', error);
     }
   };
+
   
   // State for controlling the modal visibility
 const [showModal, setShowModal] = useState(false);

@@ -28,35 +28,38 @@ function EmployerProfileCreation() {
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
-
     const userId = window.location.pathname.split('/')[2];
-
+  
+    // Default profile picture URL
+    const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/employer.png";
+  
     if (!file) {
-      console.error('No file selected');
-      return;
+        console.log('No file selected, using default profile picture');
+        setPhoto(defaultProfilePictureUrl); // Set the default photo URL in state
+        return;
     }
-
+  
     const formData = new FormData();
     formData.append('profilePicture', file);
-
+  
     try {
-      console.log('Uploading file...', file);
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/upload-profile-picture/${userId}`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log('Uploaded image data:', data);
-      setPhoto(data.profilePictureUrl);
+        console.log('Uploading file...', file);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/upload-profile-picture/${userId}`, {
+            method: 'POST',
+            body: formData,
+        });
+  
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+  
+        const data = await response.json();
+        console.log('Uploaded image data:', data);
+        setPhoto(data.profilePictureUrl); // Set the uploaded photo URL in state
     } catch (error) {
-      console.error('Error uploading profile picture:', error);
+        console.error('Error uploading profile picture:', error);
     }
-  };
+};
 
   const handleSubmit = async () => {
     const user_id = window.location.pathname.split('/')[2];
