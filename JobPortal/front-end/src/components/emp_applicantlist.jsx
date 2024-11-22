@@ -119,6 +119,26 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
     }
   };
   
+  async function fetchFilledCount() {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applications/filledCount/${userId}`);
+      const data = await response.json();
+  
+      if (response.ok) {
+        data.filledCount.forEach(job => {
+          console.log(`Job ID: ${job.jobId}, Title: ${job.jobTitle}, Positions: ${job.positions}, Filled: ${job.isFilled}`);
+          // Use `job.isFilled` to determine if a job has been fully filled or still has positions available
+        });
+      } else {
+        console.error('Error fetching filled count:', data.error);
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+    }
+  }
+  
+  fetchFilledCount();
+  
 
   const renderApplicantRows = (listings) => {
     return listings.map((listing) => (

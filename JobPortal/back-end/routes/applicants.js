@@ -264,13 +264,153 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
       io.to(userId).emit('newNotification', notification);
     }
 
-    // Send success response
-    res.status(200).json({ message: 'Hiring stage updated, email sent, and notification sent successfully.' });
+    // Get the count of "Filled" applications for this job
+    const filledCountResult = await pool.query(
+      `SELECT COUNT(*) AS filled_count, jl.positions
+       FROM applications a
+       JOIN joblistings jl ON a.job_id = jl.job_id
+       WHERE jl.user_id = $1 AND a.status = 'Filled' AND a.job_id = $2`,
+      [userId, jobId]
+    );
+
+    const filledCount = filledCountResult.rows[0].filled_count;
+    const positions = filledCountResult.rows[0].positions;
+
+    // Determine if the job has been filled
+    const isJobFilled = filledCount >= positions;
+
+    // Send success response with the filled count and filled status
+    res.status(200).json({
+      message: 'Hiring stage updated, email sent, and notification sent successfully.',
+      filledCount: filledCount,
+      isJobFilled: isJobFilled
+    });
 
   } catch (error) {
     // Log the error and send a server error response
     console.error('Error updating hiring stage and sending notifications:', error);
     res.status(500).json({ error: 'Failed to update hiring stage. Please try again later.' });
+  }
+});
+
+
+async function getFilledCountForEmployer(userId) {
+  const query = `
+    SELECT jl.job_id, jt.job_title, jl.positions, COUNT(*) AS filled_count
+    FROM applications a
+    JOIN joblistings jl ON a.job_id = jl.job_id
+    JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
+    WHERE jl.user_id = $1 AND a.status = 'Filled'
+    GROUP BY jl.job_id, jt.job_title, jl.positions
+    ORDER BY filled_count DESC;
+  `;
+  
+  const result = await pool.query(query, [userId]);
+
+  return result.rows.map(row => {
+    const isFilled = row.filled_count >= row.positions; // Compare `positions` with `filled_count`
+    return {
+      jobId: row.job_id,
+      jobTitle: row.job_title,
+      positions: row.positions,
+      filledCount: row.filled_count,
+      isFilled, // True if the position has been filled, else false
+    };
+  });
+}
+
+router.get('/applications/filledCount/:userId', async (req, res) => {
+  const { userId } = req.params; // Change employerId to userId if it's the same for job seekers/employers
+
+  try {
+    // Get the count of "Filled" applications for the employer's jobs
+    const filledCount = await getFilledCountForEmployer(userId);
+
+    // Return the data with criteria for whether each job has been filled
+    res.status(200).json({ userId, filledCount });
+  } catch (error) {
+    console.error('Error fetching filled count:', error);
+    res.status(500).json({ error: 'Failed to fetch filled count. Please try again later.' });
+  }
+});
+
+const { spawn } = require('child_process');
+const path = require('path');
+
+// Function to calculate time to fill and send to Python
+async function calculateTimeToFillForEmployer(userId) {
+  const query = `
+    SELECT jl.job_id, jl.industry_name, jl.datecreated, a.datefilled, jl.positions, COUNT(*) AS filled_count
+    FROM applications a
+    JOIN joblistings jl ON a.job_id = jl.job_id
+    WHERE jl.user_id = $1 AND a.status = 'Filled'
+    GROUP BY jl.job_id, jl.industry_name, jl.datecreated, a.datefilled, jl.positions
+    ORDER BY jl.datecreated;
+  `;
+
+  try {
+    // Get filled job data
+    const result = await pool.query(query, [userId]);
+
+    // Prepare the data to be sent to Python
+    const jobData = result.rows.map(row => ({
+      job_id: row.job_id,
+      industry_name: row.industry_name,
+      datecreated: row.datecreated,
+      datefilled: row.datefilled,
+      positions: row.positions,
+      filled_count: row.filled_count,
+    }));
+
+    // Send data to Python for "time to fill" calculation
+    return new Promise((resolve, reject) => {
+      const pythonProcess = spawn('python', [
+        path.join(__dirname, 'time_to_fill_emp.py'),
+      ]);
+
+      // Send job data to Python
+      pythonProcess.stdin.write(JSON.stringify(jobData));
+      pythonProcess.stdin.end();
+
+      let resultData = '';
+
+      pythonProcess.stdout.on('data', (data) => {
+        resultData += data.toString();
+      });
+
+      pythonProcess.stderr.on('data', (error) => {
+        console.error('Error in Python process:', error.toString());
+      });
+
+      pythonProcess.on('close', (code) => {
+        if (code === 0) {
+          resolve(JSON.parse(resultData));
+        } else {
+          reject(new Error('Python process failed'));
+        }
+      });
+    });
+
+  } catch (error) {
+    console.error('Error fetching job data for time to fill calculation:', error);
+    throw error;
+  }
+}
+
+// di pa to nalalagay sa frontend
+router.get('/applications/timeToFill/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const timeToFill = await calculateTimeToFillForEmployer(userId);
+
+    res.status(200).json({
+      userId,
+      timeToFill,
+    });
+  } catch (error) {
+    console.error('Error calculating time to fill:', error);
+    res.status(500).json({ error: 'Failed to calculate time to fill analysis' });
   }
 });
 
