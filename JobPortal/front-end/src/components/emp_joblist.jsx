@@ -273,7 +273,29 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
         </div>
       )}
     </div>
+    
   );
 }
+const Pagination = ({ listingsPerPage, totalListings, paginate, currentPage }) => {
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(totalListings / listingsPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+  return (
+    <nav>
+      <ul className="pagination justify-content-center">
+        {pageNumbers.map(number => (
+          <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
+            <a onClick={() => paginate(number)} href="javascript:void(0)" className="page-link">
+              {number}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+};
+
 
 export default ApplicantJoblist;
