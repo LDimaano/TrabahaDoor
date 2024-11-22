@@ -334,7 +334,6 @@ router.get('/applications/filledCount/:userId', async (req, res) => {
   }
 });
 
-const { spawn } = require('child_process');
 const path = require('path');
 
 // Function to calculate time to fill and send to Python
