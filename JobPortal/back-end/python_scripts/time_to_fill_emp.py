@@ -9,12 +9,12 @@ def calculate_time_to_fill(data):
     # Iterate through job listings and calculate days to fill for each job title
     for job in data:
         try:
-            filled_count = int(job['filled_count'])  # Convert to int
-            positions = int(job['positions'])  # Convert to int
+            filled_count = int(job['filled_count'])  
+            positions = int(job['positions'])  
 
             # Only consider jobs that are fully filled
             if filled_count >= positions:
-                job_title = job['job_title']  # Use job_title instead of industry_name
+                job_title = job['job_title'] 
                 datecreated = datetime.strptime(job['datecreated'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
                 datefilled = datetime.strptime(job['datefilled'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
                 days_to_fill = (datefilled - datecreated).days
@@ -22,7 +22,6 @@ def calculate_time_to_fill(data):
                 # Append the time to fill for each job to the respective job title
                 job_title_time_to_fill[job_title].append(days_to_fill)
         except (ValueError, KeyError) as e:
-            # Print the error and job data to stderr for debugging purposes
             print(f"Skipping job due to error: {e}", file=sys.stderr)
             print(f"Job data: {job}", file=sys.stderr)
 

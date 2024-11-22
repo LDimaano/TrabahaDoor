@@ -3,8 +3,7 @@ const router = express.Router();
 const pool = require('../db');
 const { sendStatusUpdateEmail, sendContactNotificationEmail } = require('../mailer');
 const { spawn } = require('child_process');
-
-
+const path = require('path');
 
 router.get('/applicantlist', async (req, res) => {
   const { jobTitle, selectedIndustry } = req.query; 
@@ -334,9 +333,8 @@ router.get('/applications/filledCount/:userId', async (req, res) => {
   }
 });
 
-const path = require('path');
 
-// Function to calculate time to fill and send to Python
+
 //time to fill analysis-emp side
 router.get('/timetofillemp/:userId', async (req, res) => {
   const { userId } = req.params;

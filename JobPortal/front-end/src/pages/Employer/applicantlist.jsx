@@ -121,7 +121,17 @@ const ApplicantDashboard = () => {
 
   return (
     <div className="d-flex">
-      <div className={`col-auto p-0 d-lg-block ${isSidebarVisible ? 'd-block' : 'd-none'}`}>
+      <div
+        className={`col-auto p-0 d-lg-block ${isSidebarVisible ? 'd-block' : 'd-none'}`}
+        style={{
+          position: 'sticky',
+          top: '0',
+          height: '100vh',
+          overflowY: 'auto',
+          backgroundColor: '#f8f9fa',
+          zIndex: 1000,
+        }}
+      >
         <Sidebar />
       </div>
       <main className="flex-grow-1 p-4">
@@ -170,7 +180,7 @@ const ApplicantDashboard = () => {
           />
         </section>
       </main>
-      
+  
       {/* Sidebar toggle button for mobile */}
       <button
         className="btn btn-primary d-lg-none position-fixed"
@@ -179,7 +189,7 @@ const ApplicantDashboard = () => {
       >
         <i className="fa fa-bars"></i>
       </button>
-      
+  
       {/* Overlay for sidebar on mobile */}
       {isSidebarVisible && (
         <div
@@ -190,6 +200,7 @@ const ApplicantDashboard = () => {
       )}
     </div>
   );
+  
 };
 
 export default ApplicantDashboard;
