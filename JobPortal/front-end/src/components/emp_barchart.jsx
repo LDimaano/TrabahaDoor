@@ -69,8 +69,7 @@ function BarChart() {
 
   // Adjusted spacing and width calculation
   const barSpacing = jobTitles.length > 5 ? 10 : 5; // Reduced spacing between bars
-  const totalWidth = 95; // Reduced total width for the bars container (in percentage)
-  const barWidth = (totalWidth - (barSpacing * (jobTitles.length - 1))) / jobTitles.length; // Dynamic width per bar
+  const totalWidth = 100; // 100% width for bars container (no need for percentage width anymore)
 
   return (
     <section className="card border-light shadow-sm p-4">
@@ -111,7 +110,7 @@ function BarChart() {
               key={index}
               className="text-center"
               style={{
-                width: `${barWidth}%`, // Dynamically set the width of the bar
+                flex: 1, // Allow bars to stretch to fill available space
                 marginRight: index < jobTitles.length - 1 ? `${barSpacing}px` : '0', // Space between bars
                 display: 'flex',
                 flexDirection: 'column', // Make sure the text is centered below the bar
