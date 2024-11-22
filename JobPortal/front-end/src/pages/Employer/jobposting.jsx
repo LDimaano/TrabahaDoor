@@ -11,6 +11,7 @@ const JobPosting = () => {
   const [responsibilities, setResponsibilities] = useState("");
   const [jobDescription, setJobDescription] = useState(""); // Updated from requirements
   const [qualifications, setQualifications] = useState("");
+  const [positions, setPositions] = useState(0);
   const [jobTitle, setJobTitle] = useState(null); // Changed to null initially
   const [industry, setIndustry] = useState(null);
   const [industryOptions, setIndustryOptions] = useState([]);
@@ -129,7 +130,8 @@ const JobPosting = () => {
       Responsibilities: responsibilities,
       JobDescription: jobDescription, // Updated from requirements
       Qualifications: qualifications,
-      JobType: jobType // New field
+      JobType: jobType,
+      positions: positions // New field
     };
     
     try {
@@ -254,6 +256,19 @@ const JobPosting = () => {
               <option value="Work from Home">Work from Home</option>
             </select>
           </div>
+          <div className="mb-3">
+          <label htmlFor="positions" className="form-label">Positions</label>
+          <input
+            type="number"
+            id="positions"
+            className="form-control"
+            value={positions}
+            onChange={(e) => setPositions(parseInt(e.target.value) || 0)}
+            min="0" // Set the minimum value to 0
+            step="1" // Increment by 1 for each up/down arrow press
+          />
+        </div>
+
         </section>
 
 

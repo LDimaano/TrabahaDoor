@@ -120,7 +120,8 @@ router.post('/joblistings', async (req, res) => {
     Responsibilities,
     JobDescription,
     Qualifications,
-    skills 
+    skills,
+    positions // New field added here
   } = req.body;
 
   console.log('Received request body:', req.body);
@@ -129,14 +130,18 @@ router.post('/joblistings', async (req, res) => {
     return res.status(400).json({ error: 'User ID is required' });
   }
 
+  if (!positions || positions < 1) {
+    return res.status(400).json({ error: 'Positions must be a positive number' });
+  }
+
   try {
     const newJobResult = await pool.query(
       `INSERT INTO joblistings (
-        user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications
+        user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, positions
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING job_id`,
-      [user_id, jobtitle_id, industry_id, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications]
+      [user_id, jobtitle_id, industry_id, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications, positions]
     );
 
     const job_id = newJobResult.rows[0].job_id;
@@ -157,6 +162,7 @@ router.post('/joblistings', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
 
 const getEmployerEmailByJobId = async (jobId) => {
   const result = await pool.query(
