@@ -65,7 +65,7 @@ function BarChart() {
 
   // Calculate max height to normalize the bar height for scaling
   const maxHeight = Math.max(...jobTitles.map((job_title) => job_title.height));
-  const containerWidth = 100; // Width in percentage for the container
+  const maxBarHeight = 200; // Max bar height in pixels
 
   return (
     <section className="card border-light shadow-sm p-4">
@@ -92,14 +92,14 @@ function BarChart() {
       <div
         className="d-flex justify-content-between align-items-end"
         style={{
-          height: '300px', // Container height for bars
+          height: `${maxBarHeight + 50}px`, // Increased height for better visibility
           width: '100%',
           overflow: 'hidden',
           marginBottom: '20px',
         }}
       >
         {jobTitles.map((job_title, index) => {
-          const barHeight = (job_title.height / maxHeight) * 100; // Normalize the height to the max value
+          const barHeight = (job_title.height / maxHeight) * maxBarHeight; // Normalize the height to the max value
 
           return (
             <div
@@ -120,7 +120,7 @@ function BarChart() {
                 <div
                   className="position-relative"
                   style={{
-                    height: `${barHeight}%`, // Dynamic bar height based on the time to fill
+                    height: `${barHeight}px`, // Dynamic bar height based on the time to fill
                     backgroundColor: 'blue',
                     border: '2px solid rgba(0, 0, 123, 0.5)',
                     borderRadius: '5px',
@@ -145,7 +145,10 @@ function BarChart() {
 
       <div className="mt-4">
         <div className="d-flex align-items-center">
-          <div className="bg-primary" style={{ width: '16px', height: '16px', borderRadius: '3px', marginRight: '8px' }}></div>
+          <div
+            className="bg-primary"
+            style={{ width: '16px', height: '16px', borderRadius: '3px', marginRight: '8px' }}
+          ></div>
           <span className="text-muted">Days</span>
         </div>
       </div>
