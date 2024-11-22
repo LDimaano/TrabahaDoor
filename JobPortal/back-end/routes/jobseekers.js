@@ -447,6 +447,7 @@ router.get('/getUserJobListings', async (req, res) => {
     SELECT 
       jl.job_id,
       jl.user_id AS emp_id,
+	    emp.company_name,
       a.application_id,
       pp.profile_picture_url,
       jt.job_title,
@@ -455,9 +456,10 @@ router.get('/getUserJobListings', async (req, res) => {
       a.user_id AS js_id
     FROM applications a
     JOIN joblistings jl ON a.job_id = jl.job_id
+	  JOIN emp_profiles emp ON jl.user_id = emp.user_id
     LEFT JOIN profilepictures pp ON jl.user_id = pp.user_id
     JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
-    WHERE a.user_id = $1
+    WHERE a.user_id = 1
   `;
   try {
     const result = await pool.query(query, [userId]);
