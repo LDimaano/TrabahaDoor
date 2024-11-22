@@ -158,7 +158,6 @@ const handleModalCancel = () => {
   
   
 const handleSubmit = async (e) => {
-  e.preventDefault();
 
   // Ensure user ID is available
   const user_id = window.location.pathname.split('/')[2];
