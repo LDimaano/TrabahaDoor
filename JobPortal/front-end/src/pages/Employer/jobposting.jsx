@@ -256,19 +256,19 @@ const JobPosting = () => {
               <option value="Work from Home">Work from Home</option>
             </select>
           </div>
-          <div className="mb-3">
-          <label htmlFor="positions" className="form-label">Positions</label>
           <input
-            type="number"
-            id="positions"
-            className="form-control"
-            value={positions}
-            onChange={(e) => setPositions(parseInt(e.target.value) || 0)}
-            min="0" // Set the minimum value to 0
-            step="1" // Increment by 1 for each up/down arrow press
-          />
-        </div>
-
+          type="number"
+          id="positions"
+          className="form-control"
+          value={positions}
+          onChange={(e) => {
+            const value = parseInt(e.target.value) || 0;
+            console.log("Positions input value:", value); // Log the input value
+            setPositions(value);
+          }}
+          min="0"
+          step="1"
+        />
         </section>
 
 
