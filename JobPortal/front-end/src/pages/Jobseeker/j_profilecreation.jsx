@@ -155,18 +155,16 @@ const handleModalCancel = () => {
     setShowModal(true); // Show confirmation modal
 };
 
-  
-  
 const handleSubmit = async (e) => {
-  e.preventDefault(); // Prevent form submission default behavior
+  if (e) e.preventDefault(); // Prevent default form submission behavior
 
   // Ensure user ID is available
   const user_id = window.location.pathname.split('/')[2];
 
-  // Default profile picture URL if no photo is set
+  // Default profile picture URL
   const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/jobseeker.png";
 
-  // Prepare the profile data
+  // Prepare the profile data, ensuring a fallback for photo
   const profileData = {
     user_id,
     fullName,
@@ -185,10 +183,10 @@ const handleSubmit = async (e) => {
       endDate: exp.endDate,
       description: exp.description,
     })),
-    profile_picture_url: photo || defaultProfilePictureUrl, // Use default if photo is null/undefined
+    profile_picture_url: photo || defaultProfilePictureUrl, // Use default if photo is missing
   };
 
-  console.log(profileData);
+  console.log('Profile data to submit:', profileData);
 
   try {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/profile`, {
@@ -206,7 +204,7 @@ const handleSubmit = async (e) => {
     const responseBody = await response.json();
     console.log('Profile created successfully:', responseBody);
 
-    // Redirect to login after 1 second
+    // Navigate to login after success
     setTimeout(() => {
       navigate('/login');
     }, 1000);
@@ -507,13 +505,13 @@ const handleSubmit = async (e) => {
                   styles={{
                     container: (provided) => ({
                       ...provided,
-                      minWidth: "500px", // minimum width for content
-                      width: "auto", // auto width based on content
-                      flexGrow: 1, // allows it to grow within the flex container
+                      minWidth: "500px", 
+                      width: "auto", 
+                      flexGrow: 1, 
                     }),
                     menu: (provided) => ({
                       ...provided,
-                      width: "auto", // auto width for dropdown items
+                      width: "auto", 
                       minWidth: "500px",
                     }),
                   }}
