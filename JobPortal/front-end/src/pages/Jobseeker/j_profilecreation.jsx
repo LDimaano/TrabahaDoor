@@ -192,6 +192,8 @@ const handleSubmit = async (e) => {
     profile_picture_url: photo, // Ensure this is populated correctly (default or uploaded)
   };
 
+  console.log(profileData);
+  
   try {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/profile`, {
       method: 'POST',
