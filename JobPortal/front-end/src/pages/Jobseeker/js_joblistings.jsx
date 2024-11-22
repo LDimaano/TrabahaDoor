@@ -56,6 +56,10 @@ const JobseekerDashboard = () => {
         }
   
         const data = await response.json();
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid response format');
+        }
+  
         setJobs(data);
       } catch (error) {
         setError(error.message);
@@ -64,7 +68,7 @@ const JobseekerDashboard = () => {
     };
   
     fetchJobListings();
-  }, []);
+  }, []);  
 
   if (error) {
     return <div>Error: {error}</div>;
