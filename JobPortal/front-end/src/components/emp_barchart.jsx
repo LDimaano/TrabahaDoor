@@ -1,151 +1,155 @@
-import React, { useEffect, useState } from "react";
-import { Tooltip, OverlayTrigger, Alert, Card, Container, Button } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { saveAs } from "file-saver";
-import jsPDF from "jspdf";
+import React, { useEffect, useState } from 'react';
+import { Tooltip, OverlayTrigger, Button } from 'react-bootstrap';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 function BarChart() {
   const [timeToFillData, setTimeToFillData] = useState({});
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/timetofill`)
-      .then((response) => {
+    const fetchData = async () => {
+      const userId = sessionStorage.getItem('user_id');
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/timetofillemp/${userId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.json();
-      })
-      .then((data) => setTimeToFillData(data))
-      .catch((error) => {
-        console.error("Error fetching time to fill data:", error);
+
+        const data = await response.json();
+        setTimeToFillData(data);
+      } catch (error) {
+        console.error('Error fetching time to fill data:', error);
         setError(error.message);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const industries = Object.keys(timeToFillData)
-    .map((industry) => ({
-      name: industry,
-      height: timeToFillData[industry] || 0,
+  const jobTitles = Object.keys(timeToFillData)
+    .map((job_title) => ({
+      name: job_title,
+      height: timeToFillData[job_title] || 0,
     }))
     .sort((a, b) => b.height - a.height);
 
-  const maxBarHeight = 200; // Max height for the bars in pixels
-  const maxHeightValue = Math.max(...industries.map((industry) => industry.height));
-
-  industries.forEach((industry) => {
-    industry.scaledHeight = (industry.height / maxHeightValue) * maxBarHeight;
-  });
-
-  const exportToCSV = () => {
-    const csvData = industries.map(({ name, height }) => `${name},${height}`).join("\n");
-    const blob = new Blob([`Industry,Time to Fill (days)\n${csvData}`], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, "time_to_fill_report.csv");
-  };
-
-  const exportToPDF = () => {
+  const generatePDFReport = () => {
     const doc = new jsPDF();
+
     doc.setFontSize(16);
-    doc.text("Time to Fill Analysis Report", 14, 20);
+    doc.text('Time to Fill Analysis Report', 20, 20);
     doc.setFontSize(12);
-    doc.text("Industry-wise Time to Fill Data", 14, 30);
+    doc.text('Average Time to Fill per Job Title', 20, 30);
 
-    doc.text("Industry", 14, 40);
-    doc.text("Time to Fill (days)", 90, 40);
+    const tableData = jobTitles.map((job_title) => [job_title.name, `${job_title.height} days`]);
 
-    industries.forEach((industry, index) => {
-      doc.text(industry.name, 14, 50 + index * 10);
-      doc.text(`${industry.height}`, 90, 50 + index * 10);
+    doc.autoTable({
+      head: [['Job Title', 'Average Time to Fill (days)']],
+      body: tableData,
+      startY: 40,
     });
 
-    doc.save("time_to_fill_report.pdf");
+    doc.save('TimeToFillReport.pdf');
   };
 
-  const barWidth = industries.length > 0 ? `${100 / industries.length}%` : "48px"; // Dynamic bar width
+  // Calculate max height to normalize the bar height for scaling
+  const maxHeight = Math.max(...jobTitles.map((job_title) => job_title.height));
+  const containerWidth = 100; // Width in percentage for the container
 
   return (
-    <Container>
-      <Card className="shadow-sm p-4">
-        <Card.Body>
-          <h4 className="text-dark text-left mb-4">Time to Fill Analysis</h4>
-          <p className="text-muted text-left mb-5">Showing Average Time to Fill per Industry</p>
+    <section className="card border-light shadow-sm p-4">
+      <header className="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+          <h2 className="h4 text-dark">Time to Fill Analysis</h2>
+          <p className="text-muted">Showing Average Time to Fill per Job Title</p>
+        </div>
+        <Button variant="primary" onClick={generatePDFReport}>
+          <FontAwesomeIcon icon={faDownload} className="me-2" />
+          Export Data
+        </Button>
+      </header>
 
-          {error && <Alert variant="danger">{error}</Alert>}
+      {error && <div className="alert alert-danger">{error}</div>}
 
-          <div className="d-flex flex-column align-items-center">
+      <nav className="nav nav-tabs mb-4">
+        <button className="nav-link active" aria-current="page">
+          Time to Fill
+        </button>
+      </nav>
+
+      {/* Bar chart container with flexbox for alignment */}
+      <div
+        className="d-flex justify-content-between align-items-end"
+        style={{
+          height: '300px', // Container height for bars
+          width: '100%',
+          overflow: 'hidden',
+          marginBottom: '20px',
+        }}
+      >
+        {jobTitles.map((job_title, index) => {
+          const barHeight = (job_title.height / maxHeight) * 100; // Normalize the height to the max value
+
+          return (
             <div
+              key={index}
+              className="text-center"
               style={{
-                display: "flex",
-                alignItems: "flex-end",
-                height: `${maxBarHeight + 50}px`,
-                paddingBottom: "50px",
-                justifyContent: "space-around", 
-                width: "100%",
-                maxWidth: "600px", 
-                marginTop: "20px",
+                flex: 1,
+                margin: '0 10px', // Added spacing between bars
+                display: 'flex',
+                flexDirection: 'column', // Make sure the text is centered below the bar
+                alignItems: 'center',
               }}
             >
-              {industries.map((industry, index) => (
-                <div key={index} className="d-flex flex-column align-items-center" style={{ width: barWidth }}>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
-                  >
-                    <div
-                      className="bar"
-                      style={{
-                        height: `${industry.scaledHeight}px`,
-                        width: "100%", 
-                        backgroundColor: "blue",
-                        borderRadius: "5px",
-                        transition: "transform 0.2s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = "scale(1.1)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = "scale(1)";
-                      }}
-                    ></div>
-                  </OverlayTrigger>
-                  <div
-                    className="text-center mt-2"
-                    style={{
-                      fontSize: "0.85rem",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis", 
-                      maxWidth: barWidth, 
-                    }}
-                    title={industry.name}
-                  >
-                    {industry.name.length > 8
-                      ? `${industry.name.substring(0, 7)}...`
-                      : industry.name}
-                  </div>
-                </div>
-              ))}
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip>{`${job_title.height} days`}</Tooltip>}
+              >
+                <div
+                  className="position-relative"
+                  style={{
+                    height: `${barHeight}%`, // Dynamic bar height based on the time to fill
+                    backgroundColor: 'blue',
+                    border: '2px solid rgba(0, 0, 123, 0.5)',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                  }}
+                ></div>
+              </OverlayTrigger>
+              <span className="text-muted d-block mt-2">{job_title.name}</span>
             </div>
-            <div className="mt-4 d-flex align-items-center justify-content-start">
-              <div
-                className="bg-primary"
-                style={{ width: "16px", height: "16px", borderRadius: "3px", marginRight: "8px" }}
-              ></div>
-              <span className="text-muted">Days</span>
-            </div>
+          );
+        })}
+      </div>
 
-            <div className="mt-4 d-flex justify-content-start">
-              <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
-                Download CSV
-              </Button>
-              <Button variant="outline-secondary" onClick={exportToPDF}>
-                Download PDF
-              </Button>
-            </div>
+      {/* X-axis labels */}
+      <div className="d-flex justify-content-between" style={{ width: '100%' }}>
+        {jobTitles.map((job_title, index) => (
+          <div key={index} className="text-center" style={{ flex: 1 }}>
+            <span className="text-muted">{job_title.name}</span>
           </div>
-        </Card.Body>
-      </Card>
-    </Container>
+        ))}
+      </div>
+
+      <div className="mt-4">
+        <div className="d-flex align-items-center">
+          <div className="bg-primary" style={{ width: '16px', height: '16px', borderRadius: '3px', marginRight: '8px' }}></div>
+          <span className="text-muted">Days</span>
+        </div>
+      </div>
+    </section>
   );
 }
 
