@@ -365,7 +365,7 @@ async function calculateTimeToFillForEmployer(userId) {
     // Send data to Python for "time to fill" calculation
     return new Promise((resolve, reject) => {
       const pythonProcess = spawn('python', [
-        path.join(__dirname, 'time_to_fill_emp.py'),
+        path.join(__dirname, 'python_scripts', 'time_to_fill_emp.py'),
       ]);
 
       // Send job data to Python
