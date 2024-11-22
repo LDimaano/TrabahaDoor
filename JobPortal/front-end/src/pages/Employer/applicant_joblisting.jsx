@@ -11,7 +11,7 @@ const ApplicantDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [listingsPerPage, setListingsPerPage] = useState(10);
   const [error, setError] = useState(null);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to control sidebar visibility
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); 
 
   useEffect(() => {
     const userId = sessionStorage.getItem('user_id');
@@ -74,7 +74,6 @@ const ApplicantDashboard = () => {
 
   return (
     <div className="d-flex flex-column flex-lg-row">
-      {/* Sidebar */}
       <div className={`sidebar ${isSidebarVisible ? 'd-block' : 'd-none'} d-lg-block`}>
         <Sidebar />
       </div>
@@ -100,8 +99,6 @@ const ApplicantDashboard = () => {
           <ApplicantJoblist currentListings={currentListings} setCurrentListings={setJobs} />
         </section>
       </main>
-
-      {/* Sidebar toggle button for mobile */}
       <button
         className="btn btn-primary d-lg-none position-fixed"
         style={{ top: '10px', left: '10px', zIndex: 999 }}

@@ -410,7 +410,8 @@ router.get('/joblistings/:userId', async (req, res) => {
       SELECT
           jl.datecreated,
           jt.job_title,
-      jl.job_id
+          jl.status,
+          jl.job_id
        FROM
           joblistings jl
        JOIN

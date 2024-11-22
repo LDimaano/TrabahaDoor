@@ -145,7 +145,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
               <td>
                 <select
                   className="form-select"
-                  value={listing.status || 'Hiring'}
+                  value={listing.status}
                   onChange={(e) => handleStatusChange(listing.job_id || listing.jobId, e.target.value)}
                 >
                   <option value="Hiring">Hiring</option>
