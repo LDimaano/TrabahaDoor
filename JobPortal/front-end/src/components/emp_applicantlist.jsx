@@ -120,6 +120,13 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   };
   
   async function fetchFilledCount() {
+    const userId = sessionStorage.getItem('userId');  // Adjust based on where userId is stored
+    
+    if (!userId) {
+      console.error('User ID not found');
+      return;
+    }
+  
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applications/filledCount/${userId}`);
       const data = await response.json();
@@ -138,6 +145,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   }
   
   fetchFilledCount();
+  
   
 
   const renderApplicantRows = (listings) => {
