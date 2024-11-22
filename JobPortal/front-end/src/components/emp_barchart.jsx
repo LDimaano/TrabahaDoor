@@ -14,13 +14,16 @@ function BarChart() {
     const fetchData = async () => {
       const userId = sessionStorage.getItem('user_id');
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/timetofillemp/${userId}`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/applicants/timetofillemp/${userId}`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -64,12 +67,11 @@ function BarChart() {
   };
 
   // Calculate max height to normalize the bar height for scaling
-  const maxHeight = Math.max(...jobTitles.map((job_title) => job_title.height));
+  const maxHeight = Math.max(...jobTitles.map((job_title) => job_title.height), 1); // Prevent divide-by-zero
   const maxBarHeight = 200; // Max bar height in pixels
-
-  // Adjusted spacing and width calculation
-  const barSpacing = jobTitles.length > 5 ? 10 : 5; // Reduced spacing between bars
-  const totalWidth = 100; // 100% width for bars container (no need for percentage width anymore)
+  const totalWidth = 100; // Full container width percentage
+  const barSpacing = jobTitles.length > 5 ? 10 : 20; // Dynamic spacing based on category count
+  const barWidth = `calc(${totalWidth / jobTitles.length}% - ${barSpacing}px)`; // Dynamic width
 
   return (
     <section className="card border-light shadow-sm p-4">
@@ -92,29 +94,29 @@ function BarChart() {
         </button>
       </nav>
 
-      {/* Bar chart container with flexbox for alignment */}
+      {/* Bar chart container */}
       <div
         className="d-flex justify-content-between align-items-end"
         style={{
-          height: `${maxBarHeight + 50}px`, // Increased height for better visibility
+          height: `${maxBarHeight + 50}px`,
           width: '100%',
           overflow: 'hidden',
           marginBottom: '20px',
         }}
       >
         {jobTitles.map((job_title, index) => {
-          const barHeight = (job_title.height / maxHeight) * maxBarHeight; // Normalize the height to the max value
+          const barHeight = (job_title.height / maxHeight) * maxBarHeight;
 
           return (
             <div
               key={index}
               className="text-center"
               style={{
-                flex: 1, // Allow bars to stretch to fill available space
-                marginRight: index < jobTitles.length - 1 ? `${barSpacing}px` : '0', // Space between bars
+                marginRight: index < jobTitles.length - 1 ? `${barSpacing}px` : '0',
                 display: 'flex',
-                flexDirection: 'column', // Make sure the text is centered below the bar
+                flexDirection: 'column',
                 alignItems: 'center',
+                width: barWidth,
               }}
             >
               <OverlayTrigger
@@ -124,7 +126,7 @@ function BarChart() {
                 <div
                   className="position-relative"
                   style={{
-                    height: `${barHeight}px`, // Dynamic bar height based on the time to fill
+                    height: `${barHeight}px`,
                     backgroundColor: 'blue',
                     border: '2px solid rgba(0, 0, 123, 0.5)',
                     borderRadius: '5px',
