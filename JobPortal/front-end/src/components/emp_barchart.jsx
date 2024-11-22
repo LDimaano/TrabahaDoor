@@ -129,7 +129,7 @@ function BarChart() {
                     height: `${barHeight}px`,
                     backgroundColor: 'blue',
                     border: '2px solid rgba(0, 0, 123, 0.5)',
-                    width:'100%',
+                    width:'80%',
                     borderRadius: '5px',
                     cursor: 'pointer',
                   }}
