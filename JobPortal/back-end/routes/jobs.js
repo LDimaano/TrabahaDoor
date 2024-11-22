@@ -331,6 +331,7 @@ router.get('/postedjobs', async (req, res) => {
   const { searchQuery, selectedIndustry } = req.query;
 
   try {
+    // Base query without any filtering
     let query = `
         SELECT
         joblistings.job_id,
@@ -348,23 +349,26 @@ router.get('/postedjobs', async (req, res) => {
     JOIN emp_profiles ON joblistings.user_id = emp_profiles.user_id
     LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
     WHERE joblistings.status = 'Hiring'
-    ORDER BY joblistings.datecreated DESC;
     `;
 
     const values = [];
 
-    // Search by either job title or company name using a single searchQuery
+    // Adding search query condition if present
     if (searchQuery) {
-      query += ` AND (job_titles.job_title ILIKE $${values.length + 1} OR emp_profiles.company_name ILIKE $${values.length + 1})`; 
-      values.push(`%${searchQuery}%`); 
+      query += ` AND (job_titles.job_title ILIKE $${values.length + 1} OR emp_profiles.company_name ILIKE $${values.length + 1})`;
+      values.push(`%${searchQuery}%`);
     }
 
-    // Filter by selected industry
+    // Adding industry filter condition if present
     if (selectedIndustry) {
       query += ` AND joblistings.industry_id = $${values.length + 1}`;
       values.push(selectedIndustry);
     }
 
+    // Adding the order by clause
+    query += ` ORDER BY joblistings.datecreated DESC`;
+
+    // Executing the query
     const result = await pool.query(query, values);
     res.json(result.rows);
   } catch (error) {
@@ -372,6 +376,7 @@ router.get('/postedjobs', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 // Get job details by job ID
 router.get('/joblistings/:jobId', async (req, res) => {
