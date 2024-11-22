@@ -13,51 +13,40 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
   const [selectedJobId, setSelectedJobId] = useState(null); // Track which job to delete
   const [successMessage, setSuccessMessage] = useState(''); 
 
-  // Function to navigate to the job description page using jobId
-  const handleApplyClick = (jobId) => {
-    navigate(`/emp_jobdescription/${jobId}`);
-  };
-  
-  const handleSeeApplicants = (jobId) => {
-    navigate(`/applicantlist/${jobId}`);
-  };
-
-  const showDeleteConfirmation = (jobId) => {
-    setSelectedJobId(jobId);
-    setShowDeleteModal(true);
-  };
-
-  const handleConfirmDeleteJob= () => {
-    handleDeleteJob();
-    setShowDeleteModal(false);
-  };
-
-
-  // Function to handle job deletion
-  const handleDeleteJob = async () => {
+  // Function to update job status
+  const handleStatusChange = async (jobId, newStatus) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/deljoblistings/${selectedJobId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // If you have cookies/sessions
-      });
-  
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/employers/updatejobstatus/${jobId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Include cookies if necessary
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
+
       if (response.ok) {
-        setCurrentListings((prevListings) => prevListings.filter(listing => listing.job_id !== selectedJobId));
-        setSuccessMessage('Job deleted successfully!');
+        setCurrentListings((prevListings) =>
+          prevListings.map((listing) =>
+            listing.job_id === jobId ? { ...listing, status: newStatus } : listing
+          )
+        );
+        setSuccessMessage('Job status updated successfully!');
         setTimeout(() => {
           setSuccessMessage('');
         }, 3000);
-        console.log(`Job ${selectedJobId} deleted successfully.`);
       } else {
-        console.error(`Failed to delete job ${selectedJobId}: ${response.statusText}`);
+        console.error(`Failed to update job status: ${response.statusText}`);
       }
     } catch (error) {
-      console.error(`Error deleting job ${selectedJobId}:`, error);
+      console.error(`Error updating job status:`, error);
     }
-  };  
+  };
+
+  // Other functions...
 
   // Get current listings
   const indexOfLastListing = currentPage * listingsPerPage;
@@ -82,6 +71,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
             <th>Date Created</th>
             <th>View Applicants</th>
             <th>View Joblisting</th>
+            <th>Status</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -107,6 +97,16 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
                 </button>
               </td>
               <td>
+                <select
+                  className="form-select"
+                  value={listing.status || 'Hiring'}
+                  onChange={(e) => handleStatusChange(listing.job_id || listing.jobId, e.target.value)}
+                >
+                  <option value="Hiring">Hiring</option>
+                  <option value="Filled">Filled</option>
+                </select>
+              </td>
+              <td>
                 <button 
                   className="btn btn-danger" 
                   onClick={() => showDeleteConfirmation(listing.job_id || listing.jobId)}
@@ -125,7 +125,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
         paginate={paginate} 
         currentPage={currentPage}
       />
-
+      
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div 
