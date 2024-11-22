@@ -114,7 +114,10 @@ function CandidateList({ searchParams = {}, isRecommended }) {
         <>
           <h3>Recommended Candidates</h3>
           {error ? (
-            <p className="text-danger">{error}</p>
+             <div className="alert alert-warning mt-3" role="alert">
+             <i className="fas fa-exclamation-circle me-2"></i> {/* Font Awesome alert icon */}
+             <strong>{error}</strong>
+           </div>
           ) : currentApplicants.length > 0 ? (
             <>
               <ul className="list-group">
