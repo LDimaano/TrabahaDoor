@@ -6,6 +6,7 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
     title_matches = []
     skill_matches = []
     contact_matches = []
+    industry_based_matches = []  # For recommending candidates by industry
     seen_user_ids = set()
 
     for job in job_postings:
@@ -61,7 +62,24 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                     })
                     seen_user_ids.add(user_id)
 
-    # incorporate collaborative filtering by recommending applicants contacted by similar employers
+    # If the employer has no job listings, recommend candidates from the same industry
+    if len(current_employer_job_titles) == 0:
+        for applicant in applicants:
+            if applicant.get('industry', '') == current_employer_industry and applicant['user_id'] not in seen_user_ids:
+                industry_based_matches.append({
+                    'user_id': applicant['user_id'],
+                    'full_name': applicant['full_name'],
+                    'job_title': applicant.get('job_titles', ['No Job Title'])[0],
+                    'matched_skills': applicant.get('skills', []),
+                    'industry_match': True,
+                    'profile_picture_url': applicant.get('profile_picture_url', ''),
+                    'from_collaborative_filtering': False,
+                    'match_type': 'industry',
+                    'influence_tag': 'content'  
+                })
+                seen_user_ids.add(applicant['user_id'])
+
+    # Incorporate collaborative filtering by recommending applicants contacted by similar employers
     for contact in contact_history:
         emp_industry = contact.get('industry_name', '')  
         emp_job_listings = set(contact.get('empjoblistings', [])) 
@@ -86,8 +104,8 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                 })
                 seen_user_ids.add(js_user_id)
 
-    # Prioritize candidates: first title matches, then skill matches, then collaborative filtering matches
-    recommendations = title_matches + skill_matches + contact_matches
+    # Prioritize candidates: first title matches, then skill matches, then collaborative filtering matches, then industry-based matches
+    recommendations = title_matches + skill_matches + contact_matches + industry_based_matches
 
     recommendations = [
         rec for rec in recommendations 
