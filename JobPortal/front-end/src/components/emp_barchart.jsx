@@ -63,8 +63,9 @@ function BarChart() {
     doc.save('TimeToFillReport.pdf');
   };
 
-  // Calculate bar width based on the number of job titles
-  const barWidth = jobTitles.length > 0 ? `${100 / jobTitles.length}%` : '48px';
+  // Calculate max height to normalize the bar height for scaling
+  const maxHeight = Math.max(...jobTitles.map((job_title) => job_title.height));
+  const containerWidth = 100; // Width in percentage for the container
 
   return (
     <section className="card border-light shadow-sm p-4">
@@ -82,30 +83,52 @@ function BarChart() {
       {error && <div className="alert alert-danger">{error}</div>}
 
       <nav className="nav nav-tabs mb-4">
-        <button className="nav-link active" aria-current="page">Time to Fill</button>
+        <button className="nav-link active" aria-current="page">
+          Time to Fill
+        </button>
       </nav>
 
-      {/* Fixed height container for the bar chart */}
-      <div className="d-flex justify-content-between" style={{ height: '300px', overflow: 'auto' }}>
+      {/* Bar chart container with flexbox for alignment */}
+      <div
+        className="d-flex justify-content-between align-items-end"
+        style={{
+          height: '300px', // Container height for bars
+          width: '100%',
+          overflow: 'hidden',
+          marginBottom: '20px',
+        }}
+      >
+        {jobTitles.map((job_title, index) => {
+          const barHeight = (job_title.height / maxHeight) * 100; // Normalize the height to the max value
+
+          return (
+            <div key={index} className="text-center" style={{ flex: 1, margin: '0 5px' }}>
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip>{`${job_title.height} days`}</Tooltip>}
+              >
+                <div
+                  className="position-relative"
+                  style={{
+                    height: `${barHeight}%`, // Dynamic bar height based on the time to fill
+                    backgroundColor: 'blue',
+                    border: '2px solid rgba(0, 0, 123, 0.5)',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                  }}
+                ></div>
+              </OverlayTrigger>
+              <span className="text-muted d-block mt-2">{job_title.name}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* X-axis labels */}
+      <div className="d-flex justify-content-between" style={{ width: '100%' }}>
         {jobTitles.map((job_title, index) => (
-          <div key={index} className="text-center">
-            <OverlayTrigger
-              placement="top"
-              overlay={<Tooltip>{`${job_title.height} days`}</Tooltip>}
-            >
-              <div
-                className="position-relative"
-                style={{
-                  height: `${job_title.height}px`, // Bar height based on time to fill
-                  width: barWidth, // Dynamic width
-                  cursor: 'pointer',
-                  backgroundColor: 'blue',
-                  border: '2px solid rgba(0, 0, 123, 0.5)',
-                  borderRadius: '5px',
-                }}
-              ></div>
-            </OverlayTrigger>
-            <span className="text-muted d-block mt-2">{job_title.name}</span>
+          <div key={index} className="text-center" style={{ flex: 1 }}>
+            <span className="text-muted">{job_title.name}</span>
           </div>
         ))}
       </div>
