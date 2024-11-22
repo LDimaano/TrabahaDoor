@@ -120,7 +120,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   };
   
   async function fetchFilledCount() {
-    const userId = sessionStorage.getItem('userId');  // Adjust based on where userId is stored
+    const userId = sessionStorage.getItem('user_id');  // Adjust based on where userId is stored
     
     if (!userId) {
       console.error('User ID not found');
