@@ -97,7 +97,7 @@ function ProfileCreation() {
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
-  
+
     const userId = window.location.pathname.split('/')[2];
     
     // Default profile picture URL
@@ -129,7 +129,8 @@ function ProfileCreation() {
     } catch (error) {
       console.error('Error uploading profile picture:', error);
     }
-  };
+};
+
 
   
   // State for controlling the modal visibility
@@ -156,67 +157,67 @@ const handleModalCancel = () => {
 
   
   
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // Ensure user ID is available
+  const user_id = window.location.pathname.split('/')[2];
+
+  // Default profile picture URL if no photo is set
+  const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/jobseeker.png";
   
-    // Ensure user ID is available
-    const user_id = window.location.pathname.split('/')[2];
-  
-    // If photo is not set, attempt to upload and wait
-    if (!photo) {
-      await handleFileChange({ target: { files: [document.getElementById('photo').files[0]] } });
-    }
-  
-    if (!photo) {
-      setError('Please upload a profile picture before submitting the form.');
-      return;
-    }
-  
-    // Continue with profile data submission
-    const profileData = {
-      user_id,
-      fullName,
-      phoneNumber,
-      dateOfBirth,
-      gender,
-      address_id: address?.value || '',
-      industry_id: industry?.value || '',
-      skills: skills.map(skill => skill?.value || ''),
-      experience: experience.map(exp => ({
-        jobTitle: exp.jobTitle?.value || '',
-        salary: exp.salaryRange?.value || '',
-        company: exp.company,
-        location: exp.location,
-        startDate: exp.startDate,
-        endDate: exp.endDate,
-        description: exp.description,
-      })),
-      profile_picture_url: photo // Ensure this is populated correctly
-    };
-  
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/profile`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(profileData),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-  
-      const responseBody = await response.json();
-      console.log('Profile created successfully:', responseBody);
-  
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-    } catch (err) {
-      console.error('Submission failed:', err);
-      setError('Failed to submit the profile. Please try again.');
-    }
+  // If photo is not set, use default profile picture
+  if (!photo) {
+    setPhoto(defaultProfilePictureUrl); // Use default profile picture if no file is uploaded
+  }
+
+  // Proceed with profile data submission
+  const profileData = {
+    user_id,
+    fullName,
+    phoneNumber,
+    dateOfBirth,
+    gender,
+    address_id: address?.value || '',
+    industry_id: industry?.value || '',
+    skills: skills.map(skill => skill?.value || ''),
+    experience: experience.map(exp => ({
+      jobTitle: exp.jobTitle?.value || '',
+      salary: exp.salaryRange?.value || '',
+      company: exp.company,
+      location: exp.location,
+      startDate: exp.startDate,
+      endDate: exp.endDate,
+      description: exp.description,
+    })),
+    profile_picture_url: photo, // Ensure this is populated correctly (default or uploaded)
   };
+
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/profile`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(profileData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseBody = await response.json();
+    console.log('Profile created successfully:', responseBody);
+
+    setTimeout(() => {
+      navigate('/login');
+    }, 1000);
+  } catch (err) {
+    console.error('Submission failed:', err);
+    setError('Failed to submit the profile. Please try again.');
+  }
+};
+
   
   useEffect(() => {
     const fetchSkills = async () => {
