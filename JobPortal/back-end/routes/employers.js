@@ -420,6 +420,7 @@ router.get('/joblistings/:userId', async (req, res) => {
           jl.jobtitle_id = jt.jobtitle_id
        WHERE
           jl.user_id = $1
+      ORDER BY jl.datecreated desc
           `,
       [userId]
     );

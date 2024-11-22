@@ -318,7 +318,8 @@ const getJobData = async () => {
       JOIN industries ON joblistings.industry_id = industries.industry_id
       JOIN job_skills ON joblistings.job_id = job_skills.job_id
       JOIN skills ON job_skills.skill_id = skills.skill_id
-	    LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id;
+	    LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
+	    WHERE joblistings.status = 'Hiring'
     `);
 
     // Transform job data to include only the necessary information
