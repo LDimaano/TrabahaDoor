@@ -183,7 +183,7 @@ const handleSubmit = async (e) => {
       endDate: exp.endDate,
       description: exp.description,
     })),
-    profile_picture_url: photo || defaultProfilePictureUrl, // Use default if photo is missing
+    profile_picture_url: photo || defaultProfilePictureUrl, 
   };
 
   console.log('Profile data to submit:', profileData);
@@ -207,7 +207,7 @@ const handleSubmit = async (e) => {
     // Navigate to login after success
     setTimeout(() => {
       navigate('/login');
-    }, 1000);
+    }, 500);
   } catch (err) {
     console.error('Submission failed:', err);
     setError('Failed to submit the profile. Please try again.');

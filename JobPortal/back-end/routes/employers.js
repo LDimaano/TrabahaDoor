@@ -109,7 +109,10 @@ router.post('/employer-profile', async (req, res) => {
     companySize,
     foundedYear,
     description,
+    profile_picture_url
   } = req.body;
+
+  const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/employer.png";
 
   if (!user_id) {
     return res.status(400).json({ error: 'User ID is required' });
@@ -137,6 +140,14 @@ router.post('/employer-profile', async (req, res) => {
       ]
     );
 
+    if (profile_picture_url === defaultProfilePictureUrl) {
+      await pool.query(
+        `INSERT INTO profilepictures (user_id, profile_picture_url)
+         VALUES ($1, $2)`,
+        [user_id, profile_picture_url]
+      );
+    }
+    
     await pool.query(
       `UPDATE users
        SET is_complete = true

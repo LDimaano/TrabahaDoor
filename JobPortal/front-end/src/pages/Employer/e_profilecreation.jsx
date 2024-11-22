@@ -61,17 +61,12 @@ function EmployerProfileCreation() {
     }
 };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault(); // Prevent default form submission behavior
     const user_id = window.location.pathname.split('/')[2];
 
-    if (!photo) {
-      await handleFileChange({ target: { files: [document.getElementById('photo').files[0]] } });
-    }
-
-    if (!photo) {
-      setError('Please upload a profile picture before submitting the form.');
-      return;
-    }
+    // Default profile picture URL
+    const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/employer.png";
 
     const profileData = {
       user_id,
@@ -84,7 +79,7 @@ function EmployerProfileCreation() {
       companySize,
       foundedYear,
       description,
-      profile_picture_url: photo,
+      profile_picture_url: photo || defaultProfilePictureUrl, 
     };
 
     console.log('Submitting profile data:', profileData);
