@@ -32,6 +32,35 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
     setShowDeleteModal(false);
   };
 
+  const handleStatusChange = async (jobId, newStatus) => {
+    try {
+      // Send a PATCH request to update the job status in the backend
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/${jobId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include credentials if necessary (e.g., for cookies)
+        body: JSON.stringify({ status: newStatus }), // Send the new status in the request body
+      });
+  
+      if (response.ok) {
+        // Update the status in the current listings in the frontend
+        setCurrentListings((prevListings) =>
+          prevListings.map((listing) =>
+            listing.job_id === jobId ? { ...listing, status: newStatus } : listing
+          )
+        );
+  
+        console.log(`Job ${jobId} status updated to: ${newStatus}`);
+      } else {
+        console.error(`Failed to update status for job ${jobId}: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error(`Error updating status for job ${jobId}:`, error);
+    }
+  };
+  
 
   // Function to handle job deletion
   const handleDeleteJob = async () => {
