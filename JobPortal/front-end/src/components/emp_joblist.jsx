@@ -3,17 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEye } from '@fortawesome/free-solid-svg-icons';
-import '../css/pagination.css'; // Ensure you import the custom CSS
+import '../css/pagination.css'; 
 
 function ApplicantJoblist({ currentListings, setCurrentListings }) {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [listingsPerPage] = useState(5); // Set the number of listings per page
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // Track modal visibility
-  const [selectedJobId, setSelectedJobId] = useState(null); // Track which job to delete
+  const [listingsPerPage] = useState(5); 
+  const [showDeleteModal, setShowDeleteModal] = useState(false); 
+  const [selectedJobId, setSelectedJobId] = useState(null); 
   const [successMessage, setSuccessMessage] = useState('');
-  const [showStatusModal, setShowStatusModal] = useState(false); // Track status change modal visibility
-  const [newStatus, setNewStatus] = useState(''); // Track the new status value for the job
+  const [showStatusModal, setShowStatusModal] = useState(false); 
+  const [newStatus, setNewStatus] = useState(''); 
 
   // Function to navigate to the job description page using jobId
   const handleApplyClick = (jobId) => {
@@ -36,40 +36,37 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
 
   const handleStatusChange = (jobId, newStatus) => {
     setSelectedJobId(jobId);
-    setNewStatus(newStatus); // Set the new status value
-    setShowStatusModal(true); // Show the confirmation modal
+    setNewStatus(newStatus); 
+    setShowStatusModal(true); 
   };
 
   const handleConfirmStatusChange = async () => {
     try {
-      // Send a PATCH request to update the status
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/${selectedJobId}/status`, {
-        method: 'PATCH',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ status: newStatus }), // Send the new status
       });
-
-      if (response.ok) {
-        // Update the status in the current listings in the frontend
-        setCurrentListings((prevListings) =>
-          prevListings.map((listing) =>
-            listing.job_id === selectedJobId ? { ...listing, status: newStatus } : listing
-          )
-        );
-        console.log(`Job ${selectedJobId} status updated to: ${newStatus}`);
-      } else {
-        console.error(`Failed to update status for job ${selectedJobId}: ${response.statusText}`);
+  
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update job status');
       }
+  
+      const data = await response.json();
+      console.log(`Job ${selectedJobId} status updated to:`, data.status);
+      alert(`Job status updated to: ${data.status}`);
+      setShowStatusModal(false); // Close the modal after success
     } catch (error) {
-      console.error(`Error updating status for job ${selectedJobId}:`, error);
+      console.error('Error updating job status:', error);
+      alert('Failed to update job status. Please try again.');
+      setShowStatusModal(false); // Close the modal even on failure
     }
-
-    // Close the modal after confirming
-    setShowStatusModal(false);
   };
+  
+  
 
   // Function to handle job deletion
   const handleDeleteJob = async () => {
@@ -79,7 +76,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // If you have cookies/sessions
+        credentials: 'include', 
       });
 
       if (response.ok) {

@@ -456,24 +456,36 @@ router.get('/job-seeker/:userId', async (req, res) => {
   }
 });
 
-router.get('/:jobId/status', async (req, res) => {
+router.put('/:jobId/status', async (req, res) => {
   const { jobId } = req.params;
-  
-  try {
-    // Fetch the job from the database using jobId
-    const job = await Job.findByPk(jobId); // Replace with appropriate query based on your ORM
+  const { status } = req.body; // Get the new status from the request body
 
-    if (!job) {
+  if (!status) {
+    return res.status(400).json({ message: 'Status is required' });
+  }
+
+  const updateQuery = `
+    UPDATE joblistings
+    SET status = $1
+    WHERE job_id = $2
+    RETURNING status;
+  `;
+
+  try {
+    const result = await pool.query(updateQuery, [status, jobId]);
+
+    if (result.rowCount === 0) {
       return res.status(404).json({ message: 'Job not found' });
     }
 
-    // Send the current status in the response
-    res.json({ status: job.status });
+    // Return the updated status in the response
+    res.json({ status: result.rows[0].status });
   } catch (error) {
-    console.error('Error fetching job status:', error);
+    console.error('Error updating job status:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 // Route to update the status of a job
 router.patch('/:jobId/status', async (req, res) => {
