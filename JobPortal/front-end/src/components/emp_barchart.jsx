@@ -67,9 +67,9 @@ function BarChart() {
   const maxHeight = Math.max(...jobTitles.map((job_title) => job_title.height));
   const maxBarHeight = 200; // Max bar height in pixels
 
-  // Dynamically calculate the total width and bar width
-  const barSpacing = jobTitles.length > 5 ? 15 : 10; // Increase spacing for more bars
-  const totalWidth = 100; // Total width for the bars container (in percentage)
+  // Adjusted spacing and width calculation
+  const barSpacing = jobTitles.length > 5 ? 10 : 5; // Reduced spacing between bars
+  const totalWidth = 95; // Reduced total width for the bars container (in percentage)
   const barWidth = (totalWidth - (barSpacing * (jobTitles.length - 1))) / jobTitles.length; // Dynamic width per bar
 
   return (
