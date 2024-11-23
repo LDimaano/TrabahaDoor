@@ -356,6 +356,73 @@ const getJobData = async () => {
   }
 };
 
+const getSimilarJobSeekers = async (jobTitles) => {
+  try {
+    // Debugging log
+    console.log('Received Job Titles:', JSON.stringify(jobTitles, null, 2));
+
+    // Extract job titles from the input
+    const titleNames = Array.isArray(jobTitles)
+      ? jobTitles.map(title => (typeof title === 'string' ? title.trim() : title.job_title?.trim()))
+      : [];
+
+    // Filter out null or empty job titles
+    const filteredJobTitles = titleNames.filter(title => title);
+
+    console.log('Filtered Job Titles:', filteredJobTitles); // Debugging log
+
+    if (filteredJobTitles.length === 0) {
+      console.warn('No valid job titles provided.');
+      return [];
+    }
+
+    // Fetch job seekers who have similar job titles and their applied jobs
+    const res = await pool.query(
+      `
+      SELECT 
+          js.user_id, 
+          STRING_AGG(DISTINCT applications.job_id::text, ', ') AS job_ids,
+          STRING_AGG(DISTINCT job_titles.job_title, ', ') AS job_titles
+      FROM 
+          js_skills 
+      JOIN 
+          job_seekers js ON js_skills.user_id = js.user_id
+      LEFT JOIN 
+          applications ON js.user_id = applications.user_id  
+      JOIN 
+          job_experience ON job_experience.user_id = js.user_id
+      JOIN 
+          job_titles ON job_titles.jobtitle_id = job_experience.jobtitle_id
+      WHERE 
+          job_titles.job_title ILIKE ANY ($1)
+      GROUP BY 
+          js.user_id;
+      `,
+      [filteredJobTitles.map(title => `%${title}%`)] // Format for ILIKE
+    );
+
+    console.log('Query Result:', res.rows); // Log query result for debugging
+
+    // Process results and group similar job seekers with their applied jobs
+    const similarJobSeekers = res.rows.map(row => ({
+      user_id: row.user_id,
+      applied_jobs: row.job_ids
+        ? row.job_ids.split(', ').map(id => ({ job_id: id }))
+        : [],
+      job_titles: row.job_titles
+        ? row.job_titles.split(', ')
+        : []
+    }));
+
+    console.log('Similar Job Seekers:', JSON.stringify(similarJobSeekers, null, 2)); // Debugging output
+    return similarJobSeekers;
+  } catch (err) {
+    console.error('Error fetching similar job seekers:', err);
+    throw err;
+  }
+};
+
+
 app.get('/api/getskills/:userId', async (req, res) => {
   const { userId } = req.params; 
 
@@ -376,40 +443,38 @@ app.get('/api/getskills/:userId', async (req, res) => {
   }
 });
 
+
 app.post('/api/recommend', async (req, res) => {
-  // Validate the required skills input
+  // Validate inputs
   if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
     return res.status(400).json({ error: 'Skills must be a non-empty array.' });
   }
-
-  // Validate the jobseeker's industry
   if (!req.body.industry) {
     return res.status(400).json({ error: 'Industry is required.' });
   }
-
-  // Validate the job titles input
   if (!req.body.jobTitles || !Array.isArray(req.body.jobTitles)) {
     return res.status(400).json({ error: 'Job titles must be an array.' });
   }
-
   if (!req.body.salaryRange) {
     return res.status(400).json({ error: 'Salary range is required.' });
-  }  
+  }
 
-  const jobSeekerSkills = req.body.skills;
-  const jobSeekerIndustry = req.body.industry;
-  const jobSeekerJobTitles = req.body.jobTitles;
-  const jobSeekerSalary = req.body.salaryRange;
+  const { skills: jobSeekerSkills, industry: jobSeekerIndustry, jobTitles: jobSeekerJobTitles, salaryRange: jobSeekerSalary } = req.body;
 
   try {
+    // Fetch job data
     const jobData = await getJobData();
 
-    // Log job data and jobseeker details for debugging
+    // Fetch similar job seekers based on job titles
+    const similarJobSeekers = await getSimilarJobSeekers(jobSeekerJobTitles);
+
+    // Log details for debugging
     console.log('Job Data:', JSON.stringify(jobData, null, 2));
     console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
     console.log('Job Seeker Industry:', jobSeekerIndustry);
     console.log('Job Seeker Job Titles:', JSON.stringify(jobSeekerJobTitles, null, 2));
-    console.log('Job Seeker Salary Range:', jobSeekerSalary); 
+    console.log('Job Seeker Salary Range:', jobSeekerSalary);
+    console.log('Similar Job Seekers:', JSON.stringify(similarJobSeekers, null, 2));
 
     // Spawn the Python process to generate recommendations
     const pythonProcess = spawn('python', [
@@ -418,7 +483,8 @@ app.post('/api/recommend', async (req, res) => {
       JSON.stringify(jobSeekerSkills), 
       jobSeekerIndustry,
       JSON.stringify(jobSeekerJobTitles),
-      JSON.stringify(jobSeekerSalary) 
+      JSON.stringify(jobSeekerSalary),
+      JSON.stringify(similarJobSeekers) // Pass similar job seekers to Python
     ]);
 
     let pythonOutput = '';
@@ -426,7 +492,7 @@ app.post('/api/recommend', async (req, res) => {
     // Collect output from Python process
     pythonProcess.stdout.on('data', (data) => {
       pythonOutput += data.toString();
-      console.log('Raw Python Output:', data.toString()); 
+      console.log('Raw Python Output:', data.toString());
     });
 
     // Log any errors from Python process
@@ -452,8 +518,8 @@ app.post('/api/recommend', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching job data:', error);
-    return res.status(500).send('An error occurred while fetching job data.');
+    console.error('Error during recommendation processing:', error);
+    return res.status(500).send('An error occurred while processing your request.');
   }
 });
 
