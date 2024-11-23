@@ -90,31 +90,7 @@ router.get('/verify-email', async (req, res) => {
 });
 
 async function reactivateJobSeeker(archivedUser) {
-  // Archive profile picture data before deleting from the active table
-  await pool.query(`
-    INSERT INTO profilepictures (user_id, profile_picture_url)
-    SELECT user_id, profile_picture_url
-    FROM archived_profilepictures
-    WHERE user_id = $1
-  `, [archivedUser.user_id]);
-
-  // Insert data into active tables
-  await pool.query(
-    `INSERT INTO job_seekers (user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id)
-     SELECT user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id
-     FROM archived_job_seekers
-     WHERE user_id = $1`, 
-    [archivedUser.user_id]
-  );
-
-  await pool.query(
-    `INSERT INTO js_skills (skill_id, user_id)
-     SELECT skill_id, user_id
-     FROM archived_js_skills
-     WHERE user_id = $1`, 
-    [archivedUser.user_id]
-  );
-
+  // Step 1: Reactivate the user by inserting them into the active users table first
   await pool.query(
     `INSERT INTO users (user_id, email, password, usertype, approve, datecreated, is_verified, is_complete)
      SELECT user_id, email, password, usertype, approve, datecreated, is_verified, is_complete
@@ -123,15 +99,41 @@ async function reactivateJobSeeker(archivedUser) {
     [archivedUser.user_id]
   );
 
-  // Delete related data from archived tables
+  // Step 2: Transfer profile picture to the active table
+  await pool.query(`
+    INSERT INTO profilepictures (user_id, profile_picture_url)
+    SELECT user_id, profile_picture_url
+    FROM archived_profilepictures
+    WHERE user_id = $1
+  `, [archivedUser.user_id]);
+
+  // Step 3: Insert data into active tables (job_seekers, js_skills, etc.)
+  await pool.query(
+    `INSERT INTO job_seekers (user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id)
+     SELECT user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id
+     FROM archived_job_seekers
+     WHERE user_id = $1`, 
+    [archivedUser.user_id]
+  );
+  
+  await pool.query(
+    `INSERT INTO js_skills (skill_id, user_id)
+     SELECT skill_id, user_id
+     FROM archived_js_skills
+     WHERE user_id = $1`, 
+    [archivedUser.user_id]
+  );
+
+  // Step 4: Delete related data from archived tables (this ensures no foreign key issues)
   await pool.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_js_skills WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_job_seekers WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUser.user_id]);
 
-  // Finally, delete the user from archived_users table
+  // Step 5: Finally, delete the user from the archived_users table
   await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
 }
+
 
 async function reactivateEmployer(email, password) {
   const client = await pool.connect();
