@@ -121,7 +121,7 @@ async function reactivateJobSeeker(archivedUser) {
     SELECT user_id, jobtitle_id, salary, company, location, start_date, end_date, description
     FROM archived_job_experience
     WHERE user_id = $1
-  `, [userId]);
+  `, [archivedUser.user_id]);
 
   
   await pool.query(
