@@ -56,10 +56,13 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
           'Content-Type': 'application/json',
         },
       });
-
+  
       if (response.ok) {
         console.log('Employer approved successfully');
-        await fetchUsers(); // Immediately refresh the user listings after approval
+        // Remove the approved user from the currentListings
+        setCurrentListings((prevListings) =>
+          prevListings.filter((listing) => listing.user_id !== selectedUserId)
+        );
       } else {
         const errorData = await response.json();
         console.error('Error:', errorData);
@@ -70,12 +73,13 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
       handleCloseApproveModal();
     }
   };
+  
 
   const handleReject = async () => {
     try {
       console.log(`Rejecting user with ID: ${selectedUserId}`);
       console.log(`Reason for rejection: ${rejectionReason}`);
-      
+  
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/reject/${selectedUserId}`, {
         method: 'POST',
         headers: {
@@ -86,7 +90,10 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
   
       if (response.ok) {
         console.log('Employer rejected successfully');
-        await fetchUsers(); // Immediately refresh the user listings after rejection
+        // Remove the rejected user from the currentListings
+        setCurrentListings((prevListings) =>
+          prevListings.filter((listing) => listing.user_id !== selectedUserId)
+        );
       } else {
         const errorData = await response.json();
         console.error('Error:', errorData);
