@@ -34,8 +34,6 @@ def check_salary_match(job, jobseeker_salary):
 def check_collaborative_filtering(job, collaborative_filtering_jobs):
     """Check if job is in the list of jobs applied to by similar jobseekers."""
     collaborative_match = job['job_id'] in collaborative_filtering_jobs
-    print(f"DEBUG: Checking collaborative match for job_id {job['job_id']} -> {collaborative_match}")
-    print(f"DEBUG: collaborative_filtering_jobs contains: {collaborative_filtering_jobs}")
     return collaborative_match
 
 def generate_recommendation(job, match_count, industry_match, title_match, salary_match, collaborative_match):
@@ -72,9 +70,9 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
             for job in jobseeker.get('applied_jobs', []):
                 job_id = int(job['job_id'])  # Convert job_id to integer for consistency
                 collaborative_filtering_jobs.add(job_id)
-                print(f"DEBUG: Adding job_id {job_id} to collaborative_filtering_jobs.")
+            
 
-    print(f"DEBUG: Final collaborative_filtering_jobs set: {collaborative_filtering_jobs}")
+    
 
     # Iterate through job data
     for job in job_info:
