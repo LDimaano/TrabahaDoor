@@ -186,8 +186,8 @@ async function reactivateEmployer(archivedUser) {
   `, [archivedUser.user_id]);
 
   await pool.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUser.user_id]);
-  await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_job_skills WHERE user_id = $1', [archivedUser.user_id]);
+  await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_emp_profiles WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
 
