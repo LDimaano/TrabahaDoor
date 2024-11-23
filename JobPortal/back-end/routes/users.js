@@ -228,7 +228,7 @@ router.post('/login', async (req, res) => {
         if (archivedUser.usertype === 'jobseeker') {
           await reactivateJobSeeker(archivedUser);
         } else if (archivedUser.usertype === 'employer') {
-          await reactivateEmployer(archivedUser.email, archivedUser.password);
+          await reactivateEmployer(archivedUser);
         }
         await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
         await pool.query('COMMIT');
