@@ -273,8 +273,8 @@ const UpdateJobPosting = () => {
             className="form-control"
             value={positions}
             onChange={(e) => {
-              setPositions(e.target.value)}
-            }
+              setPositions(parseInt(e.target.value, 10) || 0); // Ensure positions is always a number
+            }}
           />
         </div>
         </section>
