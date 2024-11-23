@@ -38,6 +38,11 @@ const JobDescription = () => {
 
   if (!jobData) return <div>Loading...</div>;
 
+  const toggleSidebar = () => {
+    setSidebarVisible(!isSidebarVisible);
+  };
+
+
   return (
     <div className="d-flex">
       <Helmet>
@@ -45,10 +50,14 @@ const JobDescription = () => {
       </Helmet>
       {/* Sidebar with responsive design */}
       <div
-        className="d-none d-md-block"
+        className={`col-auto p-0 d-lg-block ${isSidebarVisible ? 'd-block' : 'd-none'}`}
         style={{
           position: 'sticky',
-          zIndex: '1000',
+          top: '0',
+          height: '100vh',
+          overflowY: 'auto',
+          backgroundColor: '#f8f9fa',
+          zIndex: 1000,
         }}
       >
         <Sidebar />
@@ -118,6 +127,13 @@ const JobDescription = () => {
           />
         </section>
       </main>
+      {isSidebarVisible && (
+        <div
+          className="position-fixed w-100 h-100"
+          style={{ top: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 998 }}
+          onClick={toggleSidebar}
+        />
+      )}
     </div>
   );
 };
