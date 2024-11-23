@@ -62,7 +62,8 @@ const JobDescription = () => {
           jobInfo={[
             { label: 'Job Posted On', value: new Date(jobData.datecreated).toLocaleDateString() },
             { label: 'Job Type', value: jobData.jobtype },
-            { label: 'Salary', value: jobData.salaryrange }
+            { label: 'Salary', value: jobData.salaryrange },
+            { label: 'Available Positions', value: jobData.positions}
           ]}
           skills={jobData.skills || []} 
         />
