@@ -4,30 +4,30 @@ const JobContent = ({ jobdescription, responsibilities, qualifications }) => {
   return (
     <div className="col-md-8">
       <section className="mb-4">
-        <h2 className="text-primary border-bottom pb-2">Description</h2>
-        <p className="text-dark fs-5">{jobdescription}</p> 
+        <h2 className="text-dark border-bottom pb-2">Description</h2>
+        <p className="text-muted fs-5">{jobdescription}</p>
       </section>
       <section className="mb-4">
-        <h2 className="text-primary border-bottom pb-2">Responsibilities</h2>
-        <ul className="list-group list-group-flush">
+        <h2 className="text-dark border-bottom pb-2">Responsibilities</h2>
+        <div>
           {responsibilities.map((responsibility, index) => (
-            <li key={index} className="list-group-item">
+            <p key={index} className="mb-2">
               <i className="me-2 fa fa-check-circle text-success"></i>
-              <span className="text-dark">{responsibility}</span> {/* Changed text color to dark */}
-            </li>
+              {responsibility}
+            </p>
           ))}
-        </ul>
+        </div>
       </section>
       <section>
-        <h2 className="text-primary border-bottom pb-2">Qualifications</h2>
-        <ul className="list-group list-group-flush">
+        <h2 className="text-dark border-bottom pb-2">Qualifications</h2>
+        <div>
           {qualifications.map((qualification, index) => (
-            <li key={index} className="list-group-item">
+            <p key={index} className="mb-2">
               <i className="me-2 fa fa-check-circle text-success"></i>
-              <span className="text-dark">{qualification}</span> {/* Changed text color to dark */}
-            </li>
+              {qualification}
+            </p>
           ))}
-        </ul>
+        </div>
       </section>
     </div>
   );
