@@ -5,7 +5,7 @@ import { Modal, Button, Form, Alert } from 'react-bootstrap';
 
 const UploadDocuments = () => {
     const [showModal, setShowModal] = useState(false);
-    const [successMessage, setSuccessMessage] = useState(''); // State for success message
+    const [successMessage, setSuccessMessage] = useState(''); 
     const [formData, setFormData] = useState({
         sec_certificate: null,
         business_permit: null,
@@ -16,20 +16,20 @@ const UploadDocuments = () => {
     });
 
     const navigate = useNavigate();
-    const user_id = window.location.pathname.split('/')[2]; // Get user ID from session storage
+    const user_id = window.location.pathname.split('/')[2]; 
 
     // Handle file change event
     const handleFileChange = (e) => {
         setFormData({
             ...formData,
-            [e.target.name]: e.target.files[0] // Store selected file in state
+            [e.target.name]: e.target.files[0] 
         });
     };
 
     // Handle form submission
     const handleSubmit = (e) => {
-        e.preventDefault(); // Prevent default form submission
-        setShowModal(true); // Show the confirmation modal
+        e.preventDefault(); 
+        setShowModal(true); 
     };
 
     const handleConfirmSubmit = async () => {
@@ -40,13 +40,13 @@ const UploadDocuments = () => {
             for (const key in formData) {
                 if (formData[key]) {
                     form.append(key, formData[key]);
-                    console.log(`Appending file: ${key} -> ${formData[key].name}`); // Log file being appended
+                    console.log(`Appending file: ${key} -> ${formData[key].name}`); 
                 }
             }
     
             // Append the user ID
             form.append('user_id', user_id);
-            console.log(` user_id document file upload: ${user_id}`); // Log the user ID
+            console.log(` user_id document file upload: ${user_id}`); 
     
             // Send the form data to the server using await
             const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/upload/${user_id}`, { // Full backend URL
@@ -54,26 +54,24 @@ const UploadDocuments = () => {
                 body: form
             });
     
-            console.log('Response status:', response.status); // Log response status
+            console.log('Response status:', response.status); 
     
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
     
-            const data = await response.text(); // Wait for the response data
-            console.log('Response data:', data); // Log the response data from the server
+            const data = await response.text(); 
+            console.log('Response data:', data); 
             
-            setSuccessMessage('Document submitted successfully!'); // Set success message
-            setShowModal(false); // Close the modal
-            
-            // Delay navigation to show success message briefly
+            setSuccessMessage('Document submitted successfully!'); 
+            setShowModal(false); 
             setTimeout(() => {
                 navigate('/login');
-            }, 2000); // 2-second delay
+            }, 2000); 
         } catch (error) {
-            console.error('Error:', error); // Log the error
+            console.error('Error:', error); 
             alert('Upload failed. Please try again.');
-            setShowModal(false); // Close the modal in case of error
+            setShowModal(false); 
         }
     };
 
@@ -82,7 +80,6 @@ const UploadDocuments = () => {
             <h1 className="text-center">Required Document Upload</h1>
             <h5 className="text-center">Ensure compliance by providing all required documents.</h5>
             
-            {/* Success Message */}
             {successMessage && <Alert variant="success">{successMessage}</Alert>}
 
             <Form onSubmit={handleSubmit}>
@@ -116,13 +113,11 @@ const UploadDocuments = () => {
                     <Form.Control type="file" name="contract_sub_contractor_certificate" onChange={handleFileChange} required />
                 </Form.Group>
 
-                {/* Submit Button */}
                 <div className="d-flex justify-content-end mt-4">
                     <Button variant="primary" type="submit">Submit</Button>
                 </div>
             </Form>
 
-            {/* Confirmation Modal */}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirm Submission</Modal.Title>

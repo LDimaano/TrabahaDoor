@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../../components/empheader';
 import { io } from 'socket.io-client';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 
 function EmpNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
   const [notificationCount, setNotificationCount] = useState(0);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
   // Initialize WebSocket connection
   useEffect(() => {

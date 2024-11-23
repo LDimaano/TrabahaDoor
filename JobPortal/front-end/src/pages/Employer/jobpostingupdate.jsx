@@ -181,14 +181,13 @@ const UpdateJobPosting = () => {
     }
   };
 
-  // Function to handle modal confirmation
   const handleConfirmUpdate = (e) => {
-    e.preventDefault();  // Prevent form submission immediately
-    setShowModal(true);  // Show confirmation modal
+    e.preventDefault();  
+    setShowModal(true);  
   };
 
   const handleModalClose = () => {
-    setShowModal(false); // Close modal
+    setShowModal(false); 
   };
 
   const handleModalConfirm = () => {
@@ -273,7 +272,7 @@ const UpdateJobPosting = () => {
             className="form-control"
             value={positions}
             onChange={(e) => {
-              setPositions(parseInt(e.target.value, 10) || 0); // Ensure positions is always a number
+              setPositions(parseInt(e.target.value, 10) || 0); 
             }}
           />
         </div>

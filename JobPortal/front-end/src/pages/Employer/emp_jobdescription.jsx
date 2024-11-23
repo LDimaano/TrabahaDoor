@@ -13,7 +13,7 @@ const JobDescription = () => {
   const navigate = useNavigate();
   const { jobId } = useParams();
   const [jobData, setJobData] = useState(null);
-  const [isSidebarVisible, setSidebarVisible] = useState(false); // State for sidebar visibility
+  const [isSidebarVisible, setSidebarVisible] = useState(false); 
 
   const handleBack = () => {
     navigate(-1);
@@ -47,9 +47,8 @@ const JobDescription = () => {
   return (
     <div className="d-flex">
       <Helmet>
-        <title>TrabahaDoor - Employer</title> {/* Set the page title */}
+        <title>TrabahaDoor - Employer</title> 
       </Helmet>
-      {/* Sidebar with responsive design */}
       <div
         className={`col-auto p-0 d-lg-block ${isSidebarVisible ? 'd-block' : 'd-none'}`}
         style={{

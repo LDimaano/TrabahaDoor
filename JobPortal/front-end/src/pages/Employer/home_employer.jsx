@@ -9,7 +9,6 @@ function HomeEmployer() {
   const [searchParams, setSearchParams] = useState({});
   const [activeTab, setActiveTab] = useState('all'); 
 
-  // Handle search and update state with search parameters from SearchForm
   const handleSearch = (params) => {
     setSearchParams(params);
   };

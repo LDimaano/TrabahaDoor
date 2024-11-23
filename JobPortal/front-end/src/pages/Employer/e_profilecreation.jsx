@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
-import { Modal, Button } from 'react-bootstrap'; // Importing Bootstrap Modal and Button
+import { Modal, Button } from 'react-bootstrap'; 
 
 function EmployerProfileCreation() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ function EmployerProfileCreation() {
   const [photo, setPhoto] = useState(null);
   const [error, setError] = useState('');
   
-  const [showModal, setShowModal] = useState(false); // For controlling the modal visibility
+  const [showModal, setShowModal] = useState(false); 
 
   useEffect(() => {
     fetchIndustries();
@@ -35,7 +35,7 @@ function EmployerProfileCreation() {
   
     if (!file) {
         console.log('No file selected, using default profile picture');
-        setPhoto(defaultProfilePictureUrl); // Set the default photo URL in state
+        setPhoto(defaultProfilePictureUrl); 
         return;
     }
   
@@ -55,14 +55,14 @@ function EmployerProfileCreation() {
   
         const data = await response.json();
         console.log('Uploaded image data:', data);
-        setPhoto(data.profilePictureUrl); // Set the uploaded photo URL in state
+        setPhoto(data.profilePictureUrl); 
     } catch (error) {
         console.error('Error uploading profile picture:', error);
     }
 };
 
   const handleSubmit = async (e) => {
-    if (e) e.preventDefault(); // Prevent default form submission behavior
+    if (e) e.preventDefault(); 
     const user_id = window.location.pathname.split('/')[2];
 
     // Default profile picture URL
@@ -127,15 +127,15 @@ function EmployerProfileCreation() {
 
   const handleShowModal = (e) => {
     e.preventDefault();
-    setShowModal(true); // Show the modal
+    setShowModal(true); 
   };
 
   const handleCloseModal = () => {
-    setShowModal(false); // Hide the modal
+    setShowModal(false); 
   };
 
   const handleConfirmSubmit = () => {
-    setShowModal(false); // Hide modal and submit the form
+    setShowModal(false); 
     handleSubmit();
   };
 
@@ -271,7 +271,6 @@ function EmployerProfileCreation() {
       </form>
       {error && <div className="alert alert-danger mt-3">{error}</div>}
 
-      {/* Modal */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Submission</Modal.Title>

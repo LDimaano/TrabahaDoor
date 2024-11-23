@@ -1,4 +1,3 @@
-// src/pages/ApplicantDashboard.js
 import React, { useState } from 'react';
 import Sidebar from '../../components/emp_side';
 import Header from '../../components/emp_header';
@@ -10,8 +9,6 @@ import { faFilter} from '@fortawesome/free-solid-svg-icons';
 
 const ApplicantDashboard = () => {
   const [applicants, setApplicants] = useState([
-    { name: 'Jake Gyll', avatar: `${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`, status: 'Inreview', date: '13 July, 2025', role: 'Elementary Teacher' },
-    // ... (other applicants)
   ]);
 
   const userId = sessionStorage.getItem('user_id');

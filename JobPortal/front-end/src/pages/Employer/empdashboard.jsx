@@ -19,9 +19,8 @@ const EmployerDashboard = () => {
   return (
     <div className="d-flex">
       <Helmet>
-        <title>TrabahaDoor - Employer</title> {/* Set the page title */}
+        <title>TrabahaDoor - Employer</title> 
       </Helmet>
-      {/* Sidebar */}
       <div
         className={`sidebar bg-primary text-white ${isSidebarVisible ? 'slide-in' : 'slide-out'} d-lg-block`}
         style={{
@@ -37,13 +36,11 @@ const EmployerDashboard = () => {
         <Sidebar />
       </div>
 
-      {/* Main Content */}
       <main className="flex-grow-1 p-3" style={{ marginLeft: isSidebarVisible || window.innerWidth >= 992 ? '250px' : '0' }}>
         <Header />
         <section>
           <h3>Employer Dashboard</h3>
           <div className="row g-4 mt-4">
-            {/* Two charts per row (col-lg-6, col-md-12) */}
             <div className="col-lg-6 col-md-12">
               <ChartPlaceholder1 />
             </div>
@@ -59,8 +56,6 @@ const EmployerDashboard = () => {
           </div>
         </section>
       </main>
-
-      {/* Toggle Sidebar Button */}
       <button
         className="btn btn-primary d-lg-none position-fixed"
         style={{ top: '15px', left: '15px', zIndex: 999 }}

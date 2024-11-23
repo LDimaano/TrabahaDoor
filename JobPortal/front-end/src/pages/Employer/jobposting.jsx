@@ -246,8 +246,8 @@ const JobPosting = () => {
             className="form-control"
             value={positions}
             onChange={(e) => {
-              const value = parseInt(e.target.value, 10) || 0; // Ensure base 10 for parseInt
-              console.log("Positions input value:", value); // Log the input value
+              const value = parseInt(e.target.value, 10) || 0; 
+              console.log("Positions input value:", value); 
               setPositions(value);
             }}
             min="0"

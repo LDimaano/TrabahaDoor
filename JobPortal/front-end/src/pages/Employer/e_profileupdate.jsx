@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 function EmployerProfileCreation() {
   const navigate = useNavigate();
-  const { userId } = useParams(); // Extract userId from URL params
+  const { userId } = useParams(); 
   
   const [companyName, setCompanyName] = useState('');
   const [contactPerson, setContactPerson] = useState('');
@@ -53,12 +53,12 @@ function EmployerProfileCreation() {
 
   const handleUpdate = async () => {
     const profileData = {
-        user_id: userId, // Ensure userId is defined correctly in your component
+        user_id: userId, 
         companyName,
         contactPerson,
         contactNumber,
         website,
-        industry_id: industry?.value || '', // Make sure industry is defined
+        industry_id: industry?.value || '', 
         companyAddress,
         companySize,
         foundedYear,
@@ -75,12 +75,10 @@ function EmployerProfileCreation() {
             body: JSON.stringify(profileData),
         });
 
-        // Check if the response is ok
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Parse the response data
         const data = await response.json();
         console.log('Profile updated successfully:', data);
 
@@ -89,7 +87,6 @@ function EmployerProfileCreation() {
         }, 1000);
     } catch (err) {
         console.error('Update failed:', err);
-        // Set error message in state to display to the user
         setError('Failed to update the profile. Please try again.');
     }
 };
@@ -245,7 +242,6 @@ function EmployerProfileCreation() {
       </form>
       {error && <div className="alert alert-danger mt-3">{error}</div>}
 
-      {/* Modal */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Update</Modal.Title>
