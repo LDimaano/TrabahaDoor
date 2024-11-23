@@ -48,6 +48,7 @@ function ApplicantJoblist({ currentListings }) {
               <th>Company</th>
               <th>Hiring Status</th>
               <th>Applied Date</th>
+              <th>Job Status</th>
               <th>Delete</th>
             </tr>
           </thead>
@@ -66,6 +67,7 @@ function ApplicantJoblist({ currentListings }) {
                 <td>{listing.company_name}</td>
                 <td>{listing.status}</td>
                 <td>{new Date(listing.date_applied).toLocaleDateString()}</td>
+                <td>{listing.job_status}</td>
                 <td>
                   <button
                     className="btn btn-danger"

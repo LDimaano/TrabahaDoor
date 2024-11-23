@@ -460,12 +460,13 @@ router.get('/getUserJobListings', async (req, res) => {
   }
 
   const query = `
-    SELECT 
+     SELECT 
       jl.job_id,
       jl.user_id AS emp_id,
       emp.company_name,
       a.application_id,
       pp.profile_picture_url,
+	    jl.status AS job_status,
       jt.job_title,
       a.date_applied,
       a.status,
