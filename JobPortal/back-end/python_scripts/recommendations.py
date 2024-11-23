@@ -6,7 +6,7 @@ def extract_job_data(job_data):
     job_info = []
     for job in job_data:
         job_info.append({
-            'job_id': int(job.get('job_id', 0)),
+            'job_id': job.get('job_id'),
             'required_skills': set(job.get('required_skills', [])),
             'company_name': job.get('company_name', 'Unknown Company name'),
             'industry_name': job.get('industry_name', 'Unknown Industry'),
@@ -102,7 +102,7 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
             x['salary_match'],
             x['title_match'],
             x['match_count'],
-            x['collaborative_match'],  # Prioritize collaborative matches
+            x['collaborative_match']
         ),
         reverse=True
     )
