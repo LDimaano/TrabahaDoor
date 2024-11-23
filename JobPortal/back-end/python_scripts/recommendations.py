@@ -8,7 +8,7 @@ def extract_job_data(job_data):
         job_info.append({
             'job_id': job.get('job_id'),
             'required_skills': set(job.get('required_skills', [])),
-            'company_name':job.get('company_name', 'Unknown Company name'),
+            'company_name': job.get('company_name', 'Unknown Company name'),
             'industry_name': job.get('industry_name', 'Unknown Industry'),
             'job_title': job.get('job_title', 'Unknown Title'),
             'salaryrange': job.get('salaryrange', 'unknown salary'),
@@ -32,8 +32,7 @@ def check_salary_match(job, jobseeker_salary):
     ) if jobseeker_salary else False
 
 def check_collaborative_filtering(job, collaborative_filtering_jobs):
-    """Check if a job is in the collaborative filtering set."""
-    return job['job_id'] in collaborative_filtering_jobs
+    return int(job['job_id']) in collaborative_filtering_jobs  # Convert job_id to integer here
 
 
 def generate_recommendation(job, match_count, industry_match, title_match, salary_match, collaborative_match):
@@ -69,7 +68,9 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     if similar_jobseekers:
         for jobseeker in similar_jobseekers:
             for job in jobseeker.get('applied_jobs', []):
-                collaborative_filtering_jobs.add(job['job_id'])
+                job_id = int(job['job_id'])  # Convert job_id to integer for consistency
+                if job_id not in collaborative_filtering_jobs:
+                    collaborative_filtering_jobs.add(job_id)
 
     # Iterate through job data
     for job in job_info:
@@ -102,7 +103,6 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     )
 
     return recommendations
-
 
 
 if __name__ == "__main__":
