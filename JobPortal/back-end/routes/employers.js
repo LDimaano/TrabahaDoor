@@ -719,7 +719,6 @@ router.post('/reupload/:user_id', uploadDocuments, async (req, res) => {
     }
 
     const fileUploadPromises = [];
-
     const fileTypes = [
       'sec_certificate',
       'business_permit',
@@ -745,7 +744,7 @@ router.post('/reupload/:user_id', uploadDocuments, async (req, res) => {
 
     await Promise.all(fileUploadPromises);
 
-    const query = `
+    const updateDocumentsQuery = `
       UPDATE documents 
       SET sec_certificate = $2, 
           business_permit = $3, 
@@ -755,9 +754,9 @@ router.post('/reupload/:user_id', uploadDocuments, async (req, res) => {
           contract_sub_contractor_certificate = $7
       WHERE user_id = $1
       RETURNING *;
-      `;
+    `;
 
-    const values = [
+    const updateDocumentsValues = [
       user_id,
       urls.sec_certificate || null,
       urls.business_permit || null,
@@ -767,9 +766,17 @@ router.post('/reupload/:user_id', uploadDocuments, async (req, res) => {
       urls.contract_sub_contractor_certificate || null
     ];
 
-    const result = await pool.query(query, values);
+    const documentResult = await pool.query(updateDocumentsQuery, updateDocumentsValues);
 
-    res.status(200).send(`Documents uploaded successfully for user ID: ${user_id}. Record ID: ${result.rows[0].id}`);
+    const updateUserQuery = `
+      UPDATE users
+      SET approve = 'no'
+      WHERE user_id = $1;
+    `;
+
+    await pool.query(updateUserQuery, [user_id]);
+
+    res.status(200).send(`Documents uploaded successfully for user ID: ${user_id}. Record ID: ${documentResult.rows[0].id}`);
   } catch (error) {
     console.error('Error saving to database:', error);
     res.status(500).send('Server error');
