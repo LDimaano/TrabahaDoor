@@ -32,7 +32,8 @@ def check_salary_match(job, jobseeker_salary):
     ) if jobseeker_salary else False
 
 def check_collaborative_filtering(job, collaborative_filtering_jobs):
-    return int(job['job_id']) in collaborative_filtering_jobs  # Convert job_id to integer here
+    """Check if job is in the list of jobs applied to by similar jobseekers."""
+    return int(job['job_id']) in collaborative_filtering_jobs  # Convert job_id to integer for consistency
 
 
 def generate_recommendation(job, match_count, industry_match, title_match, salary_match, collaborative_match):
@@ -69,8 +70,7 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         for jobseeker in similar_jobseekers:
             for job in jobseeker.get('applied_jobs', []):
                 job_id = int(job['job_id'])  # Convert job_id to integer for consistency
-                if job_id not in collaborative_filtering_jobs:
-                    collaborative_filtering_jobs.add(job_id)
+                collaborative_filtering_jobs.add(job_id)  # Add job_id to the set
 
     # Iterate through job data
     for job in job_info:
