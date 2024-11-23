@@ -481,7 +481,7 @@ router.get('/getUserJobListings', async (req, res) => {
 
   try {
     const result = await pool.query(query, [userId]);
-    console.log('Query Result Joblisting:', result.rows);
+    console.log('Backend Query Result:', result.rows);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching job listings:', error);

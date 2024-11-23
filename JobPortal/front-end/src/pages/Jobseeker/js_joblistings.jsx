@@ -32,18 +32,26 @@ const JobseekerDashboard = () => {
   useEffect(() => {
     const fetchJobListings = async () => {
       try {
+        // Step 1: Log the user ID fetched from sessionStorage
         const userId = sessionStorage.getItem('user_id');
         if (!userId) {
           console.error('User ID not found in sessionStorage');
           return;
         }
+        console.log(`User ID fetched from sessionStorage: ${userId}`);
   
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/getUserJobListings?user_id=${userId}`, {
+        // Step 2: Log the API endpoint being called
+        const apiUrl = `${process.env.REACT_APP_API_URL}/api/jobseekers/getUserJobListings?user_id=${userId}`;
+        console.log(`Fetching job listings from API: ${apiUrl}`);
+  
+        // Step 3: Fetch the data and log the response status
+        const response = await fetch(apiUrl, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
         });
+        console.log(`API Response Status: ${response.status}`);
   
         if (response.status === 404) {
           console.log('No job listings found (404).');
@@ -52,24 +60,33 @@ const JobseekerDashboard = () => {
         }
   
         if (!response.ok) {
+          console.error(`HTTP Error! Status: ${response.status}`);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
   
+        // Step 4: Parse and log the raw JSON response
         const data = await response.json();
+        console.log('Raw API Response:', data);
+  
+        // Step 5: Validate the data format
         if (!Array.isArray(data)) {
+          console.error('Invalid response format. Expected an array:', data);
           throw new Error('Invalid response format');
         }
   
+        // Step 6: Log the processed job listings before updating state
+        console.log('Final Processed Job Listings:', data);
         setJobs(data);
       } catch (error) {
+        // Step 7: Log any error encountered
         setError(error.message);
         console.error('Error fetching job listings:', error);
       }
     };
   
     fetchJobListings();
-  }, []);  
-
+  }, []);
+  
   if (error) {
     return <div>Error: {error}</div>;
   }
