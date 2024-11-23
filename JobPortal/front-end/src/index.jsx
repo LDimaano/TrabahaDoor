@@ -16,6 +16,7 @@ import EmployerProfileCreation from './pages/Employer/e_profilecreation';
 import JobPostingForm from './pages/Employer/jobposting'; 
 import HomeJobseeker from './pages/Jobseeker/home_jobseeker';
 import Jobdescription from './pages/Jobseeker/jobdescription';
+import JsJobDescription from './pages/Jobseeker/js_jobdescription';
 import EmpJobdescription from './pages/Employer/emp_jobdescription';
 import ApplicantList from './pages/Employer/applicantlist';
 import Applicantdetails from './pages/Employer/appdetails';
@@ -113,6 +114,7 @@ root.render(
         <Route path="/verify-email" element={<EmailVerification />} />
         <Route path="/unverified-account" element={<Unverified />} />
         <Route path="/admin_demographics" element={<Demographics />} />
+        <Route path="/js_jobdescription:jobId" element={<JsJobDescription/>} />
       </Routes>
     </Router>
   </React.StrictMode>
