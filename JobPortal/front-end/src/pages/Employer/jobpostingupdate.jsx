@@ -273,8 +273,12 @@ const UpdateJobPosting = () => {
             className="form-control"
             value={positions}
             onChange={(e) => {
-              const value = parseInt(e.target.value, 10) || 0; 
-              console.log("Positions input value:", value); 
+              const rawValue = e.target.value;
+              console.log("Raw input value:", rawValue);
+
+              const value = Number(rawValue) || 0;
+              console.log("Parsed input value:", value);
+
               setPositions(value);
             }}
             min="0"
