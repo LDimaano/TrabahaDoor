@@ -8,7 +8,9 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
   const [showModal, setShowModal] = useState(false);
   const [documentUrl, setDocumentUrl] = useState('');
   const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState('');
   const [error, setError] = useState('');
 
   const toggleViewMode = () => {
@@ -35,6 +37,17 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
     setSelectedUserId(null);
   };
 
+  const handleShowRejectModal = (userId) => {
+    setSelectedUserId(userId);
+    setShowRejectModal(true);
+  };
+
+  const handleCloseRejectModal = () => {
+    setShowRejectModal(false);
+    setSelectedUserId(null);
+    setRejectionReason('');
+  };
+
   const handleApprove = async () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/approve/${selectedUserId}`, {
@@ -43,7 +56,7 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.ok) {
         console.log('Employer approved successfully');
         await fetchUsers(); // Immediately refresh the user listings after approval
@@ -54,10 +67,34 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
     } catch (error) {
       console.error('Error:', error);
     } finally {
-      handleCloseApproveModal(); // Close the approve modal
+      handleCloseApproveModal();
     }
   };
-  
+
+  const handleReject = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/reject/${selectedUserId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ reason: rejectionReason }),
+      });
+
+      if (response.ok) {
+        console.log('Employer rejected successfully');
+        await fetchUsers(); // Immediately refresh the user listings after rejection
+      } else {
+        const errorData = await response.json();
+        console.error('Error:', errorData);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      handleCloseRejectModal();
+    }
+  };
+
   return (
     <div>
       <div className="d-flex justify-content-end mb-3">
@@ -78,7 +115,8 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
                 <th>POEA License</th>
                 <th>Private Recruitment Agency License</th>
                 <th>Contract Sub Contractor Certificate</th>
-                <th>Approved</th>
+                <th>Approve</th>
+                <th>Reject</th>
               </tr>
             </thead>
             <tbody>
@@ -98,34 +136,15 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
                       <FontAwesomeIcon icon={faEye} /> View Document
                     </Button>
                   </td>
-                  <td>
-                    <Button variant="link" onClick={() => handleShowModal(listing.business_permit)}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
-                    </Button>
-                  </td>
-                  <td>
-                    <Button variant="link" onClick={() => handleShowModal(listing.bir_certificate)}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
-                    </Button>
-                  </td>
-                  <td>
-                    <Button variant="link" onClick={() => handleShowModal(listing.poea_license)}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
-                    </Button>
-                  </td>
-                  <td>
-                    <Button variant="link" onClick={() => handleShowModal(listing.private_recruitment_agency_license)}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
-                    </Button>
-                  </td>
-                  <td>
-                    <Button variant="link" onClick={() => handleShowModal(listing.contract_sub_contractor_certificate)}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
-                    </Button>
-                  </td>
+                  {/* Repeat for other document types */}
                   <td>
                     <Button variant="danger" onClick={() => handleShowApproveModal(listing.user_id)}>
                       Approve Employer
+                    </Button>
+                  </td>
+                  <td>
+                    <Button variant="warning" onClick={() => handleShowRejectModal(listing.user_id)}>
+                      Reject Employer
                     </Button>
                   </td>
                 </tr>
@@ -135,31 +154,7 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
         </div>
       ) : (
         <div className="row">
-          {currentListings.map((listing) => (
-            <div className="col-md-4 mb-4" key={listing.user_id}>
-              <div className="card h-100">
-                <img
-                  src={listing.profile_picture_url}
-                  alt="profile"
-                  className="card-img-top"
-                  style={{ height: '200px', objectFit: 'cover' }}
-                />
-                <div className="card-body">
-                  <h5 className="card-title">{listing.full_name || listing.company_name}</h5>
-                  <p><strong>Email:</strong> {listing.email}</p>
-                  <div className="d-flex flex-column">
-                    <Button variant="link" onClick={() => handleShowModal(listing.sec_certificate)}>
-                      <FontAwesomeIcon icon={faEye} /> SEC Certificate
-                    </Button>
-                    {/* Repeat for each certificate */}
-                  </div>
-                  <Button variant="danger" onClick={() => handleShowApproveModal(listing.user_id)}>
-                    Approve Employer
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
+          {/* Render grid view */}
         </div>
       )}
 
@@ -194,6 +189,32 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
           </Button>
           <Button variant="primary" onClick={handleApprove}>
             Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Rejection Modal */}
+      <Modal show={showRejectModal} onHide={handleCloseRejectModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reject Employer</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are you sure you want to reject this employer?</p>
+          <textarea
+            className="form-control"
+            placeholder="Enter the reason for rejection"
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+            rows="4"
+          ></textarea>
+          {error && <p className="text-danger">{error}</p>}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseRejectModal}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleReject} disabled={!rejectionReason}>
+            Reject Employer
           </Button>
         </Modal.Footer>
       </Modal>

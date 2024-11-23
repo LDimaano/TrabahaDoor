@@ -127,6 +127,29 @@ const generateEmailContent = (type, data) => {
                 `
                 
             };
+        case 'account_rejection':
+            return {
+                subject: 'Your Account Has Been Rejected',
+
+                text: `We regret to inform you that your employer account has been rejected for the following reason:
+                
+                "${reason}"
+                
+                If you have any questions, please contact support.
+                
+                Best regards,
+                The Trabahadoor Team`,
+                
+                html: `
+                <p>We regret to inform you that your employer account has been rejected for the following reason:</p>
+                <blockquote>${reason}</blockquote>
+                <p>If you have any questions, please contact support.</p>
+                
+                <p>Best regards,<br/>
+                <strong>The Trabahadoor Team</strong></p>
+                `
+                
+            };
         case 'email_verification':
             return {
                 subject: 'Email Verification',
@@ -217,6 +240,18 @@ const sendActivationEmail = async (employerEmail) => {
     });
 };
 
+const sendRejectionEmail = async (employerEmail, reason) => {
+    const emailContent = generateEmailContent('account_rejection', {reason});
+
+    await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: employerEmail,
+        subject: emailContent.subject,
+        text: emailContent.text,
+        html: emailContent.html,
+    });
+};
+
 const sendVerificationEmail = async (email, verificationLink) => {
     const emailContent = generateEmailContentVerify('email_verification', { verificationLink });
   
@@ -235,6 +270,7 @@ module.exports = {
     sendStatusUpdateEmail,
     sendContactNotificationEmail,
     sendActivationEmail,
+    sendRejectionEmail,
     sendVerificationEmail
 };
   

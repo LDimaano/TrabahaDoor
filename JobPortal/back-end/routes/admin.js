@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const { sendActivationEmail } = require('../mailer');
+const { sendActivationEmail, sendRejectionEmail } = require('../mailer');
 
 router.get('/infoadmin/:userId', async (req, res) => {
     try {
@@ -479,7 +479,10 @@ router.get('/dashboard-data', async (req, res) => {
     console.log('Employer Result:', employerResult.rows);
 
     // Query the count of job listings
-    const jobListingCountQuery = 'SELECT COUNT(*) as count FROM joblistings';
+    const jobListingCountQuery = `
+        SELECT COUNT(*) as count 
+        FROM joblistings
+        WHERE status = 'Hiring'`;
     const jobListingResult = await pool.query(jobListingCountQuery);
     console.log('Job Listing Result:', jobListingResult.rows);
 
@@ -582,6 +585,39 @@ router.put('/approve/:userId', async (req, res) => {
         console.error('Error approving employer:', error);
         res.status(500).json({ message: 'Server error' });
     }
+});
+
+router.post('/reject/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { reason } = req.body;
+
+  if (!reason) {
+    return res.status(400).json({ message: 'Rejection reason is required' });
+  }
+
+  console.log(`Rejecting userId: ${userId} with reason: ${reason}`);
+
+  try {
+    const result = await pool.query(
+      `UPDATE users SET approve = 'rejected' WHERE user_id = $1 RETURNING *`,
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const user = result.rows[0];
+    console.log('User rejection result:', user);
+
+    // Send an email to the employer that their account is rejected
+    await sendRejectionEmail(user.email, reason);
+
+    res.status(200).json({ message: 'Employer rejected successfully', user });
+  } catch (error) {
+    console.error('Error rejecting employer:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 router.get('/gender-distribution', async (req, res) => {
