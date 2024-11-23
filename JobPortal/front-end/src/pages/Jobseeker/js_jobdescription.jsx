@@ -9,7 +9,7 @@ import JobContent from '../../components/jobcontent';
 import JobDetails from '../../components/jobdetails';
 import Sidebar from '../../components/emp_side';
 
-const JsJobDescription = () => {
+const JobDescription = () => {
   const navigate = useNavigate();
   const { jobId } = useParams();
   const [jobData, setJobData] = useState(null);
@@ -125,4 +125,4 @@ const JsJobDescription = () => {
   );
 };
 
-export default JsJobDescription;
+export default JobDescription;
