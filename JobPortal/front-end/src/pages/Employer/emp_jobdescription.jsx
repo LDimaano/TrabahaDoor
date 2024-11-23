@@ -47,7 +47,7 @@ const JobDescription = () => {
       <div className="d-none d-md-block">
         <Sidebar />
       </div>
-      <main className="container-fluid mt-3 p-4">
+      <main className="container-fluid mt-3 p-5">
         <div className="d-none d-md-block">
           <Header />
         </div>
