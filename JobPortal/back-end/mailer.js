@@ -133,7 +133,7 @@ const generateEmailContent = (type, data) => {
 
                 text: `We regret to inform you that your employer account has been rejected for the following reason:
                 
-                "${reason}"
+                "${data.reason}"
                 
                 If you have any questions, please contact support.
                 
@@ -142,7 +142,7 @@ const generateEmailContent = (type, data) => {
                 
                 html: `
                 <p>We regret to inform you that your employer account has been rejected for the following reason:</p>
-                <blockquote>${reason}</blockquote>
+                <blockquote>${data.reason}</blockquote>
                 <p>If you have any questions, please contact support.</p>
                 
                 <p>Best regards,<br/>
