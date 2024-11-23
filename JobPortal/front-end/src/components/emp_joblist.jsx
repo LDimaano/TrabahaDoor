@@ -155,7 +155,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
                   onChange={(e) => handleStatusChange(listing.job_id || listing.jobId, e.target.value)}
                 >
                   <option value="Hiring">Hiring</option>
-                  <option value="Filled">Filled</option>
+                  <option value="Filled">Archive</option>
                 </select>
               </td>
               <td>
@@ -254,7 +254,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
             }}
           >
             <h4 className="mb-3">Confirm Status Change</h4>
-            <p>Are you sure you want to change the job status to: {newStatus}?</p>
+            <p>Are you sure you want to change the job status?</p>
 
             <div className="d-flex justify-content-end mt-4">
               <button 
