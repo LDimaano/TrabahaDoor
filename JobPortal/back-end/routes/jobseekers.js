@@ -566,13 +566,12 @@ async function deleteUserAndArchive(userId, password) {
       WHERE user_id = $1
     `, [userId]);
 
-    // Archive users data
     await client.query(`
-      INSERT INTO archived_users (user_id, email, password, usertype)
-      SELECT user_id, email, password, usertype
+      INSERT INTO archived_users (user_id, email, password, usertype, approve, datecreated, is_verified, is_complete)
+      SELECT user_id, email, password, usertype, approve, datecreated, is_verified, is_complete
       FROM users
       WHERE user_id = $1
-    `, [userId]);
+    `, [userId]);    
 
    // Archive profile pictures data
    await client.query(`

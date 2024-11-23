@@ -143,13 +143,13 @@ async function reactivateEmployer(email, password) {
       throw new Error('User is not an employer.');
     }
 
-    // Restore data to active tables
     await client.query(`
-      INSERT INTO users (user_id, email, password, usertype)
-      SELECT user_id, email, password, usertype
+      INSERT INTO users (user_id, email, password, usertype, approve, datecreated, is_verified, is_complete)
+      SELECT user_id, email, password, usertype, approve, datecreated, is_verified, is_complete
       FROM archived_users
       WHERE email = $1
     `, [email]);
+
 
     await client.query(`
       INSERT INTO emp_profiles (user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description)
