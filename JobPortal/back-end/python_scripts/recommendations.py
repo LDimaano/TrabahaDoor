@@ -32,11 +32,12 @@ def check_salary_match(job, jobseeker_salary):
     ) if jobseeker_salary else False
 
 def check_collaborative_filtering(job, collaborative_filtering_jobs):
-    """Stage 4: Check for collaborative filtering match."""
+    """Check if a job is in the collaborative filtering set."""
     return job['job_id'] in collaborative_filtering_jobs
 
-def generate_recommendation(job, match_count, industry_match, title_match, salary_match, collaborative_filtering_jobs):
-    """Stage 5: Generate a job recommendation."""
+
+def generate_recommendation(job, match_count, industry_match, title_match, salary_match, collaborative_match):
+    """Generate a job recommendation."""
     return {
         'job_title': job['job_title'],
         'company_name': job['company_name'],
@@ -47,11 +48,12 @@ def generate_recommendation(job, match_count, industry_match, title_match, salar
         'jobtype': job['jobtype'],
         'profile_picture_url': job['profile_picture_url'],
         'industry_match': industry_match,
-        'collaborative_match': collaborative_filtering_jobs.get(job['job_id'], []),
+        'collaborative_match': collaborative_match,
         'title_match': title_match,
         'salary_match': salary_match,
-        'match_type': 'hybrid' if (industry_match or title_match) and collaborative_filtering_jobs else 'content'
+        'match_type': 'hybrid' if (industry_match or title_match) and collaborative_match else 'content'
     }
+
 
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None):
     """Main recommendation pipeline."""
@@ -62,14 +64,12 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     skills_set = set(skills)
     job_titles_set = set(job_titles)
 
-    collaborative_filtering_jobs = {}
+    # Collaborative filtering: collect job IDs applied to by similar jobseekers
+    collaborative_filtering_jobs = set()
     if similar_jobseekers:
         for jobseeker in similar_jobseekers:
             for job in jobseeker.get('applied_jobs', []):
-                job_id = job['job_id']
-                if job_id not in collaborative_filtering_jobs:
-                    collaborative_filtering_jobs[job_id] = []
-                collaborative_filtering_jobs[job_id].append(jobseeker['user_id'])
+                collaborative_filtering_jobs.add(job['job_id'])
 
     # Iterate through job data
     for job in job_info:
@@ -87,7 +87,7 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         if skill_match or title_match or collaborative_match:
             match_count = len(skills_set.intersection(job.get('required_skills', set())))
             industry_match = (job['industry_name'] == jobseeker_industry) if jobseeker_industry else False
-            recommendations.append(generate_recommendation(job, match_count, industry_match, title_match, salary_match, collaborative_filtering_jobs))
+            recommendations.append(generate_recommendation(job, match_count, industry_match, title_match, salary_match, collaborative_match))
 
     # Sort recommendations
     recommendations.sort(
@@ -102,6 +102,7 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     )
 
     return recommendations
+
 
 
 if __name__ == "__main__":
