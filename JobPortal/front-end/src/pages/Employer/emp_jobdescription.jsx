@@ -97,8 +97,8 @@ const JobDescription = () => {
         <section className="row">
           <JobContent
             jobdescription={jobData.jobdescription}
-            responsibilities={jobData.responsibilities ? jobData.responsibilities.split(',') : []}
-            qualifications={jobData.qualifications ? jobData.qualifications.split(',') : []}
+            responsibilities={jobData.responsibilities || ''}
+            qualifications={jobData.qualifications || ''}            
           />
           <JobDetails
             jobInfo={[
