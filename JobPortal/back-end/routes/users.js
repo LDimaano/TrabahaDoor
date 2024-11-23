@@ -89,84 +89,171 @@ router.get('/verify-email', async (req, res) => {
   }
 });
 
+async function reactivateJobSeeker(archivedUser) {
+  await pool.query(
+    `INSERT INTO users (user_id, email, password, usertype)
+     SELECT user_id, email, password, usertype
+     FROM archived_users
+     WHERE user_id = $1`,
+    [archivedUser.user_id]
+  );
+  await pool.query(
+    `INSERT INTO job_seekers (user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id)
+     SELECT user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id
+     FROM archived_job_seekers
+     WHERE user_id = $1`,
+    [archivedUser.user_id]
+  );
+  await pool.query(
+    `INSERT INTO js_skills (skill_id, user_id)
+     SELECT skill_id, user_id
+     FROM archived_js_skills
+     WHERE user_id = $1`,
+    [archivedUser.user_id]
+  );
+  await pool.query('DELETE FROM archived_job_seekers WHERE user_id = $1', [archivedUser.user_id]);
+  await pool.query('DELETE FROM archived_js_skills WHERE user_id = $1', [archivedUser.user_id]);
+}
+
+async function reactivateEmployer(userId) {
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    // Check if the user exists in archived tables
+    const archivedUserCheck = await client.query('SELECT * FROM archived_users WHERE user_id = $1', [userId]);
+    if (archivedUserCheck.rows.length === 0) {
+      throw new Error('Archived employer not found.');
+    }
+
+    const archivedUser = archivedUserCheck.rows[0];
+
+    if (archivedUser.usertype !== 'employer') {
+      throw new Error('User is not an employer.');
+    }
+
+    // Restore data to active tables
+    await client.query(`
+      INSERT INTO users (user_id, email, password, usertype)
+      SELECT user_id, email, password, usertype
+      FROM archived_users
+      WHERE user_id = $1
+    `, [userId]);
+
+    await client.query(`
+      INSERT INTO emp_profiles (user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description)
+      SELECT user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description
+      FROM archived_emp_profiles
+      WHERE user_id = $1
+    `, [userId]);
+
+    await client.query(`
+      INSERT INTO profilepictures (user_id, profile_picture_url)
+      SELECT user_id, profile_picture_url
+      FROM archived_profilepictures
+      WHERE user_id = $1
+    `, [userId]);
+
+    await client.query(`
+      INSERT INTO joblistings (job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled)
+      SELECT job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled
+      FROM archived_joblistings
+      WHERE user_id = $1
+    `, [userId]);
+
+    await client.query(`
+      INSERT INTO job_skills (job_id, skill_id, user_id)
+      SELECT job_id, skill_id, user_id
+      FROM archived_job_skills
+      WHERE user_id = $1
+    `, [userId]);
+
+    // Remove restored data from archived tables
+    await client.query('DELETE FROM archived_users WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM archived_emp_profiles WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM archived_joblistings WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM archived_job_skills WHERE user_id = $1', [userId]);
+
+    await client.query('COMMIT');
+
+    return { success: true };
+  } catch (err) {
+    await client.query('ROLLBACK');
+    return { success: false, error: err.message };
+  } finally {
+    client.release();
+  }
+}
+
 // Login endpoint
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Check if user exists in the database
+    // Check active users
     const userQuery = 'SELECT * FROM users WHERE email = $1';
-    const { rows } = await pool.query(userQuery, [email]);
+    let { rows } = await pool.query(userQuery, [email]);
+    let user = rows[0];
 
-    // If no user is found
-    if (rows.length === 0) {
-      return res.status(400).json({ message: 'Invalid Email Or Password' });
+    if (!user) {
+      // Check archived users if not found in active users
+      const archivedUserQuery = 'SELECT * FROM archived_users WHERE email = $1';
+      const archivedResult = await pool.query(archivedUserQuery, [email]);
+
+      if (archivedResult.rows.length === 0) {
+        return res.status(400).json({ message: 'Invalid Email Or Password' });
+      }
+
+      const archivedUser = archivedResult.rows[0];
+
+      // Check plain text password match for archived user
+      if (password !== archivedUser.password) {
+        return res.status(400).json({ message: 'Invalid Email Or Password' });
+      }
+
+      // Reactivate user and move them to the active tables
+      await pool.query('BEGIN');
+      try {
+        if (archivedUser.usertype === 'jobseeker') {
+          await reactivateJobSeeker(archivedUser);
+        } else if (archivedUser.usertype === 'employer') {
+          await reactivateEmployer(archivedUser);
+        }
+        await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
+        await pool.query('COMMIT');
+      } catch (err) {
+        await pool.query('ROLLBACK');
+        throw err;
+      }
+      user = archivedUser; // Reactivated user is now treated as active
     }
 
-    const user = rows[0];
-
-    // Compare the passwords
+    // Validate plain text password for active users
     if (password !== user.password) {
       return res.status(400).json({ message: 'Invalid Email Or Password' });
     }
 
-    // Set session data
-    req.session.user = {
-      user_id: user.user_id,
-      email: user.email,
-      usertype: user.usertype,
-    };
+    // Set session for authenticated user
+    req.session.user = { user_id: user.user_id, email: user.email, usertype: user.usertype };
 
-    console.log('user id: ', req.session.user.user_id);
-
-    // Save session and handle redirection
-    await req.session.save(err => {
-      if (err) {
-        console.error('Error saving session:', err);
-        return res.status(500).json({ message: 'Session save error' });
-      }
-
-      // Determine redirect URL based on user data
-      const redirectUrl = (() => {
-        if (user.usertype === 'jobseeker') {
-          if (user.is_complete && user.is_verified) {
-            return '/home_jobseeker';
-          } else if (!user.is_complete && user.is_verified) {
-            return `/j_profilecreation/${user.user_id}`;
-          } else {
-            return '/unverified-account';
-          }
-        } else if (user.usertype === 'employer') {
-          if (user.is_verified) {
-            if (user.is_complete) {
-              if (user.approve === 'yes') {
-                return '/home_employer';
-              } else if (user.approve === 'no') {
-                return '/waitapproval';
-              }else if (user.approve === 'rejected') {
-                return '/resubmitemployerfiles';
-            }
-            } else {
-              return `/e_profilecreation/${user.user_id}`;
-            }
-          } else {
-            return '/unverified-account';
-          }        
+    // Determine redirect URL based on usertype and account status
+    const redirectUrl = (() => {
+      if (user.usertype === 'jobseeker') {
+        return user.is_complete && user.is_verified ? '/home_jobseeker' : `/j_profilecreation/${user.user_id}`;
+      } else if (user.usertype === 'employer') {
+        if (user.is_verified) {
+          return user.is_complete ? '/home_employer' : `/e_profilecreation/${user.user_id}`;
         } else {
-          return '/admindashboard';
+          return '/unverified-account';
         }
-      })();
+      } else {
+        return '/admindashboard';
+      }
+    })();
 
-      res.json({
-        redirectUrl,
-        user: {
-          user_id: user.user_id,
-          email: user.email,
-          usertype: user.usertype,
-          approve: user.approve, 
-        },
-      });
-    });
+    res.json({ redirectUrl, user });
   } catch (err) {
     console.error('Server error during login:', err);
     res.status(500).json({ message: 'Server error' });
