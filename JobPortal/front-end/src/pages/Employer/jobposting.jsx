@@ -11,7 +11,7 @@ const JobPosting = () => {
   const [responsibilities, setResponsibilities] = useState("");
   const [jobDescription, setJobDescription] = useState(""); // Updated from requirements
   const [qualifications, setQualifications] = useState("");
-  const [positions, setPositions] = useState(0);
+  const [positions, setPositions] = useState(1);
   const [jobTitle, setJobTitle] = useState(null); // Changed to null initially
   const [industry, setIndustry] = useState(null);
   const [industryOptions, setIndustryOptions] = useState([]);
@@ -256,22 +256,23 @@ const JobPosting = () => {
               <option value="Work from Home">Work from Home</option>
             </select>
           </div>
+          <div className="mb-3">
+          <label htmlFor="jobType" className="form-label">Positions</label>
           <input
-          type="number"
-          id="positions"
-          className="form-control"
-          value={positions}
-          onChange={(e) => {
-            const value = parseInt(e.target.value) || 0;
-            console.log("Positions input value:", value); // Log the input value
-            setPositions(value);
-          }}
-          min="0"
-          step="1"
-        />
+            type="number"
+            id="positions"
+            className="form-control"
+            value={positions}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10) || 0; // Ensure base 10 for parseInt
+              console.log("Positions input value:", value); // Log the input value
+              setPositions(value);
+            }}
+            min="0"
+            step="1"
+          />
+        </div>
         </section>
-
-
         <section className="mb-4">
           <h3 className="h5">Job Description</h3>
           <p>Provide details about the job responsibilities and requirements.</p>
