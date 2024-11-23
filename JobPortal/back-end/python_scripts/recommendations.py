@@ -51,7 +51,7 @@ def generate_recommendation(job, match_count, industry_match, title_match, salar
         'collaborative_match': collaborative_match,
         'title_match': title_match,
         'salary_match': salary_match,
-        'match_type': 'hybrid' if (industry_match or title_match) and collaborative_match else 'content'
+        'match_type': 'hybrid' if (title_match) and collaborative_match else 'content'
     }
 
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None):
@@ -92,8 +92,6 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     # Sort recommendations
     recommendations.sort(
         key=lambda x: (
-            # Prioritize hybrid matches with title match
-            x['match_type'] == 'hybrid' and x['title_match'],  # Hybrid match with title match
             x['match_type'] == 'hybrid',  # Hybrid match without title match
             x['match_type'] == 'content',  # Content match
             x['salary_match'],  # Salary match
