@@ -36,13 +36,14 @@ const JobDetails = ({ jobInfo, skills }) => {
       </section>
      
       <section>
-        <h2>Required Skills</h2>
-        <div className="d-flex flex-wrap">
-          {(skills.length > 0 ? skills : fetchedSkills).map((skill, index) => (
-            <Tag key={index}>{skill}</Tag>
-          ))}
-        </div>
-      </section>
+  <h2>Required Skills</h2>
+  <div className="d-flex flex-wrap" style={{ gap: '8px' }}> 
+    {(skills.length > 0 ? skills : fetchedSkills).map((skill, index) => (
+      <Tag key={index} style={{ marginBottom: '8px' }}>{skill}</Tag> 
+    ))}
+  </div>
+</section>
+
     </aside>
   );
 };
