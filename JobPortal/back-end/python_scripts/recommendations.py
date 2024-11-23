@@ -70,22 +70,19 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
             for job in jobseeker.get('applied_jobs', []):
                 job_id = int(job['job_id'])  # Convert job_id to integer for consistency
                 collaborative_filtering_jobs.add(job_id)
-            
-
-    
 
     # Iterate through job data
     for job in job_info:
         skill_match, title_match = match_skills_and_titles(job, skills_set, job_titles_set)
- 
+
         # Check for salary match
         salary_match = False
         if skill_match or title_match:
             salary_match = check_salary_match(job, jobseeker_salary)
-        
+
         # Check collaborative filtering match
         collaborative_match = check_collaborative_filtering(job, collaborative_filtering_jobs)
-        
+
         # Only add recommendation if there's a match
         if skill_match or title_match or collaborative_match:
             match_count = len(skills_set.intersection(job.get('required_skills', set())))
@@ -95,18 +92,19 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     # Sort recommendations
     recommendations.sort(
         key=lambda x: (
-            x['match_type'] == 'hybrid',
-            x['match_type'] == 'content',
-            x['salary_match'],
-            x['title_match'],
-            x['match_count'],
-            x['collaborative_match']
+            # Prioritize hybrid matches with title match
+            x['match_type'] == 'hybrid' and x['title_match'],  # Hybrid match with title match
+            x['match_type'] == 'hybrid',  # Hybrid match without title match
+            x['match_type'] == 'content',  # Content match
+            x['salary_match'],  # Salary match
+            x['title_match'],  # Title match
+            x['match_count'],  # Match count
+            x['collaborative_match']  # Collaborative match
         ),
         reverse=True
     )
 
     return recommendations
-
 
 if __name__ == "__main__":
     try:
