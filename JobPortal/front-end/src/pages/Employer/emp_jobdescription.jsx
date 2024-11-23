@@ -13,6 +13,7 @@ const JobDescription = () => {
   const navigate = useNavigate();
   const { jobId } = useParams();
   const [jobData, setJobData] = useState(null);
+  const [isSidebarVisible, setSidebarVisible] = useState(false); // State for sidebar visibility
 
   const handleBack = () => {
     navigate(-1);
