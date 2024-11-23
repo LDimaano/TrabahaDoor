@@ -230,9 +230,9 @@ router.post('/login', async (req, res) => {
       await pool.query('BEGIN');
       try {
         if (archivedUser.usertype === 'jobseeker') {
-          await reactivateJobSeeker(archivedUser);
+          await reactivateJobSeeker(archivedUser.user_id);
         } else if (archivedUser.usertype === 'employer') {
-          await reactivateEmployer(email, password);
+          await reactivateEmployer(archivedUser.email, archivedUser.password);
         }
         await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
         await pool.query('COMMIT');
@@ -240,7 +240,8 @@ router.post('/login', async (req, res) => {
         await pool.query('ROLLBACK');
         throw err;
       }
-      user = archivedUser; // Reactivated user is now treated as active
+      // Treat reactivated user as active
+      user = archivedUser;
     }
 
     // Validate plain text password for active users
@@ -254,8 +255,10 @@ router.post('/login', async (req, res) => {
     // Determine redirect URL based on usertype and account status
     const redirectUrl = (() => {
       if (user.usertype === 'jobseeker') {
+        // Reactivated users go to home_jobseeker
         return user.is_complete && user.is_verified ? '/home_jobseeker' : `/j_profilecreation/${user.user_id}`;
       } else if (user.usertype === 'employer') {
+        // Reactivated users go to home_employer
         if (user.is_verified) {
           return user.is_complete ? '/home_employer' : `/e_profilecreation/${user.user_id}`;
         } else {
@@ -272,6 +275,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 // Logout endpoint
 router.post('/logout', (req, res) => {
