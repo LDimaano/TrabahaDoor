@@ -589,6 +589,8 @@ router.put('/approve/:userId', async (req, res) => {
 
 router.post('/reject/:userId', async (req, res) => {
   const { userId } = req.params;
+  console.log('Request body:', req.body); // Debugging log
+
   const { reason } = req.body;
 
   if (!reason) {
@@ -619,6 +621,7 @@ router.post('/reject/:userId', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 router.get('/gender-distribution', async (req, res) => {
   try {
