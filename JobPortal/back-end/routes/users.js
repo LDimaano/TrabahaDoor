@@ -111,27 +111,32 @@ async function reactivateJobSeeker(archivedUser) {
      WHERE user_id = $1`,
     [archivedUser.user_id]
   );
-  await pool.query('DELETE FROM archived_users WHERE user_id = $1', [userId]);
-  await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [userId]);
-  await pool.query('DELETE FROM archived_job_seekers WHERE user_id = $1', [archivedUser.user_id]);
-  await pool.query('DELETE FROM archived_js_skills WHERE user_id = $1', [archivedUser.user_id]);
-  await pool.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [userId]);
-  await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [userId]);
+  await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
+await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUser.user_id]);
+await pool.query('DELETE FROM archived_job_seekers WHERE user_id = $1', [archivedUser.user_id]);
+await pool.query('DELETE FROM archived_js_skills WHERE user_id = $1', [archivedUser.user_id]);
+await pool.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUser.user_id]);
+
 }
 
-async function reactivateEmployer(userId) {
+async function reactivateEmployer(email, password) {
   const client = await pool.connect();
 
   try {
     await client.query('BEGIN');
 
-    // Check if the user exists in archived tables
-    const archivedUserCheck = await client.query('SELECT * FROM archived_users WHERE user_id = $1', [userId]);
+    // Check if the employer exists in archived users based on email
+    const archivedUserCheck = await client.query('SELECT * FROM archived_users WHERE email = $1', [email]);
     if (archivedUserCheck.rows.length === 0) {
       throw new Error('Archived employer not found.');
     }
 
     const archivedUser = archivedUserCheck.rows[0];
+
+    // Validate password for archived user (assuming plain-text comparison)
+    if (archivedUser.password !== password) {
+      throw new Error('Invalid Email Or Password');
+    }
 
     if (archivedUser.usertype !== 'employer') {
       throw new Error('User is not an employer.');
@@ -142,43 +147,44 @@ async function reactivateEmployer(userId) {
       INSERT INTO users (user_id, email, password, usertype)
       SELECT user_id, email, password, usertype
       FROM archived_users
-      WHERE user_id = $1
-    `, [userId]);
+      WHERE email = $1
+    `, [email]);
 
     await client.query(`
       INSERT INTO emp_profiles (user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description)
       SELECT user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description
       FROM archived_emp_profiles
-      WHERE user_id = $1
-    `, [userId]);
+      WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+    `, [email]);
 
     await client.query(`
       INSERT INTO profilepictures (user_id, profile_picture_url)
       SELECT user_id, profile_picture_url
       FROM archived_profilepictures
-      WHERE user_id = $1
-    `, [userId]);
+      WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+    `, [email]);
 
     await client.query(`
       INSERT INTO joblistings (job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled)
       SELECT job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled
       FROM archived_joblistings
-      WHERE user_id = $1
-    `, [userId]);
+      WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+    `, [email]);
 
     await client.query(`
       INSERT INTO job_skills (job_id, skill_id, user_id)
       SELECT job_id, skill_id, user_id
       FROM archived_job_skills
-      WHERE user_id = $1
-    `, [userId]);
+      WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+    `, [email]);
 
     // Remove restored data from archived tables
-    await client.query('DELETE FROM archived_users WHERE user_id = $1', [userId]);
-    await client.query('DELETE FROM archived_emp_profiles WHERE user_id = $1', [userId]);
-    await client.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [userId]);
-    await client.query('DELETE FROM archived_joblistings WHERE user_id = $1', [userId]);
-    await client.query('DELETE FROM archived_job_skills WHERE user_id = $1', [userId]);
+    const archivedUserId = archivedUser.user_id; // Get the user_id from the archived user
+    await client.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUserId]);
+    await client.query('DELETE FROM archived_emp_profiles WHERE user_id = $1', [archivedUserId]);
+    await client.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUserId]);
+    await client.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUserId]);
+    await client.query('DELETE FROM archived_job_skills WHERE user_id = $1', [archivedUserId]);
 
     await client.query('COMMIT');
 
@@ -190,6 +196,7 @@ async function reactivateEmployer(userId) {
     client.release();
   }
 }
+
 
 // Login endpoint
 router.post('/login', async (req, res) => {
@@ -223,7 +230,7 @@ router.post('/login', async (req, res) => {
         if (archivedUser.usertype === 'jobseeker') {
           await reactivateJobSeeker(archivedUser);
         } else if (archivedUser.usertype === 'employer') {
-          await reactivateEmployer(archivedUser);
+          await reactivateEmployer(email, password);
         }
         await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
         await pool.query('COMMIT');
