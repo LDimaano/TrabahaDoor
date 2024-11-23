@@ -709,6 +709,73 @@ router.post('/upload/:user_id', uploadDocuments, async (req, res) => {
   }
 });
 
+router.post('/reupload/:user_id', uploadDocuments, async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    console.log(`user_id for reupload: ${user_id}`);
+
+    if (!user_id) {
+      return res.status(400).send('User ID is required');
+    }
+
+    const fileUploadPromises = [];
+
+    const fileTypes = [
+      'sec_certificate',
+      'business_permit',
+      'bir_certificate',
+      'poea_license',
+      'private_recruitment_agency_license',
+      'contract_sub_contractor_certificate'
+    ];
+
+    const urls = {};
+
+    for (const type of fileTypes) {
+      if (req.files[type]) {
+        const file = req.files[type][0];
+        const uniqueFileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${file.originalname}`;
+        const uploadPromise = uploadFileToS3(file.buffer, uniqueFileName)
+          .then(url => {
+            urls[type] = url; 
+          });
+        fileUploadPromises.push(uploadPromise);
+      }
+    }
+
+    await Promise.all(fileUploadPromises);
+
+    const query = `
+      UPDATE documents 
+      SET sec_certificate = $2, 
+          business_permit = $3, 
+          bir_certificate = $4, 
+          poea_license = $5, 
+          private_recruitment_agency_license = $6, 
+          contract_sub_contractor_certificate = $7
+      WHERE user_id = $1
+      RETURNING *;
+      `;
+
+    const values = [
+      user_id,
+      urls.sec_certificate || null,
+      urls.business_permit || null,
+      urls.bir_certificate || null,
+      urls.poea_license || null,
+      urls.private_recruitment_agency_license || null,
+      urls.contract_sub_contractor_certificate || null
+    ];
+
+    const result = await pool.query(query, values);
+
+    res.status(200).send(`Documents uploaded successfully for user ID: ${user_id}. Record ID: ${result.rows[0].id}`);
+  } catch (error) {
+    console.error('Error saving to database:', error);
+    res.status(500).send('Server error');
+  }
+});
+
 router.get('/gender-distribution/:userId', async (req, res) => {
   try {
     const { userId } = req.params;

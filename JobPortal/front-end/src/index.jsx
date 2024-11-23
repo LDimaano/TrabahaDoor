@@ -55,6 +55,7 @@ import JsEmpProfile from './pages/Jobseeker/js_empprofile';
 import JsEmpJobListings from './pages/Jobseeker/js_empjoblisting';
 import UpdateEmpjoblist from './pages/Employer/jobpostingupdate';
 import UploadDocuments from './pages/Employer/employerfiles';
+import ResubmitDocuments from './pages/Employer/resubmitemployerfiles';
 
 import EmailVerification from './pages/Auth/verify';
 import Unverified from './pages/Auth/unverified';
@@ -106,6 +107,7 @@ root.render(
         <Route path="/e_profileupdate/:userId" element={<UpdateEmpProfile />} />
         <Route path="/jobpostingupdate/:job_id" element={<UpdateEmpjoblist />} />
         <Route path="/employerfiles/:user_id" element={<UploadDocuments />} />
+        <Route path="/resubmitemployerfiles" element={<ResubmitDocuments />} />
         <Route path="/empdashboard" element={<EmployerDashboard />} />
         <Route path="/admin_updateemp/:user_id" element={<Adminupdateemp />} />
         <Route path="/view_documents/:user_id" element={<AdminViewDocuments />} />

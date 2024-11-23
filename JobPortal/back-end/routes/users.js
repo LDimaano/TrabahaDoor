@@ -143,7 +143,9 @@ router.post('/login', async (req, res) => {
                 return '/home_employer';
               } else if (user.approve === 'no') {
                 return '/waitapproval';
-              }
+              }else if (user.approve === 'rejected') {
+                return '/resubmitemployerfiles';
+            }
             } else {
               return `/e_profilecreation/${user.user_id}`;
             }

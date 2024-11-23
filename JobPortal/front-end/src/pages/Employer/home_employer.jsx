@@ -5,25 +5,9 @@ import CandidateList from '../../components/candidatelist';
 import { Helmet } from 'react-helmet';
 
 function HomeEmployer() {
-  const [allCandidates, setAllCandidates] = useState([]); // Store all fetched candidates
+  const [allCandidates, setAllCandidates] = useState([]); 
   const [searchParams, setSearchParams] = useState({});
-  const [activeTab, setActiveTab] = useState('all'); // State to manage the active tab
-
-  // Fetch candidates once when the component mounts
-  // useEffect(() => {
-  //   const fetchAllCandidates = async () => {
-  //     try {
-  //       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/candidates`);
-  //       if (!response.ok) throw new Error('Failed to fetch candidates');
-  //       const data = await response.json();
-  //       setAllCandidates(data);
-  //     } catch (error) {
-  //       console.error('Error fetching candidates:', error);
-  //     }
-  //   };
-
-  //   fetchAllCandidates();
-  // }, []);
+  const [activeTab, setActiveTab] = useState('all'); 
 
   // Handle search and update state with search parameters from SearchForm
   const handleSearch = (params) => {
@@ -33,7 +17,7 @@ function HomeEmployer() {
   return (
     <div className="container">
       <Helmet>
-        <title>TrabahaDoor - Employer</title> {/* Set the page title */}
+        <title>TrabahaDoor - Employer</title> 
       </Helmet>
       <Header />
       <main className="row mt-4">
@@ -59,10 +43,9 @@ function HomeEmployer() {
               </button>
             </div>
 
-            {/* Pass allCandidates, searchParams, and the value of isRecommended based on activeTab */}
             <CandidateList
               searchParams={searchParams}
-              isRecommended={activeTab === 'recommended'}  // Set isRecommended based on activeTab
+              isRecommended={activeTab === 'recommended'}  
               allCandidates={allCandidates}
             />
           </div>
