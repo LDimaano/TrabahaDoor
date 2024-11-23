@@ -99,14 +99,7 @@ async function reactivateJobSeeker(archivedUser) {
   `, [archivedUser.user_id]);
 
   // Insert data into active tables
-  await pool.query(
-    `INSERT INTO users (user_id, email, password, usertype, approve, datecreated, is_verified, is_complete)
-     SELECT user_id, email, password, usertype, approve, datecreated, is_verified, is_complete
-     FROM archived_users
-     WHERE user_id = $1`, 
-    [archivedUser.user_id]
-  );
-  
+   
   await pool.query(
     `INSERT INTO job_seekers (user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id)
      SELECT user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id
@@ -120,6 +113,14 @@ async function reactivateJobSeeker(archivedUser) {
      SELECT skill_id, user_id
      FROM archived_js_skills
      WHERE user_id = $1`,
+    [archivedUser.user_id]
+  );
+
+  await pool.query(
+    `INSERT INTO users (user_id, email, password, usertype, approve, datecreated, is_verified, is_complete)
+     SELECT user_id, email, password, usertype, approve, datecreated, is_verified, is_complete
+     FROM archived_users
+     WHERE user_id = $1`, 
     [archivedUser.user_id]
   );
 
