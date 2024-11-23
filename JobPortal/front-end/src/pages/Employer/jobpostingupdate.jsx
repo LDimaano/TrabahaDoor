@@ -273,14 +273,8 @@ const UpdateJobPosting = () => {
             className="form-control"
             value={positions}
             onChange={(e) => {
-              const rawValue = e.target.value;
-              console.log("Raw input value:", rawValue);
-
-              const value = Number(rawValue) || 0;
-              console.log("Parsed input value:", value);
-
-              setPositions(value);
-            }}
+              setPositions(e.target.value)}
+            }
           />
         </div>
         </section>
