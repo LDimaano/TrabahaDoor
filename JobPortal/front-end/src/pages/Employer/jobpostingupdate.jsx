@@ -274,10 +274,13 @@ const UpdateJobPosting = () => {
             value={positions}
             onChange={(e) => {
               const rawValue = e.target.value;
-              setPositions(rawValue);
+              console.log("Raw input value:", rawValue);
+
+              const value = Number(rawValue) || 0;
+              console.log("Parsed input value:", value);
+
+              setPositions(value);
             }}
-            min="0"
-            step="1"
           />
         </div>
         </section>
