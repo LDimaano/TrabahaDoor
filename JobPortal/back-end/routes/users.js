@@ -90,13 +90,23 @@ router.get('/verify-email', async (req, res) => {
 });
 
 async function reactivateJobSeeker(archivedUser) {
+  // Archive profile picture data before deleting from the active table
+  await pool.query(`
+    INSERT INTO profilepictures (user_id, profile_picture_url)
+    SELECT user_id, profile_picture_url
+    FROM archived_profilepictures
+    WHERE user_id = $1
+  `, [archivedUser.user_id]);
+
+  // Insert data into active tables
   await pool.query(
-    `INSERT INTO users (user_id, email, password, usertype)
-     SELECT user_id, email, password, usertype
+    `INSERT INTO users (user_id, email, password, usertype, approve, datecreated, is_verified, is_complete)
+     SELECT user_id, email, password, usertype, approve, datecreated, is_verified, is_complete
      FROM archived_users
-     WHERE user_id = $1`,
+     WHERE user_id = $1`, 
     [archivedUser.user_id]
   );
+  
   await pool.query(
     `INSERT INTO job_seekers (user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id)
      SELECT user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id
@@ -104,6 +114,7 @@ async function reactivateJobSeeker(archivedUser) {
      WHERE user_id = $1`,
     [archivedUser.user_id]
   );
+  
   await pool.query(
     `INSERT INTO js_skills (skill_id, user_id)
      SELECT skill_id, user_id
@@ -111,13 +122,15 @@ async function reactivateJobSeeker(archivedUser) {
      WHERE user_id = $1`,
     [archivedUser.user_id]
   );
-  
-await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUser.user_id]);
-await pool.query('DELETE FROM archived_job_seekers WHERE user_id = $1', [archivedUser.user_id]);
-await pool.query('DELETE FROM archived_js_skills WHERE user_id = $1', [archivedUser.user_id]);
-await pool.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUser.user_id]);
-await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
 
+  // Delete related data first (to avoid foreign key constraint errors)
+  await pool.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUser.user_id]);
+  await pool.query('DELETE FROM archived_js_skills WHERE user_id = $1', [archivedUser.user_id]);
+  await pool.query('DELETE FROM archived_job_seekers WHERE user_id = $1', [archivedUser.user_id]);
+  await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUser.user_id]);
+  
+  // Finally, delete the user from archived_users table
+  await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
 }
 
 async function reactivateEmployer(email, password) {
