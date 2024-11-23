@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 function ApplicantJoblist({ currentListings }) {
   const [showModal, setShowModal] = useState(false);
@@ -13,6 +14,9 @@ function ApplicantJoblist({ currentListings }) {
   const handleDeleteClick = (application_id) => {
     setSelectedApplicationId(application_id);
     setShowModal(true);
+  };
+  const handleApplyClick = (jobId) => {
+    navigate(`/emp_jobdescription/${jobId}`);
   };
 
   const handleCloseModal = () => setShowModal(false);
@@ -46,6 +50,7 @@ function ApplicantJoblist({ currentListings }) {
             <tr>
               <th>Job Title</th>
               <th>Company</th>
+              <th>View</th>
               <th>Hiring Status</th>
               <th>Applied Date</th>
               <th>Job Status</th>
@@ -65,6 +70,14 @@ function ApplicantJoblist({ currentListings }) {
                   {listing.job_title}
                 </td>
                 <td>{listing.company_name}</td>
+                <td>
+                <button 
+                  className="btn btn-primary" 
+                  onClick={() => handleApplyClick(listing.job_id || listing.jobId)}
+                >
+                  <FontAwesomeIcon icon={faEye} />
+                </button>
+              </td>
                 <td>{listing.status}</td>
                 <td>{new Date(listing.date_applied).toLocaleDateString()}</td>
                 <td>{listing.job_status}</td>
