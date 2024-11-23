@@ -99,20 +99,19 @@ async function reactivateJobSeeker(archivedUser) {
   `, [archivedUser.user_id]);
 
   // Insert data into active tables
-   
   await pool.query(
     `INSERT INTO job_seekers (user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id)
      SELECT user_id, full_name, phone_number, date_of_birth, gender, address_id, industry_id
      FROM archived_job_seekers
-     WHERE user_id = $1`,
+     WHERE user_id = $1`, 
     [archivedUser.user_id]
   );
-  
+
   await pool.query(
     `INSERT INTO js_skills (skill_id, user_id)
      SELECT skill_id, user_id
      FROM archived_js_skills
-     WHERE user_id = $1`,
+     WHERE user_id = $1`, 
     [archivedUser.user_id]
   );
 
@@ -124,12 +123,12 @@ async function reactivateJobSeeker(archivedUser) {
     [archivedUser.user_id]
   );
 
-  // Delete related data first (to avoid foreign key constraint errors)
+  // Delete related data from archived tables
   await pool.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_js_skills WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_job_seekers WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUser.user_id]);
-  
+
   // Finally, delete the user from archived_users table
   await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
 }
@@ -244,7 +243,7 @@ router.post('/login', async (req, res) => {
       await pool.query('BEGIN');
       try {
         if (archivedUser.usertype === 'jobseeker') {
-          await reactivateJobSeeker(archivedUser.user_id);
+          await reactivateJobSeeker(archivedUser);
         } else if (archivedUser.usertype === 'employer') {
           await reactivateEmployer(archivedUser.email, archivedUser.password);
         }
