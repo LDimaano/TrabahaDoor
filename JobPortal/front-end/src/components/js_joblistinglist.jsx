@@ -19,7 +19,7 @@ function ApplicantJoblist({ currentListings }) {
     setShowModal(true);
   };
   const handleApplyClick = (jobId) => {
-    navigate(`/js_jobdescription/${jobId}`);
+    navigate(`/jobdescription/${jobId}`);
   };
 
   const handleCloseModal = () => setShowModal(false);
