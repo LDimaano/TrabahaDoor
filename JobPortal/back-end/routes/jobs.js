@@ -256,6 +256,10 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
     user_id
   } = req.body;
 
+  console.log({
+    Positions
+  });
+
   const { job_id } = req.params;
 
   const userId = user_id
