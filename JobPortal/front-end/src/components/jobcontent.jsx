@@ -20,14 +20,8 @@ const JobContent = ({ jobdescription, responsibilities, qualifications }) => {
       </section>
       <section>
         <h2 className="text-dark border-bottom pb-2">Qualifications</h2>
-        <div>
-          {qualifications.map((qualification, index) => (
-            <p key={index} className="mb-2">
-              <i className="me-2 fa fa-check-circle text-success"></i>
-              {qualification}
-            </p>
-          ))}
-        </div>
+        {/* Display qualifications as a single string */}
+        <p className="text-muted fs-5">{qualifications}</p>
       </section>
     </div>
   );
