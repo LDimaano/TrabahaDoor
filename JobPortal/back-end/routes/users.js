@@ -144,84 +144,56 @@ async function reactivateJobSeeker(archivedUser) {
 }
 
 
-async function reactivateEmployer(email, password) {
-  const client = await pool.connect();
+async function reactivateEmployer(archivedUser) {
 
-  try {
-    await client.query('BEGIN');
+  await pool.query(`
+    INSERT INTO users (user_id, email, password, usertype, approve, datecreated, is_verified, is_complete)
+    SELECT user_id, email, password, usertype, approve, datecreated, is_verified, is_complete
+    FROM archived_users
+    WHERE email = $1
+  `, [archivedUser.user_id]);
 
-    // Check if the employer exists in archived users based on email
-    const archivedUserCheck = await client.query('SELECT * FROM archived_users WHERE email = $1', [email]);
-    if (archivedUserCheck.rows.length === 0) {
-      throw new Error('Archived employer not found.');
-    }
+  // Step 3: Transfer profile picture to the active table
+  await pool.query(`
+    INSERT INTO profilepictures (user_id, profile_picture_url)
+    SELECT user_id, profile_picture_url
+    FROM archived_profilepictures
+    WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+  `, [archivedUser.user_id]);
 
-    const archivedUser = archivedUserCheck.rows[0];
+  // Step 4: Insert employer profile data into the active tables
+  await pool.query(`
+    INSERT INTO emp_profiles (user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description)
+    SELECT user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description
+    FROM archived_emp_profiles
+    WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+  `, [archivedUser.user_id]);
 
-    // Validate password for archived user (assuming plain-text comparison)
-    if (archivedUser.password !== password) {
-      throw new Error('Invalid Email Or Password');
-    }
+  // Step 5: Insert job listings into the active tables
+  await pool.query(`
+    INSERT INTO joblistings (job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled)
+    SELECT job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled
+    FROM archived_joblistings
+    WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+  `, [archivedUser.user_id]);
 
-    if (archivedUser.usertype !== 'employer') {
-      throw new Error('User is not an employer.');
-    }
+  // Step 6: Insert job skills into the active tables
+  await pool.query(`
+    INSERT INTO job_skills (job_id, skill_id, user_id)
+    SELECT job_id, skill_id, user_id
+    FROM archived_job_skills
+    WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+  `, [archivedUser.user_id]);
 
-    await client.query(`
-      INSERT INTO users (user_id, email, password, usertype, approve, datecreated, is_verified, is_complete)
-      SELECT user_id, email, password, usertype, approve, datecreated, is_verified, is_complete
-      FROM archived_users
-      WHERE email = $1
-    `, [email]);
+  await pool.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUser.user_id]);
+  await pool.query('DELETE FROM archived_emp_profiles WHERE user_id = $1', [archivedUser.user_id]);
+  await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUser.user_id]);
+  await pool.query('DELETE FROM archived_job_skills WHERE user_id = $1', [archivedUser.user_id]);
+  await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
 
-
-    await client.query(`
-      INSERT INTO emp_profiles (user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description)
-      SELECT user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description
-      FROM archived_emp_profiles
-      WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
-    `, [email]);
-
-    await client.query(`
-      INSERT INTO profilepictures (user_id, profile_picture_url)
-      SELECT user_id, profile_picture_url
-      FROM archived_profilepictures
-      WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
-    `, [email]);
-
-    await client.query(`
-      INSERT INTO joblistings (job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled)
-      SELECT job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled
-      FROM archived_joblistings
-      WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
-    `, [email]);
-
-    await client.query(`
-      INSERT INTO job_skills (job_id, skill_id, user_id)
-      SELECT job_id, skill_id, user_id
-      FROM archived_job_skills
-      WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
-    `, [email]);
-
-    // Remove restored data from archived tables
-    const archivedUserId = archivedUser.user_id; // Get the user_id from the archived user
-   
-    await client.query('DELETE FROM archived_emp_profiles WHERE user_id = $1', [archivedUserId]);
-    await client.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUserId]);
-    await client.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUserId]);
-    await client.query('DELETE FROM archived_job_skills WHERE user_id = $1', [archivedUserId]);
-    await client.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUserId]);
-
-    await client.query('COMMIT');
-
-    return { success: true };
-  } catch (err) {
-    await client.query('ROLLBACK');
-    return { success: false, error: err.message };
-  } finally {
-    client.release();
-  }
+  return { success: true };
 }
+
 
 
 // Login endpoint
