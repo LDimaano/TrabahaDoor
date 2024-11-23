@@ -111,11 +111,12 @@ async function reactivateJobSeeker(archivedUser) {
      WHERE user_id = $1`,
     [archivedUser.user_id]
   );
-  await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
+  
 await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUser.user_id]);
 await pool.query('DELETE FROM archived_job_seekers WHERE user_id = $1', [archivedUser.user_id]);
 await pool.query('DELETE FROM archived_js_skills WHERE user_id = $1', [archivedUser.user_id]);
 await pool.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUser.user_id]);
+await pool.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUser.user_id]);
 
 }
 
@@ -180,11 +181,12 @@ async function reactivateEmployer(email, password) {
 
     // Remove restored data from archived tables
     const archivedUserId = archivedUser.user_id; // Get the user_id from the archived user
-    await client.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUserId]);
+   
     await client.query('DELETE FROM archived_emp_profiles WHERE user_id = $1', [archivedUserId]);
     await client.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUserId]);
     await client.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUserId]);
     await client.query('DELETE FROM archived_job_skills WHERE user_id = $1', [archivedUserId]);
+    await client.query('DELETE FROM archived_users WHERE user_id = $1', [archivedUserId]);
 
     await client.query('COMMIT');
 
