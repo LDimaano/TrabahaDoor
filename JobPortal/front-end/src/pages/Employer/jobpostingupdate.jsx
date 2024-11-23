@@ -20,7 +20,7 @@ const UpdateJobPosting = () => {
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]);
   const [jobType, setJobType] = useState("");
-  const [positions, setPositions] = useState(0);
+  const [positions, setPositions] = useState(1);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
 
