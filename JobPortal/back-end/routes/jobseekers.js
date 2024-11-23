@@ -588,7 +588,8 @@ async function deleteUserAndArchive(userId, password) {
     await client.query('DELETE FROM js_skills WHERE user_id = $1', [userId]);
     await client.query('DELETE FROM profilepictures WHERE user_id = $1', [userId]);
     await client.query('DELETE FROM users WHERE user_id = $1', [userId]);
-    
+    await client.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUser.user_id]);
+
 
     await client.query('COMMIT');
     return { success: true };

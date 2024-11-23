@@ -111,8 +111,12 @@ async function reactivateJobSeeker(archivedUser) {
      WHERE user_id = $1`,
     [archivedUser.user_id]
   );
+  await client.query('DELETE FROM archived_users WHERE user_id = $1', [userId]);
+  await client.query('DELETE FROM archived_joblistings WHERE user_id = $1', [userId]);
   await pool.query('DELETE FROM archived_job_seekers WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_js_skills WHERE user_id = $1', [archivedUser.user_id]);
+  await client.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [userId]);
+  await client.query('DELETE FROM archived_joblistings WHERE user_id = $1', [userId]);
 }
 
 async function reactivateEmployer(userId) {
