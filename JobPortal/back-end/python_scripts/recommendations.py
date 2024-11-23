@@ -6,7 +6,7 @@ def extract_job_data(job_data):
     job_info = []
     for job in job_data:
         job_info.append({
-            'job_id': job.get('job_id'),
+            'job_id': int(job.get('job_id', 0)),
             'required_skills': set(job.get('required_skills', [])),
             'company_name': job.get('company_name', 'Unknown Company name'),
             'industry_name': job.get('industry_name', 'Unknown Industry'),
@@ -33,8 +33,10 @@ def check_salary_match(job, jobseeker_salary):
 
 def check_collaborative_filtering(job, collaborative_filtering_jobs):
     """Check if job is in the list of jobs applied to by similar jobseekers."""
-    return job['job_id'] in collaborative_filtering_jobs  # Convert job_id to integer for consistency
-
+    collaborative_match = job['job_id'] in collaborative_filtering_jobs
+    print(f"DEBUG: Checking collaborative match for job_id {job['job_id']} -> {collaborative_match}")
+    print(f"DEBUG: collaborative_filtering_jobs contains: {collaborative_filtering_jobs}")
+    return collaborative_match
 
 def generate_recommendation(job, match_count, industry_match, title_match, salary_match, collaborative_match):
     """Generate a job recommendation."""
@@ -54,7 +56,6 @@ def generate_recommendation(job, match_count, industry_match, title_match, salar
         'match_type': 'hybrid' if (industry_match or title_match) and collaborative_match else 'content'
     }
 
-
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None):
     """Main recommendation pipeline."""
     recommendations = []
@@ -70,7 +71,10 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         for jobseeker in similar_jobseekers:
             for job in jobseeker.get('applied_jobs', []):
                 job_id = int(job['job_id'])  # Convert job_id to integer for consistency
-                collaborative_filtering_jobs.add(job_id)  # No need to convert job_id to intt
+                collaborative_filtering_jobs.add(job_id)
+                print(f"DEBUG: Adding job_id {job_id} to collaborative_filtering_jobs.")
+
+    print(f"DEBUG: Final collaborative_filtering_jobs set: {collaborative_filtering_jobs}")
 
     # Iterate through job data
     for job in job_info:
@@ -97,7 +101,8 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
             x['match_type'] == 'content',
             x['salary_match'],
             x['title_match'],
-            x['match_count']
+            x['match_count'],
+            x['collaborative_match'],  # Prioritize collaborative matches
         ),
         reverse=True
     )
@@ -112,9 +117,10 @@ if __name__ == "__main__":
         jobseeker_industry = sys.argv[3]
         job_titles = json.loads(sys.argv[4])
         jobseeker_salary = json.loads(sys.argv[5])
+        similar_jobseekers = json.loads(sys.argv[6]) if len(sys.argv) > 6 else None
 
         # Generate recommendations
-        recommendations = recommend_jobs(job_data, skills, jobseeker_industry, job_titles, jobseeker_salary=jobseeker_salary)
+        recommendations = recommend_jobs(job_data, skills, jobseeker_industry, job_titles, similar_jobseekers, jobseeker_salary=jobseeker_salary)
 
         print(json.dumps(recommendations))
 
