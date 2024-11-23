@@ -44,7 +44,13 @@ const JobDescription = () => {
         <title>TrabahaDoor - Employer</title> {/* Set the page title */}
       </Helmet>
       {/* Sidebar with responsive design */}
-      <div className="d-none d-md-block">
+      <div
+        className="d-none d-md-block"
+        style={{
+          position: 'sticky',
+          zIndex: '1000',
+        }}
+      >
         <Sidebar />
       </div>
       <main className="container-fluid mt-3 p-5">
