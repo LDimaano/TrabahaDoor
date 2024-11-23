@@ -115,6 +115,14 @@ async function reactivateJobSeeker(archivedUser) {
      WHERE user_id = $1`, 
     [archivedUser.user_id]
   );
+
+  await client.query(`
+    INSERT INTO job_experience (user_id, jobtitle_id, salary, company, location, start_date, end_date, description)
+    SELECT user_id, jobtitle_id, salary, company, location, start_date, end_date, description
+    FROM archived_job_experience
+    WHERE user_id = $1
+  `, [userId]);
+
   
   await pool.query(
     `INSERT INTO js_skills (skill_id, user_id)
@@ -127,6 +135,7 @@ async function reactivateJobSeeker(archivedUser) {
   // Step 4: Delete related data from archived tables (this ensures no foreign key issues)
   await pool.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_js_skills WHERE user_id = $1', [archivedUser.user_id]);
+  await pool.query('DELETE FROM archived_job_experience WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_job_seekers WHERE user_id = $1', [archivedUser.user_id]);
   await pool.query('DELETE FROM archived_joblistings WHERE user_id = $1', [archivedUser.user_id]);
 
