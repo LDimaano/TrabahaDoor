@@ -130,7 +130,7 @@ const ApplicantCard = ({ applicant }) => {
       fontSize: '14px', 
     }}
   >
-    Delete Account
+    Deactivate
   </button>
 </div>
 
@@ -161,8 +161,8 @@ const ApplicantCard = ({ applicant }) => {
               boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <h4 className="mb-3">Confirm Account Deletion</h4>
-            <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+            <h4 className="mb-3">Confirm Account Deactivation</h4>
+            <p>Are you sure you want to deactivate your account? your account can be reactivated once you log in again.</p>
             <p>Please enter your password to confirm.</p>
             <input
               type="password"
