@@ -2,27 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import EmpHeader from '../../components/emp_header'; // Import the EmpHeader component
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
-import Select from 'react-select'; // Import react-select
+import EmpHeader from '../../components/emp_header'; 
+import 'bootstrap/dist/css/bootstrap.min.css'; 
+import Select from 'react-select'; 
 import { Modal, Button, Alert } from 'react-bootstrap';
 
 const JobPosting = () => {
   const [responsibilities, setResponsibilities] = useState("");
-  const [jobDescription, setJobDescription] = useState(""); // Updated from requirements
+  const [jobDescription, setJobDescription] = useState(""); 
   const [qualifications, setQualifications] = useState("");
   const [positions, setPositions] = useState(1);
-  const [jobTitle, setJobTitle] = useState(null); // Changed to null initially
+  const [jobTitle, setJobTitle] = useState(null); 
   const [industry, setIndustry] = useState(null);
   const [industryOptions, setIndustryOptions] = useState([]);
   const [salaryRange, setSalaryRange] = useState("");
-  const [skills, setSkills] = useState([]); // Changed to an empty array initially
+  const [skills, setSkills] = useState([]); 
   const [availableSkills, setAvailableSkills] = useState([]);
-  const [availableJobTitles, setAvailableJobTitles] = useState([]); // New state for job titles
+  const [availableJobTitles, setAvailableJobTitles] = useState([]); 
   const [jobType, setJobType] = useState("");
-  const [error, setError] = useState(''); // New state for job type
-  const [showModal, setShowModal] = useState(false); // Modal visibility state
-  const [successMessage, setSuccessMessage] = useState(''); // New state for success message
+  const [error, setError] = useState(''); 
+  const [showModal, setShowModal] = useState(false); 
+  const [successMessage, setSuccessMessage] = useState(''); 
 
   const navigate = useNavigate();
 
@@ -32,7 +32,6 @@ const JobPosting = () => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/skills`);
         if (!response.ok) throw new Error('Failed to fetch skills');
         const data = await response.json();
-        // Convert data to { value: skill_id, label: skill_name }
         const skillOptions = data.map(skill => ({
           value: skill.skill_id,
           label: skill.skill_name
@@ -46,13 +45,12 @@ const JobPosting = () => {
 
     const fetchJobTitles = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobtitles`); // Ensure this URL is correct
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobtitles`); 
         if (!response.ok) throw new Error('Failed to fetch job titles');
         const data = await response.json();
-        // Convert data to { value: jobtitle_id, label: job_title }
         const jobTitleOptions = data.map(jobTitle => ({
-          value: jobTitle.jobtitle_id, // Use 'id' from the API response
-          label: jobTitle.job_title // Use 'job_title' from the API response
+          value: jobTitle.jobtitle_id, 
+          label: jobTitle.job_title 
         }));
         setAvailableJobTitles(jobTitleOptions);
       } catch (error) {
@@ -84,12 +82,12 @@ const JobPosting = () => {
 
   const handleSkillChange = (index, selectedOption) => {
     const newSkills = [...skills];
-    newSkills[index] = selectedOption; // Set the selected skill object
+    newSkills[index] = selectedOption; 
     setSkills(newSkills);
   };
 
   const handleAddSkill = () => {
-    setSkills([...skills, null]); // Add an empty skill object
+    setSkills([...skills, null]); 
   };
 
   const handleRemoveSkill = (index) => {
@@ -98,44 +96,36 @@ const JobPosting = () => {
   };
 
   const handleJobTitleChange = (selectedOption) => {
-    setJobTitle(selectedOption); // Set the selected job title object
+    setJobTitle(selectedOption); 
   };
 
-  // Function to handle the back button click
   const handleBack = () => {
-    navigate(-1); // Navigate back
+    navigate(-1); 
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    // Attempt to retrieve user_id from session storage
     const user_id = sessionStorage.getItem('user_id');
     
-    // Log the user_id value for debugging purposes
-    console.log('Retrieved user_id:', user_id);
-    
-    // Check if user_id is null or undefined
     if (!user_id) {
       alert('User ID not found. Please log in again.');
-      return; // Exit the function if user_id is not found
+      return; 
     }
     
-    // Construct the jobData object with user_id and other form fields
     const jobData = {
       user_id: user_id,
-      jobtitle_id: jobTitle?.value || '', // Get the value from the selected job title object
+      jobtitle_id: jobTitle?.value || '', 
       industry_id: industry?.value || '',
       SalaryRange: salaryRange,
       skills: skills.map(skill => skill?.value || ''),
       Responsibilities: responsibilities,
-      JobDescription: jobDescription, // Updated from requirements
+      JobDescription: jobDescription, 
       Qualifications: qualifications,
       JobType: jobType,
-      positions: positions // New field
+      positions: positions 
     };
     
     try {
-      // Send a POST request to the server with jobData
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/joblistings`, {
         method: 'POST',
         headers: {
@@ -144,19 +134,16 @@ const JobPosting = () => {
         body: JSON.stringify(jobData),
       });
       
-      // Check if the response is successful
       if (response.ok) {
-        setSuccessMessage('Job posted successfully!'); // Set the success message
+        setSuccessMessage('Job posted successfully!'); 
         setTimeout(() => {
-          setSuccessMessage(''); // Clear the success message after a delay
-          navigate('/applicant_joblisting'); // Navigate to another page upon success
-        }, 3000); // Adjust the delay as needed
+          setSuccessMessage(''); 
+          navigate('/applicant_joblisting'); 
+        }, 3000); 
       } else {
-        // Handle server response errors
         alert('Failed to post job. Please try again.');
       }
     } catch (error) {
-      // Handle network or other errors
       console.error('Error posting job:', error);
       alert('An error occurred. Please try again.');
     }
@@ -164,25 +151,22 @@ const JobPosting = () => {
 
   // Function to handle modal confirmation
   const handleConfirmPost = (e) => {
-    e.preventDefault();  // Prevent form submission immediately
-    setShowModal(true);  // Show confirmation modal
+    e.preventDefault();  
+    setShowModal(true);  
   };
 
   const handleModalClose = () => {
-    setShowModal(false); // Close modal
+    setShowModal(false); 
   };
 
   const handleModalConfirm = () => {
-    handleSubmit();  // Do not pass any event here since it's handled internally
+    handleSubmit();  
     setShowModal(false);
   };
 
   return (
-    <div className="container mt-4"> {/* Added margin top here */}
-      {/* Top Navigation */}
-      <EmpHeader /> {/* Use EmpHeader component */}
-
-      {/* Post Job Header */}
+    <div className="container mt-4"> 
+      <EmpHeader /> 
       <section className="d-flex align-items-center mb-4">
         <button className="btn btn-outline-secondary me-3" onClick={handleBack} aria-label="Go back" style={{ border: 'none', color: 'black' }}>
           <FontAwesomeIcon icon={faArrowLeft} />
@@ -190,14 +174,12 @@ const JobPosting = () => {
         <h2 className="h4">Post a Job</h2>
       </section>
 
-      {/* Success Message */}
       {successMessage && (
         <Alert variant="success" onClose={() => setSuccessMessage('')} dismissible>
           {successMessage}
         </Alert>
       )}
 
-      {/* Job Posting Form */}
       <form className="p-4" onSubmit={handleSubmit}>
         <section className="mb-4">
           <h3 className="h5">Job Information</h3>
@@ -324,8 +306,6 @@ const JobPosting = () => {
           />
         </section>
 
-
-        {/* Skills Section Moved to End */}
         <section className="mb-4">
           <h3 className="h5">Required Skills</h3>
           <p>Select the skills required for this job.</p>
@@ -366,8 +346,6 @@ const JobPosting = () => {
   </button>
 </div>
 </form>
-
-      {/* Confirmation Modal */}
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Job Posting</Modal.Title>

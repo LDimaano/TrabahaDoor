@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Helmet } from 'react-helmet';
-import { faHome, faClipboardList, faSignOutAlt, faHourglassStart, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faClipboardList, faSignOutAlt, faHourglassStart, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Track the current path
+  const location = useLocation(); 
   const [company_name, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
   const [profile_picture_url, setProfilePictureUrl] = useState('');
-  const [activeLink, setActiveLink] = useState(location.pathname); // Sync with current route
+  const [activeLink, setActiveLink] = useState(location.pathname); 
 
   useEffect(() => {
     const fetchCompanyInfo = async () => {
@@ -41,7 +41,7 @@ const Sidebar = () => {
   }, []);
 
   useEffect(() => {
-    setActiveLink(location.pathname); // Update active link on route change
+    setActiveLink(location.pathname); 
   }, [location.pathname]);
 
   const handleNavigation = (path) => {
@@ -69,21 +69,29 @@ const Sidebar = () => {
     }
   };
 
+    const handleNavigationHome = () => {
+      navigate('/home_employer');
+    };
+    
   return (
     <>
       <Helmet>
-        <title>TrabahaDoor - Employer</title> {/* Set the page title */}
+        <title>TrabahaDoor - Employer</title> 
       </Helmet>
       <aside className="p-3 d-flex flex-column" style={{ backgroundColor: '#044474', width: '250px', height: '100vh', position: 'relative' }}>
-        <div className="d-flex align-items-center justify-content-center mb-4">
-          <img
-            src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
-            alt="TrabahaDoor Logo"
-            className="img-fluid"
-            style={{ width: '30px', marginRight: '10px' }}
-          />
-          <h4 className="mb-0 text-white" style={{ fontSize: '18px' }}>TrabahaDoor</h4>
-        </div>
+      <div
+        className="d-flex align-items-center justify-content-center mb-4"
+        onClick={handleNavigationHome}
+        style={{ cursor: 'pointer' }}
+      >
+        <img
+          src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+          alt="TrabahaDoor Logo"
+          className="img-fluid"
+          style={{ width: '30px', marginRight: '10px' }}
+        />
+        <h4 className="mb-0 text-white" style={{ fontSize: '18px' }}>TrabahaDoor</h4>
+      </div>
         <nav className="flex-grow-1">
           <ul className="nav flex-column">
             <li className={`nav-item ${activeLink === '/empdashboard' ? 'active' : ''} hover-effect`}>
@@ -143,8 +151,6 @@ const Sidebar = () => {
           <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
           Logout
         </button>
-
-        {/* Hover effect styling */}
         <style>
           {`
             .nav-item {

@@ -228,6 +228,7 @@ router.get('/fetch-jobinfo/:job_id', async (req, res) => {
         industry_name:   JobDescription.industry_name || 'Not Provided',
         salary:   JobDescription.salaryrange || 'Not Provided',
         jobtype:    JobDescription.jobtype || 'Not Provided',
+        positions: JobDescription.positions || 'Not Provided',
         responsibilities:  JobDescription.responsibilities || 'Not Provided',
         description:   JobDescription.jobdescription || 'Not Provided',
         qualifications:   JobDescription.qualifications || 'Not Provided',
@@ -251,6 +252,7 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
     JobDescription,
     Qualifications,
     JobType,
+    Positions,
     user_id
   } = req.body;
 
@@ -262,8 +264,8 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
     const updateJob = `
       UPDATE joblistings 
       SET jobtitle_id = $1, industry_id = $2, salaryrange = $3, responsibilities = $4, 
-      jobdescription = $5, qualifications = $6, jobtype = $7
-      WHERE job_id = $8 
+      jobdescription = $5, qualifications = $6, jobtype = $7, positions = $8
+      WHERE job_id = $9
       RETURNING *;
     `;
 
@@ -275,6 +277,7 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
       JobDescription,
       Qualifications,
       JobType,
+      Positions,
       job_id,
     ]);
 

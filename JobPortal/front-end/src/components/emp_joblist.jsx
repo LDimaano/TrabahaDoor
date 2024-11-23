@@ -15,7 +15,6 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
   const [showStatusModal, setShowStatusModal] = useState(false); 
   const [newStatus, setNewStatus] = useState(''); 
 
-  // Function to navigate to the job description page using jobId
   const handleApplyClick = (jobId) => {
     navigate(`/emp_jobdescription/${jobId}`);
   };
@@ -47,7 +46,7 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ status: newStatus }), // Send the new status
+            body: JSON.stringify({ status: newStatus }), 
         });
 
         if (!response.ok) {
@@ -58,7 +57,6 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
         const data = await response.json();
         console.log(`Job ${selectedJobId} status updated to:`, data.status);
 
-        // Update UI to reflect the new status without refreshing
         setCurrentListings((prevListings) => 
             prevListings.map((listing) => 
                 listing.job_id === selectedJobId 
@@ -67,7 +65,6 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
             )
         );
 
-        // Set success message
         setSuccessMessage('Job status updated successfully!');
         setTimeout(() => {
           setSuccessMessage('');
@@ -79,10 +76,6 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
     }
 };
 
-  
-  
-
-  // Function to handle job deletion
   const handleDeleteJob = async () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/deljoblistings/${selectedJobId}`, {
@@ -108,7 +101,6 @@ function ApplicantJoblist({ currentListings, setCurrentListings }) {
     }
   };
 
-  // Get current listings
   const indexOfLastListing = currentPage * listingsPerPage;
   const indexOfFirstListing = indexOfLastListing - listingsPerPage;
   const currentPaginatedListings = currentListings.slice(indexOfFirstListing, indexOfLastListing);

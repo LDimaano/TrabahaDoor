@@ -8,7 +8,7 @@ import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap';
 
 const UpdateJobPosting = () => {
-  const { job_id } = useParams(); // Get jobId from URL params
+  const { job_id } = useParams(); 
   const [responsibilities, setResponsibilities] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [qualifications, setQualifications] = useState("");
@@ -20,20 +20,19 @@ const UpdateJobPosting = () => {
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]);
   const [jobType, setJobType] = useState("");
+  const [positions, setPositions] = useState("");
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the existing job data
     const fetchJobData = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/fetch-jobinfo/${job_id}`); // Adjust the endpoint as per your backend
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobs/fetch-jobinfo/${job_id}`); 
         if (!response.ok) throw new Error('Failed to fetch job data');
         const data = await response.json();
 
-        // Populate the state variables with the fetched data
         setResponsibilities(data.JobDescription.responsibilities || "");
         setJobDescription(data.JobDescription.description || "");
         setQualifications(data.JobDescription.qualifications || "");
@@ -47,8 +46,8 @@ const UpdateJobPosting = () => {
         });
         setSalaryRange(data.JobDescription.salary || "");
         setJobType(data.JobDescription.jobtype || "");
+        setPositions(data.JobDescription.positions || "");
 
-        // Map the skills to the format used by react-select
         const skillsArray = data.JobDescription.skills.map(skill => ({
           value: skill.skillId, 
           label: skill.skillName 
@@ -66,7 +65,6 @@ const UpdateJobPosting = () => {
 
     fetchJobData();
 
-    // Fetch skills, job titles, and industries as before
     const fetchSkills = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/skills`);
@@ -144,11 +142,10 @@ const UpdateJobPosting = () => {
     navigate(-1);
   };
 
-  // Handle form update
+
   const handleUpdate = async () => {
     const user_id = sessionStorage.getItem('user_id');
     console.log('Retrieved user_id:', user_id);
-    // Construct the jobData object with updated fields
     const jobData = {
       user_id,
       jobtitle_id: jobTitle?.value || '',
@@ -158,7 +155,8 @@ const UpdateJobPosting = () => {
       Responsibilities: responsibilities,
       JobDescription: jobDescription,
       Qualifications: qualifications,
-      JobType: jobType
+      JobType: jobType,
+      Positions: positions
     };
 
     try {
@@ -200,10 +198,8 @@ const UpdateJobPosting = () => {
 
   return (
     <div className="container mt-4">
-      {/* Top Navigation */}
       <EmpHeader />
 
-      {/* Update Job Header */}
       <section className="d-flex align-items-center mb-4">
         <button className="btn btn-outline-secondary me-3" onClick={handleBack} aria-label="Go back" style={{ border: 'none', color: 'black' }}>
           <FontAwesomeIcon icon={faArrowLeft} />
@@ -211,7 +207,6 @@ const UpdateJobPosting = () => {
         <h2 className="h4">Update Job</h2>
       </section>
 
-      {/* Job Update Form */}
       <form className="p-4" onSubmit={handleConfirmUpdate}>
         <section className="mb-4">
           <h3 className="h5">Job Information</h3>
@@ -270,8 +265,23 @@ const UpdateJobPosting = () => {
               <option value="Work from Home">Work from Home</option>
             </select>
           </div>
+          <div className="mb-3">
+          <label htmlFor="jobType" className="form-label">Positions</label>
+          <input
+            type="number"
+            id="positions"
+            className="form-control"
+            value={positions}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10) || 0; 
+              console.log("Positions input value:", value); 
+              setPositions(value);
+            }}
+            min="0"
+            step="1"
+          />
+        </div>
         </section>
-
         <section className="mb-4">
           <h3 className="h5">Job Description</h3>
           <p>Update details about the job responsibilities and requirements.</p>

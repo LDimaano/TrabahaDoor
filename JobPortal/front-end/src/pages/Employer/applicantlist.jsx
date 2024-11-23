@@ -10,14 +10,14 @@ import ApplicantJoblist from '../../components/emp_applicantlist';
 const ApplicantDashboard = () => {
   const navigate = useNavigate();
   const { jobId } = useParams();
-  const [jobs, setJobs] = useState([]); // List of all applicants
-  const [recommendedJobs, setRecommendedJobs] = useState([]); // Recommended applicants
+  const [jobs, setJobs] = useState([]); 
+  const [recommendedJobs, setRecommendedJobs] = useState([]); 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [listingsPerPage] = useState(10);
   const [error, setError] = useState(null);
-  const [hiringStages, setHiringStages] = useState({}); // Hiring stages for applicants
-  const [isSidebarVisible, setSidebarVisible] = useState(false); // State for sidebar visibility
+  const [hiringStages, setHiringStages] = useState({}); 
+  const [isSidebarVisible, setSidebarVisible] = useState(false); 
 
   useEffect(() => {
     if (jobId) {
@@ -41,9 +41,8 @@ const ApplicantDashboard = () => {
       const data = await response.json();
       setJobs(data);
 
-      // Initialize hiringStages with fetched data
       const initialStages = data.reduce((acc, applicant) => {
-        acc[applicant.user_id] = applicant.hiring_stage || 'Received'; // Assuming hiring_stage is used
+        acc[applicant.user_id] = applicant.hiring_stage || 'Received'; 
         return acc;
       }, {});
       setHiringStages(initialStages);
@@ -97,7 +96,7 @@ const ApplicantDashboard = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to first page on search
+    setCurrentPage(1); 
   };
 
   const toggleSidebar = () => {
@@ -180,8 +179,7 @@ const ApplicantDashboard = () => {
           />
         </section>
       </main>
-  
-      {/* Sidebar toggle button for mobile */}
+
       <button
         className="btn btn-primary d-lg-none position-fixed"
         style={{ top: '10px', left: '10px', zIndex: 999 }}
@@ -190,7 +188,6 @@ const ApplicantDashboard = () => {
         <i className="fa fa-bars"></i>
       </button>
   
-      {/* Overlay for sidebar on mobile */}
       {isSidebarVisible && (
         <div
           className="position-fixed w-100 h-100"

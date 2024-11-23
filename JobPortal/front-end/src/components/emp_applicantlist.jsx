@@ -5,15 +5,14 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 const styles = {
   dropdownMenu: {
-    zIndex: 1050, // Ensure the dropdown appears on top
+    zIndex: 1050, 
   },
   tableResponsive: {
-    minHeight: '500px', // Set a fixed height for the table
+    minHeight: '500px', 
     overflowY: 'inherit',  
-    overflowX: 'inherit', // Allow vertical scrolling
+    overflowX: 'inherit', 
   },
 };
-
 
 function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const navigate = useNavigate();
@@ -78,13 +77,10 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
 
   const confirmStageChange = () => {
     if (selectedUser && newStage) {
-      // Update local state immediately after confirming the stage change
       setLocalHiringStages((prevStages) => ({
         ...prevStages,
         [selectedUser]: newStage,
       }));
-  
-      // Then update the backend
       handleStageChangeInJoblist(selectedUser, newStage);
       closeConfirmModal();
     }
@@ -92,7 +88,6 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
 
   const handleStageChangeInJoblist = async (userId, newStage) => {
     try {
-      // Log the request details
       console.log(`Updating hiring stage for userId: ${userId}, jobId: ${jobId}, newStage: ${newStage}`);
   
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/applications/${userId}/${jobId}`, {
@@ -100,8 +95,6 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ hiringStage: newStage }),
       });
-  
-      // Log the response status and response body
       console.log('Response status:', response.status);
   
       if (!response.ok) {
@@ -111,8 +104,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
       }
   
       console.log('Hiring stage updated successfully on the server');
-  
-      // Call the parent component’s onStageChange to update UI state globally if needed
+
       onStageChange(userId, newStage);
     } catch (error) {
       console.error('Error updating hiring stage:', error.message);
@@ -120,7 +112,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   };
   
   async function fetchFilledCount() {
-    const userId = sessionStorage.getItem('user_id');  // Adjust based on where userId is stored
+    const userId = sessionStorage.getItem('user_id');  
     
     if (!userId) {
       console.error('User ID not found');
@@ -134,7 +126,6 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
       if (response.ok) {
         data.filledCount.forEach(job => {
           console.log(`Job ID: ${job.jobId}, Title: ${job.jobTitle}, Positions: ${job.positions}, Filled: ${job.isFilled}`);
-          // Use `job.isFilled` to determine if a job has been fully filled or still has positions available
         });
       } else {
         console.error('Error fetching filled count:', data.error);
@@ -248,7 +239,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
                 <th>Hiring Stage</th>
                 <th>Applied Date</th>
                 <th>Application</th>
-                <th>Action</th>
+                <th>View Profile</th>
               </tr>
             </thead>
             <tbody>
@@ -266,7 +257,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
                 <th>Hiring Stage</th>
                 <th>Applied Date</th>
                 <th>Application</th>
-                <th>Action</th>
+                <th>View Profile</th>
               </tr>
             </thead>
             <tbody>
@@ -310,7 +301,6 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   </div>
 )}
 
-{/* PDF Viewing Modal */}
 {isPdfModalOpen && (
   <div className="modal fade show" style={{ display: 'block' }} role="dialog">
     <div className="modal-dialog modal-lg" role="document">
@@ -335,9 +325,6 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
     </div>
   </div>
 )}
-
-
-      {/* Confirm Modal for Hiring Stage Change */}
       {isConfirmModalOpen &&
         <div className="modal fade show" style={{ display: 'block' }} role="dialog">
         <div className="modal-dialog" role="document">
