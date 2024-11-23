@@ -116,7 +116,7 @@ async function reactivateJobSeeker(archivedUser) {
     [archivedUser.user_id]
   );
 
-  await client.query(`
+  await pool.query(`
     INSERT INTO job_experience (user_id, jobtitle_id, salary, company, location, start_date, end_date, description)
     SELECT user_id, jobtitle_id, salary, company, location, start_date, end_date, description
     FROM archived_job_experience
