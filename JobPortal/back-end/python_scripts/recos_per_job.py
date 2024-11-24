@@ -44,6 +44,8 @@ def recommend_candidates(job_postings, applicants):
             applicant_skills = set(applicant.get('skills', []))
             applicant_salary = applicant.get('salary', [])
 
+            print(f"Debug: Job Salary Range: {job_salary_range}, Applicant Salary: {applicant_salary}", file=sys.stderr)
+
             has_title_match = job_title in applicant_titles
             matched_skills = job_skills.intersection(applicant_skills)
             skill_match_count = len(matched_skills)
