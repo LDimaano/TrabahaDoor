@@ -15,14 +15,11 @@ def check_salary_match(job_salary, jobseeker_salary):
     # Check if job salary matches any salary in jobseeker's salary list
     return job_salary in jobseeker_salary
 
-
-
 def calculate_score(criteria):
     """
     Calculate the score for a job seeker based on fulfilled criteria.
     """
     return sum(1 for value in criteria.values() if value)
-
 
 def recommend_candidates(job_postings, applicants):
     recommendations = {}
@@ -46,8 +43,8 @@ def recommend_candidates(job_postings, applicants):
             skill_match_count = len(matched_skills)
             salary_match = check_salary_match(job_salary, applicant_salary)
 
-            # Skip applicants with no matches in any criteria
-            if not (has_title_match or matched_skills or salary_match):
+            # Skip applicants with no matches in any criteria or only a salary match
+            if not (has_title_match or matched_skills) or (salary_match and not (has_title_match or skill_match_count > 0)):
                 continue
 
             # Calculate score for this job
@@ -109,7 +106,6 @@ def recommend_candidates(job_postings, applicants):
     )
 
     return sorted_recommendations
-
 
 if __name__ == '__main__':
     try:
