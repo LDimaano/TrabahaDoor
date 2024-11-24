@@ -501,7 +501,7 @@ const getApplicantsForJob = async (jobId) => {
 router.post('/recommend-candidates/:jobId', async (req, res) => {
   const { jobId } = req.params;
   const { userId } = req.body;
-  
+
   try {
     console.log('Fetching job postings and applicants...');
 
