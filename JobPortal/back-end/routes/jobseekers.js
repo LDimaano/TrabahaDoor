@@ -613,7 +613,7 @@ router.delete('/delete', async (req, res) => {
   const result = await deleteUserAndArchive(userId, password);
 
   if (result.success) {
-    res.status(200).json({ message: 'Account deleted successfully.' });
+    res.status(200).json({ message: 'Account deactivated successfully.' });
   } else {
     res.status(400).json({ message: result.error });
   }
