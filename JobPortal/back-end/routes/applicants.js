@@ -519,6 +519,8 @@ router.post('/recommend-candidates/:jobId', async (req, res) => {
     const pythonProcess = spawn('python', ['python_scripts/recos_per_job.py']);
     const dataToSend = JSON.stringify({ job_postings: jobPostings, applicants: applicants });
 
+    console.log(dataToSend);
+    
     pythonProcess.stdin.write(dataToSend + '\n');
     pythonProcess.stdin.end();
 
