@@ -443,7 +443,6 @@ const getApplicantsForJob = async (jobId) => {
       ap.additional_info,
       ARRAY_AGG(DISTINCT jt.job_title) AS job_titles,
       ARRAY_AGG(DISTINCT s.skill_name) AS skills,
-	  ARRAY_AGG(DISTINCT je.salary) AS salary,
       pp.profile_picture_url,
       js.industry_id,
       ap.status,
@@ -468,7 +467,7 @@ const getApplicantsForJob = async (jobId) => {
       pp.profile_picture_url,
       js.industry_id,
       ap.status,
-      ap.date_applied
+      ap.date_applied;
   `;
 
   try {
@@ -480,7 +479,6 @@ const getApplicantsForJob = async (jobId) => {
       profile_picture_url: row.profile_picture_url || 'no image',
       job_titles: row.job_titles || [],
       skills: row.skills || [],
-      salary: row.salary || [],
       resume: row.resume,
       additional_info: row.additional_info,
       industry: row.industry_id,
@@ -501,7 +499,6 @@ const getApplicantsForJob = async (jobId) => {
 router.post('/recommend-candidates/:jobId', async (req, res) => {
   const { jobId } = req.params;
   const { userId } = req.body;
-
   try {
     const jobPostings = await getJobPostings(userId);
     const applicants = await getApplicantsForJob(jobId);
@@ -513,44 +510,31 @@ router.post('/recommend-candidates/:jobId', async (req, res) => {
     const pythonProcess = spawn('python', ['python_scripts/recos_per_job.py']);
     const dataToSend = JSON.stringify({ job_postings: jobPostings, applicants: applicants });
 
-    let responseSent = false; // Flag to prevent multiple responses
-
     pythonProcess.stdin.write(dataToSend + '\n');
     pythonProcess.stdin.end();
 
     pythonProcess.stdout.on('data', (data) => {
-      if (responseSent) return; // Prevent further responses
       try {
         const recommendations = JSON.parse(data.toString().trim());
         res.json({ recommendations });
-        responseSent = true; // Mark response as sent
       } catch (error) {
-        if (!responseSent) {
-          res.status(500).json({ error: 'Error parsing recommendations.' });
-          responseSent = true;
-        }
+        res.status(500).json({ error: 'Error parsing recommendations.' });
       }
     });
 
     pythonProcess.stderr.on('data', (error) => {
-      if (!responseSent) {
-        res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
-        responseSent = true;
-      }
+      res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
     });
 
     pythonProcess.on('exit', (code) => {
-      if (!responseSent && code !== 0) {
+      if (code !== 0) {
         res.status(500).json({ error: 'Internal Server Error', details: 'Python script failed' });
-        responseSent = true;
       }
     });
 
   } catch (error) {
     console.error('Error generating recommendations:', error);
-    if (!res.headersSent) {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
