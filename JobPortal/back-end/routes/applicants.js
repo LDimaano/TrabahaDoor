@@ -268,7 +268,8 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
       `SELECT COUNT(*) AS filled_count, jl.positions
        FROM applications a
        JOIN joblistings jl ON a.job_id = jl.job_id
-       WHERE jl.user_id = $1 AND a.status = 'Filled' AND a.job_id = $2`,
+       WHERE jl.user_id = $1 AND a.status = 'Filled' AND a.job_id = $2
+       GROUP BY jl.positions`,
       [userId, jobId]
     );
 
