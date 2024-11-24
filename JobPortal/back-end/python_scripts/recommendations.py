@@ -98,6 +98,7 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
             x['salary_match'],  # Salary match
             x['title_match'],  # Title match
             x['match_count'],  # Match count
+            x['industry_match'],  # Prioritize industry match
             not x['collaborative_match']  # Collaborative match (least priority)
         ),
         reverse=True
