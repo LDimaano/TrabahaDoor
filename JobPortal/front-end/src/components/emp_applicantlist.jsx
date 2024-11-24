@@ -120,7 +120,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
     }
   
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applications/filledCount/${userId}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/applications/filledCount/${userId}`);
       const data = await response.json();
   
       if (response.ok) {
