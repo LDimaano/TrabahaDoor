@@ -7,19 +7,16 @@ def recommend_candidates(job_postings, applicants):
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
         job_title = job.get('job_title', 'No Job Title Provided')
-        job_salary = job.get('salary', 0)
 
         for applicant in applicants:
             user_id = applicant.get('user_id')
             applicant_titles = applicant.get('job_titles', [])
             applicant_skills = set(applicant.get('skills', []))
-            applicant_salary = applicant.get('desired_salary', 0)
             applicant_full_name = applicant.get('full_name', 'No Name Provided')
 
             has_title_match = job_title in applicant_titles
             matched_skills = job_skills.intersection(applicant_skills)
             has_skill_match = bool(matched_skills)
-            salary_alignment = abs(job_salary - applicant_salary) if job_salary and applicant_salary else float('inf')
 
             recommendation_data = {
                 'user_id': user_id,
@@ -37,7 +34,6 @@ def recommend_candidates(job_postings, applicants):
                 'title_match': has_title_match,
                 'skill_match': has_skill_match,
                 'skill_match_count': len(matched_skills),
-                'salary_alignment': salary_alignment,
             }
 
             # Debugging output to stderr
@@ -50,8 +46,7 @@ def recommend_candidates(job_postings, applicants):
         key=lambda x: (
             x['title_match'],
             x['skill_match'],
-            x['skill_match_count'],
-            -x['salary_alignment']
+            x['skill_match_count']
         ),
         reverse=True
     )
