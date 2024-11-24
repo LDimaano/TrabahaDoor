@@ -83,8 +83,8 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         # Check collaborative filtering match
         collaborative_match = check_collaborative_filtering(job, collaborative_filtering_jobs)
 
-        # Only add recommendation if there's a match
-        if skill_match or title_match or collaborative_match:
+        # Only add recommendation if there's a match in any criteria
+        if skill_match or title_match or salary_match or collaborative_match:
             match_count = len(skills_set.intersection(job.get('required_skills', set())))
             industry_match = (job['industry_name'] == jobseeker_industry) if jobseeker_industry else False
             recommendations.append(generate_recommendation(job, match_count, industry_match, title_match, salary_match, collaborative_match))
