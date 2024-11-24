@@ -27,7 +27,7 @@ def recommend_candidates(job_postings, applicants):
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
         job_title = job.get('job_title', 'No Job Title Provided')
-        job_salary = job.get('salary', None)  # Job salary as a single value
+        job_salary = job.get('salaryrange', None)  # Job salary as a single value
 
         for applicant in applicants:
             user_id = applicant.get('user_id')
