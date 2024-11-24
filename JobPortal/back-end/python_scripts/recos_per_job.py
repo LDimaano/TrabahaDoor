@@ -40,6 +40,8 @@ def recommend_candidates(job_postings, applicants):
                 'salary_alignment': salary_alignment,
             }
 
+            print(f'Adding recommendation: {recommendation_data}')  # Debugging output
+
             recommendations.append(recommendation_data)
 
     # Sorting the recommendations based on the criteria
@@ -58,13 +60,18 @@ def recommend_candidates(job_postings, applicants):
 if __name__ == '__main__':
     try:
         input_data = sys.stdin.read()
+        print(f'Received input data: {input_data}')  # Debugging output
+
         input_json = json.loads(input_data)
         job_postings = input_json.get('job_postings', [])
         applicants = input_json.get('applicants', [])
 
         recommended_candidates = recommend_candidates(job_postings, applicants)
 
-        print(json.dumps({'recommendations': recommended_candidates}))
+        output_data = json.dumps({'recommendations': recommended_candidates})
+        print(f'Output data: {output_data}')  # Debugging output
+
+        print(output_data)
         sys.exit(0)
 
     except Exception as e:

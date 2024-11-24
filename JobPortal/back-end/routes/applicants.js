@@ -499,34 +499,47 @@ const getApplicantsForJob = async (jobId) => {
 router.post('/recommend-candidates/:jobId', async (req, res) => {
   const { jobId } = req.params;
   const { userId } = req.body;
+
+  console.log(`Received request for jobId: ${jobId}, userId: ${userId}`);
+
   try {
     const jobPostings = await getJobPostings(userId);
+    console.log(`Fetched job postings: ${JSON.stringify(jobPostings, null, 2)}`);
+
     const applicants = await getApplicantsForJob(jobId);
+    console.log(`Fetched applicants: ${JSON.stringify(applicants, null, 2)}`);
 
     if (jobPostings.length === 0 || applicants.length === 0) {
+      console.log('No job postings or applicants found.');
       return res.status(404).json({ error: 'No job postings or applicants found.' });
     }
 
     const pythonProcess = spawn('python', ['python_scripts/recos_per_job.py']);
     const dataToSend = JSON.stringify({ job_postings: jobPostings, applicants: applicants });
 
+    console.log(`Sending data to Python script: ${dataToSend}`);
+
     pythonProcess.stdin.write(dataToSend + '\n');
     pythonProcess.stdin.end();
 
     pythonProcess.stdout.on('data', (data) => {
+      console.log(`Received data from Python script: ${data.toString().trim()}`);
       try {
         const recommendations = JSON.parse(data.toString().trim());
         res.json({ recommendations });
       } catch (error) {
+        console.error('Error parsing recommendations:', error);
         res.status(500).json({ error: 'Error parsing recommendations.' });
       }
     });
 
     pythonProcess.stderr.on('data', (error) => {
+      console.error('Python script error:', error.toString());
       res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
     });
 
     pythonProcess.on('exit', (code) => {
+      console.log(`Python script exited with code: ${code}`);
       if (code !== 0) {
         res.status(500).json({ error: 'Internal Server Error', details: 'Python script failed' });
       }
