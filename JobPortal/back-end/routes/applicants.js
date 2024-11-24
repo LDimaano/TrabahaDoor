@@ -396,7 +396,7 @@ const getJobPostings = async (userId) => {
     JOIN job_skills ON joblistings.job_id = job_skills.job_id
     JOIN skills ON job_skills.skill_id = skills.skill_id
     LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
-    WHERE joblistings.user_id = 21
+    WHERE joblistings.user_id = $1
     GROUP BY 
       joblistings.job_id,
       job_titles.job_title,
