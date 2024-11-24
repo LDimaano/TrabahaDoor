@@ -499,55 +499,72 @@ const getApplicantsForJob = async (jobId) => {
 router.post('/recommend-candidates/:jobId', async (req, res) => {
   const { jobId } = req.params;
   const { userId } = req.body;
-
-  console.log(`Received request for jobId: ${jobId}, userId: ${userId}`);
-
+  
   try {
-    const jobPostings = await getJobPostings(userId);
-    console.log(`Fetched job postings: ${JSON.stringify(jobPostings, null, 2)}`);
+    console.log('Fetching job postings and applicants...');
 
+    const jobPostings = await getJobPostings(userId);
     const applicants = await getApplicantsForJob(jobId);
-    console.log(`Fetched applicants: ${JSON.stringify(applicants, null, 2)}`);
 
     if (jobPostings.length === 0 || applicants.length === 0) {
       console.log('No job postings or applicants found.');
       return res.status(404).json({ error: 'No job postings or applicants found.' });
     }
 
+    console.log('Job postings and applicants fetched successfully.');
+    console.log('Starting Python script...');
+
     const pythonProcess = spawn('python', ['python_scripts/recos_per_job.py']);
     const dataToSend = JSON.stringify({ job_postings: jobPostings, applicants: applicants });
-
-    console.log(`Sending data to Python script: ${dataToSend}`);
 
     pythonProcess.stdin.write(dataToSend + '\n');
     pythonProcess.stdin.end();
 
+    let pythonOutput = '';
+    let pythonError = '';
+
     pythonProcess.stdout.on('data', (data) => {
-      console.log(`Received data from Python script: ${data.toString().trim()}`);
-      try {
-        const recommendations = JSON.parse(data.toString().trim());
-        res.json({ recommendations });
-      } catch (error) {
-        console.error('Error parsing recommendations:', error);
-        res.status(500).json({ error: 'Error parsing recommendations.' });
-      }
+      pythonOutput += data.toString();
     });
 
     pythonProcess.stderr.on('data', (error) => {
-      console.error('Python script error:', error.toString());
-      res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
+      pythonError += error.toString();
     });
 
-    pythonProcess.on('exit', (code) => {
-      console.log(`Python script exited with code: ${code}`);
+    pythonProcess.on('close', (code) => {
       if (code !== 0) {
-        res.status(500).json({ error: 'Internal Server Error', details: 'Python script failed' });
+        console.error('Python script failed:', pythonError);
+        if (!res.headersSent) {
+          return res.status(500).json({ error: 'Internal Server Error', details: pythonError });
+        }
+      } else {
+        try {
+          console.log('Python script output:', pythonOutput.trim());
+          const recommendations = JSON.parse(pythonOutput.trim());
+          if (!res.headersSent) {
+            return res.json({ recommendations });
+          }
+        } catch (error) {
+          console.error('Error parsing recommendations:', error);
+          if (!res.headersSent) {
+            return res.status(500).json({ error: 'Error parsing recommendations.' });
+          }
+        }
+      }
+    });
+
+    pythonProcess.on('error', (error) => {
+      console.error('Failed to start Python script:', error);
+      if (!res.headersSent) {
+        return res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
       }
     });
 
   } catch (error) {
     console.error('Error generating recommendations:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    if (!res.headersSent) {
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 });
 

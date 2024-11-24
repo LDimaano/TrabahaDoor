@@ -40,7 +40,8 @@ def recommend_candidates(job_postings, applicants):
                 'salary_alignment': salary_alignment,
             }
 
-            print(f'Adding recommendation: {recommendation_data}', file=sys.stderr)  # Debugging output to stderr
+            # Debugging output to stderr
+            print(f'Adding recommendation: {recommendation_data}', file=sys.stderr)
 
             recommendations.append(recommendation_data)
 
@@ -71,6 +72,7 @@ if __name__ == '__main__':
         output_data = json.dumps({'recommendations': recommended_candidates})
         print(f'Output data: {output_data}', file=sys.stderr)  # Debugging output to stderr
 
+        # Only JSON output to stdout
         print(output_data)
         sys.exit(0)
 
