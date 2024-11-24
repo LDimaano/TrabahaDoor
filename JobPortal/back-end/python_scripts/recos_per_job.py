@@ -5,8 +5,12 @@ def check_salary_match(job_salary_range, jobseeker_salary):
     """Check if any salary from the applicant matches the salary range of the job."""
     return any(user_salary == job_salary_range for user_salary in jobseeker_salary) if jobseeker_salary else False
 
+def calculate_score(criteria):
+    """Calculate the score for a job seeker based on fulfilled criteria."""
+    return sum(1 for value in criteria.values() if value)
+
 def recommend_candidates(job_postings, applicants):
-    recommendations = []
+    recommendations = {}
 
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
@@ -15,49 +19,57 @@ def recommend_candidates(job_postings, applicants):
 
         for applicant in applicants:
             user_id = applicant.get('user_id')
+            if user_id not in recommendations:  # Initialize unique job seeker entry
+                recommendations[user_id] = {
+                    'user_id': user_id,
+                    'full_name': applicant.get('full_name', 'No Name Provided'),
+                    'job_titles': applicant.get('job_titles', []),
+                    'matched_skills': set(),
+                    'profile_picture_url': applicant.get('profile_picture_url', ''),
+                    'email': applicant.get('email', ''),
+                    'phone_number': applicant.get('phone_number', ''),
+                    'additional_info': applicant.get('additional_info', ''),
+                    'status': applicant.get('status', ''),
+                    'date_applied': applicant.get('date_applied', ''),
+                    'application_id': applicant.get('application_id', ''),
+                    'title_match': False,
+                    'skill_match_count': 0,
+                    'salary_match': False,
+                    'overall_score': 0  # Score to rank candidates
+                }
+
+            # Evaluate current job criteria against this applicant
             applicant_titles = applicant.get('job_titles', [])
             applicant_skills = set(applicant.get('skills', []))
             applicant_salary = applicant.get('salary', [])  # Applicant salary array
 
             has_title_match = job_title in applicant_titles
             matched_skills = job_skills.intersection(applicant_skills)
-            has_skill_match = bool(matched_skills)
+            salary_match = check_salary_match(job_salary_range, applicant_salary)
 
-            salary_match = check_salary_match(job_salary_range, applicant_salary)  # Pass correct job salary range
+            # Update recommendation details for this applicant
+            recommendations[user_id]['title_match'] |= has_title_match
+            recommendations[user_id]['matched_skills'].update(matched_skills)
+            recommendations[user_id]['skill_match_count'] = len(recommendations[user_id]['matched_skills'])
+            recommendations[user_id]['salary_match'] |= salary_match
 
-            recommendation_data = {
-                'user_id': user_id,
-                'full_name': applicant.get('full_name', 'No Name Provided'),
-                'job_title': job_title,
-                'recommended_job_title': applicant_titles[0] if applicant_titles else "No Job Title",
-                'matched_skills': list(matched_skills),
-                'profile_picture_url': applicant.get('profile_picture_url', ''),
-                'email': applicant.get('email', ''),
-                'phone_number': applicant.get('phone_number', ''),
-                'additional_info': applicant.get('additional_info', ''),
-                'status': applicant.get('status', ''),
-                'date_applied': applicant.get('date_applied', ''),
-                'application_id': applicant.get('application_id', ''),
-                'title_match': has_title_match,
-                'skill_match': has_skill_match,
-                'skill_match_count': len(matched_skills),
-                'salary_match': salary_match  # Add salary match to the recommendation
-            }
+    # Calculate overall score for each applicant
+    for user_id, rec in recommendations.items():
+        criteria = {
+            'title_match': rec['title_match'],
+            'skill_match_count': rec['skill_match_count'] > 0,
+            'salary_match': rec['salary_match']
+        }
+        rec['overall_score'] = calculate_score(criteria)
 
-            recommendations.append(recommendation_data)
-
-    # Sorting the recommendations based on the criteria
-    recommendations.sort(
-        key=lambda x: (
-            x['title_match'],
-            x['skill_match'],
-            x['skill_match_count'],
-            x['salary_match']  # Sorting by salary match too
-        ),
+    # Convert recommendations to a sorted list based on the overall score
+    sorted_recommendations = sorted(
+        recommendations.values(),
+        key=lambda x: x['overall_score'],
         reverse=True
     )
 
-    return recommendations
+    return sorted_recommendations
 
 if __name__ == '__main__':
     try:
