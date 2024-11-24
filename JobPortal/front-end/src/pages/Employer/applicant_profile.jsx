@@ -202,7 +202,7 @@ const MyProfile = () => {
               >
                 <FontAwesomeIcon icon={faArrowLeft} />
               </button>
-              <h3 style={{ margin: '0' }}>Applicant's Profile</h3>
+              <h3 style={{ margin: '0' }}>Applicant Profile</h3>
             </div>
             <button style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '8px 16px', cursor: 'pointer' }} onClick={() => setIsModalOpen(true)}>
               Contact
