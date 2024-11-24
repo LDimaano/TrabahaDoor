@@ -140,7 +140,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   
 
   const renderApplicantRows = (listings) => {
-    return listings.map((listing) => (
+    return listings.map((listing, index) => (
       <tr key={listing.user_id}>
         <td>{index + 1}</td>
         <td>
