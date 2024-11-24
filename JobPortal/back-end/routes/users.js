@@ -150,7 +150,7 @@ async function reactivateEmployer(archivedUser) {
     INSERT INTO users (user_id, email, password, usertype, approve, datecreated, is_verified, is_complete)
     SELECT user_id, email, password, usertype, approve, datecreated, is_verified, is_complete
     FROM archived_users
-    WHERE email = $1
+     WHERE user_id = $1
   `, [archivedUser.user_id]);
 
   // Step 3: Transfer profile picture to the active table
@@ -158,7 +158,7 @@ async function reactivateEmployer(archivedUser) {
     INSERT INTO profilepictures (user_id, profile_picture_url)
     SELECT user_id, profile_picture_url
     FROM archived_profilepictures
-    WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+    WHERE user_id = (SELECT user_id FROM archived_users WHERE user_id = $1)
   `, [archivedUser.user_id]);
 
   // Step 4: Insert employer profile data into the active tables
@@ -166,7 +166,7 @@ async function reactivateEmployer(archivedUser) {
     INSERT INTO emp_profiles (user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description)
     SELECT user_id, company_name, contact_person, contact_number, website, industry_id, company_address, company_size, founded_year, description
     FROM archived_emp_profiles
-    WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+    WHERE user_id = (SELECT user_id FROM archived_users WHERE user_id = $1)
   `, [archivedUser.user_id]);
 
   // Step 5: Insert job listings into the active tables
@@ -174,7 +174,7 @@ async function reactivateEmployer(archivedUser) {
     INSERT INTO joblistings (job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled)
     SELECT job_id, user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, datecreated, datefilled
     FROM archived_joblistings
-    WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+    WHERE user_id = (SELECT user_id FROM archived_users WHERE user_id = $1)
   `, [archivedUser.user_id]);
 
   // Step 6: Insert job skills into the active tables
@@ -182,7 +182,7 @@ async function reactivateEmployer(archivedUser) {
     INSERT INTO job_skills (job_id, skill_id, user_id)
     SELECT job_id, skill_id, user_id
     FROM archived_job_skills
-    WHERE user_id = (SELECT user_id FROM archived_users WHERE email = $1)
+    WHERE user_id = (SELECT user_id FROM archived_users WHERE user_id = $1)
   `, [archivedUser.user_id]);
 
   await pool.query('DELETE FROM archived_profilepictures WHERE user_id = $1', [archivedUser.user_id]);
