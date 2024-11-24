@@ -2,12 +2,33 @@ import sys
 import json
 
 def check_salary_match(job_salary_range, jobseeker_salary):
-    """Check if any salary from the applicant matches the salary range of the job."""
-    return any(user_salary == job_salary_range for user_salary in jobseeker_salary) if jobseeker_salary else False
+    """
+    Stage 3: Check if jobseeker's salary expectation matches the job's salary range.
+
+    The function returns True if any salary in the jobseeker's list falls within
+    the job's salary range (inclusive).
+    """
+    if not jobseeker_salary or len(job_salary_range) != 2:
+        return False  # Return False if inputs are invalid
+    
+    min_salary, max_salary = job_salary_range  # Unpack the salary range
+    return any(
+        min_salary <= user_salary <= max_salary  # Check if salary falls within the range
+        for user_salary in jobseeker_salary
+    )
 
 def calculate_score(criteria):
-    """Calculate the score for a job seeker based on fulfilled criteria."""
-    return sum(1 for value in criteria.values() if value)
+    """
+    Calculate a weighted score for a job seeker based on fulfilled criteria.
+    Higher weight indicates higher priority.
+    """
+    score = 0
+    if criteria['salary_match']:
+        score += 3  # Highest priority
+    if criteria['title_match']:
+        score += 2  # High priority
+    score += criteria['skill_match_count']  # Add skill match count as-is (higher count means higher score)
+    return score
 
 def recommend_candidates(job_postings, applicants):
     recommendations = {}
@@ -25,16 +46,17 @@ def recommend_candidates(job_postings, applicants):
 
             has_title_match = job_title in applicant_titles
             matched_skills = job_skills.intersection(applicant_skills)
+            skill_match_count = len(matched_skills)
             salary_match = check_salary_match(job_salary_range, applicant_salary)
 
             # Skip applicants with no matches in any criteria
-            if not (has_title_match or matched_skills or salary_match):
+            if not (has_title_match or skill_match_count > 0 or salary_match):
                 continue
 
-            # Calculate score for this job
+            # Calculate weighted score for this job
             criteria = {
                 'title_match': has_title_match,
-                'skill_match_count': len(matched_skills) > 0,
+                'skill_match_count': skill_match_count,
                 'salary_match': salary_match
             }
             overall_score = calculate_score(criteria)
@@ -57,7 +79,7 @@ def recommend_candidates(job_postings, applicants):
                         'application_id': applicant.get('application_id', ''),
                         'recommended_job_title': job_title,
                         'title_match': has_title_match,
-                        'skill_match_count': len(matched_skills),
+                        'skill_match_count': skill_match_count,
                         'salary_match': salary_match,
                         'overall_score': overall_score
                     }
@@ -77,7 +99,7 @@ def recommend_candidates(job_postings, applicants):
                     'application_id': applicant.get('application_id', ''),
                     'recommended_job_title': job_title,
                     'title_match': has_title_match,
-                    'skill_match_count': len(matched_skills),
+                    'skill_match_count': skill_match_count,
                     'salary_match': salary_match,
                     'overall_score': overall_score
                 }
@@ -90,6 +112,7 @@ def recommend_candidates(job_postings, applicants):
     )
 
     return sorted_recommendations
+
 
 if __name__ == '__main__':
     try:
@@ -111,4 +134,4 @@ if __name__ == '__main__':
 
     except Exception as e:
         print(f'Unexpected error occurred: {str(e)}', file=sys.stderr)
-        sys.exit(1)
+        sys.exit(1) 

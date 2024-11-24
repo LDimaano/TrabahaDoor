@@ -386,7 +386,7 @@ const getJobPostings = async (userId) => {
       joblistings.job_id,
       job_titles.job_title,
       industries.industry_name,
-      ARRAY_AGG(DISTINCT joblistings.salaryrange) AS salaryrange,
+	    joblistings.salaryrange,
       joblistings.jobtype,
       pp.profile_picture_url,
       ARRAY_AGG(DISTINCT skills.skill_name) AS required_skills
@@ -396,7 +396,7 @@ const getJobPostings = async (userId) => {
     JOIN job_skills ON joblistings.job_id = job_skills.job_id
     JOIN skills ON job_skills.skill_id = skills.skill_id
     LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
-    WHERE joblistings.user_id = $1
+    WHERE joblistings.user_id = 21
     GROUP BY 
       joblistings.job_id,
       job_titles.job_title,
@@ -417,7 +417,7 @@ const getJobPostings = async (userId) => {
     job_id: row.job_id,
     job_title: row.job_title,
     industry_name: row.industry_name,
-    salaryrange: row.salaryrange || [],
+    salaryrange: row.salaryrange,
     jobtype: row.jobtype,
     required_skills: row.required_skills || [] 
   }));
