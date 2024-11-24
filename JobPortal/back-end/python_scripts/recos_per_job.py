@@ -2,7 +2,12 @@ import sys
 import json
 
 def recommend_candidates(job_postings, applicants):
-    recommendations = []
+    recommendations_with_title_and_salary_match = {}
+    recommendations_with_title_match = {}
+    recommendations_with_skill_and_salary_match = {}
+    recommendations_with_skill_match = {}
+    recommendations_with_industry_and_salary_match = {}
+    recommendations_with_industry_match = {}
     seen_user_ids = set()
 
     for job in job_postings:
@@ -22,10 +27,14 @@ def recommend_candidates(job_postings, applicants):
             applicant_full_name = applicant.get('full_name', 'No Name Provided')
             applicant_salary_expectations = applicant.get('salary', [0])
 
-            # Check matches
+            # Check for job title match
             has_title_match = job_title in applicant_titles
+
+            # Count the number of matched skills
             matched_skills = job_skills.intersection(applicant_skills)
             skill_match_count = len(matched_skills)
+
+            # Check for other matches
             has_skill_match = skill_match_count > 0
             has_industry_match = (job_industry == applicant_industry)
             has_salary_match = any(
@@ -33,21 +42,13 @@ def recommend_candidates(job_postings, applicants):
                 for salary in applicant_salary_expectations
             )
 
-            # Calculate total matches
-            total_matches = sum([
-                has_title_match,
-                has_skill_match,
-                has_industry_match,
-                has_salary_match
-            ])
-
             recommendation_data = {
                 'user_id': user_id,
                 'full_name': applicant_full_name,
                 'job_title': job_title,
                 'recommended_job_title': applicant_titles[0] if applicant_titles else "No Job Title",
                 'matched_skills': list(matched_skills),
-                'skill_match_count': skill_match_count,
+                'skill_match_count': skill_match_count,  # Include skill match count
                 'profile_picture_url': applicant.get('profile_picture_url', ''),
                 'email': applicant.get('email', ''),
                 'phone_number': applicant.get('phone_number', ''),
@@ -56,38 +57,39 @@ def recommend_candidates(job_postings, applicants):
                 'date_applied': applicant.get('date_applied', ''),
                 'application_id': applicant.get('application_id', ''),
                 'salary': applicant_salary_expectations,
-                'total_matches': total_matches,  # Add match count
             }
 
-            # Assign priority
-            if total_matches == 4:  # All criteria match
-                priority = 1
-            elif has_title_match and has_salary_match:
-                priority = 2
+            # Prioritize based on matches
+            if has_title_match and has_salary_match:
+                recommendations_with_title_and_salary_match[user_id] = recommendation_data
+                seen_user_ids.add(user_id)
             elif has_title_match:
-                priority = 3
+                recommendations_with_title_match[user_id] = recommendation_data
+                seen_user_ids.add(user_id)
             elif has_skill_match and has_salary_match:
-                priority = 4
+                recommendations_with_skill_and_salary_match[user_id] = recommendation_data
+                seen_user_ids.add(user_id)
             elif has_skill_match:
-                priority = 5
+                recommendations_with_skill_match[user_id] = recommendation_data
+                seen_user_ids.add(user_id)
             elif has_industry_match and has_salary_match:
-                priority = 6
+                recommendations_with_industry_and_salary_match[user_id] = recommendation_data
+                seen_user_ids.add(user_id)
             elif has_industry_match:
-                priority = 7
-            else:
-                continue  # Skip if no match
+                recommendations_with_industry_match[user_id] = recommendation_data
+                seen_user_ids.add(user_id)
 
-            recommendation_data['priority'] = priority
-            recommendations.append(recommendation_data)
-            seen_user_ids.add(user_id)
-
-    # Global sort: Priority first, then total matches, then skill match count
-    recommendations.sort(
-        key=lambda x: (x['priority'], -x['total_matches'], -x['skill_match_count'])
+    # Combine recommendations with priority:
+    # Title with salary > Title > Skill with salary > Skill > Industry with salary > Industry
+    combined_recommendations = (
+        list(recommendations_with_title_and_salary_match.values()) +
+        list(recommendations_with_title_match.values()) +
+        sorted(recommendations_with_skill_and_salary_match.values(), key=lambda x: x['skill_match_count'], reverse=True) +
+        sorted(recommendations_with_skill_match.values(), key=lambda x: x['skill_match_count'], reverse=True) +
+        list(recommendations_with_industry_and_salary_match.values()) +
+        list(recommendations_with_industry_match.values())
     )
-
-    return recommendations
-
+    return combined_recommendations
 
 if __name__ == '__main__':
     try:
