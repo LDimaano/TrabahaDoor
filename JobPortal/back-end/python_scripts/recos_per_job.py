@@ -2,16 +2,16 @@ import sys
 import json
 
 def check_salary_match(job_salary, jobseeker_salary):
-    """
-    Check if the job salary matches any salary in the jobseeker's salary list.
-
-    Returns True if the job salary matches any salary in the jobseeker's salary list.
-    """
+    """Check if the job salary matches any salary in the jobseeker's salary list."""
     if not jobseeker_salary:
         return False  # Return False if no jobseeker salaries are provided
-
-    # Check if the job salary matches any salary in the jobseeker's salary list
-    return job_salary in jobseeker_salary
+    
+    # Loop through each salary in the jobseeker's salary list
+    for user_salary in jobseeker_salary:
+        if user_salary == job_salary:  # Check if job salary matches any jobseeker salary
+            return True
+    
+    return False  # Return False if no match was found
 
 
 def calculate_score(criteria):
