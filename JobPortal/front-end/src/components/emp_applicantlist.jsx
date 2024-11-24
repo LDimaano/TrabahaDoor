@@ -142,7 +142,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const renderApplicantRows = (listings) => {
     return listings.map((listing, index) => (
       <tr key={listing.user_id}>
-      {isRecommended && <td>{index + 1}</td>} 
+      {activeTab === 'recommended' && <td>{index + 1}</td>}
         <td>
           <img
             src={listing.profile_picture_url}
