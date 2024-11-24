@@ -501,6 +501,7 @@ const getApplicantsForJob = async (jobId) => {
 router.post('/recommend-candidates/:jobId', async (req, res) => {
   const { jobId } = req.params;
   const { userId } = req.body;
+
   try {
     const jobPostings = await getJobPostings(userId);
     const applicants = await getApplicantsForJob(jobId);
@@ -512,31 +513,44 @@ router.post('/recommend-candidates/:jobId', async (req, res) => {
     const pythonProcess = spawn('python', ['python_scripts/recos_per_job.py']);
     const dataToSend = JSON.stringify({ job_postings: jobPostings, applicants: applicants });
 
+    let responseSent = false; // Flag to prevent multiple responses
+
     pythonProcess.stdin.write(dataToSend + '\n');
     pythonProcess.stdin.end();
 
     pythonProcess.stdout.on('data', (data) => {
+      if (responseSent) return; // Prevent further responses
       try {
         const recommendations = JSON.parse(data.toString().trim());
         res.json({ recommendations });
+        responseSent = true; // Mark response as sent
       } catch (error) {
-        res.status(500).json({ error: 'Error parsing recommendations.' });
+        if (!responseSent) {
+          res.status(500).json({ error: 'Error parsing recommendations.' });
+          responseSent = true;
+        }
       }
     });
 
     pythonProcess.stderr.on('data', (error) => {
-      res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
+      if (!responseSent) {
+        res.status(500).json({ error: 'Internal Server Error', details: error.toString() });
+        responseSent = true;
+      }
     });
 
     pythonProcess.on('exit', (code) => {
-      if (code !== 0) {
+      if (!responseSent && code !== 0) {
         res.status(500).json({ error: 'Internal Server Error', details: 'Python script failed' });
+        responseSent = true;
       }
     });
 
   } catch (error) {
     console.error('Error generating recommendations:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 });
 
