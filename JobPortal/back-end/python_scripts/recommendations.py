@@ -92,12 +92,13 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     # Sort recommendations
     recommendations.sort(
         key=lambda x: (
-            x['match_type'] == 'hybrid',  # Hybrid match without title match
+            x['match_type'] == 'hybrid' and x['title_match'],  # Prioritize hybrid with title match
+            x['match_type'] == 'hybrid',  # Prioritize hybrid matches
             x['match_type'] == 'content',  # Content match
             x['salary_match'],  # Salary match
             x['title_match'],  # Title match
             x['match_count'],  # Match count
-            x['collaborative_match']  # Collaborative match
+            not x['collaborative_match']  # Collaborative match (least priority)
         ),
         reverse=True
     )
