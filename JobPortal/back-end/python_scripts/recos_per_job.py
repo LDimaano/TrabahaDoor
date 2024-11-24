@@ -1,34 +1,25 @@
 import sys
 import json
 
-def check_salary_match(job_salary_range, jobseeker_salary):
+def check_salary_match(job_salary, jobseeker_salary):
     """
-    Stage 3: Check if jobseeker's salary expectation matches the job's salary range.
+    Check if the job salary matches any salary in the jobseeker's salary list.
 
-    The function returns True if any salary in the jobseeker's list falls within
-    the job's salary range (inclusive).
+    Returns True if the job salary matches any salary in the jobseeker's salary list.
     """
-    if not jobseeker_salary or len(job_salary_range) != 2:
-        return False  # Return False if inputs are invalid
-    
-    min_salary, max_salary = job_salary_range  # Unpack the salary range
-    return any(
-        min_salary <= user_salary <= max_salary  # Check if salary falls within the range
-        for user_salary in jobseeker_salary
-    )
+    if not jobseeker_salary:
+        return False  # Return False if no jobseeker salaries are provided
+
+    # Check if the job salary matches any salary in the jobseeker's salary list
+    return job_salary in jobseeker_salary
+
 
 def calculate_score(criteria):
     """
-    Calculate a weighted score for a job seeker based on fulfilled criteria.
-    Higher weight indicates higher priority.
+    Calculate the score for a job seeker based on fulfilled criteria.
     """
-    score = 0
-    if criteria['salary_match']:
-        score += 3  # Highest priority
-    if criteria['title_match']:
-        score += 2  # High priority
-    score += criteria['skill_match_count']  # Add skill match count as-is (higher count means higher score)
-    return score
+    return sum(1 for value in criteria.values() if value)
+
 
 def recommend_candidates(job_postings, applicants):
     recommendations = {}
@@ -36,7 +27,7 @@ def recommend_candidates(job_postings, applicants):
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
         job_title = job.get('job_title', 'No Job Title Provided')
-        job_salary_range = job.get('salaryrange', [])
+        job_salary = job.get('salary', None)  # Job salary as a single value
 
         for applicant in applicants:
             user_id = applicant.get('user_id')
@@ -44,21 +35,22 @@ def recommend_candidates(job_postings, applicants):
             applicant_skills = set(applicant.get('skills', []))
             applicant_salary = applicant.get('salary', [])
 
-            print(f"Debug: Job Salary Range: {job_salary_range}, Applicant Salary: {applicant_salary}", file=sys.stderr)
+            # Debug: Print the salary information
+            print(f"Debug: Job Salary: {job_salary}, Applicant Salary: {applicant_salary}", file=sys.stderr)
 
             has_title_match = job_title in applicant_titles
             matched_skills = job_skills.intersection(applicant_skills)
             skill_match_count = len(matched_skills)
-            salary_match = check_salary_match(job_salary_range, applicant_salary)
+            salary_match = check_salary_match(job_salary, applicant_salary)
 
             # Skip applicants with no matches in any criteria
-            if not (has_title_match or skill_match_count > 0 or salary_match):
+            if not (has_title_match or matched_skills or salary_match):
                 continue
 
-            # Calculate weighted score for this job
+            # Calculate score for this job
             criteria = {
                 'title_match': has_title_match,
-                'skill_match_count': skill_match_count,
+                'skill_match_count': skill_match_count > 0,
                 'salary_match': salary_match
             }
             overall_score = calculate_score(criteria)
@@ -109,7 +101,7 @@ def recommend_candidates(job_postings, applicants):
     # Convert recommendations to a sorted list based on the overall score
     sorted_recommendations = sorted(
         recommendations.values(),
-        key=lambda x: x['overall_score'],
+        key=lambda x: (x['overall_score'], x['skill_match_count'], x['salary_match']),
         reverse=True
     )
 
@@ -136,4 +128,4 @@ if __name__ == '__main__':
 
     except Exception as e:
         print(f'Unexpected error occurred: {str(e)}', file=sys.stderr)
-        sys.exit(1) 
+        sys.exit(1)
