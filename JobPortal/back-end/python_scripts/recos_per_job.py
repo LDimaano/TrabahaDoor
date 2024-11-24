@@ -2,35 +2,24 @@ import sys
 import json
 
 def recommend_candidates(job_postings, applicants):
-    recommendations_with_title_match = {}
-    recommendations_with_skill_match = {}
-    recommendations_with_industry_match = {}
-    seen_user_ids = set()  
+    recommendations = []
 
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
         job_title = job.get('job_title', 'No Job Title Provided')
-        job_industry = job.get('industry', 'No Industry Provided')  
+        job_salary = job.get('salary', 0)
 
         for applicant in applicants:
             user_id = applicant.get('user_id')
-            if user_id in seen_user_ids:
-                continue  
-
             applicant_titles = applicant.get('job_titles', [])
             applicant_skills = set(applicant.get('skills', []))
-            applicant_industry = applicant.get('industry', '')
+            applicant_salary = applicant.get('desired_salary', 0)
             applicant_full_name = applicant.get('full_name', 'No Name Provided')
 
-            # Check for job title match
             has_title_match = job_title in applicant_titles
-
-            # Check for skill match
             matched_skills = job_skills.intersection(applicant_skills)
             has_skill_match = bool(matched_skills)
-
-            # Check for industry match if no title or skill match
-            has_industry_match = (job_industry == applicant_industry)
+            salary_alignment = abs(job_salary - applicant_salary) if job_salary and applicant_salary else float('inf')
 
             recommendation_data = {
                 'user_id': user_id,
@@ -45,26 +34,26 @@ def recommend_candidates(job_postings, applicants):
                 'status': applicant.get('status', ''),
                 'date_applied': applicant.get('date_applied', ''),
                 'application_id': applicant.get('application_id', ''),
+                'title_match': has_title_match,
+                'skill_match': has_skill_match,
+                'skill_match_count': len(matched_skills),
+                'salary_alignment': salary_alignment,
             }
 
-            # Add to the highest-priority match category
-            if has_title_match:
-                recommendations_with_title_match[user_id] = recommendation_data
-                seen_user_ids.add(user_id)
-            elif has_skill_match:
-                recommendations_with_skill_match[user_id] = recommendation_data
-                seen_user_ids.add(user_id)
-            elif has_industry_match:
-                recommendations_with_industry_match[user_id] = recommendation_data
-                seen_user_ids.add(user_id)
+            recommendations.append(recommendation_data)
 
-    # Combine recommendations with priority: title matches, then skill matches, then industry matches
-    combined_recommendations = (
-        list(recommendations_with_title_match.values()) +
-        list(recommendations_with_skill_match.values()) +
-        list(recommendations_with_industry_match.values())
+    # Sorting the recommendations based on the criteria
+    recommendations.sort(
+        key=lambda x: (
+            x['title_match'],
+            x['skill_match'],
+            x['skill_match_count'],
+            -x['salary_alignment']
+        ),
+        reverse=True
     )
-    return combined_recommendations
+
+    return recommendations
 
 if __name__ == '__main__':
     try:
