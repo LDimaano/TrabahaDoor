@@ -443,6 +443,7 @@ const getApplicantsForJob = async (jobId) => {
       ap.additional_info,
       ARRAY_AGG(DISTINCT jt.job_title) AS job_titles,
       ARRAY_AGG(DISTINCT s.skill_name) AS skills,
+	  ARRAY_AGG(DISTINCT je.salary) AS salary,
       pp.profile_picture_url,
       js.industry_id,
       ap.status,
@@ -467,7 +468,7 @@ const getApplicantsForJob = async (jobId) => {
       pp.profile_picture_url,
       js.industry_id,
       ap.status,
-      ap.date_applied;
+      ap.date_applied
   `;
 
   try {
@@ -479,6 +480,7 @@ const getApplicantsForJob = async (jobId) => {
       profile_picture_url: row.profile_picture_url || 'no image',
       job_titles: row.job_titles || [],
       skills: row.skills || [],
+      salary: row.salary || [],
       resume: row.resume,
       additional_info: row.additional_info,
       industry: row.industry_id,
