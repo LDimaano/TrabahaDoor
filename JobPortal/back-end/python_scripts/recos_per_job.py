@@ -40,7 +40,7 @@ def recommend_candidates(job_postings, applicants):
                 'salary_alignment': salary_alignment,
             }
 
-            print(f'Adding recommendation: {recommendation_data}')  # Debugging output
+            print(f'Adding recommendation: {recommendation_data}', file=sys.stderr)  # Debugging output to stderr
 
             recommendations.append(recommendation_data)
 
@@ -60,7 +60,7 @@ def recommend_candidates(job_postings, applicants):
 if __name__ == '__main__':
     try:
         input_data = sys.stdin.read()
-        print(f'Received input data: {input_data}')  # Debugging output
+        print(f'Received input data: {input_data}', file=sys.stderr)  # Debugging output to stderr
 
         input_json = json.loads(input_data)
         job_postings = input_json.get('job_postings', [])
@@ -69,7 +69,7 @@ if __name__ == '__main__':
         recommended_candidates = recommend_candidates(job_postings, applicants)
 
         output_data = json.dumps({'recommendations': recommended_candidates})
-        print(f'Output data: {output_data}')  # Debugging output
+        print(f'Output data: {output_data}', file=sys.stderr)  # Debugging output to stderr
 
         print(output_data)
         sys.exit(0)
