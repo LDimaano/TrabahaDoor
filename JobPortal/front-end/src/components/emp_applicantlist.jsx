@@ -142,6 +142,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
   const renderApplicantRows = (listings) => {
     return listings.map((listing) => (
       <tr key={listing.user_id}>
+        <td>{index + 1}</td>
         <td>
           <img
             src={listing.profile_picture_url}
@@ -253,6 +254,7 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
           <table className="table table-bordered">
             <thead>
               <tr>
+                <th>Rank</th>
                 <th>Full Name</th>
                 <th>Hiring Stage</th>
                 <th>Applied Date</th>
