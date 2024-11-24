@@ -31,10 +31,18 @@ def check_salary_match(job, jobseeker_salary):
         for user_salary in jobseeker_salary
     ) if jobseeker_salary else False
 
-def check_collaborative_filtering(job, collaborative_filtering_jobs):
-    """Check if job is in the list of jobs applied to by similar jobseekers."""
-    collaborative_match = job['job_id'] in collaborative_filtering_jobs
-    return collaborative_match
+def check_collaborative_filtering(job, collaborative_filtering_jobs, jobseeker_applications):
+    """Check if job is in the list of jobs applied to by similar jobseekers and if at least 5 job seekers applied."""
+    # Get the job ID
+    job_id = job['job_id']
+    
+    # Check if the job is in the collaborative filtering jobs list
+    if job_id in collaborative_filtering_jobs:
+        # Check if at least 5 job seekers applied for this job
+        applied_count = jobseeker_applications.get(job_id, 0)
+        return applied_count >= 5  # Return True only if 5 or more jobseekers have applied
+    
+    return False
 
 def generate_recommendation(job, match_count, industry_match, title_match, salary_match, collaborative_match):
     """Generate a job recommendation."""
@@ -54,7 +62,7 @@ def generate_recommendation(job, match_count, industry_match, title_match, salar
         'match_type': 'hybrid' if (title_match) and collaborative_match else 'content'
     }
 
-def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None):
+def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None, jobseeker_applications=None):
     """Main recommendation pipeline."""
     recommendations = []
 
@@ -80,8 +88,8 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         if skill_match or title_match:
             salary_match = check_salary_match(job, jobseeker_salary)
 
-        # Check collaborative filtering match
-        collaborative_match = check_collaborative_filtering(job, collaborative_filtering_jobs)
+        # Check collaborative filtering match with the new condition
+        collaborative_match = check_collaborative_filtering(job, collaborative_filtering_jobs, jobseeker_applications)
 
         # Only add recommendation if there's a match in any criteria
         if skill_match or title_match or salary_match or collaborative_match:
