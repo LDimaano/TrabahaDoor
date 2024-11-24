@@ -61,6 +61,8 @@ def recommend_candidates(job_postings, applicants):
             'salary_match': rec['salary_match']
         }
         rec['overall_score'] = calculate_score(criteria)
+        # Convert matched_skills from set to list for JSON serialization
+        rec['matched_skills'] = list(rec['matched_skills'])
 
     # Convert recommendations to a sorted list based on the overall score
     sorted_recommendations = sorted(
