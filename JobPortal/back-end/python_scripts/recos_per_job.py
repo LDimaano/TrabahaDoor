@@ -1,22 +1,32 @@
 import sys
 import json
 
+def check_salary_match(job, jobseeker_salary):
+    """Stage 3: Check if salary matches."""
+    return any(
+        user_salary == job['salaryrange']
+        for user_salary in jobseeker_salary
+    ) if jobseeker_salary else False
+
 def recommend_candidates(job_postings, applicants):
     recommendations = []
 
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
         job_title = job.get('job_title', 'No Job Title Provided')
+        job_salary_range = job.get('salaryrange', [])
 
         for applicant in applicants:
             user_id = applicant.get('user_id')
             applicant_titles = applicant.get('job_titles', [])
             applicant_skills = set(applicant.get('skills', []))
             applicant_full_name = applicant.get('full_name', 'No Name Provided')
+            applicant_salary = applicant.get('salary', [])
 
             has_title_match = job_title in applicant_titles
             matched_skills = job_skills.intersection(applicant_skills)
             has_skill_match = bool(matched_skills)
+            has_salary_match = check_salary_match(job, applicant_salary)
 
             recommendation_data = {
                 'user_id': user_id,
@@ -34,6 +44,7 @@ def recommend_candidates(job_postings, applicants):
                 'title_match': has_title_match,
                 'skill_match': has_skill_match,
                 'skill_match_count': len(matched_skills),
+                'salary_match': has_salary_match
             }
 
             # Debugging output to stderr
@@ -46,7 +57,8 @@ def recommend_candidates(job_postings, applicants):
         key=lambda x: (
             x['title_match'],
             x['skill_match'],
-            x['skill_match_count']
+            x['skill_match_count'],
+            x['salary_match']
         ),
         reverse=True
     )

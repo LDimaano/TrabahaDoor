@@ -386,7 +386,7 @@ const getJobPostings = async (userId) => {
       joblistings.job_id,
       job_titles.job_title,
       industries.industry_name,
-      joblistings.salaryrange,
+      ARRAY_AGG(DISTINCT joblistings.salaryrange) AS salaryrange,
       joblistings.jobtype,
       pp.profile_picture_url,
       ARRAY_AGG(DISTINCT skills.skill_name) AS required_skills
@@ -417,7 +417,7 @@ const getJobPostings = async (userId) => {
     job_id: row.job_id,
     job_title: row.job_title,
     industry_name: row.industry_name,
-    salaryrange: row.salaryrange,
+    salaryrange: row.salaryrange || [],
     jobtype: row.jobtype,
     required_skills: row.required_skills || [] 
   }));
@@ -441,6 +441,7 @@ const getApplicantsForJob = async (jobId) => {
       a.location,
       ap.resume,
       ap.additional_info,
+	    ARRAY_AGG(DISTINCT je.salary) AS salary,
       ARRAY_AGG(DISTINCT jt.job_title) AS job_titles,
       ARRAY_AGG(DISTINCT s.skill_name) AS skills,
       pp.profile_picture_url,
@@ -477,6 +478,7 @@ const getApplicantsForJob = async (jobId) => {
       user_id: row.user_id,
       email: row.email || '',
       profile_picture_url: row.profile_picture_url || 'no image',
+      salary: row.salary || [],
       job_titles: row.job_titles || [],
       skills: row.skills || [],
       resume: row.resume,
