@@ -4,14 +4,17 @@ import json
 def check_salary_match(job_salary, jobseeker_salary):
     """Check if the job salary matches any salary in the jobseeker's salary list."""
     if not jobseeker_salary:
-        return False  # Return False if no jobseeker salaries are provided
+        return False  # Return False if no jobseeker salary is provided
     
-    # Loop through each salary in the jobseeker's salary list
-    for user_salary in jobseeker_salary:
-        if user_salary == job_salary:  # Check if job salary matches any jobseeker salary
-            return True
+    # Ensure job salary is treated as a string for comparison
+    job_salary = str(job_salary)
     
-    return False  # Return False if no match was found
+    # Convert all jobseeker salaries to strings for comparison
+    jobseeker_salary = [str(salary) for salary in jobseeker_salary]
+    
+    # Check if job salary matches any salary in jobseeker's salary list
+    return job_salary in jobseeker_salary
+
 
 
 def calculate_score(criteria):
@@ -27,7 +30,7 @@ def recommend_candidates(job_postings, applicants):
     for job in job_postings:
         job_skills = set(job.get('required_skills', []))
         job_title = job.get('job_title', 'No Job Title Provided')
-        job_salary = job.get('salaryrange', None)  # Job salary as a single value
+        job_salary = job.get('salaryrange', 'Unknown Salary')  # Job salary as a single value
 
         for applicant in applicants:
             user_id = applicant.get('user_id')
