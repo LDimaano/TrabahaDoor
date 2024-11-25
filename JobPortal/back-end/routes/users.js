@@ -254,15 +254,19 @@ router.post('/login', async (req, res) => {
         // Reactivated users go to home_jobseeker
         return user.is_complete && user.is_verified ? '/home_jobseeker' : `/j_profilecreation/${user.user_id}`;
       } else if (user.usertype === 'employer') {
+        // Check if the user's account is awaiting approval
+        if (user.approve === 'no') {
+            return '/waitapproval';
+        }
         // Reactivated users go to home_employer
         if (user.is_verified) {
-          return user.is_complete ? '/home_employer' : `/e_profilecreation/${user.user_id}`;
+            return user.is_complete ? '/home_employer' : `/e_profilecreation/${user.user_id}`;
         } else {
-          return '/unverified-account';
+            return '/unverified-account';
         }
-      } else {
+    } else {
         return '/admindashboard';
-      }
+    }    
     })();
 
     res.json({ redirectUrl, user });
