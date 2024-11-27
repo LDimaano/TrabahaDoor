@@ -251,24 +251,32 @@ router.post('/login', async (req, res) => {
     // Determine redirect URL based on usertype and account status
     const redirectUrl = (() => {
       if (user.usertype === 'jobseeker') {
-        // Reactivated users go to home_jobseeker
-        return user.is_complete && user.is_verified ? '/home_jobseeker' : `/j_profilecreation/${user.user_id}`;
+          // Reactivated users go to home_jobseeker
+          return user.is_complete && user.is_verified ? '/home_jobseeker' : `/j_profilecreation/${user.user_id}`;
       } else if (user.usertype === 'employer') {
-        // Check if the user's account is awaiting approval
-        if (user.approve === 'no') {
-            return '/waitapproval';
-        }
-        // Reactivated users go to home_employer
-        if (user.is_verified) {
-            return user.is_complete ? '/home_employer' : `/e_profilecreation/${user.user_id}`;
-        } else {
-            return '/unverified-account';
-        }
-    } else {
-        return '/admindashboard';
-    }    
-    })();
-
+          // Check if the user is verified first
+          if (user.is_verified) {
+              // Check if the user's profile is complete
+              if (user.is_complete) {
+                  // Check approval status
+                  if (user.approve === 'no') {
+                      return '/waitapproval';  // Awaiting approval
+                  }
+                  if (user.approve === 'yes') {
+                      return '/home_employer';  // Approved, go to home
+                  }
+              } else {
+                  // If profile is not complete, go to profile creation
+                  return `/e_profilecreation/${user.user_id}`;
+              }
+          } else {
+              // If the user is not verified, go to unverified account page
+              return '/unverified-account';
+          }
+      } else {
+          return '/admindashboard';  // Default for admin
+      }
+  })();  
     res.json({ redirectUrl, user });
   } catch (err) {
     console.error('Server error during login:', err);

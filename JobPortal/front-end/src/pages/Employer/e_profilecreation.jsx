@@ -65,9 +65,6 @@ function EmployerProfileCreation() {
     if (e) e.preventDefault(); 
     const user_id = window.location.pathname.split('/')[2];
 
-    // Default profile picture URL
-    const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/employer.png";
-
     const profileData = {
       user_id,
       companyName,
@@ -79,7 +76,7 @@ function EmployerProfileCreation() {
       companySize,
       foundedYear,
       description,
-      profile_picture_url: photo || defaultProfilePictureUrl, 
+      profile_picture_url: photo, 
     };
 
     console.log('Submitting profile data:', profileData);

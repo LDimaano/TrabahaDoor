@@ -66,7 +66,7 @@ const UploadDocuments = () => {
             setSuccessMessage('Document submitted successfully!'); 
             setShowModal(false); 
             setTimeout(() => {
-                navigate('/login');
+                navigate('/waitforapproval');
             }, 2000); 
         } catch (error) {
             console.error('Error:', error); 
