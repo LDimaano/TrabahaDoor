@@ -402,16 +402,25 @@ const handleSubmit = async (e) => {
                   />
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor={`salaryRange-${index}`} className="form-label">Salary Range</label>
-                  <Select
-                    id={`salaryRange-${index}`}
-                    options={salaryRanges}
-                    value={exp.salaryRange}
-                    onChange={(selectedOption) => handleExperienceSalaryRangeChange(index, selectedOption)}
-                    placeholder="Select Salary Range"
-                    isClearable
-                  />
+                <label htmlFor={`salaryRange-${index}`} className="form-label">
+                  Salary Range
+                </label>
+                <div className="d-flex justify-content-between">
+                  <span>{minSalary}</span>
+                  <span>{exp.salaryRange || minSalary}</span>
+                  <span>{maxSalary}</span>
                 </div>
+                <input
+                  id={`salaryRange-${index}`}
+                  type="range"
+                  min={minSalary}
+                  max={maxSalary}
+                  step={step}
+                  value={exp.salaryRange || minSalary}
+                  onChange={handleSliderChange}
+                  className="form-range"
+                />
+              </div>
               </div>
               <div className="mb-3">
                 <label htmlFor={`company-${index}`} className="form-label">Company</label>
