@@ -111,29 +111,30 @@ const BarChart = () => {
 
           {/* Bar Chart */}
           <Bar
-      data={chartData}
-      options={{
-        maintainAspectRatio: false,
-        indexAxis: 'y', // Horizontal bars
-        scales: {
-          x: {
-            beginAtZero: true,
-          },
-          y: {
-            beginAtZero: true,
-          },
-        },
-        elements: {
-          bar: {
-            maxBarThickness: 50,
-          },
-        },
-      }}
-      style={{
-        height: `${chartData.labels.length * 30}px`, // Adjust height dynamically
-        width: '100%',
-      }}
-    />
+  data={chartData}
+  options={{
+    maintainAspectRatio: false,
+    indexAxis: 'y', // Horizontal bars
+    scales: {
+      x: {
+        beginAtZero: true,
+      },
+      y: {
+        beginAtZero: true,
+      },
+    },
+    elements: {
+      bar: {
+        maxBarThickness: 30, // Set a fixed thickness for bars
+      },
+    },
+  }}
+  style={{
+    height: '400px', // Fixed chart height
+    width: '100%',
+  }}
+/>
+
 
     </div>
   );
