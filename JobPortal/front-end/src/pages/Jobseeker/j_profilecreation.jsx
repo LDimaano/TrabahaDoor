@@ -151,9 +151,6 @@ const handleSubmit = async (e) => {
   // Ensure user ID is available
   const user_id = window.location.pathname.split('/')[2];
 
-  // Default profile picture URL
-  const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/jobseeker.png";
-
   // Prepare the profile data, ensuring a fallback for photo
   const profileData = {
     user_id,
@@ -173,7 +170,7 @@ const handleSubmit = async (e) => {
       endDate: exp.endDate,
       description: exp.description,
     })),
-    profile_picture_url: photo || defaultProfilePictureUrl, 
+    profile_picture_url: photo, 
   };
 
   console.log('Profile data to submit:', profileData);
@@ -196,7 +193,7 @@ const handleSubmit = async (e) => {
 
     // Navigate to login after success
     setTimeout(() => {
-      navigate('/login');
+      navigate('/home_jobseeker');
     }, 500);
   } catch (err) {
     console.error('Submission failed:', err);
@@ -392,21 +389,21 @@ const handleSubmit = async (e) => {
                   />
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="salaryRange" className="form-label fw-bold">
+                  <label htmlFor={`salaryRange-${index}`} className="form-label fw-bold">
                     Salary Range (in ₱)
                   </label>
                   <div className="d-flex justify-content-between mb-2">
                     <small className="text-muted">₱5,000</small>
-                    <small className="text-muted">{`Selected: ₱${Number(salaryRange).toLocaleString()}`}</small>
+                    <small className="text-muted">{`Selected: ₱${Number(exp.salaryRange || 5000).toLocaleString()}`}</small>
                     <small className="text-muted">₱100,000</small>
                   </div>
                   <input
-                    id="salaryRange"
+                    id={`salaryRange-${index}`}
                     type="range"
                     min={5000}
                     max={100000}
                     step={100}
-                    value={exp.salaryRange || 5000} 
+                    value={exp.salaryRange || 5000}
                     onChange={(e) => handleSalaryChange(index, e.target.value)}
                     className="form-range"
                     style={{
