@@ -47,8 +47,11 @@ const BarChart = () => {
     setChartData({
       labels,
       datasets: [{
-        ...chartData.datasets[0],
-        data: counts,
+        label: 'Count of Jobseekers',
+        data: counts, // Reset the data to avoid growth
+        backgroundColor: '#1E90FF', // Single color for bars (Dodger Blue)
+        borderColor: '#1E90FF', // Matching border color
+        borderWidth: 1,
       }],
     });
   };
@@ -60,12 +63,12 @@ const BarChart = () => {
     let filteredData = originalData;
 
     if (selectedFilter === 'high') {
-      filteredData = originalData.filter(item => item.count > 10); // Example: Show industries with count > 50
+      filteredData = originalData.filter(item => item.count > 10); // Example: Show industries with count > 10
     } else if (selectedFilter === 'low') {
-      filteredData = originalData.filter(item => item.count <= 10); // Example: Show industries with count <= 50
+      filteredData = originalData.filter(item => item.count <= 10); // Example: Show industries with count <= 10
     }
 
-    updateChartData(filteredData);
+    updateChartData(filteredData); // Update chart with the filtered data
   };
 
   const downloadPDF = () => {
@@ -109,33 +112,31 @@ const BarChart = () => {
         }}
       />
 
-          {/* Bar Chart */}
-          <Bar
-  data={chartData}
-  options={{
-    maintainAspectRatio: false,
-    indexAxis: 'y', // Horizontal bars
-    scales: {
-      x: {
-        beginAtZero: true,
-      },
-      y: {
-        beginAtZero: true,
-      },
-    },
-    elements: {
-      bar: {
-        maxBarThickness: 30, // Set a fixed thickness for bars
-      },
-    },
-  }}
-  style={{
-    height: '400px', // Fixed chart height
-    width: '100%',
-  }}
-/>
-
-
+      {/* Bar Chart */}
+      <Bar
+        data={chartData}
+        options={{
+          maintainAspectRatio: false,
+          indexAxis: 'y', // Horizontal bars
+          scales: {
+            x: {
+              beginAtZero: true,
+            },
+            y: {
+              beginAtZero: true,
+            },
+          },
+          elements: {
+            bar: {
+              maxBarThickness: 30, // Set a fixed thickness for bars
+            },
+          },
+        }}
+        style={{
+          height: '400px', // Fixed chart height
+          width: '100%',
+        }}
+      />
     </div>
   );
 };
