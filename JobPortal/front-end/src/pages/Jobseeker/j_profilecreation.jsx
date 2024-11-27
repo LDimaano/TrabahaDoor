@@ -30,18 +30,16 @@ function ProfileCreation() {
   const [skills, setSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]);
-  const [salaryRanges] = useState([
-    { value: '', label: 'Select salary range' },
-    { value: 'Below 15000', label: 'Below 15000' },
-    { value: '15001-25000', label: '15001-25000' },
-    { value: '25001-35000', label: '25001-35000' },
-    { value: '35001-50000', label: '35001-50000' },
-    { value: '50001-75000', label: '50001-75000' },
-    { value: '75001-100000', label: '75001-100000' },
-    { value: 'Above 100000', label: 'Above 100000' },
-  ]);
+  const [salaryRange, setSalaryRange] = useState(30000);
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
+
+  const SalaryRange = ({ index, exp, onSalaryChange }) => {
+    // Define state for minSalary, maxSalary, step, and salaryRange
+    const minSalary = 30000; // Example min salary, adjust as needed
+    const maxSalary = 100000; // Example max salary, adjust as needed
+    const step = 5000; // Example step size, adjust as needed
+  }
 
   const handleSkillChange = (index, selectedOption) => {
     const newSkills = [...skills];
@@ -131,7 +129,10 @@ function ProfileCreation() {
     }
 };
 
+const handleSalaryChange = (newSalary) => {
+  setSalaryRange(newSalary);
 
+}
   
   // State for controlling the modal visibility
 const [showModal, setShowModal] = useState(false);
@@ -402,26 +403,26 @@ const handleSubmit = async (e) => {
                   />
                 </div>
                 <div className="col-md-6 mb-3">
-                <label htmlFor={`salaryRange-${index}`} className="form-label">
-                  Salary Range
-                </label>
-                <div className="d-flex justify-content-between">
-                  <span>{minSalary}</span>
-                  <span>{exp.salaryRange || minSalary}</span>
-                  <span>{maxSalary}</span>
-                </div>
-                <input
-                  id={`salaryRange-${index}`}
-                  type="range"
-                  min={minSalary}
-                  max={maxSalary}
-                  step={step}
-                  value={exp.salaryRange || minSalary}
-                  onChange={handleSliderChange}
-                  className="form-range"
-                />
-              </div>
-              </div>
+        <label htmlFor="salaryRange" className="form-label">
+          Salary Range
+        </label>
+        <div className="d-flex justify-content-between">
+          <span>30000</span> {/* minSalary */}
+          <span>{salaryRange}</span> {/* Display the selected salary */}
+          <span>100000</span> {/* maxSalary */}
+        </div>
+        <input
+          id="salaryRange"
+          type="range"
+          min={30000} // minSalary
+          max={100000} // maxSalary
+          step={5000} // step size
+          value={salaryRange}
+          onChange={(e) => handleSalaryChange(e.target.value)}
+          className="form-range"
+        />
+      </div>
+      </div>
               <div className="mb-3">
                 <label htmlFor={`company-${index}`} className="form-label">Company</label>
                 <input
