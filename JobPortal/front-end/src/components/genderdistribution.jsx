@@ -12,15 +12,18 @@ const GenderDistributionChart = () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/gender-distribution`);
         const data = await response.json();
+        
+        console.log("Fetched data:", data);  // Log to check the data format
 
-        console.log(data); // Log the data to verify it's in the right format
-
-        const formattedData = data.map(item => ({
-          name: item.gender,
-          value: item.count,
-        }));
-
-        setChartData(formattedData);
+        if (Array.isArray(data) && data.length > 0) {
+          const formattedData = data.map(item => ({
+            name: item.gender,
+            value: item.count,
+          }));
+          setChartData(formattedData);
+        } else {
+          console.error("Invalid data format:", data);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -65,12 +68,12 @@ const GenderDistributionChart = () => {
             }}
           />
           {/* Pie Chart */}
-          <PieChart>
+          <PieChart width={400} height={400}> {/* Explicitly set width and height */}
             <Pie
               data={chartData}
               dataKey="value"
               nameKey="name"
-              outerRadius={150}
+              outerRadius={150} // You can try adjusting this to 100 or 180
               fill="#8884d8"
             >
               {chartData.map((entry, index) => (
