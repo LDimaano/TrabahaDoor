@@ -1,24 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Chart, registerables } from 'chart.js';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaDownload } from 'react-icons/fa';
 
-Chart.register(...registerables);
-
-const BarChart = () => {
-  const [chartData, setChartData] = useState({
-    labels: [],
-    datasets: [{
-      label: 'Count of Employers',
-      data: [],
-      backgroundColor: '#87CEEB', // Sky Blue for bars
-      borderColor: '#87CEEB', // Same Sky Blue for borders
-      borderWidth: 1,
-    }],
-  });
-
+const BarChartComponent = () => {
+  const [originalData, setOriginalData] = useState([]); // Store the full dataset
+  const [filter, setFilter] = useState('all'); // Default filter is "all"
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,18 +15,8 @@ const BarChart = () => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const jsindustry = await response.json(); 
-
-        const labels = jsindustry.map(jsindustry => jsindustry.industry_name);
-        const counts = jsindustry.map(jsindustry => jsindustry.count);
-
-        setChartData({
-          labels,
-          datasets: [{
-            ...chartData.datasets[0],
-            data: counts,
-          }],
-        });
+        const jsindustry = await response.json();
+        setOriginalData(jsindustry); // Store the raw data
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -46,56 +25,72 @@ const BarChart = () => {
     fetchData();
   }, []);
 
+  const updateChartData = () => {
+    let filteredData = originalData;
+
+    if (filter === 'high') {
+      filteredData = originalData.filter(item => item.count > 10); // Filter industries with count > 10
+    } else if (filter === 'low') {
+      filteredData = originalData.filter(item => item.count <= 10); // Filter industries with count <= 10
+    }
+
+    return filteredData;
+  };
+
   const downloadPDF = () => {
     const doc = new jsPDF();
-    doc.text('Industry Distribution Report', 14, 10);
+    doc.text('Employer Industry Distribution Report', 14, 10);
 
-    // Define table columns and data
     const tableColumn = ["Industry", "Count"];
-    const tableRows = chartData.labels.map((label, index) => [label, chartData.datasets[0].data[index]]);
+    const tableRows = originalData.map((item) => [item.industry_name, item.count]);
 
-    // Add table to PDF
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 20,
     });
 
-    // Save the PDF
     doc.save('Employer_Industry_Distribution_Report.pdf');
   };
 
   return (
-    <div style={{ position: 'relative', height: '400px' }}>
-      <FaDownload 
-        onClick={downloadPDF} 
+    <div style={{ position: 'relative' }}>
+      {/* Dropdown Filter */}
+      <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+        <label htmlFor="filter" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filter By Count:</label>
+        <select id="filter" value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <option value="all">All</option>
+          <option value="high">High Count (&gt; 10)</option>
+          <option value="low">Low Count (&le; 10)</option>
+        </select>
+      </div>
+
+      {/* Download Button */}
+      <FaDownload
+        onClick={downloadPDF}
         style={{
           position: 'absolute',
           top: 10,
           right: 10,
           cursor: 'pointer',
-          fontSize: '0.8em', 
-          color: '#007bff',  
-        }} 
+          fontSize: '0.8em',
+          color: '#007bff',
+        }}
       />
-      <Bar 
-        data={chartData} 
-        options={{
-          maintainAspectRatio: false,
-          indexAxis: 'y', // This makes the chart horizontal
-          scales: {
-            x: {
-              beginAtZero: true, // Ensure x-axis starts at 0 for horizontal bars
-            },
-            y: {
-              beginAtZero: true,
-            },
-          },
-        }} 
-        style={{ height: '100%', width: '100%' }}
-      />
+
+      {/* Bar Chart */}
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart data={updateChartData()}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="industry_name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="count" fill="#87CEEB" />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 };
 
-export default BarChart;
+export default BarChartComponent;

@@ -6,6 +6,7 @@ import { FaDownload } from 'react-icons/fa';
 
 const BarChartComponent = () => {
   const [originalData, setOriginalData] = useState([]); // Store the full dataset
+  const [filter, setFilter] = useState('all'); // Default filter is "all"
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,6 +24,18 @@ const BarChartComponent = () => {
 
     fetchData();
   }, []);
+
+  const updateChartData = () => {
+    let filteredData = originalData;
+
+    if (filter === 'high') {
+      filteredData = originalData.filter(item => item.count > 10); // Filter industries with count > 10
+    } else if (filter === 'low') {
+      filteredData = originalData.filter(item => item.count <= 10); // Filter industries with count <= 10
+    }
+
+    return filteredData;
+  };
 
   const downloadPDF = () => {
     const doc = new jsPDF();
@@ -42,6 +55,16 @@ const BarChartComponent = () => {
 
   return (
     <div style={{ position: 'relative' }}>
+      {/* Dropdown Filter */}
+      <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+        <label htmlFor="filter" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filter By Count:</label>
+        <select id="filter" value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <option value="all">All</option>
+          <option value="high">High Count (&gt; 10)</option>
+          <option value="low">Low Count (&le; 10)</option>
+        </select>
+      </div>
+
       {/* Download Button */}
       <FaDownload
         onClick={downloadPDF}
@@ -57,7 +80,7 @@ const BarChartComponent = () => {
 
       {/* Bar Chart */}
       <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={originalData}>
+        <BarChart data={updateChartData()}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="industry_name" />
           <YAxis />
