@@ -34,13 +34,6 @@ function ProfileCreation() {
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
 
-  const SalaryRange = ({ index, exp, onSalaryChange }) => {
-    // Define state for minSalary, maxSalary, step, and salaryRange
-    const minSalary = 30000; // Example min salary, adjust as needed
-    const maxSalary = 100000; // Example max salary, adjust as needed
-    const step = 5000; // Example step size, adjust as needed
-  }
-
   const handleSkillChange = (index, selectedOption) => {
     const newSkills = [...skills];
     newSkills[index] = selectedOption;
@@ -69,10 +62,8 @@ function ProfileCreation() {
     setExperience(newExperience);
   };
 
-  const handleExperienceSalaryRangeChange = (index, selectedOption) => {
-    const newExperience = [...experience];
-    newExperience[index] = { ...newExperience[index], salaryRange: selectedOption };
-    setExperience(newExperience);
+  const handleSalaryChange = (newSalary) => {
+    setSalaryRange(newSalary);
   };
 
   const handleAddExperience = () => {
@@ -128,11 +119,6 @@ function ProfileCreation() {
       console.error('Error uploading profile picture:', error);
     }
 };
-
-const handleSalaryChange = (newSalary) => {
-  setSalaryRange(newSalary);
-
-}
   
   // State for controlling the modal visibility
 const [showModal, setShowModal] = useState(false);
@@ -403,26 +389,26 @@ const handleSubmit = async (e) => {
                   />
                 </div>
                 <div className="col-md-6 mb-3">
-        <label htmlFor="salaryRange" className="form-label">
+        <label htmlFor={`salaryRange`} className="form-label">
           Salary Range
         </label>
         <div className="d-flex justify-content-between">
-          <span>30000</span> {/* minSalary */}
+          <span>30000</span>
           <span>{salaryRange}</span> {/* Display the selected salary */}
-          <span>100000</span> {/* maxSalary */}
+          <span>100000</span>
         </div>
         <input
-          id="salaryRange"
+          id={`salaryRange`}
           type="range"
-          min={30000} // minSalary
-          max={100000} // maxSalary
-          step={5000} // step size
+          min={30000}
+          max={100000}
+          step={5000}
           value={salaryRange}
-          onChange={(e) => handleSalaryChange(e.target.value)}
+          onChange={(e) => handleSalaryChange(e.target.value)} // Pass the updated salary value
           className="form-range"
         />
       </div>
-      </div>
+    </div>
               <div className="mb-3">
                 <label htmlFor={`company-${index}`} className="form-label">Company</label>
                 <input
