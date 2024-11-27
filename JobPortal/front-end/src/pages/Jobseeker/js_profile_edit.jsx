@@ -20,16 +20,6 @@ function ProfileEditForm() {
   const [skills, setSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]);
-  const [salaryRanges] = useState([
-    { value: '', label: 'Select salary range' },
-    { value: 'Below 15000', label: 'Below 15000' },
-    { value: '15001-25000', label: '15001-25000' },
-    { value: '25001-35000', label: '25001-35000' },
-    { value: '35001-50000', label: '35001-50000' },
-    { value: '50001-75000', label: '50001-75000' },
-    { value: '75001-100000', label: '75001-100000' },
-    { value: 'Above 100000', label: 'Above 100000' },
-  ]);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
 
@@ -64,7 +54,7 @@ function ProfileEditForm() {
 
           const formattedExperiences = data.jobSeeker.experiences.map(exp => ({
             jobTitle: { value: exp.jobTitleId, label: exp.jobTitleName },
-            salaryRange: { value: exp.salary, label: exp.salary },
+            salaryRange: exp.salary,
             company: exp.companyName || '',
             location: exp.location || '',
             startDate: new Date(exp.startDate).toISOString().split('T')[0],
@@ -186,11 +176,12 @@ function ProfileEditForm() {
     setExperience(newExperience);
   };
 
-  const handleExperienceSalaryRangeChange = (index, selectedOption) => {
+  const handleExperienceSalaryRangeChange = (index, value) => {
     const newExperience = [...experience];
-    newExperience[index] = { ...newExperience[index], salaryRange: selectedOption };
+    newExperience[index] = { ...newExperience[index], salaryRange: value }; // Save as integer
     setExperience(newExperience);
   };
+  
 
   const handleAddExperience = () => {
     setExperience([...experience, {
@@ -225,60 +216,45 @@ function ProfileEditForm() {
 
   const handleSubmit = async () => {
     const user_id = sessionStorage.getItem('user_id');
-
+  
     const profileData = {
-        user_id,
-        fullName,
-        phoneNumber,
-        dateOfBirth,
-        gender,
-        address_id: address?.value || '',
-        industry_id: industry?.value || '',
-        skills: skills.map(skill => skill?.value || ''),
-        experiences: experience.map(exp => ({
-            jobTitle: exp.jobTitle?.value || '',
-            salary: exp.salaryRange?.value || '',
-            company: exp.company,
-            location: exp.location,
-            startDate: exp.startDate,
-            endDate: exp.endDate,
-            description: exp.description,
-        })),
-        profile_picture_url: ''
+      user_id,
+      fullName,
+      phoneNumber,
+      dateOfBirth,
+      gender,
+      address_id: address?.value || '',
+      industry_id: industry?.value || '',
+      skills: skills.map(skill => skill?.value || ''),
+      experiences: experience.map(exp => ({
+        jobTitle: exp.jobTitle?.value || '',
+        salary: exp.salaryRange || 5000, // Ensure salary is an integer
+        company: exp.company,
+        location: exp.location,
+        startDate: exp.startDate,
+        endDate: exp.endDate,
+        description: exp.description,
+      })),
+      profile_picture_url: ''
     };
-
-    // Detailed console logs
-    console.log('experience being sent:');
-    // Log each experience item separately
-    experience.forEach((exp, index) => {
-        console.log(`Experience ${index + 1}:`, {
-            jobTitle: exp.jobTitle?.value || '',
-            salary: exp.salaryRange?.value || '',
-            company: exp.company,
-            location: exp.location,
-            startDate: exp.startDate,
-            endDate: exp.endDate,
-            description: exp.description,
-        });
-    });
-
+  
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/update-jobseeker-profile/${user_id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(profileData),
-        });
-        if (!response.ok) throw new Error('Failed to update profile');
-        console.log('Profile updated successfully!');
-        navigate(`/js_myprofile`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/update-jobseeker-profile/${user_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profileData),
+      });
+      if (!response.ok) throw new Error('Failed to update profile');
+      console.log('Profile updated successfully!');
+      navigate(`/js_myprofile`);
     } catch (error) {
-        console.error('Error updating profile:', error);
-        setError('Failed to update profile.');
+      console.error('Error updating profile:', error);
+      setError('Failed to update profile.');
     }
-};
-
+  };
+  
 
   return (
     <div className="container">
@@ -354,12 +330,29 @@ function ProfileEditForm() {
                 required
               />
               <label>Salary Range</label>
-              <Select
-                value={exp.salaryRange}
-                onChange={(selectedOption) => handleExperienceSalaryRangeChange(index, selectedOption)}
-                options={salaryRanges}
-                required
-              />
+              <div className="mb-3">
+                <label>Salary Range (in ₱)</label>
+                <div className="d-flex justify-content-between mb-2">
+                  <small className="text-muted">₱5,000</small>
+                  <small className="text-muted">{`Selected: ₱${Number(exp.salaryRange || 5000).toLocaleString()}`}</small>
+                  <small className="text-muted">₱100,000</small>
+                </div>
+                <input
+                  type="range"
+                  min={5000}
+                  max={100000}
+                  step={100}
+                  value={exp.salaryRange || 5000}
+                  onChange={(e) => handleExperienceSalaryRangeChange(index, e.target.value)}
+                  className="form-range"
+                  style={{
+                    background: `linear-gradient(to right, #0d6efd ${((exp.salaryRange || 5000) - 5000) / 95000 * 100}%, #e9ecef ${((exp.salaryRange || 5000) - 5000) / 95000 * 100}%)`,
+                    height: "8px",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                />
+              </div>
               <div className="mb-3">
                 <label>Company</label>
                 <input type="text" name="company" className="form-control" value={exp.company} onChange={(e) => handleExperienceChange(index, e)} required />
