@@ -63,7 +63,7 @@ const GenderDistributionChart = () => {
               color: '#007bff',
             }}
           />
-          <PieChart width={400} height={400}>
+          <PieChart>
             <Pie
               data={chartData}
               dataKey="value"
