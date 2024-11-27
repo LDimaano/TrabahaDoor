@@ -6,22 +6,15 @@ import 'jspdf-autotable';
 import { FaDownload } from 'react-icons/fa';
 
 Chart.register(...registerables);
+
 const BarChart = () => {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [{
       label: 'Count of Jobseekers',
       data: [],
-      backgroundColor: [
-        '#ADD8E6', // Light Blue
-        '#87CEEB', // Sky Blue
-        '#1E90FF', // Dodger Blue
-        '#4169E1', // Royal Blue
-        '#0000CD', // Medium Blue
-      ], 
-      borderColor: [
-        '#ADD8E6', '#87CEEB', '#1E90FF', '#4169E1', '#0000CD',
-      ],
+      backgroundColor: '#4169E1', // Royal Blue for all bars
+      borderColor: '#4169E1', // Same Royal Blue for borders
       borderWidth: 1,
     }],
   });
@@ -92,29 +85,29 @@ const BarChart = () => {
             x: {
               beginAtZero: true,
               title: {
-                display: true, // Add label to x-axis
+                display: true,
               },
               grid: {
-                display: true,  // Enable gridlines for clarity
+                display: true,
               },
             },
             y: {
               title: {
-                display: true,// Add label to y-axis
+                display: true,
               },
               grid: {
-                display: true,  // Enable gridlines for clarity
+                display: true,
               },
             },
           },
           plugins: {
             legend: {
-              display: true,  // Hide legend if not necessary
+              display: true,
             },
             tooltip: {
               callbacks: {
                 label: (tooltipItem) => {
-                  return `Count: ${tooltipItem.raw}`;  // Show count in tooltip
+                  return `Count: ${tooltipItem.raw}`;
                 }
               }
             }

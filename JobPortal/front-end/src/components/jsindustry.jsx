@@ -8,6 +8,7 @@ import { FaDownload } from 'react-icons/fa';
 Chart.register(...registerables);
 
 const BarChart = () => {
+  const [originalData, setOriginalData] = useState([]); // Store the full dataset
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [{
@@ -18,6 +19,7 @@ const BarChart = () => {
       borderWidth: 1,
     }],
   });
+  const [filter, setFilter] = useState('all'); // Default filter is "all"
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,18 +28,10 @@ const BarChart = () => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const jsindustry = await response.json(); 
+        const jsindustry = await response.json();
 
-        const labels = jsindustry.map(jsindustry => jsindustry.industry_name);
-        const counts = jsindustry.map(jsindustry => jsindustry.count);
-
-        setChartData({
-          labels,
-          datasets: [{
-            ...chartData.datasets[0],
-            data: counts,
-          }],
-        });
+        setOriginalData(jsindustry); // Store the raw data
+        updateChartData(jsindustry); // Initialize the chart with all data
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -46,52 +40,90 @@ const BarChart = () => {
     fetchData();
   }, []);
 
+  const updateChartData = (data) => {
+    const labels = data.map(item => item.industry_name);
+    const counts = data.map(item => item.count);
+
+    setChartData({
+      labels,
+      datasets: [{
+        ...chartData.datasets[0],
+        data: counts,
+      }],
+    });
+  };
+
+  const handleFilterChange = (e) => {
+    const selectedFilter = e.target.value;
+    setFilter(selectedFilter);
+
+    let filteredData = originalData;
+
+    if (selectedFilter === 'high') {
+      filteredData = originalData.filter(item => item.count > 10); // Example: Show industries with count > 50
+    } else if (selectedFilter === 'low') {
+      filteredData = originalData.filter(item => item.count <= 10); // Example: Show industries with count <= 50
+    }
+
+    updateChartData(filteredData);
+  };
+
   const downloadPDF = () => {
     const doc = new jsPDF();
     doc.text('Jobseeker Industry Distribution Report', 14, 10);
 
-    // Define table columns and data
     const tableColumn = ["Industry", "Count"];
     const tableRows = chartData.labels.map((label, index) => [label, chartData.datasets[0].data[index]]);
 
-    // Add table to PDF
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 20,
     });
 
-    // Save the PDF
     doc.save('Jobseeker_Industry_Distribution_Report.pdf');
   };
 
   return (
     <div style={{ position: 'relative' }}>
-      <FaDownload 
-        onClick={downloadPDF} 
+      {/* Dropdown Filter */}
+      <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+        <label htmlFor="filter" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filter By Count:</label>
+        <select id="filter" value={filter} onChange={handleFilterChange}>
+          <option value="all">All</option>
+          <option value="high">High Count (&gt; 50)</option>
+          <option value="low">Low Count (&le; 50)</option>
+        </select>
+      </div>
+
+      {/* Download Button */}
+      <FaDownload
+        onClick={downloadPDF}
         style={{
           position: 'absolute',
           top: 10,
           right: 10,
           cursor: 'pointer',
-          fontSize: '0.8em', 
-          color: '#007bff',  
-        }} 
+          fontSize: '0.8em',
+          color: '#007bff',
+        }}
       />
-      <Bar 
-        data={chartData} 
+
+      {/* Bar Chart */}
+      <Bar
+        data={chartData}
         options={{
           maintainAspectRatio: false,
-          indexAxis: 'y',  // This makes the bars horizontal
+          indexAxis: 'y', // Horizontal bars
           scales: {
             x: {
-              beginAtZero: true,  // Ensure the x-axis starts at 0
+              beginAtZero: true,
             },
             y: {
-              beginAtZero: true,  // Ensure the y-axis starts at 0
+              beginAtZero: true,
             },
           },
-        }} 
+        }}
         style={{ height: '100%', width: '100%' }}
       />
     </div>
