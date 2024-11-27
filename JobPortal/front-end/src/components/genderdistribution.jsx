@@ -13,6 +13,8 @@ const GenderDistributionChart = () => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/gender-distribution`);
         const data = await response.json();
 
+        console.log(data); // Log the data to verify it's in the right format
+
         const formattedData = data.map(item => ({
           name: item.gender,
           value: item.count,
@@ -31,27 +33,25 @@ const GenderDistributionChart = () => {
     const doc = new jsPDF();
     doc.text('Gender Distribution Report', 14, 10);
 
-    // Define table columns and data
     const tableColumn = ["Gender", "Count"];
     const tableRows = chartData.map(item => [item.name, item.value]);
 
-    // Add table to PDF
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 20,
     });
 
-    // Save the PDF
     doc.save('Gender_Distribution_Report.pdf');
   };
 
-  const COLORS = ['#87CEEB', '#4169E1', '#0000CD']; // Sky Blue, Royal Blue, Medium Blue
+  const COLORS = ['#87CEEB', '#4169E1', '#0000CD']; // Define colors for the pie chart
 
   return (
-    <div style={{ position: 'relative' }}>
-      {chartData ? (
+    <div style={{ position: 'relative', width: '100%', height: '400px' }}>
+      {chartData && chartData.length > 0 ? (
         <>
+          {/* Download button */}
           <FaDownload
             onClick={downloadPDF}
             style={{
@@ -61,8 +61,10 @@ const GenderDistributionChart = () => {
               cursor: 'pointer',
               fontSize: '0.8em',
               color: '#007bff',
+              zIndex: 1, // Ensure the button stays on top
             }}
           />
+          {/* Pie Chart */}
           <PieChart>
             <Pie
               data={chartData}
@@ -80,7 +82,7 @@ const GenderDistributionChart = () => {
           </PieChart>
         </>
       ) : (
-        <p>Loading...</p>
+        <p>Loading...</p> // Show loading text while fetching data
       )}
     </div>
   );
