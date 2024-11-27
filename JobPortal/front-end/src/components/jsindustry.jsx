@@ -109,23 +109,32 @@ const BarChart = () => {
         }}
       />
 
-      {/* Bar Chart */}
-      <Bar
-        data={chartData}
-        options={{
-          maintainAspectRatio: false,
-          indexAxis: 'y', // Horizontal bars
-          scales: {
-            x: {
-              beginAtZero: true,
-            },
-            y: {
-              beginAtZero: true,
-            },
+          {/* Bar Chart */}
+          <Bar
+      data={chartData}
+      options={{
+        maintainAspectRatio: false,
+        indexAxis: 'y', // Horizontal bars
+        scales: {
+          x: {
+            beginAtZero: true,
           },
-        }}
-        style={{ height: '100%', width: '100%' }}
-      />
+          y: {
+            beginAtZero: true,
+          },
+        },
+        elements: {
+          bar: {
+            maxBarThickness: 50,
+          },
+        },
+      }}
+      style={{
+        height: `${chartData.labels.length * 30}px`, // Adjust height dynamically
+        width: '100%',
+      }}
+    />
+
     </div>
   );
 };
