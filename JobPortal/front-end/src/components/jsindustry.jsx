@@ -13,17 +13,8 @@ const BarChart = () => {
     datasets: [{
       label: 'Count of Jobseekers',
       data: [],
-      backgroundColor: [
-        '#ADD8E6', // Light Blue
-        '#87CEEB', // Sky Blue
-        '#1E90FF', // Dodger Blue
-        '#4169E1', // Royal Blue
-        '#0000CD', // Medium Blue
-      ], 
-      // Optionally, you can also use the same shades of blue for borders
-      borderColor: [
-        '#ADD8E6', '#87CEEB', '#1E90FF', '#4169E1', '#0000CD',
-      ],
+      backgroundColor: '#1E90FF', // Single color for bars (Dodger Blue)
+      borderColor: '#1E90FF', // Matching border color
       borderWidth: 1,
     }],
   });
@@ -57,10 +48,10 @@ const BarChart = () => {
 
   const downloadPDF = () => {
     const doc = new jsPDF();
-    doc.text('Location Distribution Report', 14, 10);
+    doc.text('Jobseeker Industry Distribution Report', 14, 10);
 
     // Define table columns and data
-    const tableColumn = ["Location", "Count"];
+    const tableColumn = ["Industry", "Count"];
     const tableRows = chartData.labels.map((label, index) => [label, chartData.datasets[0].data[index]]);
 
     // Add table to PDF
