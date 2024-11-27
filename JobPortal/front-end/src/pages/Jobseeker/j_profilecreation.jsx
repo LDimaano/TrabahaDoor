@@ -30,7 +30,7 @@ function ProfileCreation() {
   const [skills, setSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]);
-  const [salaryRange, setSalaryRange] = useState(30000);
+  const [salaryRange, setSalaryRange] = useState(5000);
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
 
@@ -163,7 +163,7 @@ const handleSubmit = async (e) => {
     skills: skills.map(skill => skill?.value || ''),
     experience: experience.map(exp => ({
       jobTitle: exp.jobTitle?.value || '',
-      salary: exp.salaryRange?.value || '',
+      salary: parseInt(exp.salaryRange?.value, 10) || 0,
       company: exp.company,
       location: exp.location,
       startDate: exp.startDate,
@@ -389,26 +389,32 @@ const handleSubmit = async (e) => {
                   />
                 </div>
                 <div className="col-md-6 mb-3">
-        <label htmlFor={`salaryRange`} className="form-label">
-         Salary Range (in ₱)
-        </label>
-        <div className="d-flex justify-content-between">
-        <span>₱30,000</span>
-          <span>{salaryRange}</span> {/* Display the selected salary */}
-          <span>₱100,000</span>
-        </div>
-        <input
-          id={`salaryRange`}
-          type="range"
-          min={30000}
-          max={100000}
-          step={5000}
-          value={salaryRange}
-          onChange={(e) => handleSalaryChange(e.target.value)} // Pass the updated salary value
-          className="form-range"
-        />
-      </div>
-    </div>
+                  <label htmlFor="salaryRange" className="form-label fw-bold">
+                    Salary Range (in ₱)
+                  </label>
+                  <div className="d-flex justify-content-between mb-2">
+                    <small className="text-muted">₱5,000</small>
+                    <small className="text-muted">{`Selected: ₱${Number(salaryRange).toLocaleString()}`}</small>
+                    <small className="text-muted">₱100,000</small>
+                  </div>
+                  <input
+                    id="salaryRange"
+                    type="range"
+                    min={5000}
+                    max={100000}
+                    step={100}
+                    value={salaryRange}
+                    onChange={(e) => handleSalaryChange(e.target.value)}
+                    className="form-range"
+                    style={{
+                      background: `linear-gradient(to right, #0d6efd ${(salaryRange - 5000) / 95000 * 100}%, #e9ecef ${(salaryRange - 5000) / 95000 * 100}%)`,
+                      height: "8px",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  />
+                </div>
+            </div>
               <div className="mb-3">
                 <label htmlFor={`company-${index}`} className="form-label">Company</label>
                 <input
