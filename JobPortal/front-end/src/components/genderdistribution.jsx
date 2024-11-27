@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaDownload } from 'react-icons/fa';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
-
 const GenderDistributionChart = () => {
-  const [chartData, setChartData] = useState(null);
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,26 +13,12 @@ const GenderDistributionChart = () => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/gender-distribution`);
         const data = await response.json();
 
-        const labels = data.map(item => item.gender);
-        const counts = data.map(item => item.count);
+        const formattedData = data.map(item => ({
+          name: item.gender,
+          value: item.count,
+        }));
 
-        setChartData({
-          labels,
-          datasets: [
-            {
-              data: counts,
-              backgroundColor: [
-                '#87CEEB', // Sky Blue
-                '#4169E1', // Royal Blue
-                '#0000CD', // Medium Blue
-              ], 
-              // Optionally, you can also use the same shades of blue for borders
-              hoverBackgroundColor: [
-                '#87CEEB', '#4169E1', '#0000CD',
-              ],
-            },
-          ],
-        });
+        setChartData(formattedData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -44,13 +27,16 @@ const GenderDistributionChart = () => {
     fetchData();
   }, []);
 
+  // Colors for the pie chart
+  const COLORS = ['#87CEEB', '#4169E1', '#0000CD'];
+
   const downloadPDF = () => {
     const doc = new jsPDF();
     doc.text('Gender Distribution Report', 14, 10);
 
     // Define table columns and data
     const tableColumn = ["Gender", "Count"];
-    const tableRows = chartData.labels.map((label, index) => [label, chartData.datasets[0].data[index]]);
+    const tableRows = chartData.map(item => [item.name, item.value]);
 
     // Add table to PDF
     doc.autoTable({
@@ -65,8 +51,9 @@ const GenderDistributionChart = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      {chartData ? (
+      {chartData.length > 0 ? (
         <>
+          {/* Download Button */}
           <FaDownload 
             onClick={downloadPDF} 
             style={{
@@ -74,11 +61,31 @@ const GenderDistributionChart = () => {
               top: 10,
               right: 10,
               cursor: 'pointer',
-              fontSize: '0.8em', 
-              color: '#007bff',  
+              fontSize: '0.8em',
+              color: '#007bff',
             }} 
           />
-          <Pie data={chartData} />
+
+          {/* Pie Chart */}
+          <ResponsiveContainer width="100%" height={400}>
+            <PieChart>
+              <Pie 
+                data={chartData} 
+                dataKey="value" 
+                nameKey="name" 
+                cx="50%" 
+                cy="50%" 
+                outerRadius="80%" 
+                label
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
         </>
       ) : (
         <p>Loading...</p>
