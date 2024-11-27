@@ -390,12 +390,12 @@ const handleSubmit = async (e) => {
                 </div>
                 <div className="col-md-6 mb-3">
         <label htmlFor={`salaryRange`} className="form-label">
-          Salary Range
+         Salary Range (in ₱)
         </label>
         <div className="d-flex justify-content-between">
-          <span>30000</span>
+        <span>₱30,000</span>
           <span>{salaryRange}</span> {/* Display the selected salary */}
-          <span>100000</span>
+          <span>₱100,000</span>
         </div>
         <input
           id={`salaryRange`}
