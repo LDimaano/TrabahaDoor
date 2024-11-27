@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet';
 function HomeEmployer() {
   const [allCandidates, setAllCandidates] = useState([]); 
   const [searchParams, setSearchParams] = useState({});
-  const [activeTab, setActiveTab] = useState('all'); 
+  const [activeTab, setActiveTab] = useState('recommended'); 
 
   const handleSearch = (params) => {
     setSearchParams(params);

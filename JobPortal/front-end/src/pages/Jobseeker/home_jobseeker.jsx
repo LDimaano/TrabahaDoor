@@ -12,7 +12,7 @@ function HomeJobSeeker() {
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [userSkills, setUserSkills] = useState([]);
-  const [activeTab, setActiveTab] = useState('all'); 
+  const [activeTab, setActiveTab] = useState('recommended'); 
 
   const handleFilterChange = (filterType, selectedItems) => {
     setFilters(prevFilters => ({
