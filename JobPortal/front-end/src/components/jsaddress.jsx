@@ -81,12 +81,12 @@ const BarChartComponent = () => {
         }}
       />
 
-      {/* Horizontal Bar Chart */}
+      {/* Bar Chart */}
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={updateChartData()}>
           <CartesianGrid strokeDasharray="3 3" />
-          <YAxis dataKey="location" />
-          <XAxis type="number" />
+          <XAxis dataKey="location" />
+          <YAxis />
           <Tooltip />
           <Legend />
           <Bar dataKey="count" fill="#4169E1" />
