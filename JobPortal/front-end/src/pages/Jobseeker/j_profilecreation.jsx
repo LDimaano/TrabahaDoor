@@ -62,9 +62,12 @@ function ProfileCreation() {
     setExperience(newExperience);
   };
 
-  const handleSalaryChange = (salaryRange) => {
-    setSalaryRange(salaryRange);
+  const handleSalaryChange = (index, salaryValue) => {
+    const updatedExperience = [...experience];
+    updatedExperience[index].salaryRange = salaryValue; 
+    setExperience(updatedExperience);
   };
+  
 
   const handleAddExperience = () => {
     setExperience([...experience, {
@@ -163,7 +166,7 @@ const handleSubmit = async (e) => {
     skills: skills.map(skill => skill?.value || ''),
     experience: experience.map(exp => ({
       jobTitle: exp.jobTitle?.value || '',
-      salary: parseInt(exp.salaryRange?.value, 10),
+      salary: parseInt(exp.salaryRange, 10) || 0, // Use the correct numeric value
       company: exp.company,
       location: exp.location,
       startDate: exp.startDate,
@@ -403,11 +406,11 @@ const handleSubmit = async (e) => {
                     min={5000}
                     max={100000}
                     step={100}
-                    value={salaryRange}
-                    onChange={(e) => handleSalaryChange(e.target.value)}
+                    value={exp.salaryRange || 5000} 
+                    onChange={(e) => handleSalaryChange(index, e.target.value)}
                     className="form-range"
                     style={{
-                      background: `linear-gradient(to right, #0d6efd ${(salaryRange - 5000) / 95000 * 100}%, #e9ecef ${(salaryRange - 5000) / 95000 * 100}%)`,
+                      background: `linear-gradient(to right, #0d6efd ${((exp.salaryRange || 5000) - 5000) / 95000 * 100}%, #e9ecef ${((exp.salaryRange || 5000) - 5000) / 95000 * 100}%)`,
                       height: "8px",
                       borderRadius: "5px",
                       cursor: "pointer",

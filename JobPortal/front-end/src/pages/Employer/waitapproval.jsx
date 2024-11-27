@@ -12,6 +12,7 @@ const WaitForApproval = () => {
           Please wait for the admin approval.
         </div>
         <p className="text-center">
+          Wait for 3-5 business days for admin approval. <br />
           For further questions, contact: 
           <a href="mailto:trabahadoor.sanjose@gmail.com"> trabahadoor.sanjose@gmail.com</a>
         </p>
