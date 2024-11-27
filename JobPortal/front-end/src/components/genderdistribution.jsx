@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaDownload } from 'react-icons/fa';
 
 const GenderDistributionChart = () => {
-  const [chartData, setChartData] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,28 +13,19 @@ const GenderDistributionChart = () => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/gender-distribution`);
         const data = await response.json();
 
-        console.log("Fetched Data:", data); // Log fetched data to check structure
-
         const formattedData = data.map(item => ({
           name: item.gender,
           value: item.count,
         }));
 
-        console.log("Formatted Data:", formattedData); // Log formatted data
-
         setChartData(formattedData);
-        setLoading(false); // Set loading to false once data is loaded
       } catch (error) {
         console.error("Error fetching data:", error);
-        setLoading(false); // Set loading to false in case of error
       }
     };
 
     fetchData();
   }, []);
-
-  // Colors for the pie chart
-  const COLORS = ['#87CEEB', '#4169E1', '#0000CD'];
 
   const downloadPDF = () => {
     const doc = new jsPDF();
@@ -56,15 +46,14 @@ const GenderDistributionChart = () => {
     doc.save('Gender_Distribution_Report.pdf');
   };
 
+  const COLORS = ['#87CEEB', '#4169E1', '#0000CD']; // Sky Blue, Royal Blue, Medium Blue
+
   return (
     <div style={{ position: 'relative' }}>
-      {loading ? (
-        <p>Loading...</p> // Show loading text while data is being fetched
-      ) : (
+      {chartData ? (
         <>
-          {/* Download Button */}
-          <FaDownload 
-            onClick={downloadPDF} 
+          <FaDownload
+            onClick={downloadPDF}
             style={{
               position: 'absolute',
               top: 10,
@@ -72,30 +61,26 @@ const GenderDistributionChart = () => {
               cursor: 'pointer',
               fontSize: '0.8em',
               color: '#007bff',
-            }} 
+            }}
           />
-
-          {/* Pie Chart */}
-          <ResponsiveContainer width="100%" height={400}>
-            <PieChart>
-              <Pie 
-                data={chartData} 
-                dataKey="value" 
-                nameKey="name" 
-                cx="50%" 
-                cy="50%" 
-                outerRadius="80%" 
-                label
-              >
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+          <PieChart width={400} height={400}>
+            <Pie
+              data={chartData}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={150}
+              fill="#8884d8"
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
         </>
+      ) : (
+        <p>Loading...</p>
       )}
     </div>
   );
