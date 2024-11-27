@@ -6,6 +6,7 @@ import { FaDownload } from 'react-icons/fa';
 
 const GenderDistributionChart = () => {
   const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,14 +14,20 @@ const GenderDistributionChart = () => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/gender-distribution`);
         const data = await response.json();
 
+        console.log("Fetched Data:", data); // Log fetched data to check structure
+
         const formattedData = data.map(item => ({
           name: item.gender,
           value: item.count,
         }));
 
+        console.log("Formatted Data:", formattedData); // Log formatted data
+
         setChartData(formattedData);
+        setLoading(false); // Set loading to false once data is loaded
       } catch (error) {
         console.error("Error fetching data:", error);
+        setLoading(false); // Set loading to false in case of error
       }
     };
 
@@ -51,7 +58,9 @@ const GenderDistributionChart = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      {chartData.length > 0 ? (
+      {loading ? (
+        <p>Loading...</p> // Show loading text while data is being fetched
+      ) : (
         <>
           {/* Download Button */}
           <FaDownload 
@@ -87,8 +96,6 @@ const GenderDistributionChart = () => {
             </PieChart>
           </ResponsiveContainer>
         </>
-      ) : (
-        <p>Loading...</p>
       )}
     </div>
   );
