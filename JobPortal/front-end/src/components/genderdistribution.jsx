@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaDownload } from 'react-icons/fa';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const GenderDistributionChart = () => {
   const [chartData, setChartData] = useState(null);
@@ -12,18 +15,27 @@ const GenderDistributionChart = () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/gender-distribution`);
         const data = await response.json();
-        
-        console.log("Fetched data:", data);  // Log to check the data format
 
-        if (Array.isArray(data) && data.length > 0) {
-          const formattedData = data.map(item => ({
-            name: item.gender,
-            value: item.count,
-          }));
-          setChartData(formattedData);
-        } else {
-          console.error("Invalid data format:", data);
-        }
+        const labels = data.map(item => item.gender);
+        const counts = data.map(item => item.count);
+
+        setChartData({
+          labels,
+          datasets: [
+            {
+              data: counts,
+              backgroundColor: [
+                '#87CEEB', // Sky Blue
+                '#4169E1', // Royal Blue
+                '#0000CD', // Medium Blue
+              ], 
+              // Optionally, you can also use the same shades of blue for borders
+              hoverBackgroundColor: [
+                '#87CEEB', '#4169E1', '#0000CD',
+              ],
+            },
+          ],
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -36,56 +48,40 @@ const GenderDistributionChart = () => {
     const doc = new jsPDF();
     doc.text('Gender Distribution Report', 14, 10);
 
+    // Define table columns and data
     const tableColumn = ["Gender", "Count"];
-    const tableRows = chartData.map(item => [item.name, item.value]);
+    const tableRows = chartData.labels.map((label, index) => [label, chartData.datasets[0].data[index]]);
 
+    // Add table to PDF
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 20,
     });
 
+    // Save the PDF
     doc.save('Gender_Distribution_Report.pdf');
   };
 
-  const COLORS = ['#87CEEB', '#4169E1', '#0000CD']; // Define colors for the pie chart
-
   return (
-    <div style={{ position: 'relative', width: '100%', height: '400px' }}>
-      {chartData && chartData.length > 0 ? (
+    <div style={{ position: 'relative' }}>
+      {chartData ? (
         <>
-          {/* Download button */}
-          <FaDownload
-            onClick={downloadPDF}
+          <FaDownload 
+            onClick={downloadPDF} 
             style={{
               position: 'absolute',
               top: 10,
               right: 10,
               cursor: 'pointer',
-              fontSize: '0.8em',
-              color: '#007bff',
-              zIndex: 1, // Ensure the button stays on top
-            }}
+              fontSize: '0.8em', 
+              color: '#007bff',  
+            }} 
           />
-          {/* Pie Chart */}
-          <PieChart width={400} height={400}> {/* Explicitly set width and height */}
-            <Pie
-              data={chartData}
-              dataKey="value"
-              nameKey="name"
-              outerRadius={150} // You can try adjusting this to 100 or 180
-              fill="#8884d8"
-            >
-              {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
+          <Pie data={chartData} />
         </>
       ) : (
-        <p>Loading...</p> // Show loading text while fetching data
+        <p>Loading...</p>
       )}
     </div>
   );
