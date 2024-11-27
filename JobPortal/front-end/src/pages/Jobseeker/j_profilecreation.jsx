@@ -62,8 +62,8 @@ function ProfileCreation() {
     setExperience(newExperience);
   };
 
-  const handleSalaryChange = (newSalary) => {
-    setSalaryRange(newSalary);
+  const handleSalaryChange = (salaryRange) => {
+    setSalaryRange(salaryRange);
   };
 
   const handleAddExperience = () => {
@@ -163,7 +163,7 @@ const handleSubmit = async (e) => {
     skills: skills.map(skill => skill?.value || ''),
     experience: experience.map(exp => ({
       jobTitle: exp.jobTitle?.value || '',
-      salary: parseInt(exp.newSalary?.value, 10),
+      salary: parseInt(exp.salaryRange?.value, 10),
       company: exp.company,
       location: exp.location,
       startDate: exp.startDate,
