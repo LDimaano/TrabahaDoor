@@ -435,30 +435,36 @@ function ProfileCreation() {
               </div>
               <div className="mb-3">
                 <label htmlFor={`salaryRange-${index}`} className="form-label">Salary Range</label>
-                <div className="d-flex align-items-center">
+                <div>
                   <input
-                    type="number"
-                    className="form-control me-2"
+                    type="range"
                     id={`minSalary-${index}`}
-                    name="minSalary"
+                    className="form-range"
+                    min="0"
+                    max="100000"
+                    step="1000"
                     value={exp.salaryRange.split('-')[0]}
                     onChange={(e) =>
                       handleSalaryChange(index, e.target.value, exp.salaryRange.split('-')[1])
                     }
-                    placeholder="Min Salary"
                   />
-                  <span className="me-2">-</span>
                   <input
-                    type="number"
-                    className="form-control"
+                    type="range"
                     id={`maxSalary-${index}`}
-                    name="maxSalary"
+                    className="form-range mt-2"
+                    min="0"
+                    max="100000"
+                    step="1000"
                     value={exp.salaryRange.split('-')[1]}
                     onChange={(e) =>
                       handleSalaryChange(index, exp.salaryRange.split('-')[0], e.target.value)
                     }
-                    placeholder="Max Salary"
                   />
+                  <div className="mt-2">
+                    <span>
+                      {exp.salaryRange.split('-')[0]} - {exp.salaryRange.split('-')[1]}
+                    </span>
+                  </div>
                 </div>
               </div>
               <button
