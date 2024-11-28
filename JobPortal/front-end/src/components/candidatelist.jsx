@@ -37,10 +37,10 @@ function CandidateList({ searchParams = {}, isRecommended }) {
 
   // Apply filters to the candidates whenever searchParams change
   useEffect(() => {
+    const { searchQuery = '', selectedIndustry = '' } = searchParams;
+
+    // Filtering for the "All Candidates" tab
     if (!isRecommended) {
-      const { searchQuery = '', selectedIndustry = '' } = searchParams;
-      console.log('Search Query:', searchQuery);
-      console.log('Selected Industry:', selectedIndustry);
       const filtered = allApplicants.filter((applicant) => {
         const matchesSearchQuery =
           searchQuery === '' ||
@@ -53,13 +53,27 @@ function CandidateList({ searchParams = {}, isRecommended }) {
       });
       setFilteredApplicants(filtered);
     }
-  }, [searchParams, allApplicants, isRecommended]);
+
+    // Filtering for the "Recommended Candidates" tab
+    if (isRecommended) {
+      const filteredRecommended = recommendedApplicants.filter((applicant) => {
+        const matchesSearchQuery =
+          searchQuery === '' ||
+          applicant.latest_job_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          applicant.full_name.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesIndustry =
+          selectedIndustry === '' || applicant.industry_id === parseInt(selectedIndustry);
+
+        return matchesSearchQuery && matchesIndustry;
+      });
+      setRecommendedApplicants(filteredRecommended); // Update filtered recommended applicants
+    }
+  }, [searchParams, allApplicants, recommendedApplicants, isRecommended]);
 
   // Fetch recommended candidates when the 'Recommended' tab is active
   useEffect(() => {
     const fetchRecommendedCandidates = async () => {
       const userId = sessionStorage.getItem('user_id'); // Get user ID from session storage
-      console.log('User ID for recommendations:', userId); // Log the user ID
 
       try {
         setError(null); // Clear error before fetching recommended candidates
@@ -77,12 +91,9 @@ function CandidateList({ searchParams = {}, isRecommended }) {
         }
 
         const data = await response.json();
-        console.log('Recommended candidates data:', data); // Log the recommended candidates data
 
         if (data.recommendations && data.recommendations.length > 0) {
           setRecommendedApplicants(data.recommendations);
-        } else if (data.recommendations && data.recommendations.length === 0) {
-          setError('No recommended candidates found. It seems the job listing is empty.');
         } else {
           setError('No recommendations found.');
         }
@@ -94,7 +105,6 @@ function CandidateList({ searchParams = {}, isRecommended }) {
 
     if (isRecommended) {
       fetchRecommendedCandidates();
-      setFilteredApplicants([]); // Clear filtered applicants when switching to recommended
     }
   }, [isRecommended]);
 
@@ -114,10 +124,10 @@ function CandidateList({ searchParams = {}, isRecommended }) {
         <>
           <h3>Recommended Candidates</h3>
           {error ? (
-             <div className="alert alert-info mt-3" role="alert">
-             <i className="fas fa-exclamation-circle me-2"></i> {/* Font Awesome alert icon */}
-             <strong>{error}</strong>
-           </div>           
+            <div className="alert alert-info mt-3" role="alert">
+              <i className="fas fa-exclamation-circle me-2"></i> {/* Font Awesome alert icon */}
+              <strong>{error}</strong>
+            </div>           
           ) : currentApplicants.length > 0 ? (
             <>
               <ul className="list-group">
@@ -210,6 +220,5 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
     </nav>
   );
 };
-
 
 export default CandidateList;

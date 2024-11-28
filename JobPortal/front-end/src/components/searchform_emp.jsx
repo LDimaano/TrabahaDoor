@@ -22,20 +22,22 @@ function SearchForm({ onSearch }) {
     fetchIndustries();
   }, []);
 
-  // Update search params as user types or selects an industry
-  useEffect(() => {
-    // Dynamically call onSearch whenever searchQuery or selectedIndustry changes
-    onSearch({ searchQuery, selectedIndustry });
-  }, [searchQuery, selectedIndustry, onSearch]); // Trigger onSearch when any of these change
+  // Handle form submission and pass search data to parent
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSearch({ searchQuery, selectedIndustry }); // Pass the parameters back to parent
+  };
 
   // Handle clearing filters for search query
   const handleClearSearchQuery = () => {
     setSearchQuery(''); // Reset search query
+    onSearch({ searchQuery: '', selectedIndustry }); // Pass empty parameters to reset search
   };
 
   // Handle clearing filters for selected industry
   const handleClearIndustry = () => {
     setSelectedIndustry(''); // Reset selected industry
+    onSearch({ searchQuery, selectedIndustry: '' }); // Pass empty parameters to reset search
   };
 
   // Determine if the search query field has a value
@@ -45,7 +47,7 @@ function SearchForm({ onSearch }) {
 
   return (
     <section className="container my-4">
-      <form className="row g-3">
+      <form className="row g-3" onSubmit={handleSubmit}>
         <div className="col-md-6 position-relative">
           {/* Clear Filters button shown if search query field is active */}
           {isSearchQueryActive && (
@@ -134,6 +136,9 @@ function SearchForm({ onSearch }) {
               <option disabled>{error || 'Loading industries...'}</option>
             )}
           </select>
+        </div>
+        <div className="col-md-2">
+          <button type="submit" className="btn btn-primary w-100">Search</button>
         </div>
       </form>
     </section>
