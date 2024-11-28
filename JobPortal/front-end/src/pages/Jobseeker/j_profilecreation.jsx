@@ -282,7 +282,13 @@ const handleSubmit = async (e) => {
     <div className="container mt-4">
       <h1 className="text-center">Create your Profile</h1>
       <h5 className="text-center">Let us know more about you</h5>
+      <ProgressBar
+        now={(currentStep / totalSteps) * 100} // Calculate progress percentage
+        label={`${Math.round((currentStep / totalSteps) * 100)}%`}
+        className="mb-4"
+      />
       <form onSubmit={handleSubmit}>
+      {currentStep === 1 && (
         <div className="mb-4 border p-4">
           <h3>Profile Photo</h3>
           <div className="mb-3">
@@ -296,6 +302,8 @@ const handleSubmit = async (e) => {
             />
           </div>
         </div>
+  )}
+  {currentStep === 2 && (
         <div className="mb-4 border p-4">
           <h3>Personal Details</h3>
           <div className="mb-3">
@@ -374,8 +382,10 @@ const handleSubmit = async (e) => {
             />
           </div>
         </div>
-
+  )}
+        {currentStep === 3 && (
         <div className="mb-4 border p-4">
+       
           <h3>Experience</h3>
           {experience.map((exp, index) => (
             <div key={index} className="mb-3">
@@ -556,6 +566,8 @@ const handleSubmit = async (e) => {
             Add Experience
           </button>
         </div>
+  )}
+       {currentStep === 4 && (
         <div className="mb-4 border p-4">
           <h3>Skills</h3>
           {skills.map((skill, index) => (
@@ -600,6 +612,7 @@ const handleSubmit = async (e) => {
             Add Skill
           </button>
         </div>
+       )}
 
 
         {error && (
