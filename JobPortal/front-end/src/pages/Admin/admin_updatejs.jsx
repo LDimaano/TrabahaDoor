@@ -21,16 +21,6 @@ function ProfileEditForm() {
   const [skills, setSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]);
-  const [salaryRanges] = useState([
-    { value: '', label: 'Select salary range' },
-    { value: 'Below 15000', label: 'Below 15000' },
-    { value: '15001-25000', label: '15001-25000' },
-    { value: '25001-35000', label: '25001-35000' },
-    { value: '35001-50000', label: '35001-50000' },
-    { value: '50001-75000', label: '50001-75000' },
-    { value: '75001-100000', label: '75001-100000' },
-    { value: 'Above 100000', label: 'Above 100000' },
-  ]);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
 
@@ -64,7 +54,7 @@ function ProfileEditForm() {
 
           const formattedExperiences = data.jobSeeker.experiences.map(exp => ({
             jobTitle: { value: exp.jobTitleId, label: exp.jobTitleName },
-            salaryRange: { value: exp.salary, label: exp.salary },
+            salaryRange: exp.salary,
             company: exp.companyName || '',
             location: exp.location || '',
             startDate: new Date(exp.startDate).toISOString().split('T')[0],
@@ -243,7 +233,7 @@ function ProfileEditForm() {
       skills: skills.map(skill => skill?.value || ''),
       experiences: experience.map(exp => ({
         jobTitle: exp.jobTitle?.value || '',
-        salary: exp.salaryRange?.value || '',
+        salary: exp.salaryRange || 5000, // Ensure salary is an integer
         company: exp.company,
         location: exp.location,
         startDate: exp.startDate,
