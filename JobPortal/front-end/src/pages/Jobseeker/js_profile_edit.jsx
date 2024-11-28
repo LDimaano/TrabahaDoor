@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Range } from 'react-range';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap';
@@ -176,11 +177,20 @@ function ProfileEditForm() {
     setExperience(newExperience);
   };
 
-  const handleExperienceSalaryRangeChange = (index, value) => {
+  const handleExperienceSalaryRangeChange = (index, values) => {
     const newExperience = [...experience];
-    newExperience[index] = { ...newExperience[index], salaryRange: value }; // Save as integer
+    
+    // Convert the range values to a string in the format "min-max"
+    const salaryRangeString = `${values[0]}-${values[1]}`;
+    
+    newExperience[index] = { 
+      ...newExperience[index], 
+      salaryRange: salaryRangeString 
+    };
+    
     setExperience(newExperience);
   };
+  
   
 
   const handleAddExperience = () => {
@@ -319,83 +329,143 @@ function ProfileEditForm() {
           />
         </div>
         <div className="mb-3">
-          <h4>Experience</h4>
-          {experience.map((exp, index) => (
-            <div key={index} className="border p-3 mb-2">
-              <label>Job Title</label>
-              <Select
-                value={exp.jobTitle}
-                onChange={(selectedOption) => handleExperienceJobTitleChange(index, selectedOption)}
-                options={availableJobTitles}
-                required
-              />
-              <label>Salary Range</label>
-              <div className="mb-3">
-                <label>Salary Range (in ₱)</label>
-                <div className="d-flex justify-content-between mb-2">
-                  <small className="text-muted">₱5,000</small>
-                  <small className="text-muted">{`Selected: ₱${Number(exp.salaryRange || 5000).toLocaleString()}`}</small>
-                  <small className="text-muted">₱100,000</small>
-                </div>
-                <input
-                  type="range"
-                  min={5000}
-                  max={100000}
-                  step={100}
-                  value={exp.salaryRange || 5000}
-                  onChange={(e) => handleExperienceSalaryRangeChange(index, e.target.value)}
-                  className="form-range"
-                  style={{
-                    background: `linear-gradient(to right, #0d6efd ${((exp.salaryRange || 5000) - 5000) / 95000 * 100}%, #e9ecef ${((exp.salaryRange || 5000) - 5000) / 95000 * 100}%)`,
-                    height: "8px",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                  }}
-                />
-              </div>
-              <div className="mb-3">
-                <label>Company</label>
-                <input type="text" name="company" className="form-control" value={exp.company} onChange={(e) => handleExperienceChange(index, e)} required />
-              </div>
-              <div className="mb-3">
-                <label>Location</label>
-                <input type="text" name="location" className="form-control" value={exp.location} onChange={(e) => handleExperienceChange(index, e)} required />
-              </div>
-              <div className="mb-3">
-                <label>Start Date</label>
-                <input type="date" name="startDate" className="form-control" value={exp.startDate} onChange={(e) => handleExperienceChange(index, e)} required />
-              </div>
-              <div className="mb-3">
-                <label>End Date</label>
-                <input type="date" name="endDate" className="form-control" value={exp.endDate} onChange={(e) => handleExperienceChange(index, e)} required />
-              </div>
-              <div className="mb-3">
-                <label>Description</label>
-                <textarea name="description" className="form-control" value={exp.description} onChange={(e) => handleExperienceChange(index, e)} required />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => handleRemoveExperience(index)}
-              >
-                Remove Experience
-              </button>
-            </div>
-
-            </div>
-          ))}
-         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <button 
-              type="button" 
-              className="btn btn-primary" 
-              onClick={handleAddExperience}
+  <h4>Experience</h4>
+  {experience.map((exp, index) => (
+    <div key={index} className="border p-3 mb-2">
+      <label>Job Title</label>
+      <Select
+        value={exp.jobTitle}
+        onChange={(selectedOption) => handleExperienceJobTitleChange(index, selectedOption)}
+        options={availableJobTitles}
+        required
+      />
+      <label>Salary Range</label>
+      <div className="col-md-6 mb-3">
+        <label htmlFor={`salaryRange-${index}`} className="form-label fw-bold d-block mb-2">
+          Salary Range (in ₱)
+        </label>
+        <div
+          className="slider-container"
+          style={{
+            display: "flex", // Align items inline
+            alignItems: "center", // Vertical alignment of items
+            gap: "8px", // Spacing between elements
+          }}
+        >
+          {/* Minimum Label */}
+          <small
+            style={{
+              fontSize: "0.9rem", // Smaller text for label
+              color: "#6c757d", // Bootstrap muted color
+              marginRight: "8px", // Space after minimum label
+            }}
           >
-              Add Experience
-          </button>
-      </div>
+            ₱5,000
+          </small>
 
+          {/* Slider */}
+          <Range
+          step={1000}
+          min={5000}
+          max={100000}
+          values={exp.salaryRange
+            ? exp.salaryRange.split("-").map((val) => parseInt(val))  // Split the string and convert to integers
+            : [5000, 10000] // Default value if salaryRange is undefined
+          }
+          onChange={(values) => handleExperienceSalaryRangeChange(index, values)} // Handle slider change
+          renderTrack={({ props, children }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: "6px",
+                width: "100%",
+                backgroundColor: "#ddd",
+              }}
+            >
+              {children}
+            </div>
+          )}
+          renderThumb={({ props }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: "16px",
+                width: "16px",
+                backgroundColor: "#007bff",
+                borderRadius: "50%",
+              }}
+            />
+          )}
+        />
+
+          {/* Current Value Label */}
+          <small
+            style={{
+              fontSize: "0.9rem",
+              color: "#6c757d",
+              margin: "0 8px", // Space on both sides
+            }}
+          >
+            {exp.salaryRange
+              ? `₱${exp.salaryRange.replace("-", " to ₱")}`
+              : "₱5,000-₱10,000"}
+          </small>
+
+          {/* Maximum Label */}
+          <small
+            style={{
+              fontSize: "0.9rem",
+              color: "#6c757d",
+              marginLeft: "8px", // Space before maximum label
+            }}
+          >
+            ₱100,000
+          </small>
         </div>
+      </div>
+      <div className="mb-3">
+        <label>Company</label>
+        <input type="text" name="company" className="form-control" value={exp.company} onChange={(e) => handleExperienceChange(index, e)} required />
+      </div>
+      <div className="mb-3">
+        <label>Location</label>
+        <input type="text" name="location" className="form-control" value={exp.location} onChange={(e) => handleExperienceChange(index, e)} required />
+      </div>
+      <div className="mb-3">
+        <label>Start Date</label>
+        <input type="date" name="startDate" className="form-control" value={exp.startDate} onChange={(e) => handleExperienceChange(index, e)} required />
+      </div>
+      <div className="mb-3">
+        <label>End Date</label>
+        <input type="date" name="endDate" className="form-control" value={exp.endDate} onChange={(e) => handleExperienceChange(index, e)} required />
+      </div>
+      <div className="mb-3">
+        <label>Description</label>
+        <textarea name="description" className="form-control" value={exp.description} onChange={(e) => handleExperienceChange(index, e)} required />
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={() => handleRemoveExperience(index)}
+        >
+          Remove Experience
+        </button>
+      </div>
+    </div>
+  ))}
+  <div style={{ display: "flex", justifyContent: "flex-end" }}>
+    <button 
+      type="button" 
+      className="btn btn-primary" 
+      onClick={handleAddExperience}
+    >
+      Add Experience
+    </button>
+  </div>
+</div>
         <div className="mb-3">
           <h4>Skills</h4>
           {skills.map((skill, index) => (
