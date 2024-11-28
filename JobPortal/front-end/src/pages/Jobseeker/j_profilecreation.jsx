@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Range } from 'react-range';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
+import { ProgressBar } from 'react-bootstrap';
 import { Modal, Button } from 'react-bootstrap';
 
 
