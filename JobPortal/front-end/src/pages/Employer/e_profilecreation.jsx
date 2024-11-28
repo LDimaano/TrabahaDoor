@@ -165,11 +165,10 @@ const calculateProgress = () => {
         <h1 className="text-center">Create your Profile</h1>
         <h5 className="text-center">Let us know more about your company</h5>
       </div>
-      <div className="mb-4">
-      {/* Title or Label for the Progress */}
-      <h5 className="text-center text-muted">Sign-Up Progress</h5>
-      <p className="text-center text-muted">Fill out the information below to complete your company profile.</p>
-
+      <div className="mb-4 mt-5"> {/* Add a top margin using mt-5 for more space */}
+  {/* Title or Label for the Progress */}
+  <h5 className="text-start text-muted">Sign-Up Progress</h5> {/* Left-align the text using text-start */}
+  <p className="text-start text-muted">Fill out the information below to complete your profile.</p> {/* Left-align the description */}
       {/* Progress Bar */}
       <ProgressBar
         now={calculateProgress()} // Dynamically calculate progress
