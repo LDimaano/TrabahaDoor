@@ -311,12 +311,22 @@ const handleSubmit = async (e) => {
     <div className="container mt-4">
       <h1 className="text-center">Create your Profile</h1>
       <h5 className="text-center">Let us know more about you</h5>
-       {/* Progress Bar */}
-       <ProgressBar
+      {/* Progress Bar Section */}
+<div className="mb-4">
+  {/* Title or Label for the Progress */}
+  <h5 className="text-center text-muted">Sign-Up Progress</h5>
+  <p className="text-center text-muted">Fill out the information below to complete your profile.</p>
+
+      {/* Progress Bar */}
+      <ProgressBar
         now={calculateProgress()} // Dynamically calculate progress
         label={`${calculateProgress()}%`}
         className="mb-4"
+        variant="info" // You can change this variant for different colors
+        style={{ height: '20px', borderRadius: '10px' }} // Custom height and rounded corners
       />
+    </div>
+
       <form onSubmit={handleSubmit}>
         <div className="mb-4 border p-4">
           <h3>Profile Photo</h3>

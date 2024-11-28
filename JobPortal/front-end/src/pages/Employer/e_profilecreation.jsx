@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap'; 
+import { ProgressBar } from 'react-bootstrap';
 
 function EmployerProfileCreation() {
   const navigate = useNavigate();
@@ -59,6 +60,28 @@ function EmployerProfileCreation() {
     } catch (error) {
         console.error('Error uploading profile picture:', error);
     }
+};
+
+
+const calculateProgress = () => {
+  // Count the number of fields that are filled in
+  const fields = [
+    companyName,
+    contactPerson,
+    contactNumber,
+    website,
+    industry,
+    companyAddress,
+    companySize,
+    foundedYear,
+    description,
+    photo
+  ];
+
+  const filledFields = fields.filter(field => field && field !== ''); // Filter out empty fields
+  const progress = (filledFields.length / fields.length) * 100; // Calculate percentage
+
+  return Math.round(progress); // Return the percentage as an integer
 };
 
   const handleSubmit = async (e) => {
@@ -142,6 +165,20 @@ function EmployerProfileCreation() {
         <h1 className="text-center">Create your Profile</h1>
         <h5 className="text-center">Let us know more about your company</h5>
       </div>
+      <div className="mb-4">
+      {/* Title or Label for the Progress */}
+      <h5 className="text-center text-muted">Sign-Up Progress</h5>
+      <p className="text-center text-muted">Fill out the information below to complete your company profile.</p>
+
+      {/* Progress Bar */}
+      <ProgressBar
+        now={calculateProgress()} // Dynamically calculate progress
+        label={`${calculateProgress()}%`}
+        className="mb-4"
+        variant="info" // You can change this variant for different colors
+        style={{ height: '20px', borderRadius: '10px' }} // Custom height and rounded corners
+      />
+    </div>
       <h3>Company Details</h3>
       <form onSubmit={handleShowModal}>
         <div className="mb-4 border p-4">
