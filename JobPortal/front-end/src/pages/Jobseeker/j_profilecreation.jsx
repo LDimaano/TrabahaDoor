@@ -174,7 +174,7 @@ const handleSubmit = async (e) => {
     skills: skills.map(skill => skill?.value || ''),
     experience: experience.map(exp => ({
       jobTitle: exp.jobTitle?.value || '',
-      salary: parseInt(exp.salaryRange, 10) || 0, // Use the correct numeric value
+      salary: exp.salaryRange, // Use the correct numeric value
       company: exp.company,
       location: exp.location,
       startDate: exp.startDate,
