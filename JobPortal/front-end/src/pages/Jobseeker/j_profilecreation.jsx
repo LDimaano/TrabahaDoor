@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap';
 
-
 function ProfileCreation() {
   const navigate = useNavigate();
 
@@ -19,7 +18,7 @@ function ProfileCreation() {
   const [experience, setExperience] = useState([
     {
       jobTitle: null,
-      salaryRange: null,
+      salaryRange: '5000-10000',
       company: '',
       location: '',
       startDate: '',
@@ -30,7 +29,6 @@ function ProfileCreation() {
   const [skills, setSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]);
-  const [salaryRange, setSalaryRange] = useState(5000);
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
 
@@ -62,17 +60,16 @@ function ProfileCreation() {
     setExperience(newExperience);
   };
 
-  const handleSalaryChange = (index, salaryValue) => {
+  const handleSalaryChange = (index, minSalary, maxSalary) => {
     const updatedExperience = [...experience];
-    updatedExperience[index].salaryRange = salaryValue; 
+    updatedExperience[index].salaryRange = `${minSalary}-${maxSalary}`;
     setExperience(updatedExperience);
   };
-  
 
   const handleAddExperience = () => {
     setExperience([...experience, {
       jobTitle: null,
-      salaryRange: '',
+      salaryRange: '5000-10000',
       company: '',
       location: '',
       startDate: '',
@@ -86,123 +83,110 @@ function ProfileCreation() {
     setExperience(newExperience);
   };
 
-
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
 
     const userId = window.location.pathname.split('/')[2];
-    
-    // Default profile picture URL
+
     const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/jobseeker.png";
-  
+
     if (!file) {
       console.log('No file selected, using default profile picture');
-      setPhoto(defaultProfilePictureUrl); // Set the default photo URL in state
+      setPhoto(defaultProfilePictureUrl);
       return;
     }
-  
+
     const formData = new FormData();
     formData.append('profilePicture', file);
-  
+
     try {
       console.log('Uploading file...', file);
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/upload-profile-picture/${userId}`, {
         method: 'POST',
         body: formData,
       });
-  
+
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);
       }
-  
+
       const data = await response.json();
       console.log('Uploaded image data:', data);
-      setPhoto(data.profilePictureUrl); // Set the photo URL in state
+      setPhoto(data.profilePictureUrl);
     } catch (error) {
       console.error('Error uploading profile picture:', error);
     }
-};
-  
-  // State for controlling the modal visibility
-const [showModal, setShowModal] = useState(false);
-
-// Function to handle modal submit
-const handleModalSubmit = () => {
-  setShowModal(false); // Close modal
-  handleSubmit(); // Call the original submit function
-};
-
-
-// Function to handle modal cancel
-const handleModalCancel = () => {
-  setShowModal(false); // Close modal
-};
-
-
-  // Modify your existing form's onSubmit to show the modal first
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    setShowModal(true); // Show confirmation modal
-};
-
-const handleSubmit = async (e) => {
-  if (e) e.preventDefault(); // Prevent default form submission behavior
-
-  // Ensure user ID is available
-  const user_id = window.location.pathname.split('/')[2];
-
-  // Prepare the profile data, ensuring a fallback for photo
-  const profileData = {
-    user_id,
-    fullName,
-    phoneNumber,
-    dateOfBirth,
-    gender,
-    address_id: address?.value || '',
-    industry_id: industry?.value || '',
-    skills: skills.map(skill => skill?.value || ''),
-    experience: experience.map(exp => ({
-      jobTitle: exp.jobTitle?.value || '',
-      salary: parseInt(exp.salaryRange, 10) || 0, // Use the correct numeric value
-      company: exp.company,
-      location: exp.location,
-      startDate: exp.startDate,
-      endDate: exp.endDate,
-      description: exp.description,
-    })),
-    profile_picture_url: photo, 
   };
 
-  console.log('Profile data to submit:', profileData);
+  const [showModal, setShowModal] = useState(false);
 
-  try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/profile`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(profileData),
-    });
+  const handleModalSubmit = () => {
+    setShowModal(false);
+    handleSubmit();
+  };
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  const handleModalCancel = () => {
+    setShowModal(false);
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setShowModal(true);
+  };
+
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
+
+    const user_id = window.location.pathname.split('/')[2];
+
+    const profileData = {
+      user_id,
+      fullName,
+      phoneNumber,
+      dateOfBirth,
+      gender,
+      address_id: address?.value || '',
+      industry_id: industry?.value || '',
+      skills: skills.map(skill => skill?.value || ''),
+      experience: experience.map(exp => ({
+        jobTitle: exp.jobTitle?.value || '',
+        salary: exp.salaryRange, // Now it's a string
+        company: exp.company,
+        location: exp.location,
+        startDate: exp.startDate,
+        endDate: exp.endDate,
+        description: exp.description,
+      })),
+      profile_picture_url: photo,
+    };
+
+    console.log('Profile data to submit:', profileData);
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/profile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profileData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseBody = await response.json();
+      console.log('Profile created successfully:', responseBody);
+
+      setTimeout(() => {
+        navigate('/home_jobseeker');
+      }, 500);
+    } catch (err) {
+      console.error('Submission failed:', err);
+      setError('Failed to submit the profile. Please try again.');
     }
+  };
 
-    const responseBody = await response.json();
-    console.log('Profile created successfully:', responseBody);
-
-    // Navigate to login after success
-    setTimeout(() => {
-      navigate('/home_jobseeker');
-    }, 500);
-  } catch (err) {
-    console.error('Submission failed:', err);
-    setError('Failed to submit the profile. Please try again.');
-  }
-};
-
-
-  
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -292,10 +276,11 @@ const handleSubmit = async (e) => {
             />
           </div>
         </div>
+
         <div className="mb-4 border p-4">
           <h3>Personal Details</h3>
           <div className="mb-3">
-            <label htmlFor="fullName" className="form-label">Full Name *</label>
+            <label htmlFor="fullName" className="form-label">Full Name*</label>
             <input
               type="text"
               className="form-control"
@@ -305,66 +290,69 @@ const handleSubmit = async (e) => {
               required
             />
           </div>
+
           <div className="row mb-3">
-            <div className="col-md-6">
-              <label htmlFor="phoneNumber" className="form-label">Phone Number *</label>
-              <input
-                type="tel"
-                className="form-control"
-                id="phoneNumber"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                required
-              />
-            </div>
+          <div className="col-md-6">
+            <label htmlFor="phoneNumber" className="form-label">Phone Number*</label>
+            <input
+              type="tel"
+              className="form-control"
+              id="phoneNumber"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+            />
+          </div>
           </div>
           <div className="row mb-3">
-            <div className="col-md-6">
-              <label htmlFor="dateOfBirth" className="form-label">Date of Birth *</label>
-              <input
-                type="date"
-                className="form-control"
-                id="dateOfBirth"
-                value={dateOfBirth}
-                onChange={(e) => setDateOfBirth(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="gender" className="form-label">Gender *</label>
-              <select
-                className="form-select"
-                id="gender"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                required
-              >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </div>
+          <div className="col-md-6">
+            <label htmlFor="dateOfBirth" className="form-label">Date of Birth*</label>
+            <input
+              type="date"
+              className="form-control"
+              id="dateOfBirth"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="col-mb-6">
+            <label htmlFor="gender" className="form-label">Gender*</label>
+            <select
+              className="form-select"
+              id="gender"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              required
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
           </div>
           <div className="mb-3">
-            <label htmlFor="address" className="form-label">Address *</label>
+            <label htmlFor="address" className="form-label"><Address></Address></label>
             <Select
               id="address"
               options={addressOptions}
               value={address}
               onChange={setAddress}
-              placeholder="Select Address"
+              placeholder="Select your address"
               isClearable
               required
             />
           </div>
+
           <div className="mb-3">
-            <label htmlFor="industry" className="form-label">Industry *</label>
+            <label htmlFor="industry" className="form-label">Industry*</label>
             <Select
               id="industry"
               options={industryOptions}
               value={industry}
               onChange={setIndustry}
-              placeholder="Select Industry"
+              placeholder="Select your industry"
               isClearable
               required
             />
@@ -374,47 +362,17 @@ const handleSubmit = async (e) => {
         <div className="mb-4 border p-4">
           <h3>Experience</h3>
           {experience.map((exp, index) => (
-            <div key={index} className="mb-3">
-              <label className="form-label">Experience {index + 1}</label>
-              <div className="row">
-                <div className="col-md-6 mb-3">
-                  <label htmlFor={`jobTitle-${index}`} className="form-label">Job Title</label>
-                  <Select
-                    id={`jobTitle-${index}`}
-                    options={availableJobTitles}
-                    value={exp.jobTitle}
-                    onChange={(selectedOption) => handleExperienceJobTitleChange(index, selectedOption)}
-                    placeholder="Select Job Title"
-                    isClearable
-                  />
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor={`salaryRange-${index}`} className="form-label fw-bold">
-                    Salary Range (in ₱)
-                  </label>
-                  <div className="d-flex justify-content-between mb-2">
-                    <small className="text-muted">₱5,000</small>
-                    <small className="text-muted">{`Selected: ₱${Number(exp.salaryRange || 5000).toLocaleString()}`}</small>
-                    <small className="text-muted">₱100,000</small>
-                  </div>
-                  <input
-                    id={`salaryRange-${index}`}
-                    type="range"
-                    min={5000}
-                    max={100000}
-                    step={100}
-                    value={exp.salaryRange || 5000}
-                    onChange={(e) => handleSalaryChange(index, e.target.value)}
-                    className="form-range"
-                    style={{
-                      background: `linear-gradient(to right, #0d6efd ${((exp.salaryRange || 5000) - 5000) / 95000 * 100}%, #e9ecef ${((exp.salaryRange || 5000) - 5000) / 95000 * 100}%)`,
-                      height: "8px",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  />
-                </div>
-            </div>
+            <div key={index} className="mb-4">
+              <div className="mb-3">
+                <label htmlFor={`jobTitle-${index}`} className="form-label">Job Title</label>
+                <Select
+                  id={`jobTitle-${index}`}
+                  value={exp.jobTitle}
+                  onChange={(selectedOption) => handleExperienceJobTitleChange(index, selectedOption)}
+                  options={availableJobTitles}
+                  placeholder="Select a job title"
+                />
+              </div>
               <div className="mb-3">
                 <label htmlFor={`company-${index}`} className="form-label">Company</label>
                 <input
@@ -474,6 +432,34 @@ const handleSubmit = async (e) => {
                   placeholder="Describe your responsibilities and accomplishments"
                   rows="3"
                 />
+              </div>
+              <div className="mb-3">
+                <label htmlFor={`salaryRange-${index}`} className="form-label">Salary Range</label>
+                <div className="d-flex align-items-center">
+                  <input
+                    type="number"
+                    className="form-control me-2"
+                    id={`minSalary-${index}`}
+                    name="minSalary"
+                    value={exp.salaryRange.split('-')[0]}
+                    onChange={(e) =>
+                      handleSalaryChange(index, e.target.value, exp.salaryRange.split('-')[1])
+                    }
+                    placeholder="Min Salary"
+                  />
+                  <span className="me-2">-</span>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id={`maxSalary-${index}`}
+                    name="maxSalary"
+                    value={exp.salaryRange.split('-')[1]}
+                    onChange={(e) =>
+                      handleSalaryChange(index, exp.salaryRange.split('-')[0], e.target.value)
+                    }
+                    placeholder="Max Salary"
+                  />
+                </div>
               </div>
               <button
                 type="button"
