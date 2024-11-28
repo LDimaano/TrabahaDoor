@@ -438,32 +438,46 @@ function ProfileCreation() {
                 <div>
                   <input
                     type="range"
-                    id={`minSalary-${index}`}
+                    id={`salaryRange-${index}`}
                     className="form-range"
-                    min="0"
+                    min="5000"
                     max="100000"
-                    step="1000"
-                    value={exp.salaryRange.split('-')[0]}
+                    step="5000"
+                    value={Math.min(exp.salaryRange.split('-')[0], exp.salaryRange.split('-')[1])}
                     onChange={(e) =>
                       handleSalaryChange(index, e.target.value, exp.salaryRange.split('-')[1])
                     }
                   />
-                  <input
-                    type="range"
-                    id={`maxSalary-${index}`}
-                    className="form-range mt-2"
-                    min="0"
-                    max="100000"
-                    step="1000"
-                    value={exp.salaryRange.split('-')[1]}
-                    onChange={(e) =>
-                      handleSalaryChange(index, exp.salaryRange.split('-')[0], e.target.value)
-                    }
-                  />
-                  <div className="mt-2">
-                    <span>
+                  <div className="d-flex justify-content-between mt-2">
+                    <button
+                      className="btn btn-outline-secondary"
+                      type="button"
+                      onClick={() =>
+                        handleSalaryChange(
+                          index,
+                          Math.max(5000, parseInt(exp.salaryRange.split('-')[0]) - 5000),
+                          exp.salaryRange.split('-')[1]
+                        )
+                      }
+                    >
+                      Decrease Min
+                    </button>
+                    <span className="align-self-center">
                       {exp.salaryRange.split('-')[0]} - {exp.salaryRange.split('-')[1]}
                     </span>
+                    <button
+                      className="btn btn-outline-secondary"
+                      type="button"
+                      onClick={() =>
+                        handleSalaryChange(
+                          index,
+                          exp.salaryRange.split('-')[0],
+                          Math.min(100000, parseInt(exp.salaryRange.split('-')[1]) + 5000)
+                        )
+                      }
+                    >
+                      Increase Max
+                    </button>
                   </div>
                 </div>
               </div>
