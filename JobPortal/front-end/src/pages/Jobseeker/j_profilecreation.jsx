@@ -63,40 +63,33 @@ function ProfileCreation() {
     setExperience(newExperience);
   };
 
-  const SALARY_MIN = 5000;
-  const SALARY_MAX = 100000;
-  const STEP = 100;
 
   const handleSalaryChange = (values, index) => {
-    setExperience((prevExperience) => {
-      const updatedExperience = [...prevExperience];
-      updatedExperience[index] = {
-        ...updatedExperience[index],
-        salaryRange: `${values[0]}-${values[1]}`,
-      };
-      return updatedExperience;
-    });
+    const newExperience = [...experience]; // Create a copy of the experience array to avoid mutation
+    newExperience[index].salaryRange = `${values[0]}-${values[1]}`; // Update the salary range as a string
+    setExperience(newExperience); // Update the state
   };
   
   
-
   const handleAddExperience = () => {
-    setExperience([...experience, {
-      jobTitle: null,
-      salaryRange: '',
-      company: '',
-      location: '',
-      startDate: '',
-      endDate: '',
-      description: '',
-    }]);
+    setExperience([
+      ...experience,
+      {
+        jobTitle: null,
+        salaryRange: '5000-10000', // Set a distinct default salary range for the new experience
+        company: '',
+        location: '',
+        startDate: '',
+        endDate: '',
+        description: '',
+      }
+    ]);
   };
-
+  
   const handleRemoveExperience = (index) => {
     const newExperience = experience.filter((_, i) => i !== index);
     setExperience(newExperience);
   };
-
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
@@ -174,7 +167,7 @@ const handleSubmit = async (e) => {
     skills: skills.map(skill => skill?.value || ''),
     experience: experience.map(exp => ({
       jobTitle: exp.jobTitle?.value || '',
-      salary: exp.salaryRange, // Use the correct numeric value
+      salary: exp.salaryRange, 
       company: exp.company,
       location: exp.location,
       startDate: exp.startDate,
@@ -432,7 +425,7 @@ const handleSubmit = async (e) => {
           ? experience[0].salaryRange.split("-").map((val) => parseInt(val))
           : [5000, 10000]
       }
-      onChange={(values) => handleSalaryChange(values, 0)}
+      onChange={(values) => handleSalaryChange(values, index)} 
       renderTrack={({ props, children }) => (
         <div
           {...props}
@@ -468,7 +461,9 @@ const handleSubmit = async (e) => {
         margin: "0 8px", // Space on both sides
       }}
     >
-      {experience[0]?.salaryRange || "₱5,000-₱10,000"}
+       {experience[index]?.salaryRange
+      ? `₱${experience[index].salaryRange.replace("-", " to ₱")}`
+      : "₱5,000-₱10,000"}
     </small>
 
     {/* Maximum Label */}
