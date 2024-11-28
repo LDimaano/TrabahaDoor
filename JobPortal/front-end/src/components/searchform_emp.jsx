@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 function SearchForm({ onSearch }) {
   const [industryOptions, setIndustryOptions] = useState([]);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(''); // Unified state for both job title/keyword and full name
-  const [selectedIndustry, setSelectedIndustry] = useState(''); // State for selected industry
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedIndustry, setSelectedIndustry] = useState('');
 
   const fetchIndustries = async () => {
     try {
@@ -22,34 +22,20 @@ function SearchForm({ onSearch }) {
     fetchIndustries();
   }, []);
 
-  // Handle form submission and pass search data to parent
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSearch({ searchQuery, selectedIndustry }); // Pass the parameters back to parent
-  };
+  useEffect(() => {
+    onSearch({ searchQuery, selectedIndustry }); // Real-time search updates
+  }, [searchQuery, selectedIndustry, onSearch]);
 
-  // Handle clearing filters for search query
-  const handleClearSearchQuery = () => {
-    setSearchQuery(''); // Reset search query
-    onSearch({ searchQuery: '', selectedIndustry }); // Pass empty parameters to reset search
-  };
+  const handleClearSearchQuery = () => setSearchQuery('');
+  const handleClearIndustry = () => setSelectedIndustry('');
 
-  // Handle clearing filters for selected industry
-  const handleClearIndustry = () => {
-    setSelectedIndustry(''); // Reset selected industry
-    onSearch({ searchQuery, selectedIndustry: '' }); // Pass empty parameters to reset search
-  };
-
-  // Determine if the search query field has a value
   const isSearchQueryActive = searchQuery !== '';
-  // Determine if the industry dropdown has a value
   const isIndustryActive = selectedIndustry !== '';
 
   return (
     <section className="container my-4">
-      <form className="row g-3" onSubmit={handleSubmit}>
+      <form className="row g-3">
         <div className="col-md-6 position-relative">
-          {/* Clear Filters button shown if search query field is active */}
           {isSearchQueryActive && (
             <button
               type="button"
@@ -59,21 +45,21 @@ function SearchForm({ onSearch }) {
               style={{
                 width: '30px',
                 height: '30px',
-                left: '10px', // Position it to the left of the input
-                top: '50%', // Center vertically
-                transform: 'translateY(-50%)', // Adjust for proper vertical centering
-                padding: '0', // No padding
-                backgroundColor: 'transparent', // Transparent background
-                border: 'none', // No border
+                left: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                padding: '0',
+                backgroundColor: 'transparent',
+                border: 'none',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'gray', // Gray color for the icon
+                color: 'gray',
                 fontSize: '14px',
-                cursor: 'pointer', // Cursor pointer on hover
+                cursor: 'pointer',
               }}
             >
-              <i className="fas fa-times"></i> {/* X icon */}
+              <i className="fas fa-times"></i>
             </button>
           )}
           <input
@@ -81,15 +67,14 @@ function SearchForm({ onSearch }) {
             className="form-control"
             placeholder="Job title or Name"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)} // Update search query state
+            onChange={(e) => setSearchQuery(e.target.value)}
             aria-label="Job title or keyword"
             style={{
-              paddingLeft: isSearchQueryActive ? '40px' : '10px', // Add padding to avoid overlap with the X icon
+              paddingLeft: isSearchQueryActive ? '40px' : '10px',
             }}
           />
         </div>
         <div className="col-md-4 position-relative">
-          {/* Clear Filters button shown if industry dropdown is active */}
           {isIndustryActive && (
             <button
               type="button"
@@ -99,30 +84,30 @@ function SearchForm({ onSearch }) {
               style={{
                 width: '30px',
                 height: '30px',
-                left: '10px', // Position it to the left of the dropdown
-                top: '50%', // Center vertically
-                transform: 'translateY(-50%)', // Adjust for proper vertical centering
-                padding: '0', // No padding
-                backgroundColor: 'transparent', // Transparent background
-                border: 'none', // No border
+                left: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                padding: '0',
+                backgroundColor: 'transparent',
+                border: 'none',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'gray', // Gray color for the icon
+                color: 'gray',
                 fontSize: '14px',
-                cursor: 'pointer', // Cursor pointer on hover
+                cursor: 'pointer',
               }}
             >
-              <i className="fas fa-times"></i> {/* X icon */}
+              <i className="fas fa-times"></i>
             </button>
           )}
           <select
             className="form-select"
             value={selectedIndustry}
-            onChange={(e) => setSelectedIndustry(e.target.value)} // Update selected industry state
+            onChange={(e) => setSelectedIndustry(e.target.value)}
             aria-label="Select Industry"
             style={{
-              paddingLeft: isIndustryActive ? '40px' : '10px', // Add padding to avoid overlap with the X icon
+              paddingLeft: isIndustryActive ? '40px' : '10px',
             }}
           >
             <option value="">Select Industry</option>
@@ -138,7 +123,9 @@ function SearchForm({ onSearch }) {
           </select>
         </div>
         <div className="col-md-2">
-          <button type="submit" className="btn btn-primary w-100">Search</button>
+          <button type="button" className="btn btn-secondary w-100">
+            Search
+          </button>
         </div>
       </form>
     </section>

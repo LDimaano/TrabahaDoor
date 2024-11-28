@@ -22,16 +22,9 @@ function SearchForm({ onSearch }) {
     fetchIndustries();
   }, []);
 
-  // Handle form submission and pass search data to parent
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const searchType = jobTitle ? "jobTitle" : "companyName";
-    onSearch({ jobTitle, selectedIndustry, searchType }); // Pass the parameters back to parent
-  };
-
   // Handle real-time updates
   useEffect(() => {
-    const searchType = jobTitle ? "jobTitle" : "companyName";
+    const searchType = jobTitle ? 'jobTitle' : 'companyName';
     onSearch({ jobTitle, selectedIndustry, searchType });
   }, [jobTitle, selectedIndustry, onSearch]); // Run on each change of jobTitle or selectedIndustry
 
@@ -50,7 +43,7 @@ function SearchForm({ onSearch }) {
 
   return (
     <section className="container my-4">
-      <form className="row g-3" onSubmit={handleSubmit}>
+      <form className="row g-3">
         <div className="col-md-6 position-relative">
           {isJobTitleActive && (
             <button
@@ -139,7 +132,13 @@ function SearchForm({ onSearch }) {
           </select>
         </div>
         <div className="col-md-2">
-          <button type="submit" className="btn btn-primary w-100">Search</button>
+          <button
+            type="button"
+            className="btn btn-secondary w-100"
+            disabled
+          >
+            Search
+          </button>
         </div>
       </form>
     </section>
