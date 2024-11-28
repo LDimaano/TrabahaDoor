@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // Import useParams
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Range } from 'react-range';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import EmpHeader from '../../components/emp_header';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -232,24 +233,89 @@ const UpdateJobPosting = () => {
               required
             />
           </div>
-          <div className="mb-3">
-            <label htmlFor="salaryRange" className="form-label">Salary Range</label>
-            <select
-              id="salaryRange"
-              className="form-control"
-              value={salaryRange}
-              onChange={(e) => setSalaryRange(e.target.value)}
+          <div className="col-md-6 mb-3">
+            <label htmlFor={`salaryRange`} className="form-label">Salary Range (in ₱)</label>
+            
+            <div
+              className="slider-container"
+              style={{
+                display: "flex", // Align items inline
+                alignItems: "center", // Vertical alignment of items
+                gap: "8px", // Spacing between elements
+              }}
             >
-              <option value="" disabled>Select salary range</option>
-              <option value="Below 15000">Below 15000</option>
-              <option value="15001-25000">15001-25000</option>
-              <option value="25001-35000">25001-35000</option>
-              <option value="35001-50000">35001-50000</option>
-              <option value="50001-75000">50001-75000</option>
-              <option value="75001-100000">75001-100000</option>
-              <option value="Above 100000">Above 100000</option>
-            </select>
+              {/* Minimum Label */}
+              <small
+                style={{
+                  fontSize: "0.9rem", // Smaller text for label
+                  color: "#6c757d", // Bootstrap muted color
+                  marginRight: "8px", // Space after minimum label
+                }}
+              >
+                ₱5,000
+              </small>
+
+              {/* Slider */}
+              <Range
+                step={1000}
+                min={5000}
+                max={100000}
+                values={salaryRange
+                  ? salaryRange.split("-").map((val) => parseInt(val))  // Split the string and convert to integers
+                  : [5000, 10000] // Default value if salaryRange is undefined
+                }
+                onChange={(values) => setSalaryRange(`${values[0]}-${values[1]}`)} // Handle slider change
+                renderTrack={({ props, children }) => (
+                  <div
+                    {...props}
+                    style={{
+                      ...props.style,
+                      height: "6px",
+                      width: "100%",
+                      backgroundColor: "#ddd",
+                    }}
+                  >
+                    {children}
+                  </div>
+                )}
+                renderThumb={({ props }) => (
+                  <div
+                    {...props}
+                    style={{
+                      ...props.style,
+                      height: "16px",
+                      width: "16px",
+                      backgroundColor: "#007bff",
+                      borderRadius: "50%",
+                    }}
+                  />
+                )}
+              />
+
+              {/* Current Value Label */}
+              <small
+                style={{
+                  fontSize: "0.9rem",
+                  color: "#6c757d",
+                  margin: "0 8px", // Space on both sides
+                }}
+              >
+                {salaryRange ? `₱${salaryRange.replace("-", " to ₱")}` : "₱5,000-₱10,000"}
+              </small>
+
+              {/* Maximum Label */}
+              <small
+                style={{
+                  fontSize: "0.9rem",
+                  color: "#6c757d",
+                  marginLeft: "8px", // Space before maximum label
+                }}
+              >
+                ₱100,000
+              </small>
+            </div>
           </div>
+
           <div className="mb-3">
             <label htmlFor="jobType" className="form-label">Job Type</label>
             <select
