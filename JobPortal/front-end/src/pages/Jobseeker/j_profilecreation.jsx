@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
@@ -60,11 +62,14 @@ function ProfileCreation() {
     setExperience(newExperience);
   };
 
-  const handleSalaryChange = (index, minSalary, maxSalary) => {
-    const updatedExperience = [...experience];
-    updatedExperience[index].salaryRange = `${minSalary}-${maxSalary}`;
-    setExperience(updatedExperience);
-  };
+  const Range = Slider.Range;
+
+const handleSalaryChange = (index, values) => {
+  const [minSalary, maxSalary] = values;
+  const updatedExperience = [...experience];
+  updatedExperience[index].salaryRange = `${minSalary}-${maxSalary}`;
+  setExperience(updatedExperience);
+};
 
   const handleAddExperience = () => {
     setExperience([...experience, {
@@ -436,48 +441,18 @@ function ProfileCreation() {
               <div className="mb-3">
                 <label htmlFor={`salaryRange-${index}`} className="form-label">Salary Range</label>
                 <div>
-                  <input
-                    type="range"
-                    id={`salaryRange-${index}`}
-                    className="form-range"
-                    min="5000"
-                    max="100000"
-                    step="5000"
-                    value={Math.min(exp.salaryRange.split('-')[0], exp.salaryRange.split('-')[1])}
-                    onChange={(e) =>
-                      handleSalaryChange(index, e.target.value, exp.salaryRange.split('-')[1])
-                    }
+                  <Range
+                    min={5000}
+                    max={100000}
+                    step={5000}
+                    value={[
+                      parseInt(exp.salaryRange.split('-')[0], 10),
+                      parseInt(exp.salaryRange.split('-')[1], 10),
+                    ]}
+                    onChange={(values) => handleSalaryChange(index, values)}
                   />
-                  <div className="d-flex justify-content-between mt-2">
-                    <button
-                      className="btn btn-outline-secondary"
-                      type="button"
-                      onClick={() =>
-                        handleSalaryChange(
-                          index,
-                          Math.max(5000, parseInt(exp.salaryRange.split('-')[0]) - 5000),
-                          exp.salaryRange.split('-')[1]
-                        )
-                      }
-                    >
-                      Decrease Min
-                    </button>
-                    <span className="align-self-center">
-                      {exp.salaryRange.split('-')[0]} - {exp.salaryRange.split('-')[1]}
-                    </span>
-                    <button
-                      className="btn btn-outline-secondary"
-                      type="button"
-                      onClick={() =>
-                        handleSalaryChange(
-                          index,
-                          exp.salaryRange.split('-')[0],
-                          Math.min(100000, parseInt(exp.salaryRange.split('-')[1]) + 5000)
-                        )
-                      }
-                    >
-                      Increase Max
-                    </button>
+                  <div className="mt-2">
+                    <span>Selected Range: {exp.salaryRange}</span>
                   </div>
                 </div>
               </div>
