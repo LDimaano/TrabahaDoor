@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Range } from 'react-range';
-import { ProgressBar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap';
 
 
 function ProfileCreation() {
-  const [currentStep, setCurrentStep] = useState(1); // Step tracker
-  const totalSteps = 4; // Define the total number of steps
   const navigate = useNavigate();
 
   const [fullName, setFullName] = useState('');
@@ -37,18 +34,6 @@ function ProfileCreation() {
   const [salaryRange, setSalaryRange] = useState(5000);
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
-
-  const handleNext = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
 
   const handleSkillChange = (index, selectedOption) => {
     const newSkills = [...skills];
@@ -142,6 +127,34 @@ function ProfileCreation() {
     }
 };
   
+
+const calculateProgress = () => {
+  let progress = 0;
+  const totalFields = 8 + experience.length + skills.length; // 8 main fields + dynamic experience and skills
+
+  // Main fields completion
+  if (fullName) progress += 1;
+  if (phoneNumber) progress += 1;
+  if (dateOfBirth) progress += 1;
+  if (gender) progress += 1;
+  if (address) progress += 1;
+  if (industry) progress += 1;
+  if (photo) progress += 1; // Ensure photo is included in progress
+  
+  // Skills completion (each skill counts as 1 field)
+  skills.forEach((skill) => {
+    if (skill) progress += 1; // Increment if a skill is selected
+  });
+
+  // Experience completion (each experience section counts as 1 field)
+  experience.forEach((exp) => {
+    if (exp.jobTitle && exp.salaryRange && exp.company) progress += 1; // Ensure certain fields are completed
+  });
+
+  // Calculate and return the percentage
+  return Math.floor((progress / totalFields) * 100); 
+};
+
   // State for controlling the modal visibility
 const [showModal, setShowModal] = useState(false);
 
@@ -297,13 +310,13 @@ const handleSubmit = async (e) => {
     <div className="container mt-4">
       <h1 className="text-center">Create your Profile</h1>
       <h5 className="text-center">Let us know more about you</h5>
-      <ProgressBar
-        now={(currentStep / totalSteps) * 100} // Calculate progress percentage
-        label={`${Math.round((currentStep / totalSteps) * 100)}%`}
+       {/* Progress Bar */}
+       <ProgressBar
+        now={calculateProgress()} // Dynamically calculate progress
+        label={`${calculateProgress()}%`}
         className="mb-4"
       />
       <form onSubmit={handleSubmit}>
-      {currentStep === 1 && (
         <div className="mb-4 border p-4">
           <h3>Profile Photo</h3>
           <div className="mb-3">
@@ -317,8 +330,6 @@ const handleSubmit = async (e) => {
             />
           </div>
         </div>
-  )}
-  {currentStep === 2 && (
         <div className="mb-4 border p-4">
           <h3>Personal Details</h3>
           <div className="mb-3">
@@ -397,10 +408,8 @@ const handleSubmit = async (e) => {
             />
           </div>
         </div>
-  )}
-        {currentStep === 3 && (
+
         <div className="mb-4 border p-4">
-       
           <h3>Experience</h3>
           {experience.map((exp, index) => (
             <div key={index} className="mb-3">
@@ -581,8 +590,6 @@ const handleSubmit = async (e) => {
             Add Experience
           </button>
         </div>
-  )}
-       {currentStep === 4 && (
         <div className="mb-4 border p-4">
           <h3>Skills</h3>
           {skills.map((skill, index) => (
@@ -627,7 +634,6 @@ const handleSubmit = async (e) => {
             Add Skill
           </button>
         </div>
-       )}
 
 
         {error && (
