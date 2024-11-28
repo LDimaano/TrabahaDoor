@@ -86,31 +86,49 @@ const UploadDocuments = () => {
                 <Form.Group controlId="sec_certificate">
                     <Form.Label>SEC Certificate:</Form.Label>
                     <Form.Control type="file" name="sec_certificate" onChange={handleFileChange} required />
+                    <Form.Text className="text-muted">
+                        This document verifies your business as a registered entity with the Securities and Exchange Commission (SEC).
+                    </Form.Text>
                 </Form.Group>
 
                 <Form.Group controlId="business_permit">
                     <Form.Label>Business Permit:</Form.Label>
                     <Form.Control type="file" name="business_permit" onChange={handleFileChange} required />
+                    <Form.Text className="text-muted">
+                        This document shows your business is licensed to operate in your city or municipality.
+                    </Form.Text>
                 </Form.Group>
 
                 <Form.Group controlId="bir_certificate">
                     <Form.Label>BIR Certificate of Registration:</Form.Label>
                     <Form.Control type="file" name="bir_certificate" onChange={handleFileChange} required />
+                    <Form.Text className="text-muted">
+                        This document confirms your registration with the Bureau of Internal Revenue (BIR) for tax purposes.
+                    </Form.Text>
                 </Form.Group>
 
                 <Form.Group controlId="poea_license">
                     <Form.Label>POEA/DOLE License:</Form.Label>
                     <Form.Control type="file" name="poea_license" onChange={handleFileChange} required />
+                    <Form.Text className="text-muted">
+                        Required for recruitment agencies operating in the Philippines, ensuring compliance with the POEA/DOLE regulations.
+                    </Form.Text>
                 </Form.Group>
 
                 <Form.Group controlId="private_recruitment_agency_license">
                     <Form.Label>Private Recruitment Agency License:</Form.Label>
                     <Form.Control type="file" name="private_recruitment_agency_license" onChange={handleFileChange} required />
+                    <Form.Text className="text-muted">
+                        This license is essential for agencies that provide recruitment services to job seekers and employers.
+                    </Form.Text>
                 </Form.Group>
 
                 <Form.Group controlId="contract_sub_contractor_certificate">
                     <Form.Label>Contract/Sub-Contractor Certificate:</Form.Label>
                     <Form.Control type="file" name="contract_sub_contractor_certificate" onChange={handleFileChange} required />
+                    <Form.Text className="text-muted">
+                        This certificate verifies the legality of your business in engaging with sub-contractors.
+                    </Form.Text>
                 </Form.Group>
 
                 <div className="d-flex justify-content-end mt-4">
@@ -124,6 +142,9 @@ const UploadDocuments = () => {
                 </Modal.Header>
                 <Modal.Body>
                     Are you sure you want to submit these documents?
+                    <p className="mt-3 text-muted">
+                        Once submitted, the approval process will take 3-5 business days. You will be notified once your documents are approved.
+                    </p>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowModal(false)}>
