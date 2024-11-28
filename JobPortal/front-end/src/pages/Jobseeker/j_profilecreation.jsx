@@ -333,7 +333,7 @@ function ProfileCreation() {
           </div>
           </div>
           <div className="mb-3">
-            <label htmlFor="address" className="form-label"><Address></Address></label>
+          <label htmlFor="address" className="form-label">Address *</label>
             <Select
               id="address"
               options={addressOptions}
