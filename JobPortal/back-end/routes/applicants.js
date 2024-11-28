@@ -190,7 +190,7 @@ router.get('/appliedapplicants/:jobId', async (req, res) => {
 // API to update application hiring stage and send notification
 router.put('/applications/:userId/:jobId', async (req, res) => {
   const { userId, jobId } = req.params;
-  const { hiringStage } = req.body;
+  const { hiringStage, additionalMessage } = req.body;
 
   const allowedStages = ['Received', 'In review', 'For interview', 'Filled'];
 
@@ -211,7 +211,7 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
       SET status = $1, notif_status = $2 
       WHERE user_id = $3 AND job_id = $4
     `;
-    
+
     const queryParams = [hiringStage, 'new', userId, jobId];
     const result = await pool.query(updateAppQuery, queryParams);
 
@@ -249,8 +249,8 @@ router.put('/applications/:userId/:jobId', async (req, res) => {
     const jobSeekerName = appResult.rows[0].full_name;
     const jobTitle = appResult.rows[0].job_title;
 
-    // Send email notification to the job seeker
-    await sendStatusUpdateEmail(jobSeekerEmail, jobSeekerName, jobTitle, hiringStage);
+    // Send email notification to the job seeker with the additional message
+    await sendStatusUpdateEmail(jobSeekerEmail, jobSeekerName, jobTitle, hiringStage, additionalMessage);
 
     // Emit real-time notification via Socket.io if user is connected
     const notification = {

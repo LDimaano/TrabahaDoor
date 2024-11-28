@@ -75,41 +75,42 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
     setNewStage('');
   };
 
-  const confirmStageChange = () => {
-    if (selectedUser && newStage) {
-      setLocalHiringStages((prevStages) => ({
-        ...prevStages,
-        [selectedUser]: newStage,
-      }));
-      handleStageChangeInJoblist(selectedUser, newStage);
-      closeConfirmModal();
-    }
-  };
+  const [additionalMessage, setAdditionalMessage] = useState('');
 
-  const handleStageChangeInJoblist = async (userId, newStage) => {
-    try {
-      console.log(`Updating hiring stage for userId: ${userId}, jobId: ${jobId}, newStage: ${newStage}`);
-  
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/applications/${userId}/${jobId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hiringStage: newStage }),
-      });
-      console.log('Response status:', response.status);
-  
-      if (!response.ok) {
-        const errorData = await response.text();
-        console.error('Error response:', errorData);
-        throw new Error(errorData || 'Failed to update hiring stage');
-      }
-  
-      console.log('Hiring stage updated successfully on the server');
+const confirmStageChange = () => {
+  if (selectedUser && newStage) {
+    setLocalHiringStages((prevStages) => ({
+      ...prevStages,
+      [selectedUser]: newStage,
+    }));
+    handleStageChangeInJoblist(selectedUser, newStage, additionalMessage);
+    closeConfirmModal();
+  }
+};
 
-      onStageChange(userId, newStage);
-    } catch (error) {
-      console.error('Error updating hiring stage:', error.message);
+const handleStageChangeInJoblist = async (userId, newStage, additionalMessage) => {
+  try {
+    console.log(`Updating hiring stage for userId: ${userId}, jobId: ${jobId}, newStage: ${newStage}`);
+    
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/applications/${userId}/${jobId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hiringStage: newStage, additionalMessage }),
+    });
+    console.log('Response status:', response.status);
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Error response:', errorData);
+      throw new Error(errorData || 'Failed to update hiring stage');
     }
-  };
+
+    console.log('Hiring stage updated successfully on the server');
+    onStageChange(userId, newStage);
+  } catch (error) {
+    console.error('Error updating hiring stage:', error.message);
+  }
+};
   
   async function fetchFilledCount() {
     const userId = sessionStorage.getItem('user_id');  
@@ -327,25 +328,38 @@ function ApplicantJoblist({ currentListings, onStageChange, hiringStages }) {
     </div>
   </div>
 )}
-      {isConfirmModalOpen &&
-        <div className="modal fade show" style={{ display: 'block' }} role="dialog">
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Confirm Hiring Stage Change</h5>
-              <button type="button" className="btn-close" onClick={closeConfirmModal}></button>
-            </div>
-            <div className="modal-body">
-              <p>Are you sure you want to change the hiring stage for this applicant to <strong>{newStage}</strong>?</p>
-            </div>
-            <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={closeConfirmModal}>Cancel</button>
-              <button className="btn btn-primary" onClick={confirmStageChange}>Confirm</button>
-            </div>
+      {isConfirmModalOpen && (
+  <div className="modal fade show" style={{ display: 'block' }} role="dialog">
+    <div className="modal-dialog" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Confirm Hiring Stage Change</h5>
+          <button type="button" className="btn-close" onClick={closeConfirmModal}></button>
+        </div>
+        <div className="modal-body">
+          <p>
+            Are you sure you want to change the hiring stage for this applicant to <strong>{newStage}</strong>?
+          </p>
+          <div className="form-group">
+            <label htmlFor="additionalMessage">Additional Message:</label>
+            <textarea
+              id="additionalMessage"
+              className="form-control"
+              rows="3"
+              value={additionalMessage}
+              onChange={(e) => setAdditionalMessage(e.target.value)}
+            ></textarea>
           </div>
         </div>
+        <div className="modal-footer">
+          <button className="btn btn-secondary" onClick={closeConfirmModal}>Cancel</button>
+          <button className="btn btn-primary" onClick={confirmStageChange}>Confirm</button>
+        </div>
       </div>
-    }
+    </div>
+  </div>
+)}
+
   </div>
 );
 }

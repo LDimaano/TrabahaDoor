@@ -41,7 +41,7 @@ const generateEmailContent = (type, data) => {
                 
                 <p>We are pleased to inform you that <strong>${data.full_name}</strong> has applied for the position of <strong>${data.job_title}</strong>.</p>
                 
-                <p>You can view more details and manage this application by logging into your <a href="https://trabahadoor-front-end.onrender.com/login">employer account</a>.</p>
+                <p>You can view more details and manage this application by logging into your <a href="https://trabahadoor-pesosanjose.com/login">employer account</a>.</p>
                 
                 <p>Best regards,<br/>
                 <strong>The Trabahadoor Team</strong></p>
@@ -53,8 +53,10 @@ const generateEmailContent = (type, data) => {
                 subject: 'Your Application Status Has Been Updated',
 
                 text: `Hello ${data.jobSeekerName},
-                
+        
                 We wanted to inform you that your application status for the position of ${data.job_title} has been updated to: ${data.status}.
+                
+                ${data.additionalMessage ? `Message from the employer: ${data.additionalMessage}` : ''}
                 
                 You can log into your account to view more details.
                 
@@ -66,7 +68,9 @@ const generateEmailContent = (type, data) => {
                 
                 <p>We wanted to inform you that your application status for the position of <strong>${data.job_title}</strong> has been updated to: <strong>${data.status}</strong>.</p>
                 
-                <p>You can log into your account to view more details by visiting your <a href="https://trabahadoor-front-end.onrender.com/login">jobseeker account</a>.</p>
+                ${data.additionalMessage ? `<p>Message from the employer: ${data.additionalMessage}</p>` : ''}
+                
+                <p>You can log into your account to view more details by visiting your <a href="https://trabahadoor-pesosanjose.com/login">jobseeker account</a>.</p>
                 
                 <p>Best regards,<br/>
                 <strong>The Trabahadoor Team</strong></p>
@@ -93,7 +97,7 @@ const generateEmailContent = (type, data) => {
                 <p>We are excited to inform you that <strong>${data.companyName}</strong> has reached out to you with the following message:</p>
                 
                 <p> "${data.message}" </p>
-                <p>Please log into your account to view more details by visiting your <a href="https://trabahadoor-front-end.onrender.com/login">jobseeker account</a> and take the next steps.</p>
+                <p>Please log into your account to view more details by visiting your <a href="https://trabahadoor-pesosanjose.com/login">jobseeker account</a> and take the next steps.</p>
 
                 <p>Best regards,<br/>
                 <strong>The Trabahadoor Team</strong></p>
@@ -204,8 +208,8 @@ const sendApplicationEmail = async (employerEmail, fullName, jobTitle) => {
     });
 };
 
-const sendStatusUpdateEmail = async (jobSeekerEmail, jobSeekerName, jobTitle, status) => {
-    const emailContent = generateEmailContent('status_update', { jobSeekerName, job_title: jobTitle, status });
+const sendStatusUpdateEmail = async (jobSeekerEmail, jobSeekerName, jobTitle, status, additionalMessage) => {
+    const emailContent = generateEmailContent('status_update', { jobSeekerName, job_title: jobTitle, status, additionalMessage });
     
     await transporter.sendMail({
         from: process.env.EMAIL_USER,
