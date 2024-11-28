@@ -47,7 +47,7 @@ const UploadDocuments = () => {
             // Append the user ID
             form.append('user_id', user_id);
             console.log(` user_id document file upload: ${user_id}`); 
-    
+            
             // Send the form data to the server using await
             const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/upload/${user_id}`, { // Full backend URL
                 method: 'POST',
@@ -78,12 +78,12 @@ const UploadDocuments = () => {
     return (
         <div className="container mt-5">
             <h1 className="text-center">Required Document Upload</h1>
-            <h5 className="text-center">Ensure compliance by providing all required documents.</h5>
+            <h5 className="text-center mb-4">Ensure compliance by providing all required documents.</h5>
             
             {successMessage && <Alert variant="success">{successMessage}</Alert>}
 
             <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="sec_certificate">
+                <Form.Group controlId="sec_certificate" className="mb-4">
                     <Form.Label>SEC Certificate:</Form.Label>
                     <Form.Control type="file" name="sec_certificate" onChange={handleFileChange} required />
                     <Form.Text className="text-muted">
@@ -91,7 +91,7 @@ const UploadDocuments = () => {
                     </Form.Text>
                 </Form.Group>
 
-                <Form.Group controlId="business_permit">
+                <Form.Group controlId="business_permit" className="mb-4">
                     <Form.Label>Business Permit:</Form.Label>
                     <Form.Control type="file" name="business_permit" onChange={handleFileChange} required />
                     <Form.Text className="text-muted">
@@ -99,7 +99,7 @@ const UploadDocuments = () => {
                     </Form.Text>
                 </Form.Group>
 
-                <Form.Group controlId="bir_certificate">
+                <Form.Group controlId="bir_certificate" className="mb-4">
                     <Form.Label>BIR Certificate of Registration:</Form.Label>
                     <Form.Control type="file" name="bir_certificate" onChange={handleFileChange} required />
                     <Form.Text className="text-muted">
@@ -107,7 +107,7 @@ const UploadDocuments = () => {
                     </Form.Text>
                 </Form.Group>
 
-                <Form.Group controlId="poea_license">
+                <Form.Group controlId="poea_license" className="mb-4">
                     <Form.Label>POEA/DOLE License:</Form.Label>
                     <Form.Control type="file" name="poea_license" onChange={handleFileChange} required />
                     <Form.Text className="text-muted">
@@ -115,7 +115,7 @@ const UploadDocuments = () => {
                     </Form.Text>
                 </Form.Group>
 
-                <Form.Group controlId="private_recruitment_agency_license">
+                <Form.Group controlId="private_recruitment_agency_license" className="mb-4">
                     <Form.Label>Private Recruitment Agency License:</Form.Label>
                     <Form.Control type="file" name="private_recruitment_agency_license" onChange={handleFileChange} required />
                     <Form.Text className="text-muted">
@@ -123,7 +123,7 @@ const UploadDocuments = () => {
                     </Form.Text>
                 </Form.Group>
 
-                <Form.Group controlId="contract_sub_contractor_certificate">
+                <Form.Group controlId="contract_sub_contractor_certificate" className="mb-4">
                     <Form.Label>Contract/Sub-Contractor Certificate:</Form.Label>
                     <Form.Control type="file" name="contract_sub_contractor_certificate" onChange={handleFileChange} required />
                     <Form.Text className="text-muted">
