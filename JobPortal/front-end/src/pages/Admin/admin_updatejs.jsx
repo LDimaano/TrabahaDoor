@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Range } from 'react-range';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap';
@@ -185,9 +186,17 @@ function ProfileEditForm() {
     setExperience(newExperience);
   };
 
-  const handleExperienceSalaryRangeChange = (index, selectedOption) => {
+  const handleExperienceSalaryRangeChange = (index, values) => {
     const newExperience = [...experience];
-    newExperience[index] = { ...newExperience[index], salaryRange: selectedOption };
+    
+    // Convert the range values to a string in the format "min-max"
+    const salaryRangeString = `${values[0]}-${values[1]}`;
+    
+    newExperience[index] = { 
+      ...newExperience[index], 
+      salaryRange: salaryRangeString 
+    };
+    
     setExperience(newExperience);
   };
 
@@ -330,12 +339,91 @@ function ProfileEditForm() {
                 required
               />
               <label>Salary Range</label>
-              <Select
-                value={exp.salaryRange}
-                onChange={(selectedOption) => handleExperienceSalaryRangeChange(index, selectedOption)}
-                options={salaryRanges}
-                required
-              />
+      <div className="col-md-6 mb-3">
+        <label htmlFor={`salaryRange-${index}`} className="form-label fw-bold d-block mb-2">
+          Salary Range (in ₱)
+        </label>
+        <div
+          className="slider-container"
+          style={{
+            display: "flex", // Align items inline
+            alignItems: "center", // Vertical alignment of items
+            gap: "8px", // Spacing between elements
+          }}
+        >
+          {/* Minimum Label */}
+          <small
+            style={{
+              fontSize: "0.9rem", // Smaller text for label
+              color: "#6c757d", // Bootstrap muted color
+              marginRight: "8px", // Space after minimum label
+            }}
+          >
+            ₱5,000
+          </small>
+
+          {/* Slider */}
+          <Range
+          step={1000}
+          min={5000}
+          max={100000}
+          values={exp.salaryRange
+            ? exp.salaryRange.split("-").map((val) => parseInt(val))  // Split the string and convert to integers
+            : [5000, 10000] // Default value if salaryRange is undefined
+          }
+          onChange={(values) => handleExperienceSalaryRangeChange(index, values)} // Handle slider change
+          renderTrack={({ props, children }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: "6px",
+                width: "100%",
+                backgroundColor: "#ddd",
+              }}
+            >
+              {children}
+            </div>
+          )}
+          renderThumb={({ props }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: "16px",
+                width: "16px",
+                backgroundColor: "#007bff",
+                borderRadius: "50%",
+              }}
+            />
+          )}
+        />
+
+          {/* Current Value Label */}
+          <small
+            style={{
+              fontSize: "0.9rem",
+              color: "#6c757d",
+              margin: "0 8px", // Space on both sides
+            }}
+          >
+            {exp.salaryRange
+              ? `₱${exp.salaryRange.replace("-", " to ₱")}`
+              : "₱5,000-₱10,000"}
+          </small>
+
+          {/* Maximum Label */}
+          <small
+            style={{
+              fontSize: "0.9rem",
+              color: "#6c757d",
+              marginLeft: "8px", // Space before maximum label
+            }}
+          >
+            ₱100,000
+          </small>
+        </div>
+      </div>
               <div className="mb-3">
                 <label>Company</label>
                 <input type="text" name="company" className="form-control" value={exp.company} onChange={(e) => handleExperienceChange(index, e)} required />
