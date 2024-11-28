@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Range } from 'react-range';
+import { ProgressBar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap';
 
 
 function ProfileCreation() {
+  const [currentStep, setCurrentStep] = useState(1); // Step tracker
+  const totalSteps = 4; // Define the total number of steps
   const navigate = useNavigate();
 
   const [fullName, setFullName] = useState('');
@@ -34,6 +37,18 @@ function ProfileCreation() {
   const [salaryRange, setSalaryRange] = useState(5000);
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
+
+  const handleNext = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
 
   const handleSkillChange = (index, selectedOption) => {
     const newSkills = [...skills];
