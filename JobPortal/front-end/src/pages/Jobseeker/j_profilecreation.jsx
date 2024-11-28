@@ -417,41 +417,41 @@ const handleSubmit = async (e) => {
 
     {/* Slider */}
     <Range
-      step={1000}
-      min={5000}
-      max={100000}
-      values={
-        experience[0]?.salaryRange
-          ? experience[0].salaryRange.split("-").map((val) => parseInt(val))
-          : [5000, 10000]
-      }
-      onChange={(values) => handleSalaryChange(values, index)} 
-      renderTrack={({ props, children }) => (
-        <div
-          {...props}
-          style={{
-            ...props.style,
-            height: "6px",
-            width: "100%",
-            backgroundColor: "#ddd",
-          }}
-        >
-          {children}
-        </div>
-      )}
-      renderThumb={({ props }) => (
-        <div
-          {...props}
-          style={{
-            ...props.style,
-            height: "16px",
-            width: "16px",
-            backgroundColor: "#007bff",
-            borderRadius: "50%",
-          }}
-        />
-      )}
+  step={1000}
+  min={5000}
+  max={100000}
+  values={
+    exp.salaryRange
+      ? exp.salaryRange.split("-").map((val) => parseInt(val))
+      : [5000, 10000]
+  }
+  onChange={(values) => handleSalaryChange(values, index)}
+  renderTrack={({ props, children }) => (
+    <div
+      {...props}
+      style={{
+        ...props.style,
+        height: "6px",
+        width: "100%",
+        backgroundColor: "#ddd",
+      }}
+    >
+      {children}
+    </div>
+  )}
+  renderThumb={({ props }) => (
+    <div
+      {...props}
+      style={{
+        ...props.style,
+        height: "16px",
+        width: "16px",
+        backgroundColor: "#007bff",
+        borderRadius: "50%",
+      }}
     />
+  )}
+/>
 
     {/* Current Value Label */}
     <small
