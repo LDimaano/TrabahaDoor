@@ -134,7 +134,7 @@ function SearchForm({ onSearch }) {
         <div className="col-md-2">
           <button
             type="button"
-            className="btn btn-secondary w-100"
+            className="btn btn-primary w-100"
             disabled
           >
             Search

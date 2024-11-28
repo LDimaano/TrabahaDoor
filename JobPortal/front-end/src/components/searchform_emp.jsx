@@ -123,7 +123,7 @@ function SearchForm({ onSearch }) {
           </select>
         </div>
         <div className="col-md-2">
-          <button type="button" className="btn btn-secondary w-100">
+          <button type="button" className="btn btn-primary w-100">
             Search
           </button>
         </div>
