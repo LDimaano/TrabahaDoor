@@ -30,7 +30,7 @@ function BarChart() {
     }))
     .sort((a, b) => b.height - a.height);
 
-  const maxBarHeight = 200; // Max height for the bars in pixels
+  const maxBarHeight = 200; 
   const maxHeightValue = Math.max(...industries.map((industry) => industry.height));
 
   industries.forEach((industry) => {
@@ -65,8 +65,8 @@ function BarChart() {
     <Container>
       <Card className="shadow-sm p-4">
         <Card.Body>
-        <h4 className="text-dark text-left mb-4">Time to Fill Analysis</h4>
-        <p className="text-muted text-left mb-5">Showing Average Time to Fill per Industry</p>
+          <h4 className="text-dark text-left mb-4">Time to Fill Analysis</h4>
+          <p className="text-muted text-left mb-5">Showing Average Time to Fill per Industry</p>
 
           {error && <Alert variant="danger">{error}</Alert>}
 
@@ -77,9 +77,9 @@ function BarChart() {
                 alignItems: "flex-end",
                 height: `${maxBarHeight + 50}px`,
                 paddingBottom: "50px",
-                justifyContent: "space-around", 
+                justifyContent: "space-around",
                 width: "100%",
-                maxWidth: "600px", 
+                maxWidth: "600px",
                 marginTop: "20px",
               }}
             >
@@ -87,8 +87,20 @@ function BarChart() {
                 <div
                   key={index}
                   className="d-flex flex-column align-items-center"
-                  style={{ width: "70px" }} 
+                  style={{ width: "70px" }}
                 >
+                  {/* Display value above the bar */}
+                  <span
+                    style={{
+                      fontSize: "0.85rem",
+                      color: "darkslategray",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    {`${industry.height} days`}
+                  </span>
+
+                  {/* Tooltip for hover functionality */}
                   <OverlayTrigger
                     placement="top"
                     overlay={<Tooltip>{`${industry.height} days`}</Tooltip>}
@@ -97,7 +109,7 @@ function BarChart() {
                       className="bar"
                       style={{
                         height: `${industry.scaledHeight}px`,
-                        width: "100%", 
+                        width: "100%",
                         backgroundColor: "blue",
                         borderRadius: "5px",
                         transition: "transform 0.2s ease",
@@ -110,31 +122,34 @@ function BarChart() {
                       }}
                     ></div>
                   </OverlayTrigger>
+
+                  {/* Display industry name below the bar */}
                   <div
                     className="text-center mt-2"
                     style={{
                       fontSize: "0.85rem",
-                      whiteSpace: "nowrap", 
+                      whiteSpace: "nowrap",
                       overflow: "hidden",
-                      textOverflow: "ellipsis", 
-                      maxWidth: "70px", 
+                      textOverflow: "ellipsis",
+                      maxWidth: "70px",
                     }}
-                    title={industry.name} 
+                    title={industry.name}
                   >
-                    {industry.name.length > 8 
+                    {industry.name.length > 8
                       ? `${industry.name.substring(0, 7)}...`
                       : industry.name}
                   </div>
                 </div>
               ))}
             </div>
+
             <div className="mt-4 d-flex align-items-center justify-content-start">
-  <div
-    className="bg-primary"
-    style={{ width: "16px", height: "16px", borderRadius: "3px", marginRight: "8px" }}
-  ></div>
-  <span className="text-muted">Days</span>
-</div>
+              <div
+                className="bg-primary"
+                style={{ width: "16px", height: "16px", borderRadius: "3px", marginRight: "8px" }}
+              ></div>
+              <span className="text-muted">Days</span>
+            </div>
 
             <div className="mt-4 d-flex justify-content-start">
               <Button variant="outline-primary" className="me-2" onClick={exportToCSV}>
@@ -144,7 +159,6 @@ function BarChart() {
                 Download PDF
               </Button>
             </div>
-
           </div>
         </Card.Body>
       </Card>

@@ -36,12 +36,12 @@ function ApplicantJoblist() {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/viewdocuments/${user_id}`);
         if (response.status === 404) {
           const errorData = await response.json();
-          setError(errorData.message); // "No documents found for this user."
+          setError(errorData.message); 
         } else if (!response.ok) {
           throw new Error('Failed to fetch documents');
         } else {
           const data = await response.json();
-          setDocuments(data); // Assuming the API returns a single document object
+          setDocuments(data); 
         }
       } catch (err) {
         console.error('Error fetching documents:', err);
@@ -141,8 +141,6 @@ function ApplicantJoblist() {
             ))}
           </div>
         )}
-
-        {/* Document Modal */}
         <Modal show={showModal} onHide={handleCloseModal} size="lg">
           <Modal.Header closeButton>
             <Modal.Title>Document Viewer</Modal.Title>

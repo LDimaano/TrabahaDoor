@@ -45,8 +45,6 @@ function DashboardAnalytics() {
         <section className="py-2">
           <h2 className="text-start fs-4">TrabahaDoor Dashboard</h2>
         </section>
-
-        {/* KPI Cards */}
         <div className="row gx-2 mb-4">
           <div className="col-lg-4 col-md-6 col-sm-12">
             <div className="p-3 bg-white border rounded shadow-sm d-flex align-items-center" style={{ height: '130px' }}>
@@ -82,8 +80,6 @@ function DashboardAnalytics() {
             </div>
           </div>
         </div>
-
-        {/* Charts and Top Hiring Panels */}
         <div className="row gx-2">
           <div className="col-lg-7 col-md-12 mb-3">
             <div className="bg-white border rounded shadow-sm p-3 h-100">
