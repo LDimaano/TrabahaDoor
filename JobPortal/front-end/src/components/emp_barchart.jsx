@@ -66,11 +66,12 @@ function BarChart() {
     doc.save('TimeToFillReport.pdf');
   };
 
+  // Calculate max height to normalize the bar height for scaling
   const maxHeight = Math.max(...jobTitles.map((job_title) => job_title.height), 1); // Prevent divide-by-zero
   const maxBarHeight = 200; // Max bar height in pixels
   const totalWidth = 100; // Full container width percentage
-  const barSpacing = jobTitles.length > 5 ? 10 : 20; // Dynamic spacing
-  const barWidth = `calc(${totalWidth / jobTitles.length}% - ${barSpacing}px)`; // Dynamic bar width
+  const barSpacing = jobTitles.length > 5 ? 10 : 20; // Dynamic spacing based on category count
+  const barWidth = `calc(${totalWidth / jobTitles.length}% - ${barSpacing}px)`; // Dynamic width
 
   return (
     <section className="card border-light shadow-sm p-4">
@@ -118,18 +119,6 @@ function BarChart() {
                 width: barWidth,
               }}
             >
-              {/* Display value above the bar */}
-              <span
-                className="mb-1"
-                style={{
-                  fontSize: '0.85rem',
-                  color: 'darkslategray',
-                }}
-              >
-                {`${job_title.height} days`}
-              </span>
-
-              {/* Tooltip for hover functionality */}
               <OverlayTrigger
                 placement="top"
                 overlay={<Tooltip>{`${job_title.height} days`}</Tooltip>}
@@ -140,7 +129,7 @@ function BarChart() {
                     height: `${barHeight}px`,
                     backgroundColor: 'blue',
                     border: '2px solid rgba(0, 0, 123, 0.5)',
-                    width: '80%',
+                    width:'80%',
                     borderRadius: '5px',
                     cursor: 'pointer',
                   }}
