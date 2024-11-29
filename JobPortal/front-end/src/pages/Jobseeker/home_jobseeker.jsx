@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/jsheader';
 import SearchForm from '../../components/searchform';
 import FilterSection from '../../components/filtersection';
@@ -7,7 +7,7 @@ import JobList from '../../components/joblist';
 function HomeJobSeeker() {
   const [filters, setFilters] = useState({
     employmentTypes: [],
-    salaryRanges: [],
+    salaryRange: [5000, 100000],
     industry: '' 
   });
   const [searchQuery, setSearchQuery] = useState('');

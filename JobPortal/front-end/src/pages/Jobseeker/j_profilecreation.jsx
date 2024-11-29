@@ -21,7 +21,7 @@ function ProfileCreation() {
   const [experience, setExperience] = useState([
     {
       jobTitle: null,
-      salaryRange: "5000-10000", // Set a default range
+      salaryRange: "5000-10000", 
       company: '',
       location: '',
       startDate: '',
@@ -66,9 +66,9 @@ function ProfileCreation() {
 
 
   const handleSalaryChange = (values, index) => {
-    const newExperience = [...experience]; // Create a copy of the experience array to avoid mutation
-    newExperience[index].salaryRange = `${values[0]}-${values[1]}`; // Update the salary range as a string
-    setExperience(newExperience); // Update the state
+    const newExperience = [...experience]; 
+    newExperience[index].salaryRange = `${values[0]}-${values[1]}`; 
+    setExperience(newExperience); 
   };
   
   
@@ -77,7 +77,7 @@ function ProfileCreation() {
       ...experience,
       {
         jobTitle: null,
-        salaryRange: '5000-10000', // Set a distinct default salary range for the new experience
+        salaryRange: '5000-10000', 
         company: '',
         location: '',
         startDate: '',
@@ -97,12 +97,11 @@ function ProfileCreation() {
 
     const userId = window.location.pathname.split('/')[2];
     
-    // Default profile picture URL
     const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/jobseeker.png";
   
     if (!file) {
       console.log('No file selected, using default profile picture');
-      setPhoto(defaultProfilePictureUrl); // Set the default photo URL in state
+      setPhoto(defaultProfilePictureUrl); 
       return;
     }
   
@@ -122,7 +121,7 @@ function ProfileCreation() {
   
       const data = await response.json();
       console.log('Uploaded image data:', data);
-      setPhoto(data.profilePictureUrl); // Set the photo URL in state
+      setPhoto(data.profilePictureUrl); 
     } catch (error) {
       console.error('Error uploading profile picture:', error);
     }
@@ -131,18 +130,17 @@ function ProfileCreation() {
 
 const calculateProgress = () => {
   let progress = 0;
-  const totalFields = 8 + experience.length + skills.length; // 8 main fields + dynamic experience and skills
+  const totalFields = 8 + experience.length + skills.length; 
 
-  // Main fields completion
   if (fullName) progress += 1;
   if (phoneNumber) progress += 1;
   if (dateOfBirth) progress += 1;
   if (gender) progress += 1;
   if (address) progress += 1;
   if (industry) progress += 1;
-  if (photo) progress += 1; // Ensure photo is included in progress
+  if (photo) progress += 1; 
   
-  // Skills completion (each skill counts as 1 field)
+
   skills.forEach((skill) => {
     if (skill) progress += 1; // Increment if a skill is selected
   });

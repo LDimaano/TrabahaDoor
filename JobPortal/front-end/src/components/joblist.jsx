@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import JobListItem from './joblistitem';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
-import '../css/pagination.css'; 
+import '../css/pagination.css';
 
 function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQuery, searchType, isRecommended }) {
   const [jobs, setJobs] = useState([]);
@@ -76,7 +76,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
             console.error('Invalid salaryRange:', userProfile.salaryRange);
             return;
           }
-  
+
           const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recommend`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -87,15 +87,15 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
               jobTitles: userProfile.jobTitles || [],
             }),
           });
-  
+
           if (!response.ok) {
             const errorText = await response.text();
             console.error('Error fetching recommended jobs:', errorText);
             throw new Error(errorText);
           }
-  
+
           const recommendedJobsData = await response.json();
-  
+
           if (recommendedJobsData && recommendedJobsData.recommendations) {
             setRecommendedJobs(recommendedJobsData.recommendations);
           } else {
@@ -108,7 +108,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       fetchRecommendedJobs();
     }
   }, [isRecommended, userSkills, userProfile]);
-  
+
   const applyFilters = (jobs) => {
     if (!jobs || jobs.length === 0) return [];
     const { employmentTypes, salaryRanges } = filters;
@@ -194,9 +194,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
           ))}
           {currentPage < totalPages && (
             <li className="page-item">
-              <a onClick={() => paginate(currentPage + 1)} href="#!" className="page-link">
-              {'>>'}
-              </a>
+              <a onClick={() => paginate(currentPage + 1)} href="#!" className="page-link">{'>>'}</a>
             </li>
           )}
         </ul>
