@@ -8,7 +8,7 @@ import JobseekerJoblist from '../../components/js_empjoblist';
 
 const JobseekerDashboard = () => {
   const navigate = useNavigate(); 
-  const { userId } = useParams(); // Retrieve userId from URL parameters
+  const { userId } = useParams(); 
   const [jobs, setJobs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
