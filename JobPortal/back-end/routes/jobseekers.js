@@ -58,7 +58,7 @@ router.post('/profile', async (req, res) => {
 
     for (const education_id of educations) {
       await pool.query(
-        `INSERT INTO job_education (
+        `INSERT INTO js_education (
           user_id, education_id
         )
         VALUES ($1, $2)`,
