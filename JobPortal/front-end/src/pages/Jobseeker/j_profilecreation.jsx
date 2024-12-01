@@ -159,9 +159,10 @@ const [showModal, setShowModal] = useState(false);
 // Function to handle modal submit
 const handleModalSubmit = () => {
   if (!isChecked) {
-    alert("You must agree to the terms and conditions to proceed.");
+    setError("You must agree to the terms and conditions before submitting.");
     return;
   }
+
   setShowModal(false); // Close modal
   handleSubmit(); // Call the original submit function
 };
@@ -659,6 +660,7 @@ const handleSubmit = async (e) => {
             type="button"
             className="btn btn-success"
             onClick={handleFormSubmit}
+            disabled={!isChecked}
           >
             Submit Profile
           </button>
