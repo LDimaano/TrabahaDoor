@@ -275,6 +275,7 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
     industry_id,
     SalaryRange,
     skills,
+    educations,
     Responsibilities,
     JobDescription,
     Qualifications,
@@ -324,6 +325,16 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
         SELECT $1, unnest($2::int[]), $3;
       `;
       await pool.query(insertSkillsQuery, [job_id, skills, userId]);
+    }
+
+    if (educations.length > 0) {
+      await pool.query('DELETE FROM job_education WHERE job_id = $1', [job_id]);
+
+      const insertEducationsQuery = `
+        INSERT INTO job_education (job_id, education_id, user_id) 
+        SELECT $1, unnest($2::int[]), $3;
+      `;
+      await pool.query(insertEducationsQuery, [job_id, educations, userId]);
     }
 
     res.json({ message: 'Job updated successfully', job: jobResult.rows[0] });

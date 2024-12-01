@@ -195,6 +195,7 @@ const UpdateJobPosting = () => {
       industry_id: industry?.value || '',
       SalaryRange: salaryRange,
       skills: skills.map(skill => skill?.value || ''),
+      educations: education.map(education => education?.value || ''),
       Responsibilities: responsibilities,
       JobDescription: jobDescription,
       Qualifications: qualifications,
