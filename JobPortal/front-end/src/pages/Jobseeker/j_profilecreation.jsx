@@ -436,9 +436,7 @@ const handleSubmit = async (e) => {
               required
             />
           </div>
-        </div>
-
-        <div className="mb-4 border p-4">
+        <div className="mb-3">
         <label htmlFor="educationDropdown" className="form-label">
         Education Level or Course
       </label>
@@ -453,6 +451,7 @@ const handleSubmit = async (e) => {
           <option key={index} value={option}>{option}</option>
         ))}
       </select>
+      </div>
       </div>
 
         <div className="mb-4 border p-4">
