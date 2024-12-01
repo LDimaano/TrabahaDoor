@@ -79,25 +79,45 @@ const BarChartComponent = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* Filters */}
-      <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
-        {/* Count Filter */}
-        <label htmlFor="filter" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filter By Count:</label>
-        <select id="filter" value={filter} onChange={(e) => setFilter(e.target.value)} style={{ marginRight: '20px' }}>
-          <option value="all">All</option>
-          <option value="high">High Count (&gt; 10)</option>
-          <option value="low">Low Count (&le; 10)</option>
-        </select>
-
-        {/* Location Filter */}
-        <label htmlFor="location" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filter By Location:</label>
-        <select id="location" value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}>
-          <option value="all">All Locations</option>
-          {locations.map((location, index) => (
-            <option key={index} value={location}>{location}</option>
-          ))}
-        </select>
-      </div>
+    {/* Filters */}
+    <div style={{ marginBottom: '1rem', textAlign: 'center', fontSize: '0.85em' }}>
+      {/* Count Filter */}
+      <label htmlFor="filter" style={{ marginRight: '5px', fontWeight: 'bold' }}>Count:</label>
+      <select
+        id="filter"
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+        style={{
+          marginRight: '15px',
+          padding: '2px 5px',
+          fontSize: '0.85em',
+          width: '110px',
+        }}
+      >
+        <option value="all">All</option>
+        <option value="high">High (&gt; 10)</option>
+        <option value="low">Low (&le; 10)</option>
+      </select>
+  
+      {/* Location Filter */}
+      <label htmlFor="location" style={{ marginRight: '5px', fontWeight: 'bold' }}>Location:</label>
+      <select
+        id="location"
+        value={selectedLocation}
+        onChange={(e) => setSelectedLocation(e.target.value)}
+        style={{
+          padding: '2px 5px',
+          fontSize: '0.85em',
+          width: '130px',
+        }}
+      >
+        <option value="all">All</option>
+        {locations.map((location, index) => (
+          <option key={index} value={location}>{location}</option>
+        ))}
+      </select>
+    </div>
+  
 
       {/* Download Button */}
       <FaDownload
