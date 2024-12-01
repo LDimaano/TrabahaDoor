@@ -166,6 +166,12 @@ const UpdateJobPosting = () => {
     setJobTitle(selectedOption);
   };
 
+  const handleEducationChange = (index, selectedOption) => {
+    const newEducation = [...education];
+    newEducation[index] = selectedOption;
+    setEducation(newEducation);
+  };
+
   const handleAddEducation = () => {
     setEducation([...education, null]);
   };
