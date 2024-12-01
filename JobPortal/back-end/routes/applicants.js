@@ -114,6 +114,15 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
       WHERE jss.user_id = $1
     `, [user_id]);
 
+    const EducationsData = await pool.query(`
+      SELECT
+        e.education_id, 
+        e.education_name 
+        FROM js_education je
+        JOIN educations e ON je.education_id = e.education_id
+      WHERE je.user_id = $1
+    `, [userId]);
+
     if (jobSeekerData.rows.length === 0) {
       return res.status(404).json({ message: 'Job seeker not found' });
     }
@@ -144,7 +153,8 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
         job_title: jobTitle
       },
       jobExperience: jobExperiences,
-      skills: skillsData.rows.map(skill => skill.skill_name) 
+      skills: skillsData.rows.map(skill => skill.skill_name),
+      educations: EducationsData.rows.map(education => education.education_name) 
     });
   } catch (error) {
     console.error('Error fetching job seeker data:', error.message);

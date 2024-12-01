@@ -1,7 +1,7 @@
 import React from 'react';
 import Tag from './jstag';
 
-const PersonalInfo = ({ data, educations}) => (
+const PersonalInfo = ({ data }) => (
   <div>
     <h4>Personal Information</h4>
     <p><strong>Full Name:</strong> {data.fullName}</p>
