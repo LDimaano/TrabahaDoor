@@ -19,6 +19,8 @@ function ProfileCreation() {
   const [addressOptions, setAddressOptions] = useState([]);
   const [industry, setIndustry] = useState(null);
   const [industryOptions, setIndustryOptions] = useState([]);
+  const [selectedEducation, setSelectedEducation] = useState('');
+  const [educationOptions, setEducationOptions] = useState([]);
   const [experience, setExperience] = useState([
     {
       jobTitle: null,
@@ -307,6 +309,17 @@ const handleSubmit = async (e) => {
       }
     };
 
+    const fetchEducationOptions = async () => {
+      try {
+        const response = await fetch('/api/education-options'); // Replace with actual API URL
+        const data = await response.json();
+        setEducationOptions(data); // Set the fetched education options
+      } catch (error) {
+        console.error('Error fetching education options:', error);
+      }
+    };
+
+    fetchEducationOptions();
     fetchSkills();
     fetchJobTitles();
     fetchAddresses();
@@ -424,6 +437,23 @@ const handleSubmit = async (e) => {
             />
           </div>
         </div>
+
+        <div className="mb-4 border p-4">
+        <label htmlFor="educationDropdown" className="form-label">
+        Education Level or Course
+      </label>
+      <select
+        id="educationDropdown"
+        className="form-select mb-3"
+        value={selectedEducation}
+        onChange={(e) => setSelectedEducation(e.target.value)}
+      >
+        <option value="">Select an education level or course</option>
+        {educationOptions.map((option, index) => (
+          <option key={index} value={option}>{option}</option>
+        ))}
+      </select>
+      </div>
 
         <div className="mb-4 border p-4">
           <h3>Experience</h3>
