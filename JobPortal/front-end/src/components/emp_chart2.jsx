@@ -11,20 +11,8 @@ const BarChart = () => {
     datasets: [{
       label: 'Industries of Applicants',
       data: [],
-      backgroundColor: [
-        '#ADD8E6', // Light Blue
-        '#87CEEB', // Sky Blue
-        '#4682B4', // Steel Blue
-        '#5F9EA0', // Cadet Blue
-        '#1E90FF', // Dodger Blue
-      ],
-      borderColor: [
-        '#87CEFA', // Lighter Sky Blue
-        '#4682B4', // Steel Blue
-        '#1E90FF', // Dodger Blue
-        '#5F9EA0', // Cadet Blue
-        '#ADD8E6', // Light Blue
-      ],
+      backgroundColor: '#1E90FF', // Dodger Blue
+      borderColor: '#1E90FF', // Dodger Blue
       borderWidth: 1,
     }],
   });
@@ -36,7 +24,7 @@ const BarChart = () => {
         if (!userId) {
           throw new Error('User ID not found in session storage');
         }
-        
+
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/industry-distribution/${userId}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -51,16 +39,6 @@ const BarChart = () => {
           datasets: [{
             ...chartData.datasets[0],
             data: counts,
-            backgroundColor: counts.map((_, i) => {
-              // Cycle through blue shades dynamically
-              const shades = ['#ADD8E6', '#87CEEB', '#4682B4', '#5F9EA0', '#1E90FF'];
-              return shades[i % shades.length];
-            }),
-            borderColor: counts.map((_, i) => {
-              // Match border color with dynamic shades
-              const borders = ['#87CEFA', '#4682B4', '#1E90FF', '#5F9EA0', '#ADD8E6'];
-              return borders[i % borders.length];
-            }),
           }],
         });
       } catch (error) {

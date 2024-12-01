@@ -11,8 +11,8 @@ const BarChart = () => {
     datasets: [{
       label: 'Number of Applicants',
       data: [],
-      backgroundColor: [],
-      borderColor: [],
+      backgroundColor: '#1E90FF', // Single color for bars
+      borderColor: '#1E90FF', // Single color for borders
       borderWidth: 1,
     }],
   });
@@ -34,16 +34,13 @@ const BarChart = () => {
         const labels = applicants.map(applicant => applicant.job_title);
         const counts = applicants.map(applicant => applicant.count);
 
-        // Define shades of blue for dynamic styling
-        const shadesOfBlue = ['#ADD8E6', '#87CEEB', '#4682B4', '#5F9EA0', '#1E90FF'];
-
         setChartData({
           labels,
           datasets: [{
             label: 'Number of Applicants',
             data: counts,
-            backgroundColor: counts.map((_, i) => shadesOfBlue[i % shadesOfBlue.length]), // Cycle shades of blue
-            borderColor: counts.map((_, i) => shadesOfBlue[i % shadesOfBlue.length]), // Match borders
+            backgroundColor: '#1E90FF', // Apply single color
+            borderColor: '#1E90FF', // Apply single color
             borderWidth: 1,
           }],
         });
@@ -69,14 +66,12 @@ const BarChart = () => {
               beginAtZero: true,
               title: {
                 display: true,
-              
               },
               maxBarThickness: 20, // Limit the bar width to prevent overflow
             },
             y: { 
               title: {
                 display: true,
-                
               },
               ticks: {
                 autoSkip: true, // Skip some labels on the y-axis to avoid overlap
