@@ -4,10 +4,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap'; 
 import { ProgressBar } from 'react-bootstrap';
+import TermsAndConditions from '../../components/termsandconditions';
 
 function EmployerProfileCreation() {
   const navigate = useNavigate();
-
+  const [isChecked, setIsChecked] = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [contactPerson, setContactPerson] = useState('');
   const [contactNumber, setContactNumber] = useState('');
@@ -60,29 +61,28 @@ function EmployerProfileCreation() {
     } catch (error) {
         console.error('Error uploading profile picture:', error);
     }
-};
+  };
 
+  const calculateProgress = () => {
+    // Count the number of fields that are filled in
+    const fields = [
+      companyName,
+      contactPerson,
+      contactNumber,
+      website,
+      industry,
+      companyAddress,
+      companySize,
+      foundedYear,
+      description,
+      photo
+    ];
 
-const calculateProgress = () => {
-  // Count the number of fields that are filled in
-  const fields = [
-    companyName,
-    contactPerson,
-    contactNumber,
-    website,
-    industry,
-    companyAddress,
-    companySize,
-    foundedYear,
-    description,
-    photo
-  ];
+    const filledFields = fields.filter(field => field && field !== ''); // Filter out empty fields
+    const progress = (filledFields.length / fields.length) * 100; // Calculate percentage
 
-  const filledFields = fields.filter(field => field && field !== ''); // Filter out empty fields
-  const progress = (filledFields.length / fields.length) * 100; // Calculate percentage
-
-  return Math.round(progress); // Return the percentage as an integer
-};
+    return Math.round(progress); // Return the percentage as an integer
+  };
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault(); 
@@ -154,7 +154,15 @@ const calculateProgress = () => {
     setShowModal(false); 
   };
 
+  const handleCheckboxChange = (e) => {
+    setIsChecked(e.target.checked);
+  };
+
   const handleConfirmSubmit = () => {
+    if (!isChecked) {
+      setError("You must agree to the terms and conditions before submitting.");
+      return;
+    }
     setShowModal(false); 
     handleSubmit();
   };
@@ -166,18 +174,18 @@ const calculateProgress = () => {
         <h5 className="text-center">Let us know more about your company</h5>
       </div>
       <div className="mb-4 mt-5"> {/* Add a top margin using mt-5 for more space */}
-  {/* Title or Label for the Progress */}
-  <h5 className="text-start text-muted">Sign-Up Progress</h5> {/* Left-align the text using text-start */}
-  <p className="text-start text-muted">Fill out the information below to complete your profile.</p> {/* Left-align the description */}
-      {/* Progress Bar */}
-      <ProgressBar
-        now={calculateProgress()} // Dynamically calculate progress
-        label={`${calculateProgress()}%`}
-        className="mb-4"
-        variant="info" // You can change this variant for different colors
-        style={{ height: '20px', borderRadius: '10px' }} // Custom height and rounded corners
-      />
-    </div>
+        {/* Title or Label for the Progress */}
+        <h5 className="text-start text-muted">Sign-Up Progress</h5> {/* Left-align the text using text-start */}
+        <p className="text-start text-muted">Fill out the information below to complete your profile.</p> {/* Left-align the description */}
+        {/* Progress Bar */}
+        <ProgressBar
+          now={calculateProgress()} // Dynamically calculate progress
+          label={`${calculateProgress()}%`}
+          className="mb-4"
+          variant="info" // You can change this variant for different colors
+          style={{ height: '20px', borderRadius: '10px' }} // Custom height and rounded corners
+        />
+      </div>
       <h3>Company Details</h3>
       <form onSubmit={handleShowModal}>
         <div className="mb-4 border p-4">
@@ -237,23 +245,21 @@ const calculateProgress = () => {
               className="form-control"
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
+              required
+            />
+          </div>
+          <div className="col-md-6">
+            <label htmlFor="industry" className="form-label">Industry <span className="text-danger">*</span></label>
+            <Select
+              id="industry"
+              options={industryOptions}
+              value={industry}
+              onChange={setIndustry}
+              isSearchable
+              required
             />
           </div>
         </div>
-        <div className="mb-3">
-          <label htmlFor="industry" className="form-label">Industry *</label>
-          <Select
-            id="industry"
-            options={industryOptions}
-            value={industry}
-            onChange={setIndustry}
-            placeholder="Select Industry"
-            isClearable
-            required
-          />
-        </div>
-        <hr />
-        <h3>Additional Information</h3>
         <div className="mb-3">
           <label htmlFor="companyAddress" className="form-label">Company Address <span className="text-danger">*</span></label>
           <input
@@ -265,56 +271,74 @@ const calculateProgress = () => {
             required
           />
         </div>
-        <div className="mb-3">
-          <label htmlFor="companySize" className="form-label">Company Size</label>
-          <input
-            type="text"
-            id="companySize"
-            className="form-control"
-            value={companySize}
-            onChange={(e) => setCompanySize(e.target.value)}
-          />
+        <div className="row mb-3">
+          <div className="col-md-6">
+            <label htmlFor="companySize" className="form-label">Company Size <span className="text-danger">*</span></label>
+            <input
+              type="text"
+              id="companySize"
+              className="form-control"
+              value={companySize}
+              onChange={(e) => setCompanySize(e.target.value)}
+              required
+            />
+          </div>
+          <div className="col-md-6">
+            <label htmlFor="foundedYear" className="form-label">Founded Year <span className="text-danger">*</span></label>
+            <input
+              type="text"
+              id="foundedYear"
+              className="form-control"
+              value={foundedYear}
+              onChange={(e) => setFoundedYear(e.target.value)}
+              required
+            />
+          </div>
         </div>
         <div className="mb-3">
-          <label htmlFor="foundedYear" className="form-label">Founded Year <span className="text-danger">*</span></label>
-          <input
-            type="text"
-            id="foundedYear"
-            className="form-control"
-            value={foundedYear}
-            onChange={(e) => setFoundedYear(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="description" className="form-label">Description <span className="text-danger">*</span></label>
+          <label htmlFor="description" className="form-label">Company Description <span className="text-danger">*</span></label>
           <textarea
             id="description"
             className="form-control"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            rows={3}
-            maxLength={400}
+            rows="3"
             required
           />
         </div>
+        <div className="mb-3">
+          <input
+            type="checkbox"
+            checked={isChecked}
+            onChange={handleCheckboxChange}
+            id="termsCheckbox"
+          />
+          <label htmlFor="termsCheckbox" className="form-label ms-2">
+            I agree to the <a href="#!" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
+          </label>
+        </div>
         <div className="text-center">
-          <button type="submit" className="btn btn-success float-end">Register</button>
+          <button type="submit" className="btn btn-primary" disabled={calculateProgress() < 100}>
+            Submit Profile
+          </button>
         </div>
       </form>
       {error && <div className="alert alert-danger mt-3">{error}</div>}
 
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Submission</Modal.Title>
+          <Modal.Title>Terms and Conditions</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to submit your profile?</Modal.Body>
+        <Modal.Body>
+          <TermsAndConditions />
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
-            Cancel
+            Close
           </Button>
-          <Button variant="primary" onClick={handleConfirmSubmit}>
-            Confirm
+          <Button variant="primary" onClick={handleConfirmSubmit}
+          disabled={!isChecked}>
+            Confirm & Submit
           </Button>
         </Modal.Footer>
       </Modal>

@@ -3,7 +3,7 @@ import React from "react";
 function TermsAndConditions() {
   return (
     <div className="container-fluid" style={{ maxHeight: "60vh", overflowY: "auto" }}>
-      <h2 className="mb-4 text-center">Terms and Conditions for TrabahaDoor</h2>
+      <h2 className="mb-4 text-start">Terms and Conditions</h2>
       
       <p className="font-weight-bold">
         <strong>Effective Date:</strong> November 2024
