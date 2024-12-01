@@ -660,7 +660,6 @@ const handleSubmit = async (e) => {
             type="button"
             className="btn btn-success"
             onClick={handleFormSubmit}
-            disabled={!isChecked}
           >
             Submit Profile
           </button>
@@ -688,7 +687,8 @@ const handleSubmit = async (e) => {
           <Button variant="secondary" onClick={handleModalCancel}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleModalSubmit}>
+          <Button variant="primary" onClick={handleSubmit}
+          disabled={!isChecked}>
             Confirm Submission
           </Button>
         </Modal.Footer>
