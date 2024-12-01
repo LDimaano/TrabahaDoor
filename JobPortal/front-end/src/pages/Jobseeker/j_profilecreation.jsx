@@ -9,7 +9,7 @@ import { Modal, Button } from 'react-bootstrap';
 
 function ProfileCreation() {
   const navigate = useNavigate();
-
+  const [isChecked, setIsChecked] = useState(false);
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
@@ -126,7 +126,10 @@ function ProfileCreation() {
       console.error('Error uploading profile picture:', error);
     }
 };
-  
+
+const handleCheckboxChange = (e) => {
+  setIsChecked(e.target.checked);
+};
 
 const calculateProgress = () => {
   let progress = 0;
@@ -643,36 +646,49 @@ const handleSubmit = async (e) => {
           </button>
         </div>
 
-
         {error && (
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        )}
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
+        <div className="form-check mb-3">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="termsCheckbox"
+            onChange={handleCheckboxChange}
+          />
+          <label className="form-check-label" htmlFor="termsCheckbox">
+            I agree to the <a href="/terms">terms and conditions</a>
+          </label>
+        </div>
         <div className="d-grid gap-2">
-        <button type="button" className="btn btn-success" onClick={handleFormSubmit}>Submit Profile</button>
-      </div>
+          <button
+            type="button"
+            className="btn btn-success"
+            onClick={handleFormSubmit}
+            disabled={!isChecked}
+          >
+            Submit Profile
+          </button>
+        </div>
       </form>
       <Modal show={showModal} onHide={handleModalCancel}>
-      <Modal.Header closeButton>
-        <Modal.Title>Confirm Profile Submission</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        Are you sure you want to submit your profile?
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleModalCancel}>
-          Cancel
-        </Button>
-        <Button variant="primary" onClick={handleModalSubmit}>
-          Submit
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  </div>
-    
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Profile Submission</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to submit your profile?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleModalCancel}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleModalSubmit}>
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 }
-
 
 export default ProfileCreation;
