@@ -214,7 +214,7 @@ router.get('/fetchjobseeker-profile/:userId', async (req, res) => {
       WHERE je.user_id = $1
     `, [userId]);
 
-    const educations = jobEducation.rows.map(educations => ({
+    const educations = EducationsData.rows.map(educations => ({
       educationId: educations.education_id || 'Not Provided',
       educationName: educations.education_name || 'Not Provided',
     }));
