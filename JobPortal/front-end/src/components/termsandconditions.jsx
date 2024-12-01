@@ -2,7 +2,7 @@ import React from 'react';
 
 const TermsAndConditions = () => {
   return (
-    <div className="container">
+    <div className="container-fluid" style={{ maxHeight: "80vh", overflowY: "auto", padding: "20px" }}>
       <h1>Terms and Conditions</h1>
       <p><strong>Effective Date:</strong> November 2024</p>
       <p>Welcome to TrabahaDoor! By accessing or using our website and services, you agree to be bound by these Terms and Conditions (“Terms”). Please read them carefully before using the Portal. If you do not agree to these Terms, you must not use the Portal.</p>
