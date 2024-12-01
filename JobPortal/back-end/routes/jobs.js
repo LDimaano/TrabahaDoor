@@ -230,6 +230,21 @@ router.get('/fetch-jobinfo/:job_id', async (req, res) => {
       skillName: skill.skill_name || 'Not Provided',
     }));
 
+     // Query to fetch skills
+     const jobEducation = await pool.query(`
+      SELECT
+        je.education_id,
+        e.education_name
+      FROM job_education je
+      JOIN educations e ON je.education_id = e.education_id
+      WHERE job_id = $1
+    `, [job_id]);
+
+    const educations = jobEducation.rows.map(educations => ({
+      educationId: educations.skill_id || 'Not Provided',
+      educationName: educations.skill_name || 'Not Provided',
+    }));
+
     res.json({
       JobDescription: {
         job_id: JobDescription.job_id || 'Not Provided',
@@ -244,6 +259,7 @@ router.get('/fetch-jobinfo/:job_id', async (req, res) => {
         description:   JobDescription.jobdescription || 'Not Provided',
         qualifications:   JobDescription.qualifications || 'Not Provided',
         skills: skills, 
+        educations: educations
       },
     });
   } catch (error) {

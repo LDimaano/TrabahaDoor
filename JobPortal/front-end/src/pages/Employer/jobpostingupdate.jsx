@@ -24,6 +24,8 @@ const UpdateJobPosting = () => {
   const [positions, setPositions] = useState(1);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [education, setEducation] = useState([]);
+  const [educationOptions, setEducationOptions] = useState([]);
 
   const navigate = useNavigate();
 
@@ -57,6 +59,15 @@ const UpdateJobPosting = () => {
         setSkills(skillsArray);
 
         console.log(setSkills)
+
+        const educationArray = data.JobDescription.educations.map(educations => ({
+          value: educations.educationId, 
+          label: educations.educationName 
+        })) || [];
+        
+        setEducation(educationArray);
+
+        console.log(setEducation)
 
       } catch (error) {
         console.error('Error fetching job data:', error);
@@ -114,6 +125,22 @@ const UpdateJobPosting = () => {
       }
     };
 
+    const fetchEducationOptions = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/educations`); 
+        if (!response.ok) throw new Error('Failed to fetch industries');
+        const data = await response.json();
+        const educationOptions = data.map(education => ({
+          value: education.education_id,
+          label: education.education_name
+        }));
+        setEducationOptions(educationOptions); 
+      } catch (error) {
+        console.error('Error fetching education options:', error);
+      }
+    };
+
+    fetchEducationOptions();
     fetchSkills();
     fetchJobTitles();
     fetchIndustries();
@@ -137,6 +164,15 @@ const UpdateJobPosting = () => {
 
   const handleJobTitleChange = (selectedOption) => {
     setJobTitle(selectedOption);
+  };
+
+  const handleAddEducation = () => {
+    setEducation([...education, null]);
+  };
+  
+  const handleRemoveEducation = (index) => {
+    const newEducation = education.filter((_, i) => i !== index);
+    setEducation(newEducation);
   };
 
   const handleBack = () => {
@@ -383,6 +419,35 @@ const UpdateJobPosting = () => {
         <section className="mb-4">
           <h3 className="h5">Qualifications</h3>
           <p>Update the qualifications and requirements for this job.</p>
+          <p>Select the education levels or courses required for this job.</p>
+      {education.map((edu, index) => (
+        <div className="mb-3" key={index}>
+          <div className="d-flex">
+            <Select
+              id={`education_${index}`}
+              value={edu}
+              options={educationOptions}
+              onChange={(selectedOption) => handleEducationChange(index, selectedOption)}
+              placeholder="Select an education level or course"
+              className="flex-grow-1 me-2"
+            />
+            <button
+              type="button"
+              className="btn btn-outline-danger"
+              onClick={() => handleRemoveEducation(index)}
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      ))}
+      <button
+        type="button"
+        className="btn btn-outline-primary"
+        onClick={handleAddEducation}
+      >
+        Add Education
+      </button>
           <textarea
             id="qualifications"
             className="form-control"
