@@ -655,9 +655,9 @@ const handleSubmit = async (e) => {
           {error}
         </div>
       )}
-        <div className="d-grid gap-2">
+        <div className="text-end">
           <button
-            type="button"
+            type="submit"
             className="btn btn-success"
             onClick={handleFormSubmit}
           >

@@ -306,8 +306,8 @@ function EmployerProfileCreation() {
             required
           />
         </div>
-        <div className="text-center">
-          <button type="submit" className="btn btn-primary">
+        <div className="text-end">
+          <button type="submit" className="btn btn-success">
             Submit Profile
           </button>
         </div>
