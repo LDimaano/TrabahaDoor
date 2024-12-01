@@ -25,6 +25,7 @@ const JobPosting = () => {
   const [showModal, setShowModal] = useState(false); 
   const [successMessage, setSuccessMessage] = useState(''); 
   const [selectedEducation, setSelectedEducation] = useState('');
+  const [educationOptions, setEducationOptions] = useState([]);
 
   const navigate = useNavigate();
 
@@ -76,7 +77,18 @@ const JobPosting = () => {
         setError('Failed to load industries.');
       }
     };
+      const fetchEducationOptions = async () => {
+        try {
+          const response = await fetch('/api/education-options'); // Replace with actual API URL
+          const data = await response.json();
+          setEducationOptions(data); // Set the fetched education options
+        } catch (error) {
+          console.error('Error fetching education options:', error);
+        }
+      };
 
+
+    fetchEducationOptions();
     fetchSkills();
     fetchJobTitles();
     fetchIndustries();
