@@ -24,7 +24,7 @@ const JobPosting = () => {
   const [error, setError] = useState(''); 
   const [showModal, setShowModal] = useState(false); 
   const [successMessage, setSuccessMessage] = useState(''); 
-  const [education, setEducation] = useState('');
+  const [education, setEducation] = useState([]);
   const [educationOptions, setEducationOptions] = useState([]);
 
   const navigate = useNavigate();
