@@ -79,9 +79,14 @@ const JobPosting = () => {
     };
       const fetchEducationOptions = async () => {
         try {
-          const response = await fetch('/api/education-options'); // Replace with actual API URL
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/educations`); 
+          if (!response.ok) throw new Error('Failed to fetch industries');
           const data = await response.json();
-          setEducationOptions(data); // Set the fetched education options
+          const educationOptions = data.map(education => ({
+            value: education.education_id,
+            label: education.education_name
+          }));
+          setEducationOptions(educationOptions); 
         } catch (error) {
           console.error('Error fetching education options:', error);
         }
@@ -148,6 +153,7 @@ const JobPosting = () => {
       jobtitle_id: jobTitle?.value || '', 
       industry_id: industry?.value || '',
       SalaryRange: salaryRange,
+      education: education.map(education => education?.value || ''),
       skills: skills.map(skill => skill?.value || ''),
       Responsibilities: responsibilities,
       JobDescription: jobDescription, 

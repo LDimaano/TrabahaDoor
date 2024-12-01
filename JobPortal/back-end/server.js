@@ -1129,6 +1129,17 @@ app.get('/api/industries', async (req, res) => {
   }
 });
 
+// Route to get educations
+app.get('/api/educations', async (req, res) => {
+  try {
+    const educations = await pool.query('SELECT education_id, education_name FROM educations');
+    res.json(educations.rows);
+  } catch (err) {
+    console.error('Error fetching industries:', err);
+    res.status(500).json({ error: 'Failed to fetch industries' });
+  }
+});
+
 
 const userRoutes = require('./routes/users');
 const jobSeekerRoutes = require('./routes/jobseekers');
