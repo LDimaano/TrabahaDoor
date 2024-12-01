@@ -12,6 +12,7 @@ router.post('/profile', async (req, res) => {
     gender,
     address_id, 
     industry_id,
+    educations,
     experience,
     skills,
   } = req.body;
@@ -52,6 +53,16 @@ router.post('/profile', async (req, res) => {
         )
         VALUES ($1, $2)`,
         [user_id, skill_id]
+      );
+    }
+
+    for (const education_id of educations) {
+      await pool.query(
+        `INSERT INTO job_education (
+          user_id, education_id
+        )
+        VALUES ($1, $2)`,
+        [user_id, education_id]
       );
     }
 

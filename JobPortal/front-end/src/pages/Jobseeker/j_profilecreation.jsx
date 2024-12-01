@@ -19,8 +19,6 @@ function ProfileCreation() {
   const [addressOptions, setAddressOptions] = useState([]);
   const [industry, setIndustry] = useState(null);
   const [industryOptions, setIndustryOptions] = useState([]);
-  const [selectedEducation, setSelectedEducation] = useState('');
-  const [educationOptions, setEducationOptions] = useState([]);
   const [experience, setExperience] = useState([
     {
       jobTitle: null,
@@ -35,7 +33,8 @@ function ProfileCreation() {
   const [skills, setSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]);
-  const [salaryRange, setSalaryRange] = useState(5000);
+  const [education, setEducation] = useState([]);
+  const [educationOptions, setEducationOptions] = useState([]);
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
 
@@ -72,6 +71,23 @@ function ProfileCreation() {
     const newExperience = [...experience]; 
     newExperience[index].salaryRange = `${values[0]}-${values[1]}`; 
     setExperience(newExperience); 
+  };
+
+  const handleEducationChange = (index, selectedOption) => {
+    const newEducation = [...education];
+    newEducation[index] = selectedOption;
+    setEducation(newEducation);
+  };
+  
+  // Add a new education field
+  const handleAddEducation = () => {
+    setEducation([...education, null]);
+  };
+  
+  // Remove an education field
+  const handleRemoveEducation = (index) => {
+    const newEducation = education.filter((_, i) => i !== index);
+    setEducation(newEducation);
   };
   
   
@@ -201,6 +217,7 @@ const handleSubmit = async (e) => {
     gender,
     address_id: address?.value || '',
     industry_id: industry?.value || '',
+    educations: education.map(education => education?.value || ''),
     skills: skills.map(skill => skill?.value || ''),
     experience: experience.map(exp => ({
       jobTitle: exp.jobTitle?.value || '',
@@ -311,9 +328,14 @@ const handleSubmit = async (e) => {
 
     const fetchEducationOptions = async () => {
       try {
-        const response = await fetch('/api/education-options'); // Replace with actual API URL
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/educations`); 
+        if (!response.ok) throw new Error('Failed to fetch industries');
         const data = await response.json();
-        setEducationOptions(data); // Set the fetched education options
+        const educationOptions = data.map(education => ({
+          value: education.education_id,
+          label: education.education_name
+        }));
+        setEducationOptions(educationOptions); 
       } catch (error) {
         console.error('Error fetching education options:', error);
       }
@@ -439,18 +461,35 @@ const handleSubmit = async (e) => {
         <div className="mb-3">
         <label htmlFor="educationDropdown" className="form-label">
         Education Level or Course
-      </label>
-      <select
-        id="educationDropdown"
-        className="form-select mb-3"
-        value={selectedEducation}
-        onChange={(e) => setSelectedEducation(e.target.value)}
+      </label><br></br>
+      {education.map((edu, index) => (
+        <div className="mb-3" key={index}>
+          <div className="d-flex">
+            <Select
+              id={`education_${index}`}
+              value={edu}
+              options={educationOptions}
+              onChange={(selectedOption) => handleEducationChange(index, selectedOption)}
+              placeholder="Select an education level or course"
+              className="flex-grow-1 me-2"
+            />
+            <button
+              type="button"
+              className="btn btn-outline-danger"
+              onClick={() => handleRemoveEducation(index)}
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      ))}
+      <button
+        type="button"
+        className="btn btn-outline-primary"
+        onClick={handleAddEducation}
       >
-        <option value="">Select an education level or course</option>
-        {educationOptions.map((option, index) => (
-          <option key={index} value={option}>{option}</option>
-        ))}
-      </select>
+        Add Education
+      </button>
       </div>
       </div>
 
