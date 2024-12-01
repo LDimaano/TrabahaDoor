@@ -108,6 +108,15 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
         JOIN skills s ON jss.skill_id = s.skill_id
         WHERE jss.user_id = $1
       `, [user_id]);
+
+      const EducationsData = await pool.query(`
+        SELECT
+          e.education_id, 
+          e.education_name 
+          FROM js_education je
+          JOIN educations e ON je.education_id = e.education_id
+        WHERE je.user_id = $1
+      `, [user_id]);
   
       if (jobSeekerData.rows.length === 0) {
         return res.status(404).json({ message: 'Job seeker not found' });
@@ -138,7 +147,8 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
           job_title: jobTitle
         },
         jobExperience: jobExperiences,
-        skills: skillsData.rows.map(skill => skill.skill_name)
+        skills: skillsData.rows.map(skill => skill.skill_name),
+        educations: EducationsData.rows.map(education => education.education_name)
       });
     } catch (error) {
       console.error('Error fetching job seeker data:', error.message);
@@ -400,6 +410,13 @@ router.get('/joblistings/:jobId', async (req, res) => {
       JOIN skills s ON js.skill_id = s.skill_id
       WHERE js.job_id = $1;
     `;
+
+    const educationsQuery = `
+    SELECT e.education_name
+    FROM job_education je
+    JOIN educations e ON je.education_id = e.education_id
+    WHERE je.job_id = $1;
+  `;
   
     try {
       console.log('Executing job query...');
@@ -417,9 +434,10 @@ router.get('/joblistings/:jobId', async (req, res) => {
   
       const jobData = jobResult.rows[0];
       const skills = skillsResult.rows.map(row => row.skill_name);
+      const educations = educationsResult.rows.map(row => row.education_name);
       
       console.log('Responding with job data and skills:', { ...jobData, skills });
-      res.json({ ...jobData, skills });
+      res.json({ ...jobData, skills, educations });
     } catch (error) {
       console.error('Error fetching job details:', error);
       res.status(500).json({ error: 'Internal server error' });

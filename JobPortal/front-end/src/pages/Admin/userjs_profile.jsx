@@ -49,6 +49,7 @@ const MyProfile = () => {
           gender: data.jobSeeker.gender || 'Not Specified',
           address: data.jobSeeker.address || 'Address not provided',
           industry: data.jobSeeker.industry || 'Industry not provided',
+          educations: data.educations || [],
         });
 
         const firstJobExperience = data.jobExperience[0] || {};

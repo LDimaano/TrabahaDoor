@@ -86,6 +86,7 @@ const JobDescription = () => {
               jobdescription={jobData.jobdescription}
               responsibilities={jobData.responsibilities ? jobData.responsibilities.split(',') : []}
               qualifications={jobData.qualifications ? jobData.qualifications.split(',') : []}
+              educations={jobData.educations || []}    
             />
             <JobDetails
               jobInfo={[
