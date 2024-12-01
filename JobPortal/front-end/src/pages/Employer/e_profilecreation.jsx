@@ -306,31 +306,31 @@ function EmployerProfileCreation() {
             required
           />
         </div>
-        <div className="mb-3">
-          <input
-            type="checkbox"
-            checked={isChecked}
-            onChange={handleCheckboxChange}
-            id="termsCheckbox"
-          />
-          <label htmlFor="termsCheckbox" className="form-label ms-2">
-            I agree to the <a href="#!" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
-          </label>
-        </div>
         <div className="text-center">
-          <button type="submit" className="btn btn-primary" disabled={calculateProgress() < 100}>
+          <button type="submit" className="btn btn-primary">
             Submit Profile
           </button>
         </div>
       </form>
       {error && <div className="alert alert-danger mt-3">{error}</div>}
 
-      <Modal show={showModal} onHide={handleCloseModal}>
+      <Modal show={showModal} onHide={handleCloseModal} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Terms and Conditions</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <TermsAndConditions />
+          <div className="form-check mt-3">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="termsCheckbox"
+              onChange={handleCheckboxChange}
+            />
+            <label className="form-check-label" htmlFor="termsCheckbox">
+              I have read and agree to the terms and conditions.
+            </label>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
