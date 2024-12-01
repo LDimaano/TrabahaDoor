@@ -24,7 +24,7 @@ const JobPosting = () => {
   const [error, setError] = useState(''); 
   const [showModal, setShowModal] = useState(false); 
   const [successMessage, setSuccessMessage] = useState(''); 
-  const [selectedEducation, setSelectedEducation] = useState('');
+  const [education, setEducation] = useState('');
   const [educationOptions, setEducationOptions] = useState([]);
 
   const navigate = useNavigate();
@@ -111,6 +111,23 @@ const JobPosting = () => {
 
   const handleJobTitleChange = (selectedOption) => {
     setJobTitle(selectedOption); 
+  };
+
+  const handleEducationChange = (index, selectedOption) => {
+    const newEducation = [...education];
+    newEducation[index] = selectedOption;
+    setEducation(newEducation);
+  };
+  
+  // Add a new education field
+  const handleAddEducation = () => {
+    setEducation([...education, null]);
+  };
+  
+  // Remove an education field
+  const handleRemoveEducation = (index) => {
+    const newEducation = education.filter((_, i) => i !== index);
+    setEducation(newEducation);
   };
 
   const handleBack = () => {
@@ -375,25 +392,40 @@ const JobPosting = () => {
         </section>
 
 
-        <section className="mb-4">
+      <section className="mb-4">
       <h3 className="h5">Qualifications</h3>
       <p>List the qualifications and requirements for this job.</p>
 
-      {/* Dropdown for Education */}
-      <label htmlFor="educationDropdown" className="form-label">
-        Education Level or Course
-      </label>
-      <select
-        id="educationDropdown"
-        className="form-select mb-3"
-        value={selectedEducation}
-        onChange={(e) => setSelectedEducation(e.target.value)}
+          <p>Select the education levels or courses required for this job.</p>
+      {education.map((edu, index) => (
+        <div className="mb-3" key={index}>
+          <div className="d-flex">
+            <Select
+              id={`education_${index}`}
+              value={edu}
+              options={educationOptions}
+              onChange={(selectedOption) => handleEducationChange(index, selectedOption)}
+              placeholder="Select an education level or course"
+              className="flex-grow-1 me-2"
+            />
+            <button
+              type="button"
+              className="btn btn-outline-danger"
+              onClick={() => handleRemoveEducation(index)}
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      ))}
+      <button
+        type="button"
+        className="btn btn-outline-primary"
+        onClick={handleAddEducation}
       >
-        <option value="">Select an education level or course</option>
-        {educationOptions.map((option, index) => (
-          <option key={index} value={option}>{option}</option>
-        ))}
-      </select>
+        Add Education
+      </button>
+
 
       {/* Textarea for Qualifications */}
       <textarea
