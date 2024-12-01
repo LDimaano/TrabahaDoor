@@ -382,6 +382,20 @@ router.get('/fetchjobseeker-profileadmin/:user_id', async (req, res) => {
       skillName: skill.skill_name || 'Not Provided',
     }));
 
+    const EducationsData = await pool.query(`
+      SELECT
+        e.education_id, 
+        e.education_name 
+        FROM js_education je
+        JOIN educations e ON je.education_id = e.education_id
+      WHERE je.user_id = $1
+    `, [userId]);
+
+    const educations = EducationsData.rows.map(educations => ({
+      educationId: educations.education_id || 'Not Provided',
+      educationName: educations.education_name || 'Not Provided',
+    }));
+
     res.json({
       jobSeeker: {
         fullName: jobSeeker.full_name || 'Not Provided',
@@ -394,6 +408,7 @@ router.get('/fetchjobseeker-profileadmin/:user_id', async (req, res) => {
         address_name: jobSeeker.location || 'Not Provided',
         experiences: jobExperiences,
         skills: skills, 
+        educations: educations
       },
     });
   } catch (error) {
