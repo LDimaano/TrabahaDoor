@@ -121,7 +121,7 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
         FROM js_education je
         JOIN educations e ON je.education_id = e.education_id
       WHERE je.user_id = $1
-    `, [userId]);
+    `, [user_id]);
 
     if (jobSeekerData.rows.length === 0) {
       return res.status(404).json({ message: 'Job seeker not found' });
