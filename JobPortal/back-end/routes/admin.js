@@ -419,19 +419,16 @@ router.get('/joblistings/:jobId', async (req, res) => {
   `;
   
     try {
-      console.log('Executing job query...');
       const jobResult = await pool.query(jobQuery, [jobId]);
-      console.log('Job query result:', jobResult.rows);
-  
+      
       if (jobResult.rows.length === 0) {
         console.warn(`Job not found for Job ID: ${jobId}`);
         return res.status(404).json({ error: 'Job not found' });
       }
   
-      console.log('Executing skills query...');
       const skillsResult = await pool.query(skillsQuery, [jobId]);
-      console.log('Skills query result:', skillsResult.rows);
-  
+      const educationsResult = await pool.query(educationsQuery, [jobId]);
+      
       const jobData = jobResult.rows[0];
       const skills = skillsResult.rows.map(row => row.skill_name);
       const educations = educationsResult.rows.map(row => row.education_name);
