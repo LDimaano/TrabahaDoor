@@ -77,7 +77,7 @@ const ApplicantDashboard = () => {
         <AdminNavbar toggleSidebar={toggleSidebar} /> {/* Include Navbar for mobile */}
         <section>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <h3>Unapproved Employers: {filteredListings.length}</h3>
+            <h3>Pending Employers: {filteredListings.length}</h3>
             <div className="input-group" style={{ maxWidth: '300px' }}>
               <input
                 type="text"

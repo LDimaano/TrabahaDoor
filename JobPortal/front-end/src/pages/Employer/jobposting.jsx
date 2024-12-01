@@ -24,6 +24,7 @@ const JobPosting = () => {
   const [error, setError] = useState(''); 
   const [showModal, setShowModal] = useState(false); 
   const [successMessage, setSuccessMessage] = useState(''); 
+  const [selectedEducation, setSelectedEducation] = useState('');
 
   const navigate = useNavigate();
 
@@ -363,17 +364,35 @@ const JobPosting = () => {
 
 
         <section className="mb-4">
-          <h3 className="h5">Qualifications</h3>
-          <p>List the qualifications and requirements for this job.</p>
-          <textarea
-            id="qualifications"
-            className="form-control"
-            placeholder="Describe the education, experience, and skills required for this position."
-            rows="4"
-            value={qualifications}
-            onChange={(e) => setQualifications(e.target.value)}
-          />
-        </section>
+      <h3 className="h5">Qualifications</h3>
+      <p>List the qualifications and requirements for this job.</p>
+
+      {/* Dropdown for Education */}
+      <label htmlFor="educationDropdown" className="form-label">
+        Education Level or Course
+      </label>
+      <select
+        id="educationDropdown"
+        className="form-select mb-3"
+        value={selectedEducation}
+        onChange={(e) => setSelectedEducation(e.target.value)}
+      >
+        <option value="">Select an education level or course</option>
+        {educationOptions.map((option, index) => (
+          <option key={index} value={option}>{option}</option>
+        ))}
+      </select>
+
+      {/* Textarea for Qualifications */}
+      <textarea
+        id="qualifications"
+        className="form-control"
+        placeholder="Describe the education, experience, and skills required for this position."
+        rows="4"
+        value={qualifications}
+        onChange={(e) => setQualifications(e.target.value)}
+      />
+    </section>
 
         <section className="mb-4">
           <h3 className="h5">Required Skills</h3>

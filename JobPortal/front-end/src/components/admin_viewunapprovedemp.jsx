@@ -136,42 +136,42 @@ function ApplicantJoblist({ currentListings, fetchUsers }) {
                   </td>
                   <td>
                     <Button variant="link" onClick={() => handleShowModal(listing.sec_certificate)}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
+                      <FontAwesomeIcon icon={faEye} /> View
                     </Button>
                   </td>
                   <td>
                     <Button variant="link" onClick={() => handleShowModal(listing.business_permit)}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
+                      <FontAwesomeIcon icon={faEye} /> View
                     </Button>
                   </td>
                   <td>
                     <Button variant="link" onClick={() => handleShowModal(listing.bir_certificate)}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
+                      <FontAwesomeIcon icon={faEye} /> View
                     </Button>
                   </td>
                   <td>
                     <Button variant="link" onClick={() => handleShowModal(listing.poea_license)}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
+                      <FontAwesomeIcon icon={faEye} /> View
                     </Button>
                   </td>
                   <td>
                     <Button variant="link" onClick={() => handleShowModal(listing.private_recruitment_agency_license)}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
+                      <FontAwesomeIcon icon={faEye} /> View
                     </Button>
                   </td>
                   <td>
                     <Button variant="link" onClick={() => handleShowModal(listing.contract_sub_contractor_certificate)}>
-                      <FontAwesomeIcon icon={faEye} /> View Document
+                      <FontAwesomeIcon icon={faEye} /> View
                     </Button>
                   </td>
                   <td>
-                    <Button variant="danger" onClick={() => handleShowApproveModal(listing.user_id)}>
-                      Approve Employer
+                    <Button variant="success" onClick={() => handleShowApproveModal(listing.user_id)}>
+                      Approve
                     </Button>
                   </td>
                   <td>
-                    <Button variant="warning" onClick={() => handleShowRejectModal(listing.user_id)}>
-                      Reject Employer
+                    <Button variant="danger" onClick={() => handleShowRejectModal(listing.user_id)}>
+                      Reject
                     </Button>
                   </td>
                 </tr>
