@@ -156,6 +156,7 @@ const MyProfile = () => {
           gender: data.jobSeeker.gender || 'Not Specified',
           address: data.jobSeeker.address || 'Address not provided',
           industry: data.jobSeeker.industry || 'Industry not provided',
+          educations: data.educations.map(education => education.education_name) || [],
         });
 
         const firstJobExperience = data.jobExperience[0] || {};
