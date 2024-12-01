@@ -121,6 +121,7 @@ router.post('/joblistings', async (req, res) => {
     JobDescription,
     Qualifications,
     skills,
+    educations,
     positions // New field added here
   } = req.body;
 
@@ -143,9 +144,9 @@ router.post('/joblistings', async (req, res) => {
       RETURNING job_id`,
       [user_id, jobtitle_id, industry_id, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications, positions]
     );
-
+  
     const job_id = newJobResult.rows[0].job_id;
-
+  
     for (const skill_id of skills) {
       await pool.query(
         `INSERT INTO job_skills (
@@ -155,7 +156,17 @@ router.post('/joblistings', async (req, res) => {
         [job_id, skill_id, user_id]
       );
     }
-
+  
+    for (const education_id of educations) {
+      await pool.query(
+        `INSERT INTO job_education (
+          job_id, education_id, user_id
+        )
+        VALUES ($1, $2, $3)`,
+        [job_id, education_id, user_id]
+      );
+    }
+  
     res.json({ message: 'Job posted successfully', job_id });
   } catch (err) {
     console.error('Error posting job:', err.message);

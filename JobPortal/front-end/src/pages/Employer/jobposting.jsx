@@ -153,7 +153,7 @@ const JobPosting = () => {
       jobtitle_id: jobTitle?.value || '', 
       industry_id: industry?.value || '',
       SalaryRange: salaryRange,
-      education: education.map(education => education?.value || ''),
+      educations: education.map(education => education?.value || ''),
       skills: skills.map(skill => skill?.value || ''),
       Responsibilities: responsibilities,
       JobDescription: jobDescription, 
