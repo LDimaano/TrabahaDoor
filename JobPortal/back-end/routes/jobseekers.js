@@ -414,6 +414,14 @@ router.get('/job-seeker/:userId', async (req, res) => {
       WHERE jss.user_id = $1
     `, [userId]);
 
+    // Query skills data
+    const educationData = await pool.query(`
+      SELECT e.education_name
+      FROM js_education je
+      JOIN educations e ON je.education_id = e.education_id
+      WHERE je.user_id = $1
+    `, [userId]);
+
     // Aggregate job experiences
     const jobExperiences = jobExperienceData.rows.map(exp => ({
       job_title: exp.job_title || 'Not Specified',
@@ -440,7 +448,8 @@ router.get('/job-seeker/:userId', async (req, res) => {
         job_title: jobTitle 
       },
       jobExperience: jobExperiences, 
-      skills: skillsData.rows 
+      skills: skillsData.rows,
+      educations: educationData.rows
     });
   } catch (error) {
     console.error('Error fetching job seeker data:', error.message);
