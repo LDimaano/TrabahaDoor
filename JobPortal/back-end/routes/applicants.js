@@ -140,22 +140,30 @@ router.get('/applicantprofile/:user_id', async (req, res) => {
     const jobSeeker = jobSeekerData.rows[0];
     const jobTitle = jobExperiences.length > 0 ? jobExperiences[0].job_title : 'Not Specified';
 
-    res.json({
+        // Prepare the data
+    const dataToSend = {
       jobSeeker: {
         full_name: jobSeeker.full_name || 'Not Provided',
         email: jobSeeker.email || 'Not Provided',
         phone_number: jobSeeker.phone_number || 'Not Provided',
         date_of_birth: jobSeeker.date_of_birth ? new Date(jobSeeker.date_of_birth).toLocaleDateString() : null,
         gender: jobSeeker.gender || 'Not Specified',
-        address: jobSeeker.location|| 'Address not provided',
+        address: jobSeeker.location || 'Address not provided',
         industry: jobSeeker.industry_name || 'Industry not provided',
-        image: jobSeeker.profile_picture_url  || 'No Image',
+        image: jobSeeker.profile_picture_url || 'No Image',
         job_title: jobTitle
       },
       jobExperience: jobExperiences,
       skills: skillsData.rows.map(skill => skill.skill_name),
-      educations: EducationsData.rows.map(education => education.education_name) 
-    });
+      educations: EducationsData.rows.map(education => education.education_name)
+    };
+
+    // Log the data that will be sent
+    console.log('data to be sent:', JSON.stringify(dataToSend, null, 2));
+
+    // Send the response with the data
+    res.json(dataToSend);
+
   } catch (error) {
     console.error('Error fetching job seeker data:', error.message);
     res.status(500).json({ error: 'Server error: Failed to fetch applicant profile data' });
