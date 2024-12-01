@@ -3,7 +3,6 @@ import React from "react";
 function TermsAndConditions() {
   return (
     <div className="container-fluid" style={{ maxHeight: "80vh", overflowY: "auto", padding: "20px" }}>
-      <h2 className="mb-5 text-center text-primary font-weight-bold">Terms and Conditions</h2>
       
       <div className="text-muted mb-3">
         <p className="font-weight-bold">
