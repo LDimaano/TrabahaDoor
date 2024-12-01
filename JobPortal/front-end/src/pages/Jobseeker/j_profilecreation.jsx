@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
 import { ProgressBar } from 'react-bootstrap';
 import { Modal, Button } from 'react-bootstrap';
+import TermsAndConditions from '../../components/termsandconditions';
 
 
 function ProfileCreation() {
@@ -126,11 +127,6 @@ function ProfileCreation() {
       console.error('Error uploading profile picture:', error);
     }
 };
-
-const handleCheckboxChange = (e) => {
-  setIsChecked(e.target.checked);
-};
-
 const calculateProgress = () => {
   let progress = 0;
   const totalFields = 8 + experience.length + skills.length; 
@@ -162,8 +158,16 @@ const [showModal, setShowModal] = useState(false);
 
 // Function to handle modal submit
 const handleModalSubmit = () => {
+  if (!isChecked) {
+    alert("You must agree to the terms and conditions to proceed.");
+    return;
+  }
   setShowModal(false); // Close modal
   handleSubmit(); // Call the original submit function
+};
+
+const handleCheckboxChange = (e) => {
+  setIsChecked(e.target.checked);
 };
 
 
@@ -645,45 +649,45 @@ const handleSubmit = async (e) => {
             Add Skill
           </button>
         </div>
-
         {error && (
         <div className="alert alert-danger" role="alert">
           {error}
         </div>
       )}
-        <div className="form-check mb-3">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            id="termsCheckbox"
-            onChange={handleCheckboxChange}
-          />
-          <label className="form-check-label" htmlFor="termsCheckbox">
-            I agree to the <a href="/terms">terms and conditions</a>
-          </label>
-        </div>
         <div className="d-grid gap-2">
           <button
             type="button"
             className="btn btn-success"
             onClick={handleFormSubmit}
-            disabled={!isChecked}
           >
             Submit Profile
           </button>
         </div>
       </form>
-      <Modal show={showModal} onHide={handleModalCancel}>
+      <Modal show={showModal} onHide={handleModalCancel} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Profile Submission</Modal.Title>
+          <Modal.Title>Terms and Conditions</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to submit your profile?</Modal.Body>
+        <Modal.Body>
+        <TermsAndConditions />
+          <div className="form-check mt-3">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="termsCheckbox"
+              onChange={handleCheckboxChange}
+            />
+            <label className="form-check-label" htmlFor="termsCheckbox">
+              I have read and agree to the terms and conditions.
+            </label>
+          </div>
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleModalCancel}>
             Cancel
           </Button>
           <Button variant="primary" onClick={handleModalSubmit}>
-            Submit
+            Confirm Submission
           </Button>
         </Modal.Footer>
       </Modal>
