@@ -251,6 +251,7 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
       dateOfBirth,
       gender,
       industry_id,
+      educations,
       address_id,
       experiences,
       skills
@@ -298,6 +299,17 @@ router.put('/update-jobseeker-profile/:userId', async (req, res) => {
           INSERT INTO js_skills (user_id, skill_id)
           VALUES ($1, $2)
         `, [userId, skillId]);
+      }
+    }
+
+    // Update educations
+    if (educations && Array.isArray(educations)) {
+      await client.query(`DELETE FROM js_education WHERE user_id = $1`, [userId]);
+      for (const education_id of educations) {
+        await client.query(`
+          INSERT INTO js_education (user_id, education_id)
+          VALUES ($1, $2)
+        `, [userId, education_id]);
       }
     }
 

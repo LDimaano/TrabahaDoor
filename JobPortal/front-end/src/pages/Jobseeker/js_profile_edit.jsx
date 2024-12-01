@@ -277,6 +277,7 @@ function ProfileEditForm() {
       address_id: address?.value || '',
       industry_id: industry?.value || '',
       skills: skills.map(skill => skill?.value || ''),
+      educations: education.map(education => education?.value || ''),
       experiences: experience.map(exp => ({
         jobTitle: exp.jobTitle?.value || '',
         salary: exp.salaryRange || 5000, // Ensure salary is an integer
