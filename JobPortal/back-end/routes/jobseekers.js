@@ -389,7 +389,7 @@ router.get('/fetchjobseeker-profileadmin/:user_id', async (req, res) => {
         FROM js_education je
         JOIN educations e ON je.education_id = e.education_id
       WHERE je.user_id = $1
-    `, [userId]);
+    `, [user_id]);
 
     const educations = EducationsData.rows.map(educations => ({
       educationId: educations.education_id || 'Not Provided',
