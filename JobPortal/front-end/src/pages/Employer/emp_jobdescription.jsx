@@ -113,7 +113,8 @@ const JobDescription = () => {
           <JobContent
             jobdescription={jobData.jobdescription}
             responsibilities={jobData.responsibilities}
-            qualifications={jobData.qualifications}       
+            qualifications={jobData.qualifications}  
+            educations={jobData.educations || []}     
           />
           <JobDetails
             jobInfo={[

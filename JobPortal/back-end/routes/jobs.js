@@ -417,6 +417,13 @@ router.get('/joblistings/:jobId', async (req, res) => {
     WHERE js.job_id = $1;
   `;
 
+  const educationsQuery = `
+    SELECT e.education_name
+    FROM job_education je
+    JOIN educations e ON je.education_id = e.education_id
+    WHERE je.job_id = $1;
+  `;
+
   try {
     const jobResult = await pool.query(jobQuery, [jobId]);
 
@@ -425,12 +432,14 @@ router.get('/joblistings/:jobId', async (req, res) => {
       return res.status(404).json({ error: 'Job not found' });
     }
     const skillsResult = await pool.query(skillsQuery, [jobId]);
+    const educationsResult = await pool.query(educationsQuery, [jobId]);
 
     const jobData = jobResult.rows[0];
     const skills = skillsResult.rows.map(row => row.skill_name);
+    const educations = educationsResult.rows.map(row => row.education_name);
    
     console.log('Responding with job data and skills:', { ...jobData, skills });
-    res.json({ ...jobData, skills });
+    res.json({ ...jobData, skills, educations });
   } catch (error) {
     console.error('Error fetching job details:', error);
     res.status(500).json({ error: 'Internal server error' });
