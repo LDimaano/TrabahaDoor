@@ -241,8 +241,8 @@ router.get('/fetch-jobinfo/:job_id', async (req, res) => {
     `, [job_id]);
 
     const educations = jobEducation.rows.map(educations => ({
-      educationId: educations.skill_id || 'Not Provided',
-      educationName: educations.skill_name || 'Not Provided',
+      educationId: educations.education_id || 'Not Provided',
+      educationName: educations.education_name || 'Not Provided',
     }));
 
     res.json({
