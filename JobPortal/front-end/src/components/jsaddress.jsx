@@ -8,7 +8,9 @@ const BarChartComponent = () => {
   const [originalData, setOriginalData] = useState([]); // Store the full dataset
   const [filter, setFilter] = useState('all'); // Default filter for count
   const [categories, setCategories] = useState([]); // Store unique categories
+  const [locations, setLocations] = useState([]); // Store unique locations
   const [selectedCategory, setSelectedCategory] = useState('all'); // Default category filter
+  const [selectedLocation, setSelectedLocation] = useState('all'); // Default location filter
 
   // Fetch the data from API
   useEffect(() => {
@@ -21,9 +23,11 @@ const BarChartComponent = () => {
         const locationData = await response.json();
         setOriginalData(locationData); // Store the raw data
 
-        // Extract unique categories for category filtering
+        // Extract unique categories and locations
         const uniqueCategories = [...new Set(locationData.map(item => item.category))];
+        const uniqueLocations = [...new Set(locationData.map(item => item.location))];
         setCategories(uniqueCategories);
+        setLocations(uniqueLocations);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -39,6 +43,11 @@ const BarChartComponent = () => {
     // Apply category filter
     if (selectedCategory !== 'all') {
       filteredData = filteredData.filter(item => item.category === selectedCategory);
+    }
+
+    // Apply location filter
+    if (selectedLocation !== 'all') {
+      filteredData = filteredData.filter(item => item.location === selectedLocation);
     }
 
     // Apply count filter
@@ -80,12 +89,12 @@ const BarChartComponent = () => {
           <option value="low">Low Count (&le; 10)</option>
         </select>
 
-        {/* Category Filter */}
-        <label htmlFor="category" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filter By Category:</label>
-        <select id="category" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-          <option value="all">All Categories</option>
-          {categories.map((category, index) => (
-            <option key={index} value={category}>{category}</option>
+        {/* Location Filter */}
+        <label htmlFor="location" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filter By Location:</label>
+        <select id="location" value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}>
+          <option value="all">All Locations</option>
+          {locations.map((location, index) => (
+            <option key={index} value={location}>{location}</option>
           ))}
         </select>
       </div>
