@@ -7,7 +7,9 @@ import { FaDownload } from 'react-icons/fa';
 const BarChartComponent = () => {
   const [originalData, setOriginalData] = useState([]); // Store the full dataset
   const [filter, setFilter] = useState('all'); // Default filter is "all"
-  
+  const [industries, setIndustries] = useState([]); // Store unique industries
+  const [selectedIndustry, setSelectedIndustry] = useState('all'); // Default industry filter
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -15,8 +17,12 @@ const BarChartComponent = () => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const jsindustry = await response.json();
-        setOriginalData(jsindustry); // Store the raw data
+        const empIndustry = await response.json();
+        setOriginalData(empIndustry); // Store the raw data
+
+        // Extract unique industries for the dropdown
+        const uniqueIndustries = [...new Set(empIndustry.map(item => item.industry_name))];
+        setIndustries(uniqueIndustries);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -28,10 +34,16 @@ const BarChartComponent = () => {
   const updateChartData = () => {
     let filteredData = originalData;
 
+    // Apply industry filter
+    if (selectedIndustry !== 'all') {
+      filteredData = filteredData.filter(item => item.industry_name === selectedIndustry);
+    }
+
+    // Apply count filter
     if (filter === 'high') {
-      filteredData = originalData.filter(item => item.count > 10); // Filter industries with count > 10
+      filteredData = filteredData.filter(item => item.count > 10); // High count filter
     } else if (filter === 'low') {
-      filteredData = originalData.filter(item => item.count <= 10); // Filter industries with count <= 10
+      filteredData = filteredData.filter(item => item.count <= 10); // Low count filter
     }
 
     return filteredData;
@@ -55,13 +67,42 @@ const BarChartComponent = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* Dropdown Filter */}
-      <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
-        <label htmlFor="filter" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filter By Count:</label>
-        <select id="filter" value={filter} onChange={(e) => setFilter(e.target.value)}>
+      {/* Filters */}
+      <div style={{ marginBottom: '1rem', textAlign: 'center', fontSize: '0.85em' }}>
+        {/* Count Filter */}
+        <label htmlFor="filter" style={{ marginRight: '5px', fontWeight: 'bold' }}>Count:</label>
+        <select
+          id="filter"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          style={{
+            marginRight: '15px',
+            padding: '2px 5px',
+            fontSize: '0.85em',
+            width: '110px',
+          }}
+        >
           <option value="all">All</option>
-          <option value="high">High Count (&gt; 10)</option>
-          <option value="low">Low Count (&le; 10)</option>
+          <option value="high">High (&gt; 10)</option>
+          <option value="low">Low (&le; 10)</option>
+        </select>
+
+        {/* Industry Filter */}
+        <label htmlFor="industry" style={{ marginRight: '5px', fontWeight: 'bold' }}>Industry:</label>
+        <select
+          id="industry"
+          value={selectedIndustry}
+          onChange={(e) => setSelectedIndustry(e.target.value)}
+          style={{
+            padding: '2px 5px',
+            fontSize: '0.85em',
+            width: '130px',
+          }}
+        >
+          <option value="all">All</option>
+          {industries.map((industry, index) => (
+            <option key={index} value={industry}>{industry}</option>
+          ))}
         </select>
       </div>
 
