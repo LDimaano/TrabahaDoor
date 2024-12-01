@@ -21,6 +21,8 @@ function ProfileEditForm() {
   const [skills, setSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [availableJobTitles, setAvailableJobTitles] = useState([]);
+  const [education, setEducation] = useState([]);
+  const [educationOptions, setEducationOptions] = useState([]);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
 
@@ -69,6 +71,14 @@ function ProfileEditForm() {
             label: skill.skillName,
           })) || [];
           setSkills(skillsArray);
+
+          const educationArray = data.jobSeeker.educations.map(educations => ({
+            value: educations.educationId, 
+            label: educations.educationName 
+          })) || [];
+          
+          setEducation(educationArray);
+
         } else {
           setError('No profile data found.');
         }
@@ -142,11 +152,27 @@ function ProfileEditForm() {
       }
     };
 
+    const fetchEducationOptions = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/educations`); 
+        if (!response.ok) throw new Error('Failed to fetch industries');
+        const data = await response.json();
+        const educationOptions = data.map(education => ({
+          value: education.education_id,
+          label: education.education_name
+        }));
+        setEducationOptions(educationOptions); 
+      } catch (error) {
+        console.error('Error fetching education options:', error);
+      }
+    };
+
     fetchProfileData();
     fetchSkills();
     fetchJobTitles();
     fetchAddresses();
     fetchIndustries();
+    fetchEducationOptions();
   }, [userId]);
 
   const handleSkillChange = (index, selectedOption) => {
@@ -162,6 +188,21 @@ function ProfileEditForm() {
   const handleRemoveSkill = (index) => {
     const newSkills = skills.filter((_, i) => i !== index);
     setSkills(newSkills);
+  };
+
+  const handleEducationChange = (index, selectedOption) => {
+    const newEducation = [...education];
+    newEducation[index] = selectedOption;
+    setEducation(newEducation);
+  };
+
+  const handleAddEducation = () => {
+    setEducation([...education, null]);
+  };
+  
+  const handleRemoveEducation = (index) => {
+    const newEducation = education.filter((_, i) => i !== index);
+    setEducation(newEducation);
   };
 
   const handleExperienceChange = (index, event) => {
@@ -328,6 +369,39 @@ function ProfileEditForm() {
             required
           />
         </div>
+        <div className="mb-3">
+        <label htmlFor="educationDropdown" className="form-label">
+        Education Level or Course
+      </label><br></br>
+      {education.map((edu, index) => (
+        <div className="mb-3" key={index}>
+          <div className="d-flex">
+            <Select
+              id={`education_${index}`}
+              value={edu}
+              options={educationOptions}
+              onChange={(selectedOption) => handleEducationChange(index, selectedOption)}
+              placeholder="Select an education level or course"
+              className="flex-grow-1 me-2"
+            />
+            <button
+              type="button"
+              className="btn btn-outline-danger"
+              onClick={() => handleRemoveEducation(index)}
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      ))}
+      <button
+        type="button"
+        className="btn btn-outline-primary"
+        onClick={handleAddEducation}
+      >
+        Add Education
+      </button>
+      </div>
         <div className="mb-3">
   <h4>Experience</h4>
   {experience.map((exp, index) => (
