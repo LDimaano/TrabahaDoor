@@ -1,7 +1,6 @@
 import sys
 import json
 
-
 def check_salary_match(job_salary, jobseeker_salary):
     """Check if the job salary matches any salary in the jobseeker's salary list."""
     if not jobseeker_salary:
@@ -50,9 +49,9 @@ def recommend_candidates(job_postings, applicants):
             salary_match = check_salary_match(job_salary, applicant_salary)
             education_match_count = count_education_matches(job_education, applicant_education)
 
-            # Skip if no significant match is found
-            if not (has_title_match or skill_match_count or education_match_count):
-                continue
+            # Ensure at least one match exists before proceeding
+            if not (has_title_match or skill_match_count or education_match_count or salary_match):
+                continue  # Skip if no match found
 
             # Define criteria for scoring
             criteria = {
