@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons'; // Import the filter icon
 import Header from '../../components/jsheader';
 import FilterSection from '../../components/filtersection';
 import JobList from '../../components/joblist';
@@ -41,6 +43,7 @@ function HomeJobSeeker() {
       <div className="container mt-4" style={{ maxWidth: '900px', margin: '0 auto' }}>
         <div className="row">
           <div className="col-12 mb-4">
+            {/* Dropdown Filter Icon */}
             <button
               className="btn btn-secondary"
               onClick={() => setShowFilters(!showFilters)}
@@ -50,8 +53,7 @@ function HomeJobSeeker() {
                 gap: '8px',
               }}
             >
-              <i className="bi bi-funnel" style={{ fontSize: '18px' }}></i> {/* Bootstrap icon */}
-              Filter
+              <FontAwesomeIcon icon={faFilter} style={{ fontSize: '18px' }} />
             </button>
           </div>
           {showFilters && (
