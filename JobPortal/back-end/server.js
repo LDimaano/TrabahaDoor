@@ -470,6 +470,9 @@ app.post('/api/recommend', async (req, res) => {
   if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
     return res.status(400).json({ error: 'Skills must be a non-empty array.' });
   }
+  if (!req.body.educations || !Array.isArray(req.body.educations) || req.body.educations.length === 0) {
+    return res.status(400).json({ error: 'Educations must be a non-empty array.' });
+  }
   if (!req.body.industry) {
     return res.status(400).json({ error: 'Industry is required.' });
   }
@@ -480,7 +483,11 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(400).json({ error: 'Salary range is required.' });
   }
 
-  const { skills: jobSeekerSkills, industry: jobSeekerIndustry, jobTitles: jobSeekerJobTitles, salaryRange: jobSeekerSalary } = req.body;
+  const { skills: jobSeekerSkills, 
+          educations: jobSeekerEducations,
+          industry: jobSeekerIndustry, 
+          jobTitles: jobSeekerJobTitles, 
+          salaryRange: jobSeekerSalary } = req.body;
 
   try {
     // Fetch job data
@@ -491,7 +498,8 @@ app.post('/api/recommend', async (req, res) => {
 
     // Log details for debugging
     console.log('Job Data:', JSON.stringify(jobData, null, 2));
-    console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
+    console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));4
+    console.log('Job Seeker education:', JSON.stringify(jobSeekerEducations, null, 2));
     console.log('Job Seeker Industry:', jobSeekerIndustry);
     console.log('Job Seeker Job Titles:', JSON.stringify(jobSeekerJobTitles, null, 2));
     console.log('Job Seeker Salary Range:', jobSeekerSalary);
@@ -502,6 +510,7 @@ app.post('/api/recommend', async (req, res) => {
       'python_scripts/recommendations.py', 
       JSON.stringify(jobData), 
       JSON.stringify(jobSeekerSkills), 
+      JSON.stringify(jobSeekerEducations), 
       jobSeekerIndustry,
       JSON.stringify(jobSeekerJobTitles),
       JSON.stringify(jobSeekerSalary),
