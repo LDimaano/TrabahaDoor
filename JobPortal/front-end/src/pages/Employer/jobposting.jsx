@@ -398,51 +398,50 @@ const JobPosting = () => {
         </section>
 
 
-      <section className="mb-4">
-      <h3 className="h5">Qualifications</h3>
-      <p>List the qualifications and requirements for this job.</p>
+        <section className="mb-4">
+  <h3 className="h5">Qualifications</h3>
 
-          <p>Select the education levels or courses required for this job.</p>
-      {education.map((edu, index) => (
-        <div className="mb-3" key={index}>
-          <div className="d-flex">
-            <Select
-              id={`education_${index}`}
-              value={edu}
-              options={educationOptions}
-              onChange={(selectedOption) => handleEducationChange(index, selectedOption)}
-              placeholder="Select an education level or course"
-              className="flex-grow-1 me-2"
-            />
-            <button
-              type="button"
-              className="btn btn-outline-danger"
-              onClick={() => handleRemoveEducation(index)}
-            >
-              Remove
-            </button>
-          </div>
-        </div>
-      ))}
-      <button
-        type="button"
-        className="btn btn-outline-primary"
-        onClick={handleAddEducation}
-      >
-        Add Education
-      </button>
+  <p>Select the education levels or courses required for this job.</p>
+  {education.map((edu, index) => (
+    <div className="mb-3" key={index}>
+      <div className="d-flex">
+        <Select
+          id={`education_${index}`}
+          value={edu}
+          options={educationOptions}
+          onChange={(selectedOption) => handleEducationChange(index, selectedOption)}
+          placeholder="Select an education level or course"
+          className="flex-grow-1 me-2"
+        />
+        <button
+          type="button"
+          className="btn btn-outline-danger"
+          onClick={() => handleRemoveEducation(index)}
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  ))}
+  <button
+    type="button"
+    className="btn btn-outline-primary"
+    onClick={handleAddEducation}
+  >
+    Add Education
+  </button>
 
-
-      {/* Textarea for Qualifications */}
-      <textarea
-        id="qualifications"
-        className="form-control"
-        placeholder="Describe the education, experience, and skills required for this position."
-        rows="4"
-        value={qualifications}
-        onChange={(e) => setQualifications(e.target.value)}
-      />
-    </section>
+  <p className="mt-3">List the qualifications and requirements for this job.</p>
+  {/* Textarea for Qualifications */}
+  <textarea
+    id="qualifications"
+    className="form-control mt-3"
+    placeholder="Describe the education, experience, and skills required for this position."
+    rows="4"
+    value={qualifications}
+    onChange={(e) => setQualifications(e.target.value)}
+  />
+</section>
 
         <section className="mb-4">
           <h3 className="h5">Required Skills</h3>
