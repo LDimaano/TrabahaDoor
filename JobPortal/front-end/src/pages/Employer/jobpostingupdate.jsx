@@ -370,7 +370,11 @@ const UpdateJobPosting = () => {
               <option value="" disabled>Select job type</option>
               <option value="Full-time">Full-time</option>
               <option value="Part-time">Part-time</option>
-              <option value="Work from Home">Work from Home</option>
+              <option value="Contract">Contract</option>
+              <option value="Temporary">Temporary</option>
+              <option value="Internship">Internship</option>
+              <option value="Volunteer">Volunteer</option>
+              <option value="Volunteer">Volunteer</option>
             </select>
           </div>
           <div className="mb-3">
