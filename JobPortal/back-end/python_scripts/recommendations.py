@@ -78,9 +78,11 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     collaborative_filtering_jobs = set()
     if similar_jobseekers:
         for jobseeker in similar_jobseekers:
-            for job in jobseeker.get('applied_jobs', []):
-                job_id = int(job['job_id'])  # Convert job_id to integer for consistency
-                collaborative_filtering_jobs.add(job_id)
+            if 'applied_jobs' in jobseeker:  # Check if the key exists
+                for job in jobseeker['applied_jobs']:
+                    if isinstance(job, dict) and 'job_id' in job:  # Ensure job is a dict and has job_id
+                        job_id = int(job['job_id'])  # Convert job_id to integer for consistency
+                        collaborative_filtering_jobs.add(job_id)
 
     # Iterate through job data
     for job in job_info:
