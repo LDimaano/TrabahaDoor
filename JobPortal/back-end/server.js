@@ -470,7 +470,7 @@ app.post('/api/recommend', async (req, res) => {
   if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
     return res.status(400).json({ error: 'Skills must be a non-empty array.' });
   }
-  if (!req.body.educations || !Array.isArray(req.body.educations) || req.body.educations.length === 0) {
+  if (!req.body.education || !Array.isArray(req.body.education) || req.body.education.length === 0) {
     return res.status(400).json({ error: 'Educations must be a non-empty array.' });
   }
   if (!req.body.industry) {
@@ -484,7 +484,7 @@ app.post('/api/recommend', async (req, res) => {
   }
 
   const { skills: jobSeekerSkills, 
-          educations: jobSeekerEducations,
+          educations: jobSeekerEducation,
           industry: jobSeekerIndustry, 
           jobTitles: jobSeekerJobTitles, 
           salaryRange: jobSeekerSalary } = req.body;
@@ -499,7 +499,7 @@ app.post('/api/recommend', async (req, res) => {
     // Log details for debugging
     console.log('Job Data:', JSON.stringify(jobData, null, 2));
     console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));4
-    console.log('Job Seeker education:', JSON.stringify(jobSeekerEducations, null, 2));
+    console.log('Job Seeker education:', JSON.stringify(jobSeekerEducation, null, 2));
     console.log('Job Seeker Industry:', jobSeekerIndustry);
     console.log('Job Seeker Job Titles:', JSON.stringify(jobSeekerJobTitles, null, 2));
     console.log('Job Seeker Salary Range:', jobSeekerSalary);
@@ -510,7 +510,7 @@ app.post('/api/recommend', async (req, res) => {
       'python_scripts/recommendations.py', 
       JSON.stringify(jobData), 
       JSON.stringify(jobSeekerSkills), 
-      JSON.stringify(jobSeekerEducations), 
+      JSON.stringify(jobSeekerEducation), 
       jobSeekerIndustry,
       JSON.stringify(jobSeekerJobTitles),
       JSON.stringify(jobSeekerSalary),
