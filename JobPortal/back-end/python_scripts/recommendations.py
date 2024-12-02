@@ -29,8 +29,10 @@ def match_education(job, jobseeker_education):
     """Stage 3: Check for education matches."""
     if not jobseeker_education:
         return False
-    job_education = job.get('required_education', set())
-    return len(jobseeker_education.intersection(job_education)) > 0
+    # Convert job education and jobseeker education to sets of hashable types (e.g., strings)
+    job_education = set(map(str, job.get('required_education', [])))
+    jobseeker_education_set = set(map(str, jobseeker_education))
+    return len(jobseeker_education_set.intersection(job_education)) > 0
 
 def check_salary_match(job, jobseeker_salary):
     """Check if salary matches."""
