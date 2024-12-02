@@ -38,15 +38,20 @@ function HomeJobSeeker() {
     <div className="home-jobseeker">
       {/* Header */}
       <Header />
-      <div className="container mt-4">
-        <div className="row justify-content-center" style={{ textAlign: 'center' }}>
+      <div className="container mt-4" style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <div className="row">
           <div className="col-12 mb-4">
             <button
               className="btn btn-secondary"
               onClick={() => setShowFilters(!showFilters)}
-              style={{ marginBottom: '20px' }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
             >
-              {showFilters ? 'Hide Filters' : 'Show Filters'}
+              <i className="bi bi-funnel" style={{ fontSize: '18px' }}></i> {/* Bootstrap icon */}
+              Filter
             </button>
           </div>
           {showFilters && (
@@ -103,10 +108,10 @@ function HomeJobSeeker() {
               </div>
             </div>
           )}
-          <div className="col-10">
+          <div className="col-12">
             <div
               className="nav nav-tabs mb-3"
-              style={{ justifyContent: 'center', display: 'flex' }}
+              style={{ justifyContent: 'flex-start', display: 'flex' }} // Align tabs to the left
             >
               <button
                 className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`}
@@ -121,13 +126,15 @@ function HomeJobSeeker() {
                 All Jobs
               </button>
             </div>
-            <JobList
-              filters={filters}
-              searchQuery={searchQuery}
-              searchType={searchType}
-              userSkills={userSkills}
-              isRecommended={activeTab === 'recommended'}
-            />
+            <div style={{ textAlign: 'left' }}> {/* Align job content to the left */}
+              <JobList
+                filters={filters}
+                searchQuery={searchQuery}
+                searchType={searchType}
+                userSkills={userSkills}
+                isRecommended={activeTab === 'recommended'}
+              />
+            </div>
           </div>
         </div>
       </div>
