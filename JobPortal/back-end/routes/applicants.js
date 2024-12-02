@@ -401,47 +401,57 @@ router.get('/timetofillemp/:userId', async (req, res) => {
 const getJobPostings = async (userId) => {
   const query = `
     SELECT 
-      joblistings.job_id,
-      job_titles.job_title,
-      industries.industry_name,
-	    joblistings.salaryrange,
-      joblistings.jobtype,
-      pp.profile_picture_url,
-      ARRAY_AGG(DISTINCT skills.skill_name) AS required_skills
+        joblistings.job_id,
+        job_titles.job_title,
+        industries.industry_name,
+        joblistings.salaryrange,
+        joblistings.jobtype,
+        pp.profile_picture_url,
+        ARRAY_AGG(DISTINCT skills.skill_name) AS required_skills,
+        ARRAY_AGG(DISTINCT educations.education_name) AS education
     FROM joblistings
     JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
     JOIN industries ON joblistings.industry_id = industries.industry_id
     JOIN job_skills ON joblistings.job_id = job_skills.job_id
     JOIN skills ON job_skills.skill_id = skills.skill_id
     LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
+    LEFT JOIN job_education ON job_education.job_id = joblistings.job_id
+    LEFT JOIN educations ON job_education.education_id = educations.education_id
     WHERE joblistings.user_id = $1
     GROUP BY 
-      joblistings.job_id,
-      job_titles.job_title,
-      industries.industry_name,
-      joblistings.salaryrange,
-      joblistings.jobtype,
-      pp.profile_picture_url;  
+        joblistings.job_id,
+        job_titles.job_title,
+        industries.industry_name,
+        joblistings.salaryrange,
+        joblistings.jobtype,
+        pp.profile_picture_url;
   `;
 
-  const { rows } = await pool.query(query, [userId]);
+  try {
+    const { rows } = await pool.query(query, [userId]);
 
-  if (rows.length === 0) {
-    console.log(`No job postings found for user ${userId}`);
-    return [];
+    if (rows.length === 0) {
+      console.log(`No job postings found for user ${userId}`);
+      return [];
+    }
+
+    const joblistingData = rows.map(row => ({
+      job_id: row.job_id,
+      job_title: row.job_title,
+      industry_name: row.industry_name,
+      salaryrange: row.salaryrange,
+      jobtype: row.jobtype,
+      required_skills: row.required_skills || [],
+      education: row.education || [] // Add education to the mapped data
+    }));
+
+    console.log(`Retrieved ${joblistingData.length} job postings for user ${userId}`);
+    return joblistingData;
+
+  } catch (error) {
+    console.error(`Error retrieving job postings for user ${userId}:`, error.message);
+    throw error; // Re-throw the error to handle it at a higher level
   }
-
-  const joblistingData = rows.map(row => ({
-    job_id: row.job_id,
-    job_title: row.job_title,
-    industry_name: row.industry_name,
-    salaryrange: row.salaryrange,
-    jobtype: row.jobtype,
-    required_skills: row.required_skills || [] 
-  }));
-
-  console.log(`Retrieved ${joblistingData.length} job postings for user ${userId}`);
-  return joblistingData; 
 };
 
 const getApplicantsForJob = async (jobId) => {
@@ -459,9 +469,10 @@ const getApplicantsForJob = async (jobId) => {
       a.location,
       ap.resume,
       ap.additional_info,
-	    ARRAY_AGG(DISTINCT je.salary) AS salary,
+      ARRAY_AGG(DISTINCT je.salary) AS salary,
       ARRAY_AGG(DISTINCT jt.job_title) AS job_titles,
       ARRAY_AGG(DISTINCT s.skill_name) AS skills,
+      ARRAY_AGG(DISTINCT educations.education_name) AS js_education,
       pp.profile_picture_url,
       js.industry_id,
       ap.status,
@@ -469,20 +480,23 @@ const getApplicantsForJob = async (jobId) => {
     FROM job_seekers js
     JOIN users u ON js.user_id = u.user_id
     JOIN address a ON js.address_id = a.address_id
-    JOIN job_experience je ON js.user_id = je.user_id
-    JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
+    LEFT JOIN job_experience je ON js.user_id = je.user_id
+    LEFT JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
     LEFT JOIN profilepictures pp ON js.user_id = pp.user_id
-    JOIN js_skills jk ON js.user_id = jk.user_id
-    JOIN skills s ON jk.skill_id = s.skill_id
-    JOIN applications ap ON u.user_id = ap.user_id
+    LEFT JOIN js_education ON js_education.user_id = js.user_id
+    LEFT JOIN educations ON js_education.education_id = educations.education_id
+    LEFT JOIN js_skills jk ON js.user_id = jk.user_id
+    LEFT JOIN skills s ON jk.skill_id = s.skill_id
+    JOIN applications ap ON js.user_id = ap.user_id
     WHERE ap.job_id = $1
     GROUP BY 
       ap.application_id,
       js.full_name,
-      js.user_id,
       u.email,
       js.phone_number,
       a.location,
+      ap.resume,
+      ap.additional_info,
       pp.profile_picture_url,
       js.industry_id,
       ap.status,
@@ -493,28 +507,31 @@ const getApplicantsForJob = async (jobId) => {
     const { rows } = await pool.query(query, [jobId]);
 
     const relevantData = rows.map(row => ({
+      application_id: row.application_id,
       user_id: row.user_id,
+      full_name: row.full_name || 'No Name Provided',
       email: row.email || '',
-      profile_picture_url: row.profile_picture_url || 'no image',
+      phone_number: row.phone_number || '',
+      location: row.location || '',
+      resume: row.resume || '',
+      additional_info: row.additional_info || '',
       salary: row.salary || [],
       job_titles: row.job_titles || [],
       skills: row.skills || [],
-      resume: row.resume,
-      additional_info: row.additional_info,
-      industry: row.industry_id,
-      full_name: row.full_name || 'No Name Provided', 
-      phone_number: row.phone_number || '',
+      js_education: row.js_education || [],
+      profile_picture_url: row.profile_picture_url || 'no image',
+      industry: row.industry_id || '',
       status: row.status || '',
-      date_applied: row.date_applied || '',
-      application_id: row.application_id || ''
+      date_applied: row.date_applied || ''
     }));
 
     return relevantData;
   } catch (error) {
-    console.error("Error fetching applicants for job:", error);
+    console.error("Error fetching applicants for job:", error.message);
     throw error;
   }
 };
+
 
 router.post('/recommend-candidates/:jobId', async (req, res) => {
   const { jobId } = req.params;
