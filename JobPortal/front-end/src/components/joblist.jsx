@@ -130,26 +130,19 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   }, [isRecommended, userSkills, userEducations,  userProfile]);
   
   const applyFilters = (jobs) => {
-    if (!Array.isArray(jobs) || jobs.length === 0) return [];
-    const employmentTypes = filters.employmentTypes || [];
-    const salaryRanges = filters.salaryRanges || [];
-    const employmentTypesLower = employmentTypes.map(type => type.toLowerCase());
-  
+    if (!jobs || jobs.length === 0) return [];
+    const { employmentTypes, salaryRanges } = filters;
+    const employmentTypesLower = (employmentTypes || []).map(type => type.toLowerCase());
+    const salaryRangesLower = (salaryRanges || []).map(range => range.toLowerCase());
     return jobs.filter(job => {
       const jobType = job.jobtype ? job.jobtype.toLowerCase() : '';
-      const jobSalaryRange = job.salaryrange || '';
-      const [jobMinSalary, jobMaxSalary] = jobSalaryRange.split('-').map(Number);
-  
-      const matchesEmploymentType = employmentTypesLower.length === 0 || employmentTypesLower.includes(jobType);
-      const matchesSalaryRange = salaryRanges.length === 0 || salaryRanges.some(range => {
-        const [selectedMin, selectedMax] = range.split('-').map(Number);
-        return jobMinSalary <= selectedMax && jobMaxSalary >= selectedMin;
-      });
-  
-      return matchesEmploymentType && matchesSalaryRange;
+      const jobSalaryRange = job.salaryrange ? job.salaryrange.toLowerCase() : '';
+      return (
+        (employmentTypesLower.length === 0 || employmentTypesLower.includes(jobType)) &&
+        (salaryRangesLower.length === 0 || salaryRangesLower.includes(jobSalaryRange))
+      );
     });
   };
-  
 
   const applySearch = (jobs) => {
     if (!jobs || jobs.length === 0 || !searchQuery) return jobs;
@@ -166,10 +159,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
 
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = isRecommended
-  ? (Array.isArray(recommendedJobs) ? recommendedJobs.slice(indexOfFirstJob, indexOfLastJob) : [])
-  : (Array.isArray(searchedJobs) ? searchedJobs.slice(indexOfFirstJob, indexOfLastJob) : []);
-
+  const currentJobs = isRecommended ? recommendedJobs.slice(indexOfFirstJob, indexOfLastJob) : searchedJobs.slice(indexOfFirstJob, indexOfLastJob);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
