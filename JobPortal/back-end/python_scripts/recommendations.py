@@ -8,7 +8,7 @@ def extract_job_data(job_data):
         job_info.append({
             'job_id': job.get('job_id'),
             'required_skills': set(job.get('required_skills', [])),
-            'required_education': set(job.get('required_education', [])),
+            'education': set(job.get('education', [])),
             'company_name': job.get('company_name', 'Unknown Company name'),
             'industry_name': job.get('industry_name', 'Unknown Industry'),
             'job_title': job.get('job_title', 'Unknown Title'),
@@ -18,21 +18,19 @@ def extract_job_data(job_data):
         })
     return job_info
 
-def match_skills_and_titles(job, skills_set, job_titles_set):
-    """Stage 2: Check for skill and title matches."""
+def match_skills_and_titles(job, skills_set, job_titles_set, jobseeker_education_set=None):
+    """Stage 2: Check for skill, title, and education matches."""
     job_skills = job.get('required_skills', set())
     title_match = job['job_title'] in job_titles_set
     skill_match = len(skills_set.intersection(job_skills)) > 0
-    return skill_match, title_match
+    
+    # Treat education matching as another form of matching
+    education_match = False
+    if jobseeker_education_set is not None:
+        job_education = set(job.get('required_education', []))
+        education_match = len(job_education.intersection(jobseeker_education_set)) > 0
 
-def match_education(job, jobseeker_education):
-    """Check for education matches."""
-    if not jobseeker_education:
-        return False
-    job_education = set(job.get('required_education', []))  # Array of strings from job data
-    jobseeker_education_set = set(jobseeker_education)  # Array of strings from job seeker
-    return len(job_education.intersection(jobseeker_education_set)) > 0
-
+    return skill_match, title_match, education_match
 
 def check_salary_match(job, jobseeker_salary):
     """Check if salary matches."""
@@ -73,7 +71,7 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     job_info = extract_job_data(job_data)
     skills_set = set(skills)
     job_titles_set = set(job_titles)
-    jobseeker_education_set = set(jobseeker_education or [])
+    jobseeker_education_set = set(jobseeker_education) if jobseeker_education else set()
 
     # Collaborative filtering: collect job IDs applied to by similar jobseekers
     collaborative_filtering_jobs = set()
@@ -85,8 +83,7 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
 
     # Iterate through job data
     for job in job_info:
-        skill_match, title_match = match_skills_and_titles(job, skills_set, job_titles_set)
-        education_match = match_education(job, jobseeker_education_set)
+        skill_match, title_match, education_match = match_skills_and_titles(job, skills_set, job_titles_set, jobseeker_education_set)
 
         # Check for salary match
         salary_match = False
@@ -98,14 +95,13 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
 
         # Only add recommendation if there's a match in any criteria
         if skill_match or title_match or education_match or salary_match or collaborative_match:
-            match_count = len(skills_set.intersection(job.get('required_skills', set())))
+            match_count = len(skills_set.intersection(job.get('required_skills', set()))) + (1 if education_match else 0)
             industry_match = (job['industry_name'] == jobseeker_industry) if jobseeker_industry else False
 
-            # Prioritize education match in the recommendation
             recommendations.append(
                 generate_recommendation(
                     job,
-                    match_count + (10 if education_match else 0),  # Higher weight for education match
+                    match_count,  # Now the match count includes both skills and education
                     industry_match,
                     title_match,
                     education_match,
@@ -121,7 +117,7 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
             x['match_type'] == 'hybrid',  # Hybrid matches
             x['title_match'],  # Title match
             x['education_match'],  # Education matches
-            x['match_count'],  # Skill matches
+            x['match_count'],  # Skill and education matches combined
             x['salary_match'],  # Salary matches
             x['collaborative_match']  # Collaborative match (lowest priority)
         ),
@@ -129,7 +125,6 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     )
 
     return recommendations
-
 
 if __name__ == "__main__":
     try:
