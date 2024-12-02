@@ -95,10 +95,12 @@ const ApplicantDashboard = () => {
     setSidebarVisible(!isSidebarVisible);
   };
 
-  const filteredListings = jobs.filter(listing =>
-    listing.job_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    listing.datecreated.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredListings = jobs.filter(listing => {
+    const jobTitle = listing.job_title?.toLowerCase() || ''; // Fallback to an empty string if undefined
+    const dateCreated = listing.datecreated?.toLowerCase() || ''; // Fallback to an empty string if undefined
+    return jobTitle.includes(searchTerm.toLowerCase()) || dateCreated.includes(searchTerm.toLowerCase());
+  });
+  
 
   if (error) {
     return <div>Error: {error}</div>;
