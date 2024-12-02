@@ -559,16 +559,16 @@ app.post('/api/recommend', async (req, res) => {
   }
 });
 
-
 const getJobPostings = async (userId) => {
   const query = `
-    SELECT 
+     SELECT 
         joblistings.job_id,
         job_titles.job_title,
         industries.industry_name,
         joblistings.salaryrange,
         joblistings.jobtype,
         skills.skill_name,
+        educations.education_name,
         pp.profile_picture_url
     FROM joblistings
     JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
@@ -576,7 +576,9 @@ const getJobPostings = async (userId) => {
     JOIN job_skills ON joblistings.job_id = job_skills.job_id
     JOIN skills ON job_skills.skill_id = skills.skill_id
     LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
-    WHERE joblistings.user_id = $1;
+    LEFT JOIN job_education ON job_education.job_id = joblistings.job_id
+    LEFT JOIN educations ON job_education.education_id = educations.education_id
+    WHERE joblistings.user_id = $1
   `;
 
   const { rows } = await pool.query(query, [userId]);
@@ -588,7 +590,7 @@ const getJobPostings = async (userId) => {
 
   // Transform job data to include only the necessary information
   const joblistingData = rows.reduce((acc, row) => {
-    const { job_id, job_title, industry_name, skill_name, salaryrange, jobtype, profile_picture_url } = row;
+    const { job_id, job_title, industry_name, skill_name, education_name, salaryrange, jobtype, profile_picture_url } = row;
 
     // Create a job object if it doesn't already exist
     if (!acc[job_id]) {
@@ -597,6 +599,7 @@ const getJobPostings = async (userId) => {
         job_title,
         industry_name,
         required_skills: [], 
+        required_educations: [],
         salaryrange,
         jobtype,
         profile_picture_url
@@ -608,12 +611,18 @@ const getJobPostings = async (userId) => {
       acc[job_id].required_skills.push(skill_name);
     }
 
+    // Add education to the job's required educations
+    if (education_name) {
+      acc[job_id].required_educations.push(education_name);
+    }
+
     return acc;
   }, {});
 
   console.log(`Retrieved ${Object.keys(joblistingData).length} job postings for user ${userId}`);
   return Object.values(joblistingData); 
 };
+
 
 // Function to get applicants
 const getApplicants = async () => {
