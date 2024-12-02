@@ -90,17 +90,16 @@ const ApplicantDashboard = () => {
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
+  
+  const filteredListings = jobs.filter(listing => {
+    const fullName = listing.full_name?.toLowerCase() || ''; // Search based on full_name
+    return fullName.includes(searchTerm.toLowerCase());
+  });
+  
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
   };
-
-  const filteredListings = jobs.filter(listing => {
-    const jobTitle = listing.job_title?.toLowerCase() || ''; // Fallback to an empty string if undefined
-    const dateCreated = listing.datecreated?.toLowerCase() || ''; // Fallback to an empty string if undefined
-    return jobTitle.includes(searchTerm.toLowerCase()) || dateCreated.includes(searchTerm.toLowerCase());
-  });
-  
 
   if (error) {
     return <div>Error: {error}</div>;
