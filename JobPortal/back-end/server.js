@@ -348,7 +348,7 @@ const getJobData = async () => {
           required_skills: [],
           salaryrange,
           jobtype,
-          education_names: [], // Use a Set to avoid duplicate education names
+          education_names: [], // Use an array for education names to include all of them
           profile_picture_url,
         };
       }
@@ -363,6 +363,9 @@ const getJobData = async () => {
 
       return acc;
     }, {});
+
+    // Convert the object back to an array, since you may need the array format for further processing
+    const transformedData = Object.values(jobData);
 
     // Log the filtered job data for debugging
     console.log('Fetched Job Data for Algorithm:', JSON.stringify(transformedData, null, 2));
