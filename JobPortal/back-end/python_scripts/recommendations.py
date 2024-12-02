@@ -26,13 +26,13 @@ def match_skills_and_titles(job, skills_set, job_titles_set):
     return skill_match, title_match
 
 def match_education(job, jobseeker_education):
-    """Stage 3: Check for education matches."""
+    """Check for education matches."""
     if not jobseeker_education:
         return False
-    # Convert job education and jobseeker education to sets of hashable types (e.g., strings)
-    job_education = set(map(str, job.get('required_education', [])))
-    jobseeker_education_set = set(map(str, jobseeker_education))
-    return len(jobseeker_education_set.intersection(job_education)) > 0
+    job_education = set(job.get('required_education', []))  # Array of strings from job data
+    jobseeker_education_set = set(jobseeker_education)  # Array of strings from job seeker
+    return len(job_education.intersection(jobseeker_education_set)) > 0
+
 
 def check_salary_match(job, jobseeker_salary):
     """Check if salary matches."""
@@ -90,35 +90,46 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
 
         # Check for salary match
         salary_match = False
-        if education_match or skill_match or title_match:
+        if skill_match or title_match or education_match:
             salary_match = check_salary_match(job, jobseeker_salary)
 
         # Check collaborative filtering match
         collaborative_match = check_collaborative_filtering(job, collaborative_filtering_jobs)
 
         # Only add recommendation if there's a match in any criteria
-        if education_match or skill_match or title_match or salary_match or collaborative_match:
+        if skill_match or title_match or education_match or salary_match or collaborative_match:
             match_count = len(skills_set.intersection(job.get('required_skills', set())))
             industry_match = (job['industry_name'] == jobseeker_industry) if jobseeker_industry else False
-            recommendations.append(generate_recommendation(job, match_count, industry_match, title_match, education_match, salary_match, collaborative_match))
 
-    # Sort recommendations
+            # Prioritize education match in the recommendation
+            recommendations.append(
+                generate_recommendation(
+                    job,
+                    match_count + (10 if education_match else 0),  # Higher weight for education match
+                    industry_match,
+                    title_match,
+                    education_match,
+                    salary_match,
+                    collaborative_match
+                )
+            )
+
+    # Sort recommendations based on priority
     recommendations.sort(
         key=lambda x: (
-            x['education_match'],  # Prioritize education match
-            x['match_type'] == 'hybrid' and x['title_match'],  # Hybrid with title match
+            x['match_type'] == 'hybrid' and x['title_match'],  # Prioritize hybrid with title match
             x['match_type'] == 'hybrid',  # Hybrid matches
-            x['match_type'] == 'content',  # Content matches
-            x['salary_match'],  # Salary match
             x['title_match'],  # Title match
-            x['match_count'],  # Skill match count
-            x['industry_match'],  # Industry match
-            not x['collaborative_match']  # Collaborative match (least priority)
+            x['education_match'],  # Education matches
+            x['match_count'],  # Skill matches
+            x['salary_match'],  # Salary matches
+            x['collaborative_match']  # Collaborative match (lowest priority)
         ),
         reverse=True
     )
 
     return recommendations
+
 
 if __name__ == "__main__":
     try:
