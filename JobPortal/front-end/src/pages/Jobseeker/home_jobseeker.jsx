@@ -7,7 +7,6 @@ import JobList from '../../components/joblist';
 function HomeJobSeeker() {
   const [filters, setFilters] = useState({
     employmentTypes: [],
-    salaryRanges: [],
     industry: '' 
   });
   const [searchQuery, setSearchQuery] = useState('');
