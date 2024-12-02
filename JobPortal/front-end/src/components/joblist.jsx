@@ -129,20 +129,31 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
     }
   }, [isRecommended, userSkills, userEducations,  userProfile]);
   
-  const applyFilters = (jobs) => {
-    if (!jobs || jobs.length === 0) return [];
-    const { employmentTypes, salaryRanges } = filters;
-    const employmentTypesLower = (employmentTypes || []).map(type => type.toLowerCase());
-    const salaryRangesLower = (salaryRanges || []).map(range => range.toLowerCase());
-    return jobs.filter(job => {
-      const jobType = job.jobtype ? job.jobtype.toLowerCase() : '';
-      const jobSalaryRange = job.salaryrange ? job.salaryrange.toLowerCase() : '';
-      return (
-        (employmentTypesLower.length === 0 || employmentTypesLower.includes(jobType)) &&
-        (salaryRangesLower.length === 0 || salaryRangesLower.includes(jobSalaryRange))
-      );
+ const applyFilters = (jobs) => {
+  if (!jobs || jobs.length === 0) return [];
+  const { employmentTypes, salaryRanges } = filters;
+  const employmentTypesLower = (employmentTypes || []).map(type => type.toLowerCase());
+
+  return jobs.filter(job => {
+    const jobType = job.jobtype ? job.jobtype.toLowerCase() : '';
+    const jobSalaryRange = job.salaryrange ? job.salaryrange : '';
+
+    // Split the job's salary range into min and max
+    const [jobMinSalary, jobMaxSalary] = jobSalaryRange.split('-').map(Number);
+
+    // Check if the job matches the employment type filter
+    const matchesEmploymentType = employmentTypesLower.length === 0 || employmentTypesLower.includes(jobType);
+
+    // Check if the job's salary range intersects with the selected salary range
+    const matchesSalaryRange = salaryRanges.length === 0 || salaryRanges.some(range => {
+      const [selectedMin, selectedMax] = range.split('-').map(Number);
+      return jobMinSalary <= selectedMax && jobMaxSalary >= selectedMin;
     });
-  };
+
+    return matchesEmploymentType && matchesSalaryRange;
+  });
+};
+
 
   const applySearch = (jobs) => {
     if (!jobs || jobs.length === 0 || !searchQuery) return jobs;
@@ -160,6 +171,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
   const currentJobs = isRecommended ? recommendedJobs.slice(indexOfFirstJob, indexOfLastJob) : searchedJobs.slice(indexOfFirstJob, indexOfLastJob);
+
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
