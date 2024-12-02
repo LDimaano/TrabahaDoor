@@ -302,16 +302,17 @@ app.get('/api/notifications/:userId', async (req, res) => {
 const getJobData = async () => {
   try {
     const res = await pool.query(`
-        SELECT
+         SELECT
         joblistings.job_id,
         emp_profiles.company_name,
         job_titles.job_title,
         industries.industry_name,
         job_skills.skill_id,
         skills.skill_name,
+		    job_education.education_id,
+		    educations.education_name,
         joblistings.salaryrange,
         joblistings.jobtype,
-        educations.education_name,
         pp.profile_picture_url
     FROM joblistings
     JOIN emp_profiles ON joblistings.user_id = emp_profiles.user_id
@@ -319,7 +320,7 @@ const getJobData = async () => {
     JOIN industries ON joblistings.industry_id = industries.industry_id
     JOIN job_skills ON joblistings.job_id = job_skills.job_id
     JOIN skills ON job_skills.skill_id = skills.skill_id
-    LEFT JOIN job_education ON job_education.user_id = joblistings.user_id
+    LEFT JOIN job_education ON job_education.job_id = joblistings.job_id
     LEFT JOIN educations ON job_education.education_id = educations.education_id
     LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
     WHERE joblistings.status = 'Hiring';
@@ -333,9 +334,9 @@ const getJobData = async () => {
         job_title,
         industry_name,
         skill_name,
+        education_name,
         salaryrange,
         jobtype,
-        education_name,
         profile_picture_url,
       } = row;
 
