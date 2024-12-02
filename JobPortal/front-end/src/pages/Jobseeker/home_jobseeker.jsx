@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Header from '../../components/jsheader';
-import SearchForm from '../../components/searchform';
+// import SearchForm from '../../components/searchform';
 import FilterSection from '../../components/filtersection';
 import JobList from '../../components/joblist';
 import { Range } from 'react-range';
@@ -38,12 +38,12 @@ function HomeJobSeeker() {
       <Header />
 
       {/* Search Form */}
-      <SearchForm
+      {/* <SearchForm
         searchQuery={searchQuery}
         searchType={searchType}
         onSearchChange={(query) => setSearchQuery(query)}
         onSearchTypeChange={(type) => setSearchType(type)}
-      />
+      /> */}
 
       <div className="container mt-4">
         <div className="row">
