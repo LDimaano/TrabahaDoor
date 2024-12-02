@@ -4,7 +4,15 @@ import FilterGroup from './filtergroup';
 function FilterSection({ onFilterChange }) {
   const [selectedEmploymentTypes, setSelectedEmploymentTypes] = useState([]);
 
-  const employmentTypes = ['Full-time', 'Part-Time', 'Work from Home'];
+  const employmentTypes = [
+    'Full-time',
+    'Part-time',
+    'Contract',
+    'Temporary',
+    'Internship',
+    'Volunteer',
+    'Freelance'
+  ];
 
   const handleEmploymentTypeChange = (selectedItems) => {
     setSelectedEmploymentTypes(selectedItems);
