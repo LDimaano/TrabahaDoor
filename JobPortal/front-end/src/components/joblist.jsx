@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import JobListItem from './joblistitem';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
-import '../css/pagination.css';
+import '../css/pagination.css'; 
 
 function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQuery, searchType, isRecommended }) {
   const [jobs, setJobs] = useState([]);
@@ -59,6 +59,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         console.error('Error fetching user skills:', error);
       }
     };
+    
 
     const fetchUserProfile = async () => {
       const userId = sessionStorage.getItem('user_id');
@@ -91,7 +92,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
             console.error('Invalid salaryRange:', userProfile.salaryRange);
             return;
           }
-
+          
           const requestBody = {
             skills: userSkills,
             industry: userProfile.industryName,
@@ -106,15 +107,15 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
           });
-
+  
           if (!response.ok) {
             const errorText = await response.text();
             console.error('Error fetching recommended jobs:', errorText);
             throw new Error(errorText);
           }
-
+  
           const recommendedJobsData = await response.json();
-
+  
           if (recommendedJobsData && recommendedJobsData.recommendations) {
             setRecommendedJobs(recommendedJobsData.recommendations);
           } else {
@@ -126,34 +127,29 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       };
       fetchRecommendedJobs();
     }
-  }, [isRecommended, userSkills, userEducations, userProfile]);
-
+  }, [isRecommended, userSkills, userEducations,  userProfile]);
+  
   const applyFilters = (jobs) => {
-    if (!jobs || jobs.length === 0) return [];
-
+    if (!Array.isArray(jobs) || jobs.length === 0) return [];
     const employmentTypes = filters.employmentTypes || [];
     const salaryRanges = filters.salaryRanges || [];
     const employmentTypesLower = employmentTypes.map(type => type.toLowerCase());
-
+  
     return jobs.filter(job => {
       const jobType = job.jobtype ? job.jobtype.toLowerCase() : '';
-      const jobSalaryRange = job.salaryrange ? job.salaryrange : '';
-
-      // Split the job's salary range into min and max
+      const jobSalaryRange = job.salaryrange || '';
       const [jobMinSalary, jobMaxSalary] = jobSalaryRange.split('-').map(Number);
-
-      // Check if the job matches the employment type filter
+  
       const matchesEmploymentType = employmentTypesLower.length === 0 || employmentTypesLower.includes(jobType);
-
-      // Check if the job's salary range intersects with the selected salary range
       const matchesSalaryRange = salaryRanges.length === 0 || salaryRanges.some(range => {
         const [selectedMin, selectedMax] = range.split('-').map(Number);
         return jobMinSalary <= selectedMax && jobMaxSalary >= selectedMin;
       });
-
+  
       return matchesEmploymentType && matchesSalaryRange;
     });
   };
+  
 
   const applySearch = (jobs) => {
     if (!jobs || jobs.length === 0 || !searchQuery) return jobs;
@@ -170,32 +166,71 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
 
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = isRecommended ? recommendedJobs.slice(indexOfFirstJob, indexOfLastJob) : searchedJobs.slice(indexOfFirstJob, indexOfLastJob);
+  const currentJobs = isRecommended
+  ? (Array.isArray(recommendedJobs) ? recommendedJobs.slice(indexOfFirstJob, indexOfLastJob) : [])
+  : (Array.isArray(searchedJobs) ? searchedJobs.slice(indexOfFirstJob, indexOfLastJob) : []);
+
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const totalJobs = isRecommended ? recommendedJobs.length : searchedJobs.length;
+  const totalPages = Math.ceil(totalJobs / jobsPerPage);
+  const maxPagesVisible = 5;
+
+  let startPage = Math.max(1, currentPage - Math.floor(maxPagesVisible / 2));
+  let endPage = Math.min(totalPages, startPage + maxPagesVisible - 1);
+
+  if (endPage - startPage + 1 < maxPagesVisible) {
+    startPage = Math.max(1, endPage - maxPagesVisible + 1);
+  }
+
+  const pageNumbers = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i);
+  }
+
   return (
-    <div className="container mt-5">
-      <div className="row">
-        <div className="col-md-12">
-          <ul className="list-group">
-            {currentJobs.map((job, index) => (
-              <JobListItem key={index} job={job} />
-            ))}
-          </ul>
-          <nav>
-            <ul className="pagination">
-              {Array.from({ length: Math.ceil((isRecommended ? recommendedJobs.length : searchedJobs.length) / jobsPerPage) }, (_, i) => (
-                <li key={i} className={`page-item ${i + 1 === currentPage ? 'active' : ''}`}>
-                  <button onClick={() => paginate(i + 1)} className="page-link">
-                    {i + 1}
-                  </button>
-                </li>
-              ))}
+    <div>
+      {isRecommended ? (
+        <>
+          <h3>Recommended Jobs</h3>
+          {currentJobs.length === 0 ? <p>No recommended jobs available</p> : (
+            <ul className="list-group">
+              {currentJobs.map((job) => <JobListItem key={job.job_id} job={job} />)}
             </ul>
-          </nav>
-        </div>
-      </div>
+          )}
+        </>
+      ) : (
+        <>
+          <h3>All Jobs</h3>
+          {currentJobs.length === 0 ? <p>No jobs available</p> : (
+            <ul className="list-group">
+              {currentJobs.map((job) => <JobListItem key={job.job_id} job={job} />)}
+            </ul>
+          )}
+        </>
+      )}
+      <nav className="pagination-container">
+        <ul className="pagination">
+          {currentPage > 1 && (
+            <li className="page-item">
+              <a onClick={() => paginate(currentPage - 1)} href="#!" className="page-link">{'<<'}</a>
+            </li>
+          )}
+          {pageNumbers.map(number => (
+            <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
+              <a onClick={() => paginate(number)} href="#!" className="page-link">{number}</a>
+            </li>
+          ))}
+          {currentPage < totalPages && (
+            <li className="page-item">
+              <a onClick={() => paginate(currentPage + 1)} href="#!" className="page-link">
+              {'>>'}
+              </a>
+            </li>
+          )}
+        </ul>
+      </nav>
     </div>
   );
 }
