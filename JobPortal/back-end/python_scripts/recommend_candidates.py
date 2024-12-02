@@ -40,7 +40,8 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                     'profile_picture_url': applicant.get('profile_picture_url', ''),
                     'from_collaborative_filtering': False,
                     'match_type': 'title',
-                    'influence_tag': 'content'
+                    'influence_tag': 'content',
+                    'match_score': 3  # Assign a higher score for title match
                 })
                 seen_user_ids.add(user_id)
                 continue
@@ -64,7 +65,8 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                         'profile_picture_url': applicant.get('profile_picture_url', ''),
                         'from_collaborative_filtering': False,
                         'match_type': 'education' if matched_education else 'both' if matched_skills and industry_match else 'skills' if matched_skills else 'industry',
-                        'influence_tag': 'content'
+                        'influence_tag': 'content',
+                        'match_score': len(matched_skills) * 2 + len(matched_education)  # Score based on skill and education match count
                     })
                     seen_user_ids.add(user_id)
 
@@ -78,7 +80,8 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                     'profile_picture_url': applicant.get('profile_picture_url', ''),
                     'from_collaborative_filtering': False,
                     'match_type': 'education',
-                    'influence_tag': 'content'
+                    'influence_tag': 'content',
+                    'match_score': len(matched_education)  # Score based on education match count
                 })
                 seen_user_ids.add(user_id)
 
@@ -102,7 +105,8 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                     'profile_picture_url': profile_picture_url,
                     'from_collaborative_filtering': True,
                     'match_type': 'collaborative',
-                    'influence_tag': 'collaborative'
+                    'influence_tag': 'collaborative',
+                    'match_score': 1  # Assign a lower score for collaborative match
                 })
                 seen_user_ids.add(js_user_id)
 
@@ -114,6 +118,9 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
         rec for rec in recommendations
         if rec['matched_skills'] or rec['matched_education'] or rec['industry_match'] or rec['job_title']
     ]
+
+    # Sort by match_score in descending order to prioritize higher skill and education matches
+    recommendations = sorted(recommendations, key=lambda rec: rec['match_score'], reverse=True)
 
     return recommendations
 
