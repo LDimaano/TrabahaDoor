@@ -12,12 +12,11 @@ const PersonalInfo = ({ data, educations }) => {
       <p><strong>Gender:</strong> {data.gender}</p>
       <p><strong>Address:</strong> {data.address}</p>
       <p><strong>Industry:</strong> {data.industry}</p>
-      <div className="d-flex flex-wrap" style={{ gap: '8px' }}>
-      <p><strong>Education:</strong> </p>{data.educations.map((education, index) => (
+      <p><strong>Education:</strong> </p>
+      {data.educations.map((education, index) => (
           <Tag key={index} style={{ marginBottom: '8px' }}>{education}</Tag>
         ))}
       </div>
-    </div>
   );
 };
 
