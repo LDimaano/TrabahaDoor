@@ -85,6 +85,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
               industry: userProfile.industryName,
               salaryRange: userProfile.salaryRange || null,
               jobTitles: userProfile.jobTitles || [],
+              education: userProfile.education || [],
             }),
           });
   

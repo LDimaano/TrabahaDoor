@@ -101,18 +101,22 @@ router.get('/user-info/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
+    // Validate the user ID
     if (!userId || isNaN(userId)) {
       return res.status(400).json({ message: 'Invalid user ID' });
     }
 
+    // Query to fetch user information
     const result = await pool.query(
-            `SELECT 
+      `
+      SELECT 
           js.full_name,
           js.user_id,
           js.industry_id,
           i.industry_name,
           je.salary,
-          ARRAY_AGG(DISTINCT jt.job_title) AS job_titles
+          ARRAY_AGG(DISTINCT jt.job_title) AS job_titles,
+          ARRAY_AGG(DISTINCT educations.education_name) AS education
       FROM 
           job_seekers js
       JOIN 
@@ -121,21 +125,31 @@ router.get('/user-info/:userId', async (req, res) => {
           industries i ON js.industry_id = i.industry_id
       JOIN 
           job_titles jt ON je.jobtitle_id = jt.jobtitle_id
+      LEFT JOIN 
+          js_education ON js_education.user_id = js.user_id
+      LEFT JOIN 
+          educations ON js_education.education_id = educations.education_id
       WHERE 
           js.user_id = $1
       GROUP BY 
-          js.user_id, js.full_name, js.industry_id, i.industry_name, je.salary;`,
+          js.user_id, js.full_name, js.industry_id, i.industry_name, je.salary;
+      `,
       [userId]
     );
 
+    // Check if a user was found
     if (result.rows.length > 0) {
       const userInfo = result.rows[0];
+
+      // Construct response object
       const response = {
         fullName: userInfo.full_name,
         industryName: userInfo.industry_name,
         salaryRange: userInfo.salary,
-        jobTitles: userInfo.job_titles,
+        jobTitles: userInfo.job_titles || [],
+        education: userInfo.education || [], // Include education in the response
       };
+
       res.json(response);
     } else {
       res.status(404).json({ message: 'User not found' });

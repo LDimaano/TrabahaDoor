@@ -302,29 +302,42 @@ app.get('/api/notifications/:userId', async (req, res) => {
 const getJobData = async () => {
   try {
     const res = await pool.query(`
-      SELECT
+        SELECT
         joblistings.job_id,
-		    emp_profiles.company_name,
+        emp_profiles.company_name,
         job_titles.job_title,
         industries.industry_name,
         job_skills.skill_id,
         skills.skill_name,
         joblistings.salaryrange,
         joblistings.jobtype,
+        educations.education_name,
         pp.profile_picture_url
-      FROM joblistings
-	    JOIN emp_profiles ON joblistings.user_id = emp_profiles.user_id
-      JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
-      JOIN industries ON joblistings.industry_id = industries.industry_id
-      JOIN job_skills ON joblistings.job_id = job_skills.job_id
-      JOIN skills ON job_skills.skill_id = skills.skill_id
-	    LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
-	    WHERE joblistings.status = 'Hiring'
+    FROM joblistings
+    JOIN emp_profiles ON joblistings.user_id = emp_profiles.user_id
+    JOIN job_titles ON joblistings.jobtitle_id = job_titles.jobtitle_id
+    JOIN industries ON joblistings.industry_id = industries.industry_id
+    JOIN job_skills ON joblistings.job_id = job_skills.job_id
+    JOIN skills ON job_skills.skill_id = skills.skill_id
+    LEFT JOIN job_education ON job_education.user_id = joblistings.user_id
+    LEFT JOIN educations ON job_education.education_id = educations.education_id
+    LEFT JOIN profilepictures pp ON joblistings.user_id = pp.user_id
+    WHERE joblistings.status = 'Hiring';
     `);
 
-    // Transform job data to include only the necessary information
+    // Transform job data to include education name
     const jobData = res.rows.reduce((acc, row) => {
-      const { job_id, company_name, job_title, industry_name, skill_name, salaryrange, jobtype, profile_picture_url } = row;
+      const {
+        job_id,
+        company_name,
+        job_title,
+        industry_name,
+        skill_name,
+        salaryrange,
+        jobtype,
+        education_name,
+        profile_picture_url,
+      } = row;
 
       if (!acc[job_id]) {
         acc[job_id] = {
@@ -335,7 +348,8 @@ const getJobData = async () => {
           required_skills: [],
           salaryrange,
           jobtype,
-          profile_picture_url  
+          education_names: new Set(), // Use a Set to avoid duplicate education names
+          profile_picture_url,
         };
       }
 
@@ -343,13 +357,23 @@ const getJobData = async () => {
         acc[job_id].required_skills.push(skill_name);
       }
 
+      if (education_name) {
+        acc[job_id].education_names.add(education_name);
+      }
+
       return acc;
     }, {});
 
-    // Log the filtered job data for debugging
-    console.log('Fetched Job Data for Algorithm:', JSON.stringify(Object.values(jobData), null, 2));
+    // Convert Sets to Arrays for education_names
+    const transformedData = Object.values(jobData).map(job => ({
+      ...job,
+      education_names: Array.from(job.education_names),
+    }));
 
-    return Object.values(jobData); 
+    // Log the filtered job data for debugging
+    console.log('Fetched Job Data for Algorithm:', JSON.stringify(transformedData, null, 2));
+
+    return transformedData;
   } catch (err) {
     console.error('Error fetching job data:', err);
     throw err;
