@@ -368,9 +368,6 @@ const getJobData = async () => {
     // Convert the object back to an array, since you may need the array format for further processing
     const transformedData = Object.values(jobData);
 
-    // Log the filtered job data for debugging
-    console.log('Fetched Job Data for Algorithm:', JSON.stringify(transformedData, null, 2));
-
     return transformedData;
   } catch (err) {
     console.error('Error fetching job data:', err);
@@ -390,8 +387,6 @@ const getSimilarJobSeekers = async (jobTitles) => {
 
     // Filter out null or empty job titles
     const filteredJobTitles = titleNames.filter(title => title);
-
-    console.log('Filtered Job Titles:', filteredJobTitles); // Debugging log
 
     if (filteredJobTitles.length === 0) {
       console.warn('No valid job titles provided.');
@@ -423,8 +418,6 @@ const getSimilarJobSeekers = async (jobTitles) => {
       [filteredJobTitles.map(title => `%${title}%`)] // Format for ILIKE
     );
 
-    console.log('Query Result:', res.rows); // Log query result for debugging
-
     // Process results and group similar job seekers with their applied jobs
     const similarJobSeekers = res.rows.map(row => ({
       user_id: row.user_id,
@@ -436,7 +429,6 @@ const getSimilarJobSeekers = async (jobTitles) => {
         : []
     }));
 
-    console.log('Similar Job Seekers:', JSON.stringify(similarJobSeekers, null, 2)); // Debugging output
     return similarJobSeekers;
   } catch (err) {
     console.error('Error fetching similar job seekers:', err);
@@ -454,9 +446,6 @@ app.get('/api/getskills/:userId', async (req, res) => {
       FROM js_skills
       JOIN skills ON js_skills.skill_id = skills.skill_id
       WHERE js_skills.user_id = $1`, [userId]);
-
-    // Log the retrieved skills for debugging
-    console.log('Retrieved Skills for User:', userId, JSON.stringify(skills.rows, null, 2));
 
     res.json(skills.rows); 
   } catch (err) {
@@ -478,9 +467,6 @@ app.get('/api/geteducation/:userId', async (req, res) => {
       WHERE je.user_id = $1
       `, [userId]);
 
-    // Log the retrieved skills for debugging
-    console.log('Retrieved education for User:', userId, JSON.stringify(educations.rows, null, 2));
-
     res.json(educations.rows); 
   } catch (err) {
     console.error('Error fetching education:', err);
@@ -490,23 +476,6 @@ app.get('/api/geteducation/:userId', async (req, res) => {
 
 
 app.post('/api/recommend', async (req, res) => {
-  // Validate inputs
-  if (!req.body.skills || !Array.isArray(req.body.skills) || req.body.skills.length === 0) {
-    return res.status(400).json({ error: 'Skills must be a non-empty array.' });
-  }
-  if (!req.body.education || !Array.isArray(req.body.education) || req.body.education.length === 0) {
-    return res.status(400).json({ error: 'Educations must be a non-empty array.' });
-  }
-  if (!req.body.industry) {
-    return res.status(400).json({ error: 'Industry is required.' });
-  }
-  if (!req.body.jobTitles || !Array.isArray(req.body.jobTitles)) {
-    return res.status(400).json({ error: 'Job titles must be an array.' });
-  }
-  if (!req.body.salaryRange) {
-    return res.status(400).json({ error: 'Salary range is required.' });
-  }
-
   const {
     skills: jobSeekerSkills,        
     education: jobSeekerEducations, 
@@ -515,7 +484,6 @@ app.post('/api/recommend', async (req, res) => {
     salaryRange: jobSeekerSalary    
   } = req.body;
   
-
   try {
     // Fetch job data
     const jobData = await getJobData();
@@ -526,10 +494,10 @@ app.post('/api/recommend', async (req, res) => {
     // Log details for debugging
     console.log('Job Data:', JSON.stringify(jobData, null, 2));
     console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
-    console.log('Job Seeker education:', JSON.stringify(jobSeekerEducations, null, 2));
+    console.log('Job Seeker Education:', JSON.stringify(jobSeekerEducations, null, 2));
     console.log('Job Seeker Industry:', jobSeekerIndustry);
     console.log('Job Seeker Job Titles:', JSON.stringify(jobSeekerJobTitles, null, 2));
-    console.log('Job Seeker Salary Range:', jobSeekerSalary);
+    console.log('Job Seeker Salary Range:', JSON.stringify(jobSeekerSalary, null, 2));
     console.log('Similar Job Seekers:', JSON.stringify(similarJobSeekers, null, 2));
 
     // Spawn the Python process to generate recommendations
@@ -538,10 +506,21 @@ app.post('/api/recommend', async (req, res) => {
       JSON.stringify(jobData), 
       JSON.stringify(jobSeekerSkills), 
       JSON.stringify(jobSeekerEducations), 
-      jobSeekerIndustry,
+      JSON.stringify(jobSeekerIndustry),  // Ensure industry is a string
       JSON.stringify(jobSeekerJobTitles),
       JSON.stringify(jobSeekerSalary),
       JSON.stringify(similarJobSeekers) // Pass similar job seekers to Python
+    ]);
+
+    // Log arguments passed to Python
+    console.log('Arguments passed to Python:', [
+      JSON.stringify(jobData), 
+      JSON.stringify(jobSeekerSkills), 
+      JSON.stringify(jobSeekerEducations), 
+      JSON.stringify(jobSeekerIndustry),
+      JSON.stringify(jobSeekerJobTitles),
+      JSON.stringify(jobSeekerSalary),
+      JSON.stringify(similarJobSeekers)
     ]);
 
     let pythonOutput = '';

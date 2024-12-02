@@ -115,34 +115,50 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
 
     # Sort recommendations based on priority
     recommendations.sort(
-        key=lambda x: (
-            x['match_type'] == 'hybrid' and x['title_match'],  # Prioritize hybrid with title match
-            x['match_type'] == 'hybrid',  # Hybrid matches
-            x['title_match'],  # Title match
-            x['education_match'],  # Education matches
-            x['match_count'],  # Skill and education matches combined
-            x['salary_match'],  # Salary matches
-            x['collaborative_match']  # Collaborative match (lowest priority)
-        ),
+        key=lambda x: (x['industry_match'], x['collaborative_match'], x['title_match'], x['education_match'], x['salary_match'], x['match_count']),
         reverse=True
     )
 
     return recommendations
 
+# Main block to execute the script with received arguments
 if __name__ == "__main__":
     try:
+        # Log the raw input arguments
+        print('Raw input arguments:', sys.argv)
+
         job_data = json.loads(sys.argv[1])
         skills = json.loads(sys.argv[2])
-        jobseeker_industry = sys.argv[3]
-        job_titles = json.loads(sys.argv[4])
-        jobseeker_salary = json.loads(sys.argv[5])
-        jobseeker_education = json.loads(sys.argv[6]) if len(sys.argv) > 6 else None
-        similar_jobseekers = json.loads(sys.argv[7]) if len(sys.argv) > 7 else None
+        education = json.loads(sys.argv[3])
+        industry = json.loads(sys.argv[4])
+        job_titles = json.loads(sys.argv[5])
+        salary_range = json.loads(sys.argv[6])
+        similar_job_seekers = json.loads(sys.argv[7])
+
+        # Log parsed arguments
+        print('Parsed Job Data:', job_data)
+        print('Parsed Skills:', skills)
+        print('Parsed Education:', education)
+        print('Parsed Industry:', industry)
+        print('Parsed Job Titles:', job_titles)
+        print('Parsed Salary Range:', salary_range)
+        print('Parsed Similar Job Seekers:', similar_job_seekers)
 
         # Generate recommendations
-        recommendations = recommend_jobs(job_data, skills, jobseeker_industry, job_titles, similar_jobseekers, jobseeker_salary=jobseeker_salary, jobseeker_education=jobseeker_education)
+        recommendations = recommend_jobs(
+            job_data,
+            skills,
+            industry,
+            job_titles,
+            similar_job_seekers,
+            salary_range,
+            education
+        )
 
+        # Output the recommendations
         print(json.dumps(recommendations))
 
     except Exception as e:
-        print(json.dumps({"error": str(e)}), file=sys.stderr)
+        # Print the exception to standard error
+        print('Error:', e, file=sys.stderr)
+        sys.exit(1)
