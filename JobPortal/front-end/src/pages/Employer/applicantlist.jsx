@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../../components/emp_side';
 import Header from '../../components/emp_header';
-import Pagination from '../../components/emp_pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import ApplicantJoblist from '../../components/emp_applicantlist';
@@ -10,14 +9,12 @@ import ApplicantJoblist from '../../components/emp_applicantlist';
 const ApplicantDashboard = () => {
   const navigate = useNavigate();
   const { jobId } = useParams();
-  const [jobs, setJobs] = useState([]); 
+  const [jobs, setJobs] = useState([]);
   const [recommendedJobs, setRecommendedJobs] = useState([]); 
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [listingsPerPage] = useState(10);
   const [error, setError] = useState(null);
-  const [hiringStages, setHiringStages] = useState({}); 
-  const [isSidebarVisible, setSidebarVisible] = useState(false); 
+  const [hiringStages, setHiringStages] = useState({});
+  const [isSidebarVisible, setSidebarVisible] = useState(false);
 
   useEffect(() => {
     if (jobId) {
@@ -42,7 +39,7 @@ const ApplicantDashboard = () => {
       setJobs(data);
 
       const initialStages = data.reduce((acc, applicant) => {
-        acc[applicant.user_id] = applicant.hiring_stage || 'Received'; 
+        acc[applicant.user_id] = applicant.hiring_stage || 'Received';
         return acc;
       }, {});
       setHiringStages(initialStages);
@@ -65,26 +62,22 @@ const ApplicantDashboard = () => {
         throw new Error(errorData || 'Failed to update hiring stage');
       }
 
-      // Update the hiring stage in both jobs and hiringStages state
       setJobs(prevJobs =>
         prevJobs.map(job =>
           job.user_id === userId ? { ...job, hiring_stage: newStage } : job
         )
       );
 
-      // Update hiring stages for both jobs and recommended jobs
       setHiringStages(prevStages => ({
         ...prevStages,
         [userId]: newStage,
       }));
-
-      // Update recommended jobs if they share the same state
+      
       setRecommendedJobs(prevRecommended =>
         prevRecommended.map(recJob =>
           recJob.user_id === userId ? { ...recJob, hiring_stage: newStage } : recJob
         )
       );
-
     } catch (error) {
       console.error('Error updating hiring stage:', error.message);
     }
@@ -96,7 +89,6 @@ const ApplicantDashboard = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); 
   };
 
   const toggleSidebar = () => {
@@ -107,12 +99,6 @@ const ApplicantDashboard = () => {
     listing.job_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     listing.datecreated.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const indexOfLastListing = currentPage * listingsPerPage;
-  const indexOfFirstListing = indexOfLastListing - listingsPerPage;
-  const currentListings = filteredListings.slice(indexOfFirstListing, indexOfLastListing);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -167,15 +153,9 @@ const ApplicantDashboard = () => {
             </div>
           </div>
           <ApplicantJoblist
-            currentListings={currentListings}
+            currentListings={filteredListings}
             hiringStages={hiringStages}
             onStageChange={handleStageChangeInDashboard}
-          />
-          <Pagination
-            listingsPerPage={listingsPerPage}
-            totalListings={filteredListings.length}
-            paginate={paginate}
-            currentPage={currentPage}
           />
         </section>
       </main>
@@ -187,7 +167,7 @@ const ApplicantDashboard = () => {
       >
         <i className="fa fa-bars"></i>
       </button>
-  
+
       {isSidebarVisible && (
         <div
           className="position-fixed w-100 h-100"
@@ -197,7 +177,6 @@ const ApplicantDashboard = () => {
       )}
     </div>
   );
-  
 };
 
 export default ApplicantDashboard;

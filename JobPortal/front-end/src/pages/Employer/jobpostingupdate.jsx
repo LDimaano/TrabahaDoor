@@ -374,7 +374,7 @@ const UpdateJobPosting = () => {
               <option value="Temporary">Temporary</option>
               <option value="Internship">Internship</option>
               <option value="Volunteer">Volunteer</option>
-              <option value="Volunteer">Volunteer</option>
+              <option value="Freelance">Freelance</option>
             </select>
           </div>
           <div className="mb-3">
