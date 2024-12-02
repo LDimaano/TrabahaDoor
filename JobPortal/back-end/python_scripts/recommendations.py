@@ -6,7 +6,7 @@ def extract_job_data(job_data):
     job_info = []
     for job in job_data:
         job_info.append({
-            'job_id': job.get('job_id'),
+            'job_id': int(job.get('job_id')),  # Ensure job_id is an integer
             'required_skills': set(job.get('required_skills', [])),
             'education': set(job.get('education', [])),
             'company_name': job.get('company_name', 'Unknown Company name'),
@@ -20,14 +20,14 @@ def extract_job_data(job_data):
 
 def match_skills_and_titles(job, skills_set, job_titles_set, jobseeker_education_set=None):
     """Stage 2: Check for skill, title, and education matches."""
-    job_skills = job.get('required_skills', set())
+    job_skills = set(job.get('required_skills', []))  # Ensure it's a set
     title_match = job['job_title'] in job_titles_set
     skill_match = len(skills_set.intersection(job_skills)) > 0
     
     # Treat education matching as another form of matching
     education_match = False
     if jobseeker_education_set is not None:
-        job_education = set(job.get('required_education', []))
+        job_education = set(job.get('required_education', []))  # Ensure education is a set
         education_match = len(job_education.intersection(jobseeker_education_set)) > 0
 
     return skill_match, title_match, education_match
@@ -41,8 +41,9 @@ def check_salary_match(job, jobseeker_salary):
 
 def check_collaborative_filtering(job, collaborative_filtering_jobs):
     """Check if job is in the list of jobs applied to by similar jobseekers."""
-    collaborative_match = job['job_id'] in collaborative_filtering_jobs
+    collaborative_match = job['job_id'] in collaborative_filtering_jobs  # job_id should be an integer
     return collaborative_match
+
 
 def generate_recommendation(job, match_count, industry_match, title_match, education_match, salary_match, collaborative_match):
     """Generate a job recommendation."""
