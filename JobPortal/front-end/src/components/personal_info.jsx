@@ -1,5 +1,5 @@
 import React from 'react';
-import Tag from './jstag';
+import EducTag from './eductag';
 
 const PersonalInfo = ({ data, educations }) => {
   console.log("the data received:", data);
@@ -12,9 +12,9 @@ const PersonalInfo = ({ data, educations }) => {
       <p><strong>Gender:</strong> {data.gender}</p>
       <p><strong>Address:</strong> {data.address}</p>
       <p><strong>Industry:</strong> {data.industry}</p>
-      <p><strong>Education:</strong> </p>
+      <p><strong>Education:</strong></p>
       {data.educations.map((education, index) => (
-          <Tag key={index} style={{ marginBottom: '8px' }}>{education}</Tag>
+          <EducTag key={index} style={{ marginBottom: '8px' }}>{education}</EducTag>
         ))}
       </div>
   );

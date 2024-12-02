@@ -3,7 +3,7 @@ import SkillSet from './skillset';
 
 const ProfessionalInfo = ({ data }) => (
   <section className="container my-4">
-    <h3 className="mb-4">Professional Info</h3>
+    <h4 className="mb-4">Professional Info</h4>
     <div className="row">
       <div className="col-12 mb-3">
         <p><strong>Current Job:</strong> {data.currentJob || 'Not Specified'}</p>
