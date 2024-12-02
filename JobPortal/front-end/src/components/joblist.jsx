@@ -76,17 +76,20 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
             console.error('Invalid salaryRange:', userProfile.salaryRange);
             return;
           }
-  
+          
+          const requestBody = {
+            skills: userSkills,
+            industry: userProfile.industryName,
+            salaryRange: userProfile.salaryRange || null,
+            jobTitles: userProfile.jobTitles || [],
+            education: userProfile.education || [],
+          };
+          console.log('Request Body:', JSON.stringify(requestBody));
+
           const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recommend`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              skills: userSkills,
-              industry: userProfile.industryName,
-              salaryRange: userProfile.salaryRange || null,
-              jobTitles: userProfile.jobTitles || [],
-              education: userProfile.education || [],
-            }),
+            body: JSON.stringify(requestBody),
           });
   
           if (!response.ok) {

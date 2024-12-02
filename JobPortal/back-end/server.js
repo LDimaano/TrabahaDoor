@@ -498,7 +498,7 @@ app.post('/api/recommend', async (req, res) => {
 
     // Log details for debugging
     console.log('Job Data:', JSON.stringify(jobData, null, 2));
-    console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));4
+    console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
     console.log('Job Seeker education:', JSON.stringify(jobSeekerEducation, null, 2));
     console.log('Job Seeker Industry:', jobSeekerIndustry);
     console.log('Job Seeker Job Titles:', JSON.stringify(jobSeekerJobTitles, null, 2));
