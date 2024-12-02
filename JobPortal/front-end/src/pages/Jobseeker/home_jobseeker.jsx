@@ -13,6 +13,8 @@ function HomeJobSeeker() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState('jobTitle');
   const [salaryRange, setSalaryRange] = useState([5000, 100000]);
+  const [userSkills, setUserSkills] = useState([]);
+  const [activeTab, setActiveTab] = useState('recommended'); 
 
   const handleFilterChange = (key, value) => {
     setFilters((prevFilters) => ({
@@ -87,23 +89,34 @@ function HomeJobSeeker() {
                 )}
               />
               <div className="d-flex justify-content-between">
-                <span>${salaryRange[0]}</span>
-                <span>${salaryRange[1]}</span>
+                <span>₱{salaryRange[0]}</span>
+                <span>₱{salaryRange[1]}</span>
               </div>
               <button className="btn btn-primary mt-3" onClick={applySalaryFilter}>
                 Apply
               </button>
             </div>
           </div>
-
-          {/* Job List */}
-          <div className="col-md-8">
+          <div className="col-md-9">
+            <div className="nav nav-tabs mb-3">
+              <button 
+                className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`} 
+                onClick={() => setActiveTab('recommended')}
+              >
+                Recommended Jobs
+              </button>
+              <button 
+                className={`nav-link ${activeTab === 'all' ? 'active' : ''}`} 
+                onClick={() => setActiveTab('all')}
+              >
+                All Jobs
+              </button>
+            </div>
             <JobList
               filters={filters}
               searchQuery={searchQuery}
               searchType={searchType}
-              isRecommended={false} // Set to true if recommended jobs are required
-            />
+              userSkills={userSkills} isRecommended={activeTab === 'recommended'} />  
           </div>
         </div>
       </div>
