@@ -8,6 +8,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
   const [jobs, setJobs] = useState([]);
   const [recommendedJobs, setRecommendedJobs] = useState([]);
   const [userSkills, setUserSkills] = useState([]);
+  const [userEducations, setUserEducations] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
@@ -46,6 +47,20 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       }
     };
 
+    const fetchUserEducations = async () => {
+      const userId = sessionStorage.getItem('user_id');
+      if (!userId) return;
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/geteducation/${userId}`);
+        if (!response.ok) throw new Error(await response.text());
+        const educations = await response.json();
+        setUserEducations(educations.map(education => education.education_name) || []);
+      } catch (error) {
+        console.error('Error fetching user skills:', error);
+      }
+    };
+    
+
     const fetchUserProfile = async () => {
       const userId = sessionStorage.getItem('user_id');
       if (!userId) return;
@@ -61,6 +76,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
     };
 
     fetchUserSkills();
+    fetchUserEducations();
     fetchUserProfile();
   }, []);
 
@@ -82,7 +98,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
             industry: userProfile.industryName,
             salaryRange: userProfile.salaryRange || null,
             jobTitles: userProfile.jobTitles || [],
-            education: userProfile.education || [],
+            education: userEducations
           };
           console.log('Request Body:', JSON.stringify(requestBody));
 
@@ -111,7 +127,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       };
       fetchRecommendedJobs();
     }
-  }, [isRecommended, userSkills, userProfile]);
+  }, [isRecommended, userSkills, userEducations,  userProfile]);
   
   const applyFilters = (jobs) => {
     if (!jobs || jobs.length === 0) return [];

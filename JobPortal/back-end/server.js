@@ -464,6 +464,29 @@ app.get('/api/getskills/:userId', async (req, res) => {
   }
 });
 
+app.get('/api/geteducation/:userId', async (req, res) => {
+  const { userId } = req.params; 
+
+  try {
+    const educations = await pool.query(`
+      SELECT 
+        e.education_name, 
+        je.education_id
+      FROM js_education je
+      JOIN educations e ON je.education_id = e.education_id
+      WHERE je.user_id = $1
+      `, [userId]);
+
+    // Log the retrieved skills for debugging
+    console.log('Retrieved education for User:', userId, JSON.stringify(educations.rows, null, 2));
+
+    res.json(educations.rows); 
+  } catch (err) {
+    console.error('Error fetching education:', err);
+    res.status(500).json({ error: 'Error fetching education' });
+  }
+});
+
 
 app.post('/api/recommend', async (req, res) => {
   // Validate inputs
@@ -484,7 +507,7 @@ app.post('/api/recommend', async (req, res) => {
   }
 
   const { skills: jobSeekerSkills, 
-          educations: jobSeekerEducation,
+          educations: jobSeekerEducations,
           industry: jobSeekerIndustry, 
           jobTitles: jobSeekerJobTitles, 
           salaryRange: jobSeekerSalary } = req.body;
@@ -499,7 +522,7 @@ app.post('/api/recommend', async (req, res) => {
     // Log details for debugging
     console.log('Job Data:', JSON.stringify(jobData, null, 2));
     console.log('Job Seeker Skills:', JSON.stringify(jobSeekerSkills, null, 2));
-    console.log('Job Seeker education:', JSON.stringify(jobSeekerEducation, null, 2));
+    console.log('Job Seeker education:', JSON.stringify(jobSeekerEducations, null, 2));
     console.log('Job Seeker Industry:', jobSeekerIndustry);
     console.log('Job Seeker Job Titles:', JSON.stringify(jobSeekerJobTitles, null, 2));
     console.log('Job Seeker Salary Range:', jobSeekerSalary);
@@ -510,7 +533,7 @@ app.post('/api/recommend', async (req, res) => {
       'python_scripts/recommendations.py', 
       JSON.stringify(jobData), 
       JSON.stringify(jobSeekerSkills), 
-      JSON.stringify(jobSeekerEducation), 
+      JSON.stringify(jobSeekerEducations), 
       jobSeekerIndustry,
       JSON.stringify(jobSeekerJobTitles),
       JSON.stringify(jobSeekerSalary),
