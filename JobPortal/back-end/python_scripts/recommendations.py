@@ -115,8 +115,15 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
 
     # Sort recommendations based on priority
     recommendations.sort(
-        key=lambda x: (x['industry_match'], x['collaborative_match'], x['title_match'], x['education_match'], x['salary_match'], x['match_count']),
-        reverse=True
+        key=lambda x: (
+            x['match_type'] == 'hybrid' and x['title_match'],  # Prioritize hybrid with title match
+            x['match_type'] == 'hybrid',  # Hybrid matches
+            x['title_match'],  # Title match
+            x['education_match'],  # Education matches
+            x['match_count'],  # Skill and education matches combined
+            x['salary_match'],  # Salary matches
+            x['collaborative_match']  # Collaborative match (lowest priority)
+        ),reverse=True
     )
 
     return recommendations
@@ -132,8 +139,8 @@ if __name__ == "__main__":
         education = json.loads(sys.argv[3])
         industry = json.loads(sys.argv[4])
         job_titles = json.loads(sys.argv[5])
-        salary_range = json.loads(sys.argv[6])
-        similar_job_seekers = json.loads(sys.argv[7])
+        salary_range = json.loads(sys.argv[6]) if len(sys.argv) > 6 else None
+        similar_job_seekers = json.loads(sys.argv[7]) if len(sys.argv) > 7 else None
 
         # Log parsed arguments
         print('Parsed Job Data:', job_data)
