@@ -44,7 +44,6 @@ def check_collaborative_filtering(job, collaborative_filtering_jobs):
     collaborative_match = job['job_id'] in collaborative_filtering_jobs  # job_id should be an integer
     return collaborative_match
 
-
 def generate_recommendation(job, match_count, industry_match, title_match, education_match, salary_match, collaborative_match):
     """Generate a job recommendation."""
     return {
@@ -123,49 +122,28 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
             x['match_count'],  # Skill and education matches combined
             x['salary_match'],  # Salary matches
             x['collaborative_match']  # Collaborative match (lowest priority)
-        ),reverse=True
+        ),
+        reverse=True
     )
 
     return recommendations
 
-# Main block to execute the script with received arguments
 if __name__ == "__main__":
     try:
-        # Log the raw input arguments
-        print('Raw input arguments:', sys.argv)
-
         job_data = json.loads(sys.argv[1])
         skills = json.loads(sys.argv[2])
-        education = json.loads(sys.argv[3])
-        industry = json.loads(sys.argv[4])
-        job_titles = json.loads(sys.argv[5])
-        salary_range = json.loads(sys.argv[6]) if len(sys.argv) > 6 else None
-        similar_job_seekers = json.loads(sys.argv[7]) if len(sys.argv) > 7 else None
-
-        # Log parsed arguments
-        print('Parsed Job Data:', job_data)
-        print('Parsed Skills:', skills)
-        print('Parsed Education:', education)
-        print('Parsed Industry:', industry)
-        print('Parsed Job Titles:', job_titles)
-        print('Parsed Salary Range:', salary_range)
-        print('Parsed Similar Job Seekers:', similar_job_seekers)
+        jobseeker_industry = sys.argv[3]
+        job_titles = json.loads(sys.argv[4])
+        jobseeker_salary = json.loads(sys.argv[5])
+        jobseeker_education = json.loads(sys.argv[6]) if len(sys.argv) > 6 else None
+        similar_jobseekers = json.loads(sys.argv[7]) if len(sys.argv) > 7 else None
 
         # Generate recommendations
-        recommendations = recommend_jobs(
-            job_data,
-            skills,
-            industry,
-            job_titles,
-            similar_job_seekers,
-            salary_range,
-            education
-        )
+        recommendations = recommend_jobs(job_data, skills, jobseeker_industry, job_titles, similar_jobseekers, jobseeker_salary=jobseeker_salary, jobseeker_education=jobseeker_education)
 
-        # Output the recommendations
+        # Only print the recommendations JSON to stdout
         print(json.dumps(recommendations))
 
     except Exception as e:
-        # Print the exception to standard error
-        print('Error:', e, file=sys.stderr)
-        sys.exit(1)
+        # Print errors to stderr
+        print(json.dumps({"error": str(e)}), file=sys.stderr)
