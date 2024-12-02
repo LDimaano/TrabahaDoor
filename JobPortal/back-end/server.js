@@ -618,33 +618,37 @@ const getJobPostings = async (userId) => {
 // Function to get applicants
 const getApplicants = async () => {
   const query = `
-      SELECT
-        js.full_name,
-        js.user_id,
-        u.email,
-        a.location,
-        ARRAY_AGG(DISTINCT jt.job_title) AS job_titles,
-        ARRAY_AGG(DISTINCT s.skill_name) AS skills,
-        pp.profile_picture_url,
-		js.industry_id, 
-    i.industry_name as industry
-    FROM job_seekers js
-    JOIN users u ON js.user_id = u.user_id
-    JOIN address a ON js.address_id = a.address_id
-    JOIN job_experience je ON js.user_id = je.user_id
-    JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
-    LEFT JOIN profilepictures pp ON js.user_id = pp.user_id
-    JOIN js_skills jk ON js.user_id = jk.user_id
-    JOIN skills s ON jk.skill_id = s.skill_id
-	JOIN industries i ON js.industry_id = i.industry_id
-    GROUP BY 
-        js.full_name,
-        js.user_id,
-        u.email,
-        a.location,
-        pp.profile_picture_url,
-		js.industry_id,
-    i.industry_name`;
+          SELECT
+          js.full_name,
+          js.user_id,
+          u.email,
+          a.location,
+          ARRAY_AGG(DISTINCT jt.job_title) AS job_titles,
+          ARRAY_AGG(DISTINCT s.skill_name) AS skills,
+          ARRAY_AGG(DISTINCT educations.education_name) AS js_education,
+          pp.profile_picture_url,
+          js.industry_id,
+          i.industry_name AS industry
+      FROM job_seekers js
+      JOIN users u ON js.user_id = u.user_id
+      JOIN address a ON js.address_id = a.address_id
+      JOIN job_experience je ON js.user_id = je.user_id
+      JOIN job_titles jt ON je.jobtitle_id = jt.jobtitle_id
+      LEFT JOIN profilepictures pp ON js.user_id = pp.user_id
+      LEFT JOIN js_education ON js_education.user_id = js.user_id
+      LEFT JOIN educations ON js_education.education_id = educations.education_id
+      JOIN js_skills jsk ON jsk.user_id = js.user_id
+      JOIN skills s ON jsk.skill_id = s.skill_id
+      JOIN industries i ON js.industry_id = i.industry_id
+      GROUP BY 
+          js.full_name,
+          js.user_id,
+          u.email,
+          a.location,
+          pp.profile_picture_url,
+          js.industry_id,
+          i.industry_name;
+      `;
     
   const { rows } = await pool.query(query); 
   return rows; 
