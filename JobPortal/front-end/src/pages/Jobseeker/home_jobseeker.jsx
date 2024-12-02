@@ -1,81 +1,91 @@
 import React, { useState } from 'react';
-import Header from '../../components/jsheader';
-import SearchForm from '../../components/searchform';
-import FilterSection from '../../components/filtersection';
-import JobList from '../../components/joblist';
+import FilterSection from './FilterSection';
+import JobList from './JobList';
+import { Range } from 'react-range';
 
 function HomeJobSeeker() {
   const [filters, setFilters] = useState({
     employmentTypes: [],
-    salaryRange: '',
-    industry: ''
+    salaryRanges: [],
   });
-  const [searchQuery, setSearchQuery] = useState('');
-  const [userSkills, setUserSkills] = useState([]);
-  const [activeTab, setActiveTab] = useState('recommended'); 
 
-  const handleFilterChange = (filterType, selectedItems) => {
-    setFilters(prevFilters => ({
+  const [salaryRange, setSalaryRange] = useState([5000, 100000]);
+
+  const handleFilterChange = (key, value) => {
+    setFilters((prevFilters) => ({
       ...prevFilters,
-      [filterType]: selectedItems
+      [key]: value,
     }));
   };
 
-  const handleSearchChange = (searchData) => {
-    setSearchQuery(searchData.jobTitle);
-    if (searchData.selectedIndustry) {
-      setFilters((prevFilters) => ({ ...prevFilters, industry: searchData.selectedIndustry }));
-    }
+  const handleSalaryRangeChange = (values) => {
+    setSalaryRange(values);
   };
 
-  const titleStyle = {
-    fontSize: '2rem', 
-    fontWeight: '700', 
-    color: '#333', 
-    textAlign: 'center', 
-    margin: '2rem 0', 
-    position: 'relative', 
-  };
-
-  const subtitleStyle = {
-    fontSize: '1.2rem',
-    color: '#666', 
-    textAlign: 'center', 
-    marginTop: '0.5rem', 
+  const applySalaryFilter = () => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      salaryRanges: [`${salaryRange[0]}-${salaryRange[1]}`],
+    }));
   };
 
   return (
     <div className="container">
-      <Header />
-      <main className="row mt-4">
-        <div style={titleStyle}>
-          <h1>Find Jobs</h1>
-          <div style={subtitleStyle}>Discover opportunities that match your skills and interests</div>
-        </div>
-        <SearchForm onSearch={handleSearchChange} />
-        <div className="row mt-3">
-          <div className="col-md-3">
-            <FilterSection onFilterChange={handleFilterChange} />
-          </div>
-          <div className="col-md-9">
-            <div className="nav nav-tabs mb-3">
-              <button 
-                className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('recommended')}
-              >
-                Recommended Jobs
-              </button>
-              <button 
-                className={`nav-link ${activeTab === 'all' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('all')}
-              >
-                All Jobs
-              </button>
+      <div className="row">
+        {/* Filter Section */}
+        <div className="col-md-4">
+          <FilterSection onFilterChange={handleFilterChange} />
+          
+          {/* Salary Range Filter */}
+          <div className="filter-group mt-4">
+            <h5>Salary Range</h5>
+            <Range
+              step={1000}
+              min={5000}
+              max={100000}
+              values={salaryRange}
+              onChange={handleSalaryRangeChange}
+              renderTrack={({ props, children }) => (
+                <div
+                  {...props}
+                  style={{
+                    ...props.style,
+                    height: '6px',
+                    width: '100%',
+                    background: '#ccc',
+                  }}
+                >
+                  {children}
+                </div>
+              )}
+              renderThumb={({ props }) => (
+                <div
+                  {...props}
+                  style={{
+                    ...props.style,
+                    height: '20px',
+                    width: '20px',
+                    background: '#007bff',
+                    borderRadius: '50%',
+                  }}
+                />
+              )}
+            />
+            <div className="d-flex justify-content-between">
+              <span>${salaryRange[0]}</span>
+              <span>${salaryRange[1]}</span>
             </div>
-            <JobList filters={filters} searchQuery={searchQuery} userSkills={userSkills} isRecommended={activeTab === 'recommended'} />
+            <button className="btn btn-primary mt-3" onClick={applySalaryFilter}>
+              Apply
+            </button>
           </div>
         </div>
-      </main>
+
+        {/* Job List */}
+        <div className="col-md-8">
+          <JobList filters={filters} />
+        </div>
+      </div>
     </div>
   );
 }
