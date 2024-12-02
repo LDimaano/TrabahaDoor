@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Header from '../../components/jsheader';
-// import SearchForm from '../../components/searchform';
 import FilterSection from '../../components/filtersection';
 import JobList from '../../components/joblist';
 import { Range } from 'react-range';
@@ -15,6 +14,7 @@ function HomeJobSeeker() {
   const [salaryRange, setSalaryRange] = useState([5000, 100000]);
   const [userSkills, setUserSkills] = useState([]);
   const [activeTab, setActiveTab] = useState('recommended'); 
+  const [showFilters, setShowFilters] = useState(false); // State to toggle filters
 
   const handleFilterChange = (key, value) => {
     setFilters((prevFilters) => ({
@@ -38,75 +38,84 @@ function HomeJobSeeker() {
     <div className="home-jobseeker">
       {/* Header */}
       <Header />
-
-      {/* Search Form */}
-      {/* <SearchForm
-        searchQuery={searchQuery}
-        searchType={searchType}
-        onSearchChange={(query) => setSearchQuery(query)}
-        onSearchTypeChange={(type) => setSearchType(type)}
-      /> */}
-
       <div className="container mt-4">
-        <div className="row">
-          {/* Filter Section */}
-          <div className="col-md-4">
-            <FilterSection onFilterChange={handleFilterChange} />
-
-            {/* Salary Range Filter */}
-            <div className="filter-group mt-4">
-              <h5>Salary Range</h5>
-              <Range
-                step={1000}
-                min={5000}
-                max={100000}
-                values={salaryRange}
-                onChange={handleSalaryRangeChange}
-                renderTrack={({ props, children }) => (
-                  <div
-                    {...props}
-                    style={{
-                      ...props.style,
-                      height: '6px',
-                      width: '100%',
-                      background: '#ccc',
-                    }}
-                  >
-                    {children}
-                  </div>
-                )}
-                renderThumb={({ props }) => (
-                  <div
-                    {...props}
-                    style={{
-                      ...props.style,
-                      height: '20px',
-                      width: '20px',
-                      background: '#007bff',
-                      borderRadius: '50%',
-                    }}
-                  />
-                )}
-              />
-              <div className="d-flex justify-content-between">
-                <span>₱{salaryRange[0]}</span>
-                <span>₱{salaryRange[1]}</span>
-              </div>
-              <button className="btn btn-primary mt-3" onClick={applySalaryFilter}>
-                Apply
-              </button>
-            </div>
+        <div className="row justify-content-center" style={{ textAlign: 'center' }}>
+          <div className="col-12 mb-4">
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowFilters(!showFilters)}
+              style={{ marginBottom: '20px' }}
+            >
+              {showFilters ? 'Hide Filters' : 'Show Filters'}
+            </button>
           </div>
-          <div className="col-md-9">
-            <div className="nav nav-tabs mb-3">
-              <button 
-                className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`} 
+          {showFilters && (
+            <div className="col-12 mb-4" style={{ textAlign: 'left' }}>
+              {/* Filter Section */}
+              <div className="filter-group">
+                <FilterSection onFilterChange={handleFilterChange} />
+              </div>
+              <div className="filter-group mt-4">
+                <h5>Salary Range</h5>
+                <Range
+                  step={1000}
+                  min={5000}
+                  max={100000}
+                  values={salaryRange}
+                  onChange={handleSalaryRangeChange}
+                  renderTrack={({ props, children }) => (
+                    <div
+                      {...props}
+                      style={{
+                        ...props.style,
+                        height: '6px',
+                        width: '100%',
+                        background: '#ccc',
+                        marginBottom: '10px',
+                      }}
+                    >
+                      {children}
+                    </div>
+                  )}
+                  renderThumb={({ props }) => (
+                    <div
+                      {...props}
+                      style={{
+                        ...props.style,
+                        height: '20px',
+                        width: '20px',
+                        background: '#007bff',
+                        borderRadius: '50%',
+                      }}
+                    />
+                  )}
+                />
+                <div
+                  className="d-flex justify-content-between"
+                  style={{ fontSize: '14px', marginBottom: '10px' }}
+                >
+                  <span>₱{salaryRange[0]}</span>
+                  <span>₱{salaryRange[1]}</span>
+                </div>
+                <button className="btn btn-primary" onClick={applySalaryFilter}>
+                  Apply
+                </button>
+              </div>
+            </div>
+          )}
+          <div className="col-10">
+            <div
+              className="nav nav-tabs mb-3"
+              style={{ justifyContent: 'center', display: 'flex' }}
+            >
+              <button
+                className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`}
                 onClick={() => setActiveTab('recommended')}
               >
                 Recommended Jobs
               </button>
-              <button 
-                className={`nav-link ${activeTab === 'all' ? 'active' : ''}`} 
+              <button
+                className={`nav-link ${activeTab === 'all' ? 'active' : ''}`}
                 onClick={() => setActiveTab('all')}
               >
                 All Jobs
@@ -116,7 +125,9 @@ function HomeJobSeeker() {
               filters={filters}
               searchQuery={searchQuery}
               searchType={searchType}
-              userSkills={userSkills} isRecommended={activeTab === 'recommended'} />  
+              userSkills={userSkills}
+              isRecommended={activeTab === 'recommended'}
+            />
           </div>
         </div>
       </div>
