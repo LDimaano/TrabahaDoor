@@ -358,7 +358,7 @@ const getJobData = async () => {
       }
 
       if (education_name) {
-        acc[job_id].education_names.add(education_name);
+        acc[job_id].education_names.push(education_name);
       }
 
       return acc;
