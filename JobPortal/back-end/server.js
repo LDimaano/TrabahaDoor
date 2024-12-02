@@ -507,11 +507,14 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(400).json({ error: 'Salary range is required.' });
   }
 
-  const { skills: jobSeekerSkills, 
-          educations: jobSeekerEducations,
-          industry: jobSeekerIndustry, 
-          jobTitles: jobSeekerJobTitles, 
-          salaryRange: jobSeekerSalary } = req.body;
+  const {
+    skills: jobSeekerSkills,        
+    education: jobSeekerEducations, 
+    industry: jobSeekerIndustry,    
+    jobTitles: jobSeekerJobTitles,  
+    salaryRange: jobSeekerSalary    
+  } = req.body;
+  
 
   try {
     // Fetch job data
