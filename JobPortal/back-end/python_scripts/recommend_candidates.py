@@ -54,6 +54,23 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
             if len(matched_skills) >= 2 or industry_match or matched_education:
                 if user_id not in seen_user_ids:
                     recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
+                    
+                    # Add to industry matches if there's an industry match
+                    if industry_match:
+                        industry_based_matches.append({
+                            'user_id': user_id,
+                            'full_name': applicant_full_name,
+                            'job_title': recommended_job_title,
+                            'matched_skills': list(matched_skills),
+                            'matched_education': list(matched_education),
+                            'industry_match': industry_match,
+                            'profile_picture_url': applicant.get('profile_picture_url', ''),
+                            'from_collaborative_filtering': False,
+                            'match_type': 'industry',
+                            'influence_tag': 'content'
+                        })
+                    
+                    # Add to skill and education matches
                     skill_matches.append({
                         'user_id': user_id,
                         'full_name': applicant_full_name,
