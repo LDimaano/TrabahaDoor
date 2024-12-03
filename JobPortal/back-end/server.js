@@ -699,16 +699,29 @@ const getContactHistory = async (empUserId) => {
 
 
 app.post('/api/recommend-candidates', async (req, res) => {
-  const userId = req.body.userId; 
+  const { userId, jobTitle, selectedIndustry } = req.body; // Assume filters are passed in request
 
   if (!userId) {
     return res.status(400).json({ error: 'User ID is required.' });
   }
 
   try {
-    const jobPostings = await getJobPostings(userId); // Fetch job postings for the user
-    const applicants = await getApplicants(); // Fetch applicants
-    const contactHistory = await getContactHistory(userId); // Fetch contact history from other employers
+    let jobPostings = await getJobPostings(userId); // Fetch job postings
+    let applicants = await getApplicants(); // Fetch applicants
+
+    // Apply job title and industry filter if provided
+    if (jobTitle) {
+      jobPostings = jobPostings.filter(post => post.job_title.toLowerCase().includes(jobTitle.toLowerCase()));
+      applicants = applicants.filter(applicant => applicant.job_titles.some(title => title.toLowerCase().includes(jobTitle.toLowerCase())));
+    }
+
+    if (selectedIndustry) {
+      jobPostings = jobPostings.filter(post => post.industry_name === selectedIndustry);
+      applicants = applicants.filter(applicant => applicant.industry_name === selectedIndustry);
+    }
+
+    // Fetch contact history
+    const contactHistory = await getContactHistory(userId);
 
     if (jobPostings.length === 0 || applicants.length === 0) {
       return res.status(404).json({ error: 'No job postings or applicants found.' });
@@ -746,12 +759,12 @@ app.post('/api/recommend-candidates', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error', details: 'Python script failed' });
       }
     });
-
   } catch (error) {
     console.error('Error generating recommendations:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 //time to fill analysis
 app.get('/api/timetofill', async (req, res) => {
