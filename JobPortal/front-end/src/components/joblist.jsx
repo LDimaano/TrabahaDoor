@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import JobListItem from './joblistitem';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
-import '../css/pagination.css'; 
+import '../css/pagination.css';
 
 function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQuery, searchType, isRecommended }) {
   const [jobs, setJobs] = useState([]);
@@ -41,7 +41,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/getskills/${userId}`);
         if (!response.ok) throw new Error(await response.text());
         const skills = await response.json();
-        setUserSkills(skills.map(skill => skill.skill_name) || []);
+        setUserSkills(skills.map((skill) => skill.skill_name) || []);
       } catch (error) {
         console.error('Error fetching user skills:', error);
       }
@@ -54,22 +54,22 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/geteducation/${userId}`);
         if (!response.ok) throw new Error(await response.text());
         const educations = await response.json();
-        setUserEducations(educations.map(education => education.education_name) || []);
+        setUserEducations(educations.map((education) => education.education_name) || []);
       } catch (error) {
-        console.error('Error fetching user skills:', error);
+        console.error('Error fetching user educations:', error);
       }
     };
-    
 
     const fetchUserProfile = async () => {
       const userId = sessionStorage.getItem('user_id');
       if (!userId) return;
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/jobseekers/user-info/${userId}`, {
-          method: 'GET', credentials: 'include',
+          method: 'GET',
+          credentials: 'include',
         });
         if (!response.ok) throw new Error(await response.text());
-        setUserProfile(await response.json() || null);
+        setUserProfile((await response.json()) || null);
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
@@ -84,57 +84,38 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
     if (isRecommended && userSkills.length > 0 && userProfile && userProfile.industryName) {
       const fetchRecommendedJobs = async () => {
         try {
-          if (!Array.isArray(userProfile.jobTitles)) {
-            console.error('Invalid jobTitles:', userProfile.jobTitles);
-            return;
-          }
-          if (userProfile.salaryRange && typeof userProfile.salaryRange !== 'string' && !Array.isArray(userProfile.salaryRange)) {
-            console.error('Invalid salaryRange:', userProfile.salaryRange);
-            return;
-          }
-          
           const requestBody = {
             skills: userSkills,
             industry: userProfile.industryName,
             salaryRange: userProfile.salaryRange || null,
             jobTitles: userProfile.jobTitles || [],
-            education: userEducations
+            education: userEducations,
           };
-          console.log('Request Body:', JSON.stringify(requestBody));
 
           const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recommend`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
           });
-  
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error fetching recommended jobs:', errorText);
-            throw new Error(errorText);
-          }
-  
+
+          if (!response.ok) throw new Error(await response.text());
+
           const recommendedJobsData = await response.json();
-  
-          if (recommendedJobsData && recommendedJobsData.recommendations) {
-            setRecommendedJobs(recommendedJobsData.recommendations);
-          } else {
-            console.error('Invalid response format:', recommendedJobsData);
-          }
+          setRecommendedJobs(recommendedJobsData.recommendations || []);
         } catch (error) {
           console.error('Error fetching recommended jobs:', error);
         }
       };
       fetchRecommendedJobs();
     }
-  }, [isRecommended, userSkills, userEducations,  userProfile]);
-  
+  }, [isRecommended, userSkills, userEducations, userProfile]);
+
   const applyFilters = (jobs) => {
     if (!jobs || jobs.length === 0) return [];
     const { employmentTypes, salaryRanges } = filters;
-    const employmentTypesLower = (employmentTypes || []).map(type => type.toLowerCase());
-    const salaryRangesLower = (salaryRanges || []).map(range => range.toLowerCase());
-    return jobs.filter(job => {
+    const employmentTypesLower = (employmentTypes || []).map((type) => type.toLowerCase());
+    const salaryRangesLower = (salaryRanges || []).map((range) => range.toLowerCase());
+    return jobs.filter((job) => {
       const jobType = job.jobtype ? job.jobtype.toLowerCase() : '';
       const jobSalaryRange = job.salaryrange ? job.salaryrange.toLowerCase() : '';
       return (
@@ -146,27 +127,26 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
 
   const applySearch = (jobs) => {
     if (!jobs || jobs.length === 0 || !searchQuery) return jobs;
-  
     const lowerCaseQuery = searchQuery.toLowerCase();
-  
     return jobs.filter(
       (job) =>
         (job.job_title && job.job_title.toLowerCase().includes(lowerCaseQuery)) ||
         (job.company_name && job.company_name.toLowerCase().includes(lowerCaseQuery))
     );
   };
-  
 
   const filteredJobs = applyFilters(jobs);
   const searchedJobs = applySearch(filteredJobs);
 
+  const filteredRecommendedJobs = applySearch(applyFilters(recommendedJobs));
+
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = isRecommended ? recommendedJobs.slice(indexOfFirstJob, indexOfLastJob) : searchedJobs.slice(indexOfFirstJob, indexOfLastJob);
+  const currentJobs = isRecommended
+    ? filteredRecommendedJobs.slice(indexOfFirstJob, indexOfLastJob)
+    : searchedJobs.slice(indexOfFirstJob, indexOfLastJob);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  const totalJobs = isRecommended ? recommendedJobs.length : searchedJobs.length;
+  const totalJobs = isRecommended ? filteredRecommendedJobs.length : searchedJobs.length;
   const totalPages = Math.ceil(totalJobs / jobsPerPage);
   const maxPagesVisible = 5;
 
@@ -182,23 +162,33 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
     pageNumbers.push(i);
   }
 
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div>
       {isRecommended ? (
         <>
           <h3>Recommended Jobs</h3>
-          {currentJobs.length === 0 ? <p>No recommended jobs available</p> : (
+          {currentJobs.length === 0 ? (
+            <p>No recommended jobs available</p>
+          ) : (
             <ul className="list-group">
-              {currentJobs.map((job) => <JobListItem key={job.job_id} job={job} />)}
+              {currentJobs.map((job) => (
+                <JobListItem key={job.job_id} job={job} />
+              ))}
             </ul>
           )}
         </>
       ) : (
         <>
           <h3>All Jobs</h3>
-          {currentJobs.length === 0 ? <p>No jobs available</p> : (
+          {currentJobs.length === 0 ? (
+            <p>No jobs available</p>
+          ) : (
             <ul className="list-group">
-              {currentJobs.map((job) => <JobListItem key={job.job_id} job={job} />)}
+              {currentJobs.map((job) => (
+                <JobListItem key={job.job_id} job={job} />
+              ))}
             </ul>
           )}
         </>
@@ -207,18 +197,22 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         <ul className="pagination">
           {currentPage > 1 && (
             <li className="page-item">
-              <a onClick={() => paginate(currentPage - 1)} href="#!" className="page-link">{'<<'}</a>
+              <a onClick={() => paginate(currentPage - 1)} href="#!" className="page-link">
+                {'<<'}
+              </a>
             </li>
           )}
-          {pageNumbers.map(number => (
+          {pageNumbers.map((number) => (
             <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-              <a onClick={() => paginate(number)} href="#!" className="page-link">{number}</a>
+              <a onClick={() => paginate(number)} href="#!" className="page-link">
+                {number}
+              </a>
             </li>
           ))}
           {currentPage < totalPages && (
             <li className="page-item">
               <a onClick={() => paginate(currentPage + 1)} href="#!" className="page-link">
-              {'>>'}
+                {'>>'}
               </a>
             </li>
           )}
