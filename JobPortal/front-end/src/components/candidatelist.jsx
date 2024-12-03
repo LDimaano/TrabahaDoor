@@ -7,22 +7,23 @@ function CandidateList({ searchParams = {}, isRecommended }) {
   const [allApplicants, setAllApplicants] = useState([]);
   const [filteredApplicants, setFilteredApplicants] = useState([]);
   const [recommendedApplicants, setRecommendedApplicants] = useState([]);
+  const [filteredRecommendedApplicants, setFilteredRecommendedApplicants] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [applicantsPerPage] = useState(10); // Set the number of applicants per page
+  const [applicantsPerPage] = useState(10);
 
-  // Fetch all applicants when the component mounts
+  // Fetch all applicants
   useEffect(() => {
     const fetchApplicants = async () => {
       try {
-        setError(null); // Clear error before fetching applicants
+        setError(null);
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applicants/applicantlist`);
         if (!response.ok) {
           throw new Error(`Failed to fetch applicants: ${response.status}`);
         }
         const data = await response.json();
         setAllApplicants(data);
-        setFilteredApplicants(data); // Initially set filtered applicants to all applicants
+        setFilteredApplicants(data);
       } catch (error) {
         console.error('Error fetching applicants:', error);
         setError('Failed to load applicants.');
@@ -31,44 +32,20 @@ function CandidateList({ searchParams = {}, isRecommended }) {
 
     if (!isRecommended) {
       fetchApplicants();
-      setRecommendedApplicants([]); // Clear recommended applicants when switching tabs
+      setRecommendedApplicants([]); // Clear recommended applicants when not in the recommended tab
     }
   }, [isRecommended]);
 
-  // Apply filters to the candidates whenever searchParams change
-  useEffect(() => {
-    if (!isRecommended) {
-      const { searchQuery = '', selectedIndustry = '' } = searchParams;
-      console.log('Search Query:', searchQuery);
-      console.log('Selected Industry:', selectedIndustry);
-      const filtered = allApplicants.filter((applicant) => {
-        const matchesSearchQuery =
-          searchQuery === '' ||
-          applicant.latest_job_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          applicant.full_name.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesIndustry =
-          selectedIndustry === '' || applicant.industry_id === parseInt(selectedIndustry);
-
-        return matchesSearchQuery && matchesIndustry;
-      });
-      setFilteredApplicants(filtered);
-    }
-  }, [searchParams, allApplicants, isRecommended]);
-
-  // Fetch recommended candidates when the 'Recommended' tab is active
+  // Fetch recommended candidates
   useEffect(() => {
     const fetchRecommendedCandidates = async () => {
-      const userId = sessionStorage.getItem('user_id'); // Get user ID from session storage
-      console.log('User ID for recommendations:', userId); // Log the user ID
+      const userId = sessionStorage.getItem('user_id');
 
       try {
-        setError(null); // Clear error before fetching recommended candidates
-        // Fetch recommended candidates
+        setError(null);
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recommend-candidates`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId }),
         });
 
@@ -77,14 +54,12 @@ function CandidateList({ searchParams = {}, isRecommended }) {
         }
 
         const data = await response.json();
-        console.log('Recommended candidates data:', data); // Log the recommended candidates data
 
         if (data.recommendations && data.recommendations.length > 0) {
           setRecommendedApplicants(data.recommendations);
-        } else if (data.recommendations && data.recommendations.length === 0) {
-          setError('No recommended candidates found. It seems the job listing is empty.');
+          setFilteredRecommendedApplicants(data.recommendations);
         } else {
-          setError('No recommendations found.');
+          setError('No recommended candidates found.');
         }
       } catch (error) {
         console.error('Error fetching recommended candidates:', error);
@@ -94,71 +69,73 @@ function CandidateList({ searchParams = {}, isRecommended }) {
 
     if (isRecommended) {
       fetchRecommendedCandidates();
-      setFilteredApplicants([]); // Clear filtered applicants when switching to recommended
+      setFilteredApplicants([]); // Clear filtered applicants when in the recommended tab
     }
   }, [isRecommended]);
 
+  // Apply filters based on searchParams
+  useEffect(() => {
+    const { searchQuery = '', selectedIndustry = '' } = searchParams;
+
+    const filterCandidates = (candidates) =>
+      candidates.filter((applicant) => {
+        const matchesSearchQuery =
+          !searchQuery ||
+          applicant.latest_job_title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          applicant.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesIndustry =
+          !selectedIndustry ||
+          applicant.industry_id === parseInt(selectedIndustry, 10) || // Numeric match
+          applicant.industry_id?.toString() === selectedIndustry; // String match
+
+        return matchesSearchQuery && matchesIndustry;
+      });
+
+    if (isRecommended) {
+      setFilteredRecommendedApplicants(filterCandidates(recommendedApplicants));
+    } else {
+      setFilteredApplicants(filterCandidates(allApplicants));
+    }
+  }, [searchParams, allApplicants, recommendedApplicants, isRecommended]);
+
+  // Pagination logic
   const indexOfLastApplicant = currentPage * applicantsPerPage;
   const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
   const currentApplicants = isRecommended
-    ? recommendedApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant)
+    ? filteredRecommendedApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant)
     : filteredApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const totalApplicants = isRecommended ? recommendedApplicants.length : filteredApplicants.length;
+  const totalApplicants = isRecommended
+    ? filteredRecommendedApplicants.length
+    : filteredApplicants.length;
 
   return (
     <div>
-      {isRecommended ? (
+      <h3>{isRecommended ? 'Recommended Candidates' : 'All Candidates'}</h3>
+      {error ? (
+        <div className="alert alert-info mt-3" role="alert">
+          <i className="fas fa-exclamation-circle me-2"></i>
+          <strong>{error}</strong>
+        </div>
+      ) : currentApplicants.length > 0 ? (
         <>
-          <h3>Recommended Candidates</h3>
-          {error ? (
-             <div className="alert alert-info mt-3" role="alert">
-             <i className="fas fa-exclamation-circle me-2"></i> {/* Font Awesome alert icon */}
-             <strong>{error}</strong>
-           </div>           
-          ) : currentApplicants.length > 0 ? (
-            <>
-              <ul className="list-group">
-                {currentApplicants.map((applicant) => (
-                  <ApplicantListItem key={applicant.user_id} applicant={applicant} />
-                ))}
-              </ul>
-              <Pagination
-                applicantsPerPage={applicantsPerPage}
-                totalApplicants={totalApplicants}
-                paginate={paginate}
-                currentPage={currentPage}
-              />
-            </>
-          ) : (
-            <p>No recommended candidates available</p>
-          )}
+          <ul className="list-group">
+            {currentApplicants.map((applicant) => (
+              <ApplicantListItem key={applicant.user_id} applicant={applicant} />
+            ))}
+          </ul>
+          <Pagination
+            applicantsPerPage={applicantsPerPage}
+            totalApplicants={totalApplicants}
+            paginate={paginate}
+            currentPage={currentPage}
+          />
         </>
       ) : (
-        <>
-          <h3>All Candidates</h3>
-          {error ? (
-            <p className="text-danger">{error}</p>
-          ) : currentApplicants.length > 0 ? (
-            <>
-              <ul className="list-group">
-                {currentApplicants.map((applicant) => (
-                  <ApplicantListItem key={applicant.user_id} applicant={applicant} />
-                ))}
-              </ul>
-              <Pagination
-                applicantsPerPage={applicantsPerPage}
-                totalApplicants={totalApplicants}
-                paginate={paginate}
-                currentPage={currentPage}
-              />
-            </>
-          ) : (
-            <p>No applicants available</p>
-          )}
-        </>
+        <p>No candidates available</p>
       )}
     </div>
   );
@@ -169,7 +146,6 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
   const maxPagesVisible = 5;
   const pageNumbers = [];
 
-  // Calculate start and end pages to show up to 5 pages
   let startPage = Math.max(1, currentPage - Math.floor(maxPagesVisible / 2));
   let endPage = Math.min(totalPages, startPage + maxPagesVisible - 1);
 
@@ -177,7 +153,6 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
     startPage = Math.max(1, endPage - maxPagesVisible + 1);
   }
 
-  // Create the range of page numbers based on startPage and endPage
   for (let i = startPage; i <= endPage; i++) {
     pageNumbers.push(i);
   }
@@ -188,7 +163,7 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
         {currentPage > 1 && (
           <li className="page-item">
             <a onClick={() => paginate(currentPage - 1)} href="#!" className="page-link">
-            {'<<'}
+              {'<<'}
             </a>
           </li>
         )}
@@ -210,6 +185,5 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
     </nav>
   );
 };
-
 
 export default CandidateList;
