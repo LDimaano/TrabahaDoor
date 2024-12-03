@@ -40,7 +40,9 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                     'profile_picture_url': applicant.get('profile_picture_url', ''),
                     'from_collaborative_filtering': False,
                     'match_type': 'title',
-                    'influence_tag': 'content'
+                    'influence_tag': 'content',
+                    'recommended_job_title': recommended_job_title,  # Always append job title
+                    'applicant_industry': applicant_industry  # Always append industry ID
                 })
                 seen_user_ids.add(user_id)
                 continue
@@ -67,7 +69,9 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                             'profile_picture_url': applicant.get('profile_picture_url', ''),
                             'from_collaborative_filtering': False,
                             'match_type': 'industry',
-                            'influence_tag': 'content'
+                            'influence_tag': 'content',
+                            'recommended_job_title': recommended_job_title,  # Always append job title
+                            'applicant_industry': applicant_industry  # Always append industry ID
                         })
                     
                     # Add to skill and education matches
@@ -81,7 +85,9 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                         'profile_picture_url': applicant.get('profile_picture_url', ''),
                         'from_collaborative_filtering': False,
                         'match_type': 'education' if matched_education else 'both' if matched_skills and industry_match else 'skills' if matched_skills else 'industry',
-                        'influence_tag': 'content'
+                        'influence_tag': 'content',
+                        'recommended_job_title': recommended_job_title,  # Always append job title
+                        'applicant_industry': applicant_industry  # Always append industry ID
                     })
                     seen_user_ids.add(user_id)
 
@@ -95,7 +101,9 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                     'profile_picture_url': applicant.get('profile_picture_url', ''),
                     'from_collaborative_filtering': False,
                     'match_type': 'education',
-                    'influence_tag': 'content'
+                    'influence_tag': 'content',
+                    'recommended_job_title': recommended_job_title,  # Always append job title
+                    'applicant_industry': applicant_industry  # Always append industry ID
                 })
                 seen_user_ids.add(user_id)
 
@@ -119,7 +127,9 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                     'profile_picture_url': profile_picture_url,
                     'from_collaborative_filtering': True,
                     'match_type': 'collaborative',
-                    'influence_tag': 'collaborative'
+                    'influence_tag': 'collaborative',
+                    'recommended_job_title': job_title,  # Always append job title
+                    'applicant_industry': emp_industry  # Always append industry ID
                 })
                 seen_user_ids.add(js_user_id)
 
