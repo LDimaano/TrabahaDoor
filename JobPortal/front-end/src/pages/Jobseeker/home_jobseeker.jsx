@@ -52,7 +52,7 @@ function HomeJobSeeker() {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Search by job title or company name..."
+                  placeholder="Job title or Company Name"
                   value={searchQuery}
                   onChange={handleSearchChange}
                 />
