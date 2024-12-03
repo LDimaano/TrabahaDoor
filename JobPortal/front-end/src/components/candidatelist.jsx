@@ -7,6 +7,7 @@ function CandidateList({ searchParams = {}, isRecommended }) {
   const [allApplicants, setAllApplicants] = useState([]);
   const [filteredApplicants, setFilteredApplicants] = useState([]);
   const [recommendedApplicants, setRecommendedApplicants] = useState([]);
+  const [filteredRecommendedApplicants, setFilteredRecommendedApplicants] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [applicantsPerPage] = useState(10); // Set the number of applicants per page
@@ -37,11 +38,10 @@ function CandidateList({ searchParams = {}, isRecommended }) {
 
   // Apply filters to the candidates whenever searchParams change
   useEffect(() => {
-    if (!isRecommended) {
-      const { searchQuery = '', selectedIndustry = '' } = searchParams;
-      console.log('Search Query:', searchQuery);
-      console.log('Selected Industry:', selectedIndustry);
-      const filtered = allApplicants.filter((applicant) => {
+    const { searchQuery = '', selectedIndustry = '' } = searchParams;
+
+    const filterCandidates = (candidates) =>
+      candidates.filter((applicant) => {
         const matchesSearchQuery =
           searchQuery === '' ||
           applicant.latest_job_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -51,9 +51,13 @@ function CandidateList({ searchParams = {}, isRecommended }) {
 
         return matchesSearchQuery && matchesIndustry;
       });
-      setFilteredApplicants(filtered);
+
+    if (!isRecommended) {
+      setFilteredApplicants(filterCandidates(allApplicants));
+    } else {
+      setFilteredRecommendedApplicants(filterCandidates(recommendedApplicants));
     }
-  }, [searchParams, allApplicants, isRecommended]);
+  }, [searchParams, allApplicants, recommendedApplicants, isRecommended]);
 
   // Fetch recommended candidates when the 'Recommended' tab is active
   useEffect(() => {
@@ -81,6 +85,7 @@ function CandidateList({ searchParams = {}, isRecommended }) {
 
         if (data.recommendations && data.recommendations.length > 0) {
           setRecommendedApplicants(data.recommendations);
+          setFilteredRecommendedApplicants(data.recommendations);
         } else if (data.recommendations && data.recommendations.length === 0) {
           setError('No recommended candidates found. It seems the job listing is empty.');
         } else {
@@ -101,12 +106,14 @@ function CandidateList({ searchParams = {}, isRecommended }) {
   const indexOfLastApplicant = currentPage * applicantsPerPage;
   const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
   const currentApplicants = isRecommended
-    ? recommendedApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant)
+    ? filteredRecommendedApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant)
     : filteredApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const totalApplicants = isRecommended ? recommendedApplicants.length : filteredApplicants.length;
+  const totalApplicants = isRecommended
+    ? filteredRecommendedApplicants.length
+    : filteredApplicants.length;
 
   return (
     <div>
@@ -114,10 +121,10 @@ function CandidateList({ searchParams = {}, isRecommended }) {
         <>
           <h3>Recommended Candidates</h3>
           {error ? (
-             <div className="alert alert-info mt-3" role="alert">
-             <i className="fas fa-exclamation-circle me-2"></i> {/* Font Awesome alert icon */}
-             <strong>{error}</strong>
-           </div>           
+            <div className="alert alert-info mt-3" role="alert">
+              <i className="fas fa-exclamation-circle me-2"></i> {/* Font Awesome alert icon */}
+              <strong>{error}</strong>
+            </div>
           ) : currentApplicants.length > 0 ? (
             <>
               <ul className="list-group">
@@ -169,7 +176,6 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
   const maxPagesVisible = 5;
   const pageNumbers = [];
 
-  // Calculate start and end pages to show up to 5 pages
   let startPage = Math.max(1, currentPage - Math.floor(maxPagesVisible / 2));
   let endPage = Math.min(totalPages, startPage + maxPagesVisible - 1);
 
@@ -177,7 +183,6 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
     startPage = Math.max(1, endPage - maxPagesVisible + 1);
   }
 
-  // Create the range of page numbers based on startPage and endPage
   for (let i = startPage; i <= endPage; i++) {
     pageNumbers.push(i);
   }
@@ -188,7 +193,7 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
         {currentPage > 1 && (
           <li className="page-item">
             <a onClick={() => paginate(currentPage - 1)} href="#!" className="page-link">
-            {'<<'}
+              {'<<'}
             </a>
           </li>
         )}
@@ -210,6 +215,5 @@ const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage 
     </nav>
   );
 };
-
 
 export default CandidateList;
