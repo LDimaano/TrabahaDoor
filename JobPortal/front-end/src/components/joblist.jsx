@@ -146,13 +146,16 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
 
   const applySearch = (jobs) => {
     if (!jobs || jobs.length === 0 || !searchQuery) return jobs;
-    if (searchType === "jobTitle") {
-      return jobs.filter(job => job.job_title && job.job_title.toLowerCase().includes(searchQuery.toLowerCase()));
-    } else if (searchType === "companyName") {
-      return jobs.filter(job => job.company_name && job.company_name.toLowerCase().includes(searchQuery.toLowerCase()));
-    }
-    return jobs;
+  
+    const lowerCaseQuery = searchQuery.toLowerCase();
+  
+    return jobs.filter(
+      (job) =>
+        (job.job_title && job.job_title.toLowerCase().includes(lowerCaseQuery)) ||
+        (job.company_name && job.company_name.toLowerCase().includes(lowerCaseQuery))
+    );
   };
+  
 
   const filteredJobs = applyFilters(jobs);
   const searchedJobs = applySearch(filteredJobs);

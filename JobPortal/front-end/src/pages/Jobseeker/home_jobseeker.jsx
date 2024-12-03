@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter } from '@fortawesome/free-solid-svg-icons'; // Import the filter icon
+import { faFilter, faSearch } from '@fortawesome/free-solid-svg-icons'; // Import the search icon
 import Header from '../../components/jsheader';
 import FilterSection from '../../components/filtersection';
 import JobList from '../../components/joblist';
@@ -15,8 +15,8 @@ function HomeJobSeeker() {
   const [searchType, setSearchType] = useState('jobTitle');
   const [salaryRange, setSalaryRange] = useState([5000, 100000]);
   const [userSkills, setUserSkills] = useState([]);
-  const [activeTab, setActiveTab] = useState('recommended'); 
-  const [showFilters, setShowFilters] = useState(false); // State to toggle filters
+  const [activeTab, setActiveTab] = useState('recommended');
+  const [showFilters, setShowFilters] = useState(false);
 
   const handleFilterChange = (key, value) => {
     setFilters((prevFilters) => ({
@@ -36,29 +36,47 @@ function HomeJobSeeker() {
     }));
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
   return (
     <div className="home-jobseeker">
-      {/* Header */}
       <Header />
       <div className="container mt-4" style={{ maxWidth: '900px', margin: '0 auto' }}>
         <div className="row">
           <div className="col-12 mb-4">
-            {/* Dropdown Filter Icon */}
-            <button
-              className="btn btn-secondary"
-              onClick={() => setShowFilters(!showFilters)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <FontAwesomeIcon icon={faFilter} style={{ fontSize: '18px' }} />
-            </button>
+            <div className="d-flex align-items-center">
+              {/* Search Input */}
+              <div className="input-group me-3" style={{ flex: 1 }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search by job title or company name..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+                <span className="input-group-text">
+                  <FontAwesomeIcon icon={faSearch} />
+                </span>
+              </div>
+              {/* Dropdown Filter Icon */}
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowFilters(!showFilters)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <FontAwesomeIcon icon={faFilter} style={{ fontSize: '18px' }} />
+              </button>
+            </div>
           </div>
+
           {showFilters && (
             <div className="col-12 mb-4" style={{ textAlign: 'left' }}>
-              {/* Filter Section */}
               <div className="filter-group">
                 <FilterSection onFilterChange={handleFilterChange} />
               </div>
@@ -110,10 +128,11 @@ function HomeJobSeeker() {
               </div>
             </div>
           )}
+
           <div className="col-12">
             <div
               className="nav nav-tabs mb-3"
-              style={{ justifyContent: 'flex-start', display: 'flex' }} // Align tabs to the left
+              style={{ justifyContent: 'flex-start', display: 'flex' }}
             >
               <button
                 className={`nav-link ${activeTab === 'recommended' ? 'active' : ''}`}
@@ -128,7 +147,7 @@ function HomeJobSeeker() {
                 All Jobs
               </button>
             </div>
-            <div style={{ textAlign: 'left' }}> {/* Align job content to the left */}
+            <div style={{ textAlign: 'left' }}>
               <JobList
                 filters={filters}
                 searchQuery={searchQuery}
