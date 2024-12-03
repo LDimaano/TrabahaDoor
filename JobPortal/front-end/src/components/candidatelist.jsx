@@ -36,29 +36,6 @@ function CandidateList({ searchParams = {}, isRecommended }) {
     }
   }, [isRecommended]);
 
-  // Apply filters to the candidates whenever searchParams change
-  useEffect(() => {
-    const { searchQuery = '', selectedIndustry = '' } = searchParams;
-
-    const filterCandidates = (candidates) =>
-      candidates.filter((applicant) => {
-        const matchesSearchQuery =
-          searchQuery === '' ||
-          applicant.latest_job_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          applicant.full_name.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesIndustry =
-          selectedIndustry === '' || applicant.industry_id === parseInt(selectedIndustry);
-
-        return matchesSearchQuery && matchesIndustry;
-      });
-
-    if (!isRecommended) {
-      setFilteredApplicants(filterCandidates(allApplicants));
-    } else {
-      setFilteredRecommendedApplicants(filterCandidates(recommendedApplicants));
-    }
-  }, [searchParams, allApplicants, recommendedApplicants, isRecommended]);
-
   // Fetch recommended candidates when the 'Recommended' tab is active
   useEffect(() => {
     const fetchRecommendedCandidates = async () => {
@@ -102,6 +79,29 @@ function CandidateList({ searchParams = {}, isRecommended }) {
       setFilteredApplicants([]); // Clear filtered applicants when switching to recommended
     }
   }, [isRecommended]);
+
+  // Apply filters to candidates whenever searchParams change
+  useEffect(() => {
+    const { searchQuery = '', selectedIndustry = '' } = searchParams;
+
+    const filterCandidates = (candidates) =>
+      candidates.filter((applicant) => {
+        const matchesSearchQuery =
+          searchQuery === '' ||
+          applicant.latest_job_title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          applicant.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesIndustry =
+          selectedIndustry === '' || applicant.industry_id === parseInt(selectedIndustry);
+
+        return matchesSearchQuery && matchesIndustry;
+      });
+
+    if (isRecommended) {
+      setFilteredRecommendedApplicants(filterCandidates(recommendedApplicants));
+    } else {
+      setFilteredApplicants(filterCandidates(allApplicants));
+    }
+  }, [searchParams, allApplicants, recommendedApplicants, isRecommended]);
 
   const indexOfLastApplicant = currentPage * applicantsPerPage;
   const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
