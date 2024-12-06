@@ -26,7 +26,8 @@ function EmployerProfileCreation() {
   const [showModal, setShowModal] = useState(false); 
 
   const handleRangeChange = (values) => {
-    setCompanySizeRange(values);
+    console.log('Range changed to:', values); // Debugging
+    setCompanySizeRange(values); // Update state
   };
 
   useEffect(() => {
@@ -95,45 +96,45 @@ function EmployerProfileCreation() {
     const user_id = window.location.pathname.split('/')[2];
 
     const profileData = {
-      user_id,
-      companyName,
-      contactPerson,
-      contactNumber,
-      website,
-      industry_id: industry?.value || '',
-      companyAddress,
-      companySizeRange,
-      foundedYear,
-      description,
-      profile_picture_url: photo, 
+        user_id,
+        companyName,
+        contactPerson,
+        contactNumber,
+        website,
+        industry_id: industry?.value || '',
+        companyAddress,
+        companySizeRange, // This should now work
+        foundedYear,
+        description,
+        profile_picture_url: photo,
     };
 
-    console.log('Submitting profile data:', profileData);
+    console.log('Submitting profile data:', profileData); // Debugging submission data
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/employer-profile`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(profileData),
-      });
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/employer-profile`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(profileData),
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-      const data = await response.json();
-      console.log('Profile created successfully:', data);
+        const data = await response.json();
+        console.log('Profile created successfully:', data);
 
-      setTimeout(() => {
-        navigate(`/employerfiles/${user_id}`);
-      }, 500);
+        setTimeout(() => {
+            navigate(`/employerfiles/${user_id}`);
+        }, 500);
     } catch (err) {
-      console.error('Submission failed:', err);
-      setError('Failed to submit the profile. Please try again.');
+        console.error('Submission failed:', err);
+        setError('Failed to submit the profile. Please try again.');
     }
-  };
+};
 
   const fetchIndustries = async () => {
     try {
