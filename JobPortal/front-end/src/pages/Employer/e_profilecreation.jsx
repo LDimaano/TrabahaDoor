@@ -205,7 +205,7 @@ function EmployerProfileCreation() {
     {/* Text Section */}
     <div className="text-center"> {/* Centers the content */}
   <h4>Create your Profile</h4> {/* Reduced font size */}
-  <h5 className="text-muted">Let us know more about you</h5>
+  <h5 className="text-muted">Let us know more about your company</h5>
 </div>
       <div className="mb-4 mt-5"> {/* Add a top margin using mt-5 for more space */}
         {/* Title or Label for the Progress */}
@@ -217,7 +217,13 @@ function EmployerProfileCreation() {
           label={`${calculateProgress()}%`}
           className="mb-4"
           variant="info" // You can change this variant for different colors
-          style={{ height: '20px', borderRadius: '10px' }} // Custom height and rounded corners
+          style={{
+            height: '20px',
+            borderRadius: '10px',
+            position: 'sticky',
+            top: '0', // Adjust to stick at the top of the container or viewport
+            zIndex: '1000', // Ensure it's on top of other elements if necessary
+          }}
         />
       </div>
       <h3>Company Details</h3>
@@ -237,10 +243,20 @@ function EmployerProfileCreation() {
           <small className="form-text text-muted">
             Accepted file types: JPEG, JPG, PNG. Maximum file size: 5MB.
           </small>
+          <p className="text-info text-muted">
+            A professional company logo helps make a strong brand impression on potential candidates and can increase your chances of attracting top talent for the right opportunities!
+          </p>
         </div>
      </div>
         <div className="mb-3">
-          <label htmlFor="companyName" className="form-label">Company Name <span className="text-danger">*</span></label>
+          <label htmlFor="companyName" className="form-label">Company Name <span className="text-danger">*</span>
+          <i
+            className="far fa-question-circle" // Use "far" for a hollow circle
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Enter the company name registered for your business"
+            style={{ cursor: 'pointer' }}
+          ></i></label>
           <input
             type="text"
             id="companyName"
@@ -252,7 +268,14 @@ function EmployerProfileCreation() {
         </div>
         <div className="row mb-3">
           <div className="col-md-6">
-            <label htmlFor="contactPerson" className="form-label">Contact Person <span className="text-danger">*</span></label>
+            <label htmlFor="contactPerson" className="form-label">Contact Person <span className="text-danger">*</span>
+            <i
+      className="far fa-question-circle" // Use "far" for a hollow circle
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      title="Enter the full name of the person in charge of this account. Example: Juan Dela Cruz"
+      style={{ cursor: 'pointer' }}
+    ></i></label>
             <input
               type="text"
               id="contactPerson"
@@ -263,7 +286,14 @@ function EmployerProfileCreation() {
             />
           </div>
           <div className="col-md-6">
-            <label htmlFor="contactNumber" className="form-label">Contact Number <span className="text-danger">*</span></label>
+            <label htmlFor="contactNumber" className="form-label">Contact Number <span className="text-danger">*</span>
+            <i
+      className="far fa-question-circle" // Use "far" for a hollow circle
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      title="Enter the company's active contact number, including the country code if applicable. Example: +63 234 567 8900. This will not be shared publicly"
+      style={{ cursor: 'pointer' }}
+    ></i></label>
             <input
               type="tel"
               id="contactNumber"
@@ -276,7 +306,14 @@ function EmployerProfileCreation() {
         </div>
         <div className="row mb-3">
           <div className="col-md-6">
-            <label htmlFor="website" className="form-label">Website <span className="text-danger">*</span></label>
+            <label htmlFor="website" className="form-label">Website <span className="text-danger">*</span>
+            <i
+        className="far fa-question-circle" // Hollow question mark icon
+        data-bs-toggle="tooltip"
+        data-bs-placement="right"
+        title="Enter the URL of your company's website to better showcase your company profile to candidates"
+        style={{ cursor: 'pointer' }}
+      ></i></label>
             <input
               type="url"
               id="website"
@@ -287,7 +324,14 @@ function EmployerProfileCreation() {
             />
           </div>
           <div className="col-md-6">
-            <label htmlFor="industry" className="form-label">Industry <span className="text-danger">*</span></label>
+            <label htmlFor="industry" className="form-label">Industry <span className="text-danger">*</span>
+            <i
+      className="far fa-question-circle" // Hollow question mark icon
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      title="Select your industry from the available options. This helps us match you with relevant job seekers."
+      style={{ cursor: 'pointer' }}
+    ></i></label>
             <Select
               id="industry"
               options={industryOptions}
@@ -299,7 +343,14 @@ function EmployerProfileCreation() {
           </div>
         </div>
         <div className="mb-3">
-          <label htmlFor="companyAddress" className="form-label">Company Address <span className="text-danger">*</span></label>
+          <label htmlFor="companyAddress" className="form-label">Company Address <span className="text-danger">*</span>
+          <i
+      className="far fa-question-circle" // Hollow question mark icon
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      title="This information helps us verify your location."
+      style={{ cursor: 'pointer' }}
+    ></i></label>
           <input
             type="text"
             id="companyAddress"
@@ -313,6 +364,13 @@ function EmployerProfileCreation() {
         <div className="col-md-6">
       <label htmlFor="companySize" className="form-label">
         Company Size <span className="text-danger">*</span>
+        <i
+    className="far fa-question-circle" // Hollow question mark icon
+    data-bs-toggle="tooltip"
+    data-bs-placement="right"
+    title="Please provide the number of employees in your company to help us categorize your business size."
+    style={{ cursor: 'pointer', marginLeft: '5px' }}
+  ></i>
       </label>
       <div
         className="slider-container"
@@ -388,7 +446,16 @@ function EmployerProfileCreation() {
       />
     </div>
           <div className="col-md-6">
-            <label htmlFor="foundedYear" className="form-label">Founded Year <span className="text-danger">*</span></label>
+          <label htmlFor="foundedYear" className="form-label">
+    Founded Year <span className="text-danger">*</span>
+  </label>
+  <i
+    className="far fa-question-circle" // Hollow question mark icon
+    data-bs-toggle="tooltip"
+    data-bs-placement="right"
+    title="Please provide the year your company was founded to help us better understand your business's history."
+    style={{ cursor: 'pointer', marginLeft: '5px' }}
+  ></i>
             <select
               id="foundedYear"
               className="form-control"
@@ -404,7 +471,19 @@ function EmployerProfileCreation() {
           </div>
         </div>
         <div className="mb-3">
-          <label htmlFor="description" className="form-label">Company Description <span className="text-danger">*</span></label>
+        <div className="d-flex align-items-center">
+  <label htmlFor="description" className="form-label">
+    Company Description <span className="text-danger">*</span>
+  </label>
+  <i
+    className="far fa-question-circle" // Hollow question mark icon
+    data-bs-toggle="tooltip"
+    data-bs-placement="right"
+    title="Provide a brief description of your company, including its mission, values, and goals."
+    style={{ cursor: 'pointer', marginLeft: '5px' }}
+  ></i>
+</div>
+
           <textarea
             id="description"
             className="form-control"
