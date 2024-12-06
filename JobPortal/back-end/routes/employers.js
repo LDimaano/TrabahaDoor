@@ -203,24 +203,26 @@ router.get('/user-infoemp/:userId', async (req, res) => {
 });
 
 
-router.get('/approval-date/:userId', async (req, res) => {
+router.get('/api/employers/approval-date/:userId', async (req, res) => {
   const { userId } = req.params;
-  console.log(`userId fetch from waitapproval: ${userId}`);
 
   try {
     // Query to get the date submitted from the database
     const query = 'SELECT uploaded_at FROM documents WHERE user_id = $1';
     const result = await pool.query(query, [userId]);
-    console.log(`result in wait approval: ${result}`);
-    
 
     if (result.rows.length > 0) {
-      const dateSubmitted = result.rows[0].date_submitted;
-      
+      const uploadedAt = result.rows[0].uploaded_at;
+
+      // Ensure uploadedAt is a valid Date object
+      const parsedDate = new Date(uploadedAt);
+      if (isNaN(parsedDate)) {
+        throw new Error('Invalid date value');
+      }
+
       // Format the date to a user-friendly format
-      const formattedDate = format(new Date(dateSubmitted), 'yyyy-MM-dd'); // Example format: "2024-11-22"
-      console.log(`new formattedDate: ${formattedDate}`);
-      
+      const formattedDate = format(parsedDate, 'yyyy-MM-dd'); // Example format: "2024-11-22"
+
       res.json({ dateSubmitted: formattedDate });
     } else {
       res.status(404).json({ message: 'User not found' });
