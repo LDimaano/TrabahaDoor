@@ -7,6 +7,7 @@ import EmpHeader from '../../components/emp_header';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import Select from 'react-select'; 
 import { Modal, Button, Alert } from 'react-bootstrap';
+import Header from '../../components/header_unverified1';
 
 const JobPosting = () => {
   const [responsibilities, setResponsibilities] = useState("");
@@ -205,6 +206,7 @@ const JobPosting = () => {
 
   return (
     <div className="container mt-4"> 
+     <Header/> 
       <EmpHeader /> 
       <section className="d-flex align-items-center mb-4">
         <button className="btn btn-outline-secondary me-3" onClick={handleBack} aria-label="Go back" style={{ border: 'none', color: 'black' }}>
