@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../../components/jsheader';
 import ApplicantProfile from '../../components/app_profile';
 import ApplicantCard from '../../components/app_card';
-import Footer from '../components/footer';
+import Footer from '../../components/footer';
 
 const MyProfile = () => {
   const [applicantData, setApplicantData] = useState({});
