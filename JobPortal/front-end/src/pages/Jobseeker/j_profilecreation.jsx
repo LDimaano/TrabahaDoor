@@ -371,10 +371,11 @@ const handleSubmit = async (e) => {
     <Header style={{ fontSize: '3rem', fontWeight: 'bold' }} /> {/* Increased header size */}
     
     {/* Text Section */}
-    <div>
-      <h2 className="text-muted">Create your Profile</h2> {/* Reduced font size */}
-      <h5>Let us know more about you</h5>
-    </div>
+    <div className="text-center"> {/* Centers the content */}
+  <h4>Create your Profile</h4> {/* Reduced font size */}
+  <h5 className="text-muted">Let us know more about you</h5>
+</div>
+
   
     {/* Progress Bar Section */}
     <div 
