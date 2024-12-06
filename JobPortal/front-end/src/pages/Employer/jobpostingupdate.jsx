@@ -12,6 +12,7 @@ const UpdateJobPosting = () => {
   const { job_id } = useParams(); 
   const [responsibilities, setResponsibilities] = useState("");
   const [jobDescription, setJobDescription] = useState("");
+  const [jobBenefit, setJobBenefit] = useState(""); 
   const [qualifications, setQualifications] = useState("");
   const [jobTitle, setJobTitle] = useState(null);
   const [industry, setIndustry] = useState(null);
@@ -38,6 +39,7 @@ const UpdateJobPosting = () => {
 
         setResponsibilities(data.JobDescription.responsibilities || "");
         setJobDescription(data.JobDescription.description || "");
+        setJobBenefit(data.JobDescription.benefits || "");
         setQualifications(data.JobDescription.qualifications || "");
         setJobTitle({
           value: data.JobDescription.jobtitle_id,
@@ -198,6 +200,7 @@ const UpdateJobPosting = () => {
       educations: education.map(education => education?.value || ''),
       Responsibilities: responsibilities,
       JobDescription: jobDescription,
+      Benefits: jobBenefit,
       Qualifications: qualifications,
       JobType: jobType,
       Positions: positions
@@ -423,6 +426,23 @@ const UpdateJobPosting = () => {
             />
             <div className="d-flex justify-content-end">
               <span className="text-muted">{jobDescription.length}/3000</span>
+            </div>
+          </div>
+          <div className="mb-4">
+            <div className="mb-2">
+              <label htmlFor="jobBenefit" className="form-label">Benefits</label>
+              <p>list the expected benefits of the job.</p>
+            </div>
+            <textarea
+              id="jobBenefit"
+              className="form-control"
+              placeholder="Outline the anticipated benefits associated with the position."
+              rows="4"
+              value={jobBenefit}
+              onChange={(e) => setJobBenefit(e.target.value)}
+            />
+            <div className="d-flex justify-content-end">
+              <span className="text-muted">{jobBenefit.length}/3000</span>
             </div>
           </div>
         </section>

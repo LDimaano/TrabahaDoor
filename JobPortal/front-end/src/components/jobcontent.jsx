@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Tag from './jstag';
 
-const JobContent = ({ jobdescription, responsibilities, qualifications, educations }) => {
+const JobContent = ({ jobdescription, responsibilities, qualifications, benefits, educations }) => {
   const [fetchedEducations, setFetchedEducations] = useState([]);
   const { jobId } = useParams();
 
@@ -33,6 +33,11 @@ const JobContent = ({ jobdescription, responsibilities, qualifications, educatio
         <h2 className="text-dark border-bottom pb-2">Responsibilities</h2>
         {/* Display responsibilities as a single string */}
         <p className="text-muted fs-5">{responsibilities}</p>
+      </section>
+      <section className="mb-4">
+        <h2 className="text-dark border-bottom pb-2">Benefits</h2>
+        {/* Display responsibilities as a single string */}
+        <p className="text-muted fs-5">{benefits}</p>
       </section>
       <section>
         <h2 className="text-dark border-bottom pb-2">Qualifications</h2>

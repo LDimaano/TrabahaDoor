@@ -111,8 +111,9 @@ const JobDescription = () => {
         <section className="row">
           <JobContent
             jobdescription={jobData.jobdescription}
-            responsibilities={jobData.responsibilities}
-            qualifications={jobData.qualifications}  
+            responsibilities={jobData.responsibilities ? jobData.responsibilities.split(',') : []}
+            qualifications={jobData.qualifications ? jobData.qualifications.split(',') : []}
+            benefits={jobData.benefits ? jobData.benefits.split(',') : []}
             educations={jobData.educations || []}     
           />
           <JobDetails

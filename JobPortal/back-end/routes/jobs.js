@@ -279,15 +279,12 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
     educations,
     Responsibilities,
     JobDescription,
+    Benefits,
     Qualifications,
     JobType,
     Positions,
     user_id
   } = req.body;
-
-  console.log({
-    Positions
-  });
 
   const { job_id } = req.params;
 
@@ -297,8 +294,8 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
     const updateJob = `
       UPDATE joblistings 
       SET jobtitle_id = $1, industry_id = $2, salaryrange = $3, responsibilities = $4, 
-      jobdescription = $5, qualifications = $6, jobtype = $7, positions = $8
-      WHERE job_id = $9
+      jobdescription = $5, qualifications = $6, jobtype = $7, positions = $8, benefits = $9
+      WHERE job_id = $10
       RETURNING *;
     `;
 
@@ -311,6 +308,7 @@ router.put('/updatejoblistings/:job_id', async (req, res) => {
       Qualifications,
       JobType,
       Positions,
+      Benefits,
       job_id,
     ]);
 
