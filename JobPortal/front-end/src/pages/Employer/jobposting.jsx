@@ -292,7 +292,6 @@ const JobPosting = () => {
         bottom: '-20px', // Move label below the slider
         left: '0', // Align minimum value to the left
         marginLeft: '8px',
-        marginBottom:'8px' // Space from the left edge
       }}
     >
       ₱5,000
@@ -360,7 +359,7 @@ const JobPosting = () => {
                 bottom: '-20px', // Move label below the slider
                 right: '0', // Align maximum value to the right
                 marginRight: '8px',
-                marginBottom:'8px' // Space from the right edge
+               
               }}
             >
               ₱100,000
@@ -368,7 +367,7 @@ const JobPosting = () => {
           </div>
         </div>
 
-          <div className="mb-3">
+          <div className="mb-3 mt-3">
             <label htmlFor="jobType" className="form-label">Job Type
             <i
             className="far fa-question-circle ml-2" // Use "far" for a hollow circle
