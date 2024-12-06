@@ -258,6 +258,7 @@ router.get('/fetch-jobinfo/:job_id', async (req, res) => {
         positions: JobDescription.positions || 'Not Provided',
         responsibilities:  JobDescription.responsibilities || 'Not Provided',
         description:   JobDescription.jobdescription || 'Not Provided',
+        benefits:   JobDescription.benefits || 'Not Provided',
         qualifications:   JobDescription.qualifications || 'Not Provided',
         skills: skills, 
         educations: educations
