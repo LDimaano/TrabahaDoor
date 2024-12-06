@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Range } from "react-range";
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select';
@@ -16,11 +17,16 @@ function EmployerProfileCreation() {
   const [industry, setIndustry] = useState(null);
   const [industryOptions, setIndustryOptions] = useState([]);
   const [companyAddress, setCompanyAddress] = useState('');
-  const [companySize, setCompanySize] = useState('');
+  const [companySizeRange, setCompanySizeRange] = useState([0, 5000]);
   const [foundedYear, setFoundedYear] = useState('');
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
+
+  const handleRangeChange = (values) => {
+    console.log('Range changed to:', values); // Debugging
+    setCompanySizeRange(values); // Update state
+  };
 
   const fetchEmployerProfile = async () => {
     try {
@@ -37,7 +43,7 @@ function EmployerProfileCreation() {
       setWebsite(data.employer.website);
       setIndustry({ value: data.employer.industry, label: data.employer.industryname });
       setCompanyAddress(data.employer.company_address);
-      setCompanySize(data.employer.company_size);
+      setCompanySizeRange(data.employer.company_size);
       setFoundedYear(data.employer.foundedYear);
       setDescription(data.employer.description);
     } catch (error) {
@@ -60,7 +66,7 @@ function EmployerProfileCreation() {
         website,
         industry_id: industry?.value || '', 
         companyAddress,
-        companySize,
+        companySizeRange,
         foundedYear,
         description,
     };
@@ -203,16 +209,83 @@ function EmployerProfileCreation() {
             required
           />
         </div>
-        <div className="mb-3">
-          <label htmlFor="companySize" className="form-label">Company Size</label>
-          <input
-            type="text"
-            id="companySize"
-            className="form-control"
-            value={companySize}
-            onChange={(e) => setCompanySize(e.target.value)}
-          />
-        </div>
+        <div className="col-md-6">
+      <label htmlFor="companySize" className="form-label">
+        Company Size <span className="text-danger">*</span>
+      </label>
+      <div
+        className="slider-container"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          marginBottom: "10px",
+        }}
+      >
+        {/* Minimum Label */}
+        <small
+          style={{
+            fontSize: "0.9rem",
+            color: "#6c757d",
+          }}
+        >
+          0
+        </small>
+
+        {/* Slider */}
+        <Range
+          step={100}
+          min={0}
+          max={5000}
+          values={companySizeRange}
+          onChange={handleRangeChange}
+          renderTrack={({ props, children }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: "6px",
+                width: "100%",
+                backgroundColor: "#ddd",
+              }}
+            >
+              {children}
+            </div>
+          )}
+          renderThumb={({ props }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: "16px",
+                width: "16px",
+                backgroundColor: "#007bff",
+                borderRadius: "50%",
+              }}
+            />
+          )}
+        />
+
+        {/* Maximum Label */}
+        <small
+          style={{
+            fontSize: "0.9rem",
+            color: "#6c757d",
+          }}
+        >
+          5000
+        </small>
+      </div>
+
+      {/* Current Value Display */}
+      <input
+        type="text"
+        id="companySize"
+        className="form-control"
+        value={`${companySizeRange[0]}-${companySizeRange[1]} employees`}
+        readOnly
+      />
+    </div>
         <div className="col-md-6">
             <label htmlFor="foundedYear" className="form-label">Founded Year <span className="text-danger">*</span></label>
             <select
