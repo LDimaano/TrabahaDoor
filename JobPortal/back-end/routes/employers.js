@@ -210,7 +210,7 @@ router.get('/approval-date/:userId', async (req, res) => {
   try {
     // Query to get the date submitted from the database
     const query = 'SELECT uploaded_at FROM documents WHERE user_id = $1';
-    const result = await db.query(query, [userId]);
+    const result = await pool.query(query, [userId]);
     console.log(`result in wait approval: ${result}`);
     
 
