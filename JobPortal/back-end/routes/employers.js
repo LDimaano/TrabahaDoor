@@ -205,18 +205,22 @@ router.get('/user-infoemp/:userId', async (req, res) => {
 
 router.get('/approval-date/:userId', async (req, res) => {
   const { userId } = req.params;
+  console.log(`userId fetch from waitapproval: ${userId}`);
 
   try {
     // Query to get the date submitted from the database
     const query = 'SELECT uploaded_at FROM documents WHERE user_id = $1';
     const result = await db.query(query, [userId]);
+    console.log(`result in wait approval: ${result}`);
+    
 
     if (result.rows.length > 0) {
       const dateSubmitted = result.rows[0].date_submitted;
       
       // Format the date to a user-friendly format
       const formattedDate = format(new Date(dateSubmitted), 'yyyy-MM-dd'); // Example format: "2024-11-22"
-
+      console.log(`new formattedDate: ${formattedDate}`);
+      
       res.json({ dateSubmitted: formattedDate });
     } else {
       res.status(404).json({ message: 'User not found' });
