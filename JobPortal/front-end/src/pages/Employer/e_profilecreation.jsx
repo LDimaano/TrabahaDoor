@@ -6,6 +6,7 @@ import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap'; 
 import { ProgressBar } from 'react-bootstrap';
 import TermsAndConditions from '../../components/termsandconditions';
+import Header from '../../components/header_unverified1';
 
 function EmployerProfileCreation() {
   const navigate = useNavigate();
@@ -199,19 +200,13 @@ function EmployerProfileCreation() {
 
   return (
     <main className="container mt-4">
-      <div className="mb-4 d-flex align-items-center justify-content-center" style={{ marginTop: "45px" }}>
-    {/* Logo Section */}
-    <img
-      src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
-      alt="TrabahaDoor Logo"
-      style={{ maxWidth: "80px", marginRight: "20px" }} // Adjust width and spacing
-    />
+       <Header style={{ fontSize: '3rem', fontWeight: 'bold' }} /> {/* Increased header size */}
+    
     {/* Text Section */}
-    <div>
-      <h1 className="text-center">Create your Profile</h1>
-      <h5 className="text-center">Let us know more about your company</h5>
-      </div>
-    </div>
+    <div className="text-center"> {/* Centers the content */}
+  <h4>Create your Profile</h4> {/* Reduced font size */}
+  <h5 className="text-muted">Let us know more about you</h5>
+</div>
       <div className="mb-4 mt-5"> {/* Add a top margin using mt-5 for more space */}
         {/* Title or Label for the Progress */}
         <h5 className="text-start text-muted">Sign-Up Progress</h5> {/* Left-align the text using text-start */}

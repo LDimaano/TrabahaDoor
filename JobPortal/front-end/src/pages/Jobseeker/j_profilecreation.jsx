@@ -421,17 +421,27 @@ const handleSubmit = async (e) => {
 
         <div className="mb-4 border p-4">
           <h3>Personal Details</h3>
-          <div className="mb-3">
-            <label htmlFor="fullName" className="form-label">Full Name *</label>
-            <input
-              type="text"
-              className="form-control"
-              id="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-            />
-          </div>
+          <div className="mb-3 position-relative">
+  <label htmlFor="fullName" className="form-label">
+    Full Name *{' '}
+    <i
+      className="fas fa-question-circle text-muted"
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      title="Enter your full name as it appears on official documents. Example: Juan Dela Cruz"
+      style={{ cursor: 'pointer' }}
+    ></i>
+  </label>
+  <input
+    type="text"
+    className="form-control"
+    id="fullName"
+    value={fullName}
+    onChange={(e) => setFullName(e.target.value)}
+    required
+  />
+</div>
+
           <div className="row mb-3">
             <div className="col-md-6">
               <label htmlFor="phoneNumber" className="form-label">Phone Number *</label>
