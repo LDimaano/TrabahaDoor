@@ -207,25 +207,26 @@ function EmployerProfileCreation() {
   <h4>Create your Profile</h4> {/* Reduced font size */}
   <h5 className="text-muted">Let us know more about your company</h5>
 </div>
-      <div className="mb-4 mt-5"> {/* Add a top margin using mt-5 for more space */}
-        {/* Title or Label for the Progress */}
-        <h5 className="text-start text-muted">Sign-Up Progress</h5> {/* Left-align the text using text-start */}
-        <p className="text-start text-muted">Fill out the information below to complete your profile.</p> {/* Left-align the description */}
-        {/* Progress Bar */}
-        <ProgressBar
-          now={calculateProgress()} // Dynamically calculate progress
-          label={`${calculateProgress()}%`}
-          className="mb-4"
-          variant="info" // You can change this variant for different colors
-          style={{
-            height: '20px',
-            borderRadius: '10px',
-            position: 'sticky',
-            top: '0', // Adjust to stick at the top of the container or viewport
-            zIndex: '1000', // Ensure it's on top of other elements if necessary
-          }}
-        />
-      </div>
+<div className="mb-4 mt-5" style={{ position: 'relative' }}> {/* Add position relative to the parent */}
+  {/* Title or Label for the Progress */}
+  <h5 className="text-start text-muted">Sign-Up Progress</h5> {/* Left-align the text */}
+  <p className="text-start text-muted">Fill out the information below to complete your profile.</p> {/* Left-align the description */}
+  
+  {/* Progress Bar */}
+  <ProgressBar
+    now={calculateProgress()} // Dynamically calculate progress
+    label={`${calculateProgress()}%`}
+    className="mb-4"
+    variant="info" // Change this variant for different colors
+    style={{
+      height: '20px',
+      borderRadius: '10px',
+      position: 'sticky',
+      top: '0', // Stick at the top of its parent container
+      zIndex: '1000', // Ensure it's on top of other elements if necessary
+    }}
+  />
+</div>
       <h3>Company Details</h3>
       <form onSubmit={handleShowModal}>
         <div className="mb-4 border p-4">
