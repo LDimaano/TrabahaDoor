@@ -291,7 +291,8 @@ const JobPosting = () => {
         position: 'absolute',
         bottom: '-20px', // Move label below the slider
         left: '0', // Align minimum value to the left
-        marginLeft: '8px', // Space from the left edge
+        marginLeft: '8px',
+        marginBottom:'8px' // Space from the left edge
       }}
     >
       ₱5,000
@@ -358,7 +359,8 @@ const JobPosting = () => {
                 position: 'absolute',
                 bottom: '-20px', // Move label below the slider
                 right: '0', // Align maximum value to the right
-                marginRight: '8px', // Space from the right edge
+                marginRight: '8px',
+                marginBottom:'8px' // Space from the right edge
               }}
             >
               ₱100,000
