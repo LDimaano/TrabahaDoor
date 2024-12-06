@@ -224,7 +224,15 @@ const JobPosting = () => {
           <h3 className="h5">Job Information</h3>
           <p>Provide details about the job title, industry, and location.</p>
           <div className="mb-3">
-            <label htmlFor="jobTitle" className="form-label">Job Title</label>
+            <label htmlFor="jobTitle" className="form-label">Job Title
+            <i
+            className="far fa-question-circle ml-2" // Use "far" for a hollow circle
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Please specify the title of the job position you're hiring for."
+            style={{ cursor: 'pointer', marginLeft: '5px'  }}
+          ></i>
+            </label>
             <Select
               id="jobTitle"
               value={jobTitle}
@@ -234,7 +242,15 @@ const JobPosting = () => {
             />
           </div>
           <div className="mb-3">
-          <label htmlFor="industry" className="form-label">Industry *</label>
+          <label htmlFor="industry" className="form-label">Industry
+          <i
+          className="far fa-question-circle ml-2" // Use "far" for a hollow circle
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          title="Select the industry that best represents your business or job position."
+          style={{ cursor: 'pointer', marginLeft: '5px' }} // Small margin before the icon
+        ></i>
+          </label>
           <Select
             id="industry"
             options={industryOptions}
@@ -248,6 +264,13 @@ const JobPosting = () => {
         <div className="col-md-6 mb-3">
           <label htmlFor={`salaryRange-0`} className="form-label fw-bold d-block mb-2">
             Salary Range (in ₱)
+            <i
+            className="far fa-question-circle ml-2" // Use "far" for a hollow circle
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Select the salary range that you are offering for this position"
+            style={{ cursor: 'pointer', marginLeft: '5px' }} // Small margin before the icon
+          ></i>
           </label>
           <div
             className="slider-container"
@@ -332,7 +355,15 @@ const JobPosting = () => {
         </div>
 
           <div className="mb-3">
-            <label htmlFor="jobType" className="form-label">Job Type</label>
+            <label htmlFor="jobType" className="form-label">Job Type
+            <i
+            className="far fa-question-circle ml-2" // Use "far" for a hollow circle
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Choose the employment type for this position"
+            style={{ cursor: 'pointer', marginLeft: '5px' }} // Small margin before the icon
+          ></i>
+            </label>
             <select
               id="jobType"
               className="form-select"
@@ -404,7 +435,7 @@ const JobPosting = () => {
           <div className="mb-4">
             <div className="mb-2">
               <label htmlFor="jobBenefit" className="form-label">Benefits</label>
-              <p>list the expected benefits of the job.</p>
+              <p>List the expected benefits of the job.</p>
             </div>
             <textarea
               id="jobBenefit"
