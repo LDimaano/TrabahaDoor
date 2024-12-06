@@ -69,25 +69,26 @@ const ProfilePictureModal = ({ onClose, onUpdate }) => {
 
   return (
     <div className="modal d-block" tabIndex="-1">
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Update Profile Picture</h5>
-            <button type="button" className="btn-close" onClick={onClose}></button>
-          </div>
-          <div className="modal-body">
-            <input type="file" onChange={handleFileChange} accept=".jpg,.jpeg,.png" />
-            {error && <div className="alert alert-danger mt-2">{error}</div>}
-            {photo && <img src={photo} alt="Profile Preview" className="img-fluid mt-3" />}
-          </div>
-          <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="button" className="btn btn-primary" onClick={handleSave}>Save</button>
-          </div>
+    <div className="modal-dialog">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Update Profile Picture</h5>
+          <button type="button" className="btn-close" onClick={onClose}></button>
+        </div>
+        <div className="modal-body">
+          <p>Accepted file types: JPG, JPEG, PNG. Max size: 5MB.</p>
+          <input type="file" onChange={handleFileChange} accept=".jpg,.jpeg,.png" />
+          {error && <div className="alert alert-danger mt-2">{error}</div>}
+          {photo && <img src={photo} alt="Profile Preview" className="img-fluid mt-3" />}
+        </div>
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
+          <button type="button" className="btn btn-primary" onClick={handleSave}>Save</button>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default ProfilePictureModal;
