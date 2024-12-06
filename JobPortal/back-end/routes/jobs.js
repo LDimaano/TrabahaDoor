@@ -141,7 +141,7 @@ router.post('/joblistings', async (req, res) => {
       `INSERT INTO joblistings (
         user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, positions, benefits
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING job_id`,
       [user_id, jobtitle_id, industry_id, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications, positions, JobBenefit]
     );
