@@ -77,8 +77,19 @@ const UploadDocuments = () => {
 
     return (
         <div className="container mt-5">
-            <h1 className="text-center">Required Document Upload</h1>
-            <h5 className="text-center mb-4">Ensure compliance by providing all required documents.</h5>
+             <div className="mb-4 d-flex align-items-center justify-content-center" style={{ marginTop: "45px" }}>
+                {/* Logo Section */}
+                <img
+                src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+                alt="TrabahaDoor Logo"
+                style={{ maxWidth: "80px", marginRight: "20px" }} // Adjust width and spacing
+                />
+                {/* Text Section */}
+                <div>
+                <h1 className="text-center">Required Document Upload</h1>
+                <h5 className="text-center mb-4">Ensure compliance by providing all required documents.</h5>
+                </div>
+            </div>
             
             {successMessage && <Alert variant="success">{successMessage}</Alert>}
 

@@ -310,11 +310,18 @@ function ProfileEditForm() {
 
   return (
     <div className="container">
-      <div className="mb-4">
-      <h1 className="text-center" style={{ marginTop: "45px" }}>
-          Edit your Profile
-      </h1>
-        <h5 className="text-center">Update any changes to your information</h5>
+      <div className="mb-4 d-flex align-items-center justify-content-center" style={{ marginTop: "45px" }}>
+        {/* Logo Section */}
+        <img
+          src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+          alt="TrabahaDoor Logo"
+          style={{ maxWidth: "80px", marginRight: "20px" }} // Adjust width and spacing
+        />
+        {/* Text Section */}
+        <div>
+          <h1 className="text-center">Edit your Profile</h1>
+          <h5 className="text-center">Update any changes to your information</h5>
+        </div>
       </div>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleFormSubmit}>

@@ -17,7 +17,7 @@ function EmployerProfileCreation() {
   const [industry, setIndustry] = useState(null);
   const [industryOptions, setIndustryOptions] = useState([]);
   const [companyAddress, setCompanyAddress] = useState('');
-  const [companySizeRange, setCompanySizeRange] = useState([0, 5000]);
+  const [companySizeRange, setCompanySizeRange] = useState([0, 100000]);
   const [foundedYear, setFoundedYear] = useState('');
   const [description, setDescription] = useState('');
   const [photo, setPhoto] = useState(null);
@@ -182,10 +182,19 @@ function EmployerProfileCreation() {
 
   return (
     <main className="container mt-4">
-      <div className="mb-4">
-        <h1 className="text-center">Create your Profile</h1>
-        <h5 className="text-center">Let us know more about your company</h5>
+      <div className="mb-4 d-flex align-items-center justify-content-center" style={{ marginTop: "45px" }}>
+    {/* Logo Section */}
+    <img
+      src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+      alt="TrabahaDoor Logo"
+      style={{ maxWidth: "80px", marginRight: "20px" }} // Adjust width and spacing
+    />
+    {/* Text Section */}
+    <div>
+      <h1 className="text-center">Create your Profile</h1>
+      <h5 className="text-center">Let us know more about your company</h5>
       </div>
+    </div>
       <div className="mb-4 mt-5"> {/* Add a top margin using mt-5 for more space */}
         {/* Title or Label for the Progress */}
         <h5 className="text-start text-muted">Sign-Up Progress</h5> {/* Left-align the text using text-start */}
@@ -312,7 +321,7 @@ function EmployerProfileCreation() {
         <Range
           step={100}
           min={0}
-          max={5000}
+          max={100000}
           values={companySizeRange}
           onChange={handleRangeChange}
           renderTrack={({ props, children }) => (
@@ -349,7 +358,7 @@ function EmployerProfileCreation() {
             color: "#6c757d",
           }}
         >
-          5000
+          100000
         </small>
       </div>
 

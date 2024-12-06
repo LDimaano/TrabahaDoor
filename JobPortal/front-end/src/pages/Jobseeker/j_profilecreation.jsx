@@ -350,8 +350,19 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="container mt-4">
-      <h1 className="text-center">Create your Profile</h1>
-      <h5 className="text-center">Let us know more about you</h5>
+  <div className="d-flex align-items-center justify-content-center">
+    {/* Logo Section */}
+    <img
+      src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
+      alt="TrabahaDoor Logo"
+      style={{ maxWidth: '80px', marginRight: '20px' }} // Adjust width and spacing
+    />
+    {/* Text Section */}
+    <div>
+      <h1>Create your Profile</h1>
+      <h5>Let us know more about you</h5>
+    </div>
+  </div>
       {/* Progress Bar Section */}
       <div className="mb-4 mt-5"> {/* Add a top margin using mt-5 for more space */}
   {/* Title or Label for the Progress */}
