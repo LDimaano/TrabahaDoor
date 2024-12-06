@@ -203,7 +203,7 @@ router.get('/user-infoemp/:userId', async (req, res) => {
 });
 
 
-router.get('/api/employers/approval-date/:userId', async (req, res) => {
+router.get('/approval-date/:userId', async (req, res) => {
   const { userId } = req.params;
 
   try {
