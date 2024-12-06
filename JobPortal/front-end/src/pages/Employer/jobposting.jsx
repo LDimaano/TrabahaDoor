@@ -261,8 +261,8 @@ const JobPosting = () => {
             required
           />
         </div>
-        <div className="col-md-6 mb-3">
-          <label htmlFor={`salaryRange-0`} className="form-label fw-bold d-block mb-2">
+        <div className="col-md-6 mb-3" style={{ marginBottom: '10px' }}>
+          <label htmlFor={`salaryRange-0`} className="form-label">
             Salary Range (in ₱)
             <i
             className="far fa-question-circle ml-2" // Use "far" for a hollow circle

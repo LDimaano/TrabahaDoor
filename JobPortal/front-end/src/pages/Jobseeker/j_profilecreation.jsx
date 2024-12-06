@@ -624,7 +624,7 @@ const handleSubmit = async (e) => {
                   />
                 </div>
   <div className="col-md-6 mb-3">
-  <label htmlFor={`salaryRange-0`} className="form-label fw-bold d-block mb-2">
+  <label htmlFor={`salaryRange-0`} className="form-label">
     Salary Range (in ₱) {' '}
     <i
       className="far fa-question-circle"
