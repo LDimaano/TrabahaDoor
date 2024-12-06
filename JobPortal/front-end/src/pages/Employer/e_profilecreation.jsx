@@ -17,7 +17,7 @@ function EmployerProfileCreation() {
   const [industry, setIndustry] = useState(null);
   const [industryOptions, setIndustryOptions] = useState([]);
   const [companyAddress, setCompanyAddress] = useState('');
-  const [companySizeRange, setCompanySizeRange] = useState([0, 1000]);
+  const [companySizeRange, setCompanySizeRange] = useState([0, 5000]);
   const [foundedYear, setFoundedYear] = useState('');
   const [description, setDescription] = useState('');
   const [photo, setPhoto] = useState(null);
@@ -92,7 +92,11 @@ function EmployerProfileCreation() {
   
 
   const handleSubmit = async (e) => {
-    if (e) e.preventDefault(); 
+    if (e) e.preventDefault();
+    
+    const currentCompanySizeRange = [...companySizeRange]; // Ensure fresh reference
+    console.log('Current companySizeRange on submit:', currentCompanySizeRange);
+
     const user_id = window.location.pathname.split('/')[2];
 
     const profileData = {
