@@ -639,7 +639,7 @@ const handleSubmit = async (e) => {
     style={{
       display: 'flex', // Align items inline
       alignItems: 'center', // Vertical alignment of items
-      gap: '8px', // Spacing between elements
+      justifyContent: 'space-between', // Distribute elements across the container
       position: 'relative', // Container for absolute positioning
     }}
   >
@@ -697,7 +697,7 @@ const handleSubmit = async (e) => {
       )}
     />
 
-    {/* Minimum Label */}
+    {/* Minimum Label (Positioned at the left) */}
     <small
       style={{
         fontSize: '0.9rem',
@@ -714,8 +714,6 @@ const handleSubmit = async (e) => {
         fontSize: '0.9rem',
         color: '#6c757d',
         marginLeft: '8px', // Space before maximum label
-        position: 'absolute',
-        right: '0', // Align to the right
       }}
     >
       ₱100,000
