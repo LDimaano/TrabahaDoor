@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import React, { useEffect } from 'react';
 import { Tooltip } from 'bootstrap';
 
 import Login from './pages/Auth/login';
