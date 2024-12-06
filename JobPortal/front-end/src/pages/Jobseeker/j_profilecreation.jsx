@@ -113,38 +113,55 @@ function ProfileCreation() {
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
-
+    
     const userId = window.location.pathname.split('/')[2];
     
     const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/jobseeker.png";
-  
+
+    setError(''); // Clear any previous error messages
+    
     if (!file) {
-      console.log('No file selected, using default profile picture');
-      setPhoto(defaultProfilePictureUrl); 
-      return;
+        console.log('No file selected, using default profile picture');
+        setPhoto(defaultProfilePictureUrl); 
+        return;
     }
-  
+    
+    // Validate file type
+    const validFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!validFileTypes.includes(file.type)) {
+        console.error('Invalid file type. Only JPEG, JPG, and PNG are allowed.');
+        return;
+    }
+    
+    // Validate file size (5MB = 5 * 1024 * 1024 bytes)
+    const maxSizeInBytes = 5 * 1024 * 1024;
+    if (file.size > maxSizeInBytes) {
+        console.error('File size exceeds 5MB. Please select a smaller file.');
+        return;
+    }
+    
     const formData = new FormData();
     formData.append('profilePicture', file);
-  
+    
     try {
-      console.log('Uploading file...', file);
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/upload-profile-picture/${userId}`, {
-        method: 'POST',
-        body: formData,
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-  
-      const data = await response.json();
-      console.log('Uploaded image data:', data);
-      setPhoto(data.profilePictureUrl); 
+        console.log('Uploading file...', file);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/upload-profile-picture/${userId}`, {
+            method: 'POST',
+            body: formData,
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Uploaded image data:', data);
+        setPhoto(data.profilePictureUrl); 
     } catch (error) {
-      console.error('Error uploading profile picture:', error);
+        console.error('Error uploading profile picture:', error);
     }
 };
+
 const calculateProgress = () => {
   let progress = 0;
   const totalFields = 8 + experience.length + skills.length; 
@@ -379,19 +396,23 @@ const handleSubmit = async (e) => {
     </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="mb-4 border p-4">
-          <h3>Profile Photo</h3>
-          <div className="mb-3">
-            <label htmlFor="photo" className="form-label">Upload your profile photo</label>
-            <input
-              type="file"
-              className="form-control"
-              id="photo"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-          </div>
-        </div>
+      <div className="mb-4 border p-4">
+      <h3>Profile Photo</h3>
+      <div className="mb-3">
+        <label htmlFor="photo" className="form-label">Upload your profile photo</label>
+        <input
+          type="file"
+          className="form-control"
+          id="photo"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
+        {error && <div className="text-danger mt-2">{error}</div>}
+        <small className="form-text text-muted">
+          Accepted file types: JPEG, JPG, PNG. Maximum file size: 5MB.
+        </small>
+      </div>
+    </div>
         <div className="mb-4 border p-4">
           <h3>Personal Details</h3>
           <div className="mb-3">

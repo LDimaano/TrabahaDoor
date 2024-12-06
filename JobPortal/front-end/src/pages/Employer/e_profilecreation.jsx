@@ -40,12 +40,29 @@ function EmployerProfileCreation() {
   
     // Default profile picture URL
     const defaultProfilePictureUrl = "https://trabahadoor-bucket.s3.amazonaws.com/employer.png";
+
+    setError(''); // Clear any previous error messages
+    
   
     if (!file) {
         console.log('No file selected, using default profile picture');
         setPhoto(defaultProfilePictureUrl); 
         return;
     }
+
+     // Validate file type
+     const validFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+     if (!validFileTypes.includes(file.type)) {
+       setError('Invalid file type. Only JPEG, JPG, and PNG are allowed.');
+       return;
+     }
+ 
+     // Validate file size (5MB = 5 * 1024 * 1024 bytes)
+     const maxSizeInBytes = 5 * 1024 * 1024;
+     if (file.size > maxSizeInBytes) {
+       setError('File size exceeds 5MB. Please select a smaller file.');
+       return;
+     }
   
     const formData = new FormData();
     formData.append('profilePicture', file);
@@ -211,18 +228,22 @@ function EmployerProfileCreation() {
       <h3>Company Details</h3>
       <form onSubmit={handleShowModal}>
         <div className="mb-4 border p-4">
-          <h3>Profile Photo</h3>
-          <div className="mb-3">
-            <label htmlFor="photo" className="form-label">Upload your profile photo</label>
-            <input
-              type="file"
-              className="form-control"
-              id="photo"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-          </div>
+        <h3>Profile Photo</h3>
+        <div className="mb-3">
+          <label htmlFor="photo" className="form-label">Upload your profile photo</label>
+          <input
+            type="file"
+            className="form-control"
+            id="photo"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+          {error && <div className="text-danger mt-2">{error}</div>}
+          <small className="form-text text-muted">
+            Accepted file types: JPEG, JPG, PNG. Maximum file size: 5MB.
+          </small>
         </div>
+     </div>
         <div className="mb-3">
           <label htmlFor="companyName" className="form-label">Company Name <span className="text-danger">*</span></label>
           <input
