@@ -3,6 +3,7 @@ import Header from '../../components/empheader';
 import SearchForm from '../../components/searchform_emp';
 import CandidateList from '../../components/candidatelist';
 import { Helmet } from 'react-helmet';
+import Footer from '../components/footer';
 
 function HomeEmployer() {
   const [allCandidates, setAllCandidates] = useState([]); 
@@ -50,6 +51,7 @@ function HomeEmployer() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

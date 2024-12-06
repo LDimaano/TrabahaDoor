@@ -6,6 +6,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Header from '../../components/empheader';
 import EmployerProfile from '../../components/emp_profile';
 import EmployerCard from '../../components/emp_card';
+import Footer from '../components/footer';
 
 const MyProfile = () => {
   const navigate = useNavigate(); 
@@ -104,6 +105,7 @@ const MyProfile = () => {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   );
 };
