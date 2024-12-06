@@ -6,7 +6,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Header from '../../components/empheader';
 import EmployerProfile from '../../components/emp_profile';
 import EmployerCard from '../../components/emp_card';
-import Footer from '../../components/footer';
+import Footer from '../../components/footer2';
 
 const MyProfile = () => {
   const navigate = useNavigate(); 

@@ -5,7 +5,7 @@ import Header from '../../components/jsheader';
 import FilterSection from '../../components/filtersection';
 import JobList from '../../components/joblist';
 import { Range } from 'react-range';
-import Footer from '../../components/footer';
+import Footer from '../../components/footer2';
 
 function HomeJobSeeker() {
   const [filters, setFilters] = useState({

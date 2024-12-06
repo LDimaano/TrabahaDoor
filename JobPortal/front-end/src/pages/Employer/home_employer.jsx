@@ -3,7 +3,7 @@ import Header from '../../components/empheader';
 import SearchForm from '../../components/searchform_emp';
 import CandidateList from '../../components/candidatelist';
 import { Helmet } from 'react-helmet';
-import Footer from '../../components/footer';
+import Footer from '../../components/footer2';
 
 function HomeEmployer() {
   const [allCandidates, setAllCandidates] = useState([]); 
