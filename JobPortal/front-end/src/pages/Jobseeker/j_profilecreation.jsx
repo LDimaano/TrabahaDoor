@@ -428,7 +428,7 @@ const handleSubmit = async (e) => {
       className="far fa-question-circle" // Use "far" for a hollow circle
       data-bs-toggle="tooltip"
       data-bs-placement="right"
-      title="Enter your full name as it appears on official documents. Example: John A. Doe"
+      title="Enter your full name as it appears on official documents. Example: Juan Dela Cruz"
       style={{ cursor: 'pointer' }}
     ></i>
   </label>
@@ -441,104 +441,161 @@ const handleSubmit = async (e) => {
     required
   />
 </div>
+
+<div className="row mb-3">
+  <div className="col-md-6">
+    <label htmlFor="phoneNumber" className="form-label">
+      Phone Number *{' '}
+      <i
+        className="far fa-question-circle" // Hollow question mark icon
+        data-bs-toggle="tooltip"
+        data-bs-placement="right"
+        title="Enter a valid phone number, including the country code if applicable. Example: +63 234 567 8900. This will not be shared publicly "
+        style={{ cursor: 'pointer' }}
+      ></i>
+    </label>
+    <input
+      type="tel"
+      className="form-control"
+      id="phoneNumber"
+      value={phoneNumber}
+      onChange={(e) => setPhoneNumber(e.target.value)}
+      required
+    />
+  </div>
+</div>
+
           <div className="row mb-3">
-            <div className="col-md-6">
-              <label htmlFor="phoneNumber" className="form-label">Phone Number *</label>
-              <input
-                type="tel"
-                className="form-control"
-                id="phoneNumber"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div className="row mb-3">
-            <div className="col-md-6">
-              <label htmlFor="dateOfBirth" className="form-label">Date of Birth *</label>
-              <input
-                type="date"
-                className="form-control"
-                id="dateOfBirth"
-                value={dateOfBirth}
-                onChange={(e) => setDateOfBirth(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="gender" className="form-label">Gender *</label>
-              <select
-                className="form-select"
-                id="gender"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                required
-              >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </div>
+          <div className="col-md-6">
+    <label htmlFor="dateOfBirth" className="form-label">
+      Date of Birth *{' '}
+      <i
+        className="far fa-question-circle" // Hollow question mark icon
+        data-bs-toggle="tooltip"
+        data-bs-placement="right"
+        title="Select your date of birth. Format: YYYY-MM-DD. Example: 1990-01-01"
+        style={{ cursor: 'pointer' }}
+      ></i>
+    </label>
+    <input
+      type="date"
+      className="form-control"
+      id="dateOfBirth"
+      value={dateOfBirth}
+      onChange={(e) => setDateOfBirth(e.target.value)}
+      required
+    />
+  </div>
+  <div className="col-md-6">
+  <label htmlFor="gender" className="form-label">
+    Gender *{' '}
+    <i
+      className="far fa-question-circle" // Hollow question mark icon
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      title="Select your gender from the available options. This information helps us personalize your profile."
+      style={{ cursor: 'pointer' }}
+    ></i>
+  </label>
+  <select
+    className="form-select"
+    id="gender"
+    value={gender}
+    onChange={(e) => setGender(e.target.value)}
+    required
+  >
+    <option value="">Select Gender</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+  </select>
+</div>
+
           </div>
           <div className="mb-3">
-            <label htmlFor="address" className="form-label">Address *</label>
-            <Select
-              id="address"
-              options={addressOptions}
-              value={address}
-              onChange={setAddress}
-              placeholder="Select Address"
-              isClearable
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="industry" className="form-label">Industry *</label>
-            <Select
-              id="industry"
-              options={industryOptions}
-              value={industry}
-              onChange={setIndustry}
-              placeholder="Select Industry"
-              isClearable
-              required
-            />
-          </div>
-        <div className="mb-3">
-        <label htmlFor="educationDropdown" className="form-label">
-        Education Level or Course
-      </label><br></br>
-      {education.map((edu, index) => (
-        <div className="mb-3" key={index}>
-          <div className="d-flex">
-            <Select
-              id={`education_${index}`}
-              value={edu}
-              options={educationOptions}
-              onChange={(selectedOption) => handleEducationChange(index, selectedOption)}
-              placeholder="Select an education level or course"
-              className="flex-grow-1 me-2"
-            />
-            <button
-              type="button"
-              className="btn btn-outline-danger"
-              onClick={() => handleRemoveEducation(index)}
-            >
-              Remove
-            </button>
-          </div>
-        </div>
-      ))}
-      <button
-        type="button"
-        className="btn btn-outline-primary"
-        onClick={handleAddEducation}
-      >
-        Add Education
-      </button>
+  <label htmlFor="address" className="form-label">
+    Address *{' '}
+    <i
+      className="far fa-question-circle" // Hollow question mark icon
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      title="Select your address from the available options. This information helps us verify your location."
+      style={{ cursor: 'pointer' }}
+    ></i>
+  </label>
+  <Select
+    id="address"
+    options={addressOptions}
+    value={address}
+    onChange={setAddress}
+    placeholder="Select Address"
+    isClearable
+    required
+  />
+</div>
+
+<div className="mb-3">
+  <label htmlFor="industry" className="form-label">
+    Industry *{' '}
+    <i
+      className="far fa-question-circle" // Hollow question mark icon
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      title="Select your industry from the available options. This helps us match you with relevant job opportunities."
+      style={{ cursor: 'pointer' }}
+    ></i>
+  </label>
+  <Select
+    id="industry"
+    options={industryOptions}
+    value={industry}
+    onChange={setIndustry}
+    placeholder="Select Industry"
+    isClearable
+    required
+  />
+</div>
+
+<div className="mb-3">
+  <label htmlFor="educationDropdown" className="form-label">
+    Education Level or Course{' '}
+    <i
+      className="far fa-question-circle" // Hollow question mark icon
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      title="Select your highest education level or relevant course. You can add multiple entries if applicable."
+      style={{ cursor: 'pointer' }}
+    ></i>
+  </label><br />
+  {education.map((edu, index) => (
+    <div className="mb-3" key={index}>
+      <div className="d-flex">
+        <Select
+          id={`education_${index}`}
+          value={edu}
+          options={educationOptions}
+          onChange={(selectedOption) => handleEducationChange(index, selectedOption)}
+          placeholder="Select an education level or course"
+          className="flex-grow-1 me-2"
+        />
+        <button
+          type="button"
+          className="btn btn-outline-danger"
+          onClick={() => handleRemoveEducation(index)}
+        >
+          Remove
+        </button>
       </div>
-      </div>
+    </div>
+  ))}
+  <button
+    type="button"
+    className="btn btn-outline-primary"
+    onClick={handleAddEducation}
+  >
+    Add Education
+  </button>
+</div>
+</div>
 
         <div className="mb-4 border p-4">
           <h3>Experience</h3>
@@ -560,6 +617,13 @@ const handleSubmit = async (e) => {
                 <div className="col-md-6 mb-3">
               <label htmlFor={`salaryRange-0`} className="form-label fw-bold d-block mb-2">
                 Salary Range (in ₱)
+                <i
+              className="far fa-question-circle" // Hollow question mark icon
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Use the slider to select your expected salary range for this position."
+              style={{ cursor: 'pointer' }}
+            ></i>
               </label>
               <div
                 className="slider-container"
@@ -645,7 +709,15 @@ const handleSubmit = async (e) => {
             </div>
             </div>
               <div className="mb-3">
-                <label htmlFor={`company-${index}`} className="form-label">Company</label>
+                <label htmlFor={`company-${index}`} className="form-label">Company
+                <i
+                className="far fa-question-circle" // Hollow question mark icon
+                data-bs-toggle="tooltip"
+                data-bs-placement="right"
+                title="Enter the name of the company where you worked."
+                style={{ cursor: 'pointer' }}
+              ></i>
+                </label>
                 <input
                   type="text"
                   className="form-control"
@@ -658,7 +730,15 @@ const handleSubmit = async (e) => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor={`location-${index}`} className="form-label">Location</label>
+                  <label htmlFor={`location-${index}`} className="form-label">Location
+                  <i
+                  className="far fa-question-circle" // Hollow question mark icon
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="right"
+                  title="Enter the location where your company is based or where you worked."
+                  style={{ cursor: 'pointer' }}
+                ></i>
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -670,7 +750,15 @@ const handleSubmit = async (e) => {
                   />
                 </div>
                 <div className="col-md-3">
-                  <label htmlFor={`startDate-${index}`} className="form-label">Start Date</label>
+                  <label htmlFor={`startDate-${index}`} className="form-label">Start Date
+                  <i
+    className="far fa-question-circle" // Hollow question mark icon
+    data-bs-toggle="tooltip"
+    data-bs-placement="right"
+    title="Select the date when you started your position at this company."
+    style={{ cursor: 'pointer' }}
+  ></i>
+                  </label>
                   <input
                     type="date"
                     className="form-control"
@@ -681,7 +769,15 @@ const handleSubmit = async (e) => {
                   />
                 </div>
                 <div className="col-md-3">
-                  <label htmlFor={`endDate-${index}`} className="form-label">End Date</label>
+                  <label htmlFor={`endDate-${index}`} className="form-label">End Date
+                  <i
+    className="far fa-question-circle" // Hollow question mark icon
+    data-bs-toggle="tooltip"
+    data-bs-placement="right"
+    title="Select the date when you ended or left your job or position. If still working, leave it empty."
+    style={{ cursor: 'pointer' }}
+  ></i>
+                  </label>
                   <input
                     type="date"
                     className="form-control"
@@ -693,7 +789,15 @@ const handleSubmit = async (e) => {
                 </div>
               </div>
               <div className="mb-3">
-                <label htmlFor={`description-${index}`} className="form-label">Description</label>
+                <label htmlFor={`description-${index}`} className="form-label">Description
+                <i
+    className="far fa-question-circle" // Hollow question mark icon
+    data-bs-toggle="tooltip"
+    data-bs-placement="right"
+    title="Provide a brief description of your responsibilities and achievements in this role."
+    style={{ cursor: 'pointer' }}
+  ></i>
+                </label>
                 <textarea
                   className="form-control"
                   id={`description-${index}`}
@@ -725,7 +829,15 @@ const handleSubmit = async (e) => {
           <h3>Skills</h3>
           {skills.map((skill, index) => (
             <div key={index} className="mb-3">
-              <label className="form-label">Skill {index + 1}</label>
+              <label className="form-label">Skill {index + 1}
+              <i
+              className="far fa-question-circle" // Hollow question mark icon
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Enter a skill you possess that is relevant to your job profile."
+              style={{ cursor: 'pointer' }}
+            ></i>
+              </label>
               <div className="d-flex">
                 <Select
                   options={availableSkills}

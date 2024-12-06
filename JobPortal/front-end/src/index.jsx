@@ -4,8 +4,12 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { Tooltip } from 'bootstrap';
 
-
+document.addEventListener('DOMContentLoaded', () => {
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl));
+});
 
 
 import Login from './pages/Auth/login';
