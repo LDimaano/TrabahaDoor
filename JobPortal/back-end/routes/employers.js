@@ -107,7 +107,7 @@ router.post('/employer-profile', async (req, res) => {
     website,
     industry_id,
     companyAddress,
-    companySize,
+    companySizeRange,
     foundedYear,
     description,
     profile_picture_url
@@ -135,7 +135,7 @@ router.post('/employer-profile', async (req, res) => {
         website,
         industry_id,
         companyAddress,
-        companySize,
+        companySizeRange,
         foundedYear,
         description,
       ]
