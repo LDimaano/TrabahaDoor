@@ -419,6 +419,15 @@ function EmployerProfileCreation() {
             required
           />
         </div>
+        <div>
+          <p>
+            Note: Document submission is required to complete your registration.
+          </p>
+          <p>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#documentModal">Click here</a> <span> </span>
+            to view the list of required documents.
+          </p>
+        </div>
         <div className="text-end">
           <button type="submit" className="btn btn-success">
             Submit Profile
@@ -426,6 +435,59 @@ function EmployerProfileCreation() {
         </div>
       </form>
       {error && <div className="alert alert-danger mt-3">{error}</div>}
+
+
+      <div className="modal fade" id="documentModal" tabIndex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
+  <div className="modal-dialog">
+    <div className="modal-content">
+      <div className="modal-header">
+        <h5 className="modal-title" id="documentModalLabel">Required Documents</h5>
+        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div className="modal-body">
+        <div className="card mb-3">
+          <div className="card-body">
+            <h5 className="card-title">SEC Certificate</h5>
+            <p className="card-text">This document verifies your business as a registered entity with the Securities and Exchange Commission (SEC).</p>
+          </div>
+        </div>
+        <div className="card mb-3">
+          <div className="card-body">
+            <h5 className="card-title">Business Permit</h5>
+            <p className="card-text">This document shows your business is licensed to operate in your city or municipality.</p>
+          </div>
+        </div>
+        <div className="card mb-3">
+          <div className="card-body">
+            <h5 className="card-title">BIR Certificate</h5>
+            <p className="card-text">This document confirms your registration with the Bureau of Internal Revenue (BIR) for tax purposes.</p>
+          </div>
+        </div>
+        <div className="card mb-3">
+          <div className="card-body">
+            <h5 className="card-title">POEA or DOLE License</h5>
+            <p className="card-text">Required for recruitment agencies operating in the Philippines, ensuring compliance with the POEA/DOLE regulations.</p>
+          </div>
+        </div>
+        <div className="card mb-3">
+          <div className="card-body">
+            <h5 className="card-title">Private Recruitment Agency License</h5>
+            <p className="card-text">This license is essential for agencies that provide recruitment services to job seekers and employers.</p>
+          </div>
+        </div>
+        <div className="card mb-3">
+          <div className="card-body">
+            <h5 className="card-title">Contract Sub Contractor Certificate</h5>
+            <p className="card-text">This certificate verifies the legality of your business in engaging with sub-contractors.</p>
+          </div>
+        </div>
+      </div>
+      <div className="modal-footer">
+        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
       <Modal show={showModal} onHide={handleCloseModal} size="lg">
         <Modal.Header closeButton>
