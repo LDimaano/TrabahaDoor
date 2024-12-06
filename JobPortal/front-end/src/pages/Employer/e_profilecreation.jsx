@@ -255,7 +255,7 @@ function EmployerProfileCreation() {
             data-bs-toggle="tooltip"
             data-bs-placement="right"
             title="Enter the company name registered for your business"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', marginLeft: '5px'  }}
           ></i></label>
           <input
             type="text"
@@ -274,7 +274,7 @@ function EmployerProfileCreation() {
       data-bs-toggle="tooltip"
       data-bs-placement="right"
       title="Enter the full name of the person in charge of this account. Example: Juan Dela Cruz"
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: 'pointer', marginLeft: '5px'  }}
     ></i></label>
             <input
               type="text"
@@ -292,7 +292,7 @@ function EmployerProfileCreation() {
       data-bs-toggle="tooltip"
       data-bs-placement="right"
       title="Enter the company's active contact number, including the country code if applicable. Example: +63 234 567 8900. This will not be shared publicly"
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: 'pointer' ,marginLeft: '5px' }}
     ></i></label>
             <input
               type="tel"
@@ -312,7 +312,7 @@ function EmployerProfileCreation() {
         data-bs-toggle="tooltip"
         data-bs-placement="right"
         title="Enter the URL of your company's website to better showcase your company profile to candidates"
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: 'pointer', marginLeft: '5px'  }}
       ></i></label>
             <input
               type="url"
@@ -330,7 +330,7 @@ function EmployerProfileCreation() {
       data-bs-toggle="tooltip"
       data-bs-placement="right"
       title="Select your industry from the available options. This helps us match you with relevant job seekers."
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: 'pointer',marginLeft: '5px'  }}
     ></i></label>
             <Select
               id="industry"
@@ -349,7 +349,7 @@ function EmployerProfileCreation() {
       data-bs-toggle="tooltip"
       data-bs-placement="right"
       title="This information helps us verify your location."
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: 'pointer', marginLeft: '5px'  }}
     ></i></label>
           <input
             type="text"
@@ -511,7 +511,7 @@ function EmployerProfileCreation() {
       {error && <div className="alert alert-danger mt-3">{error}</div>}
 
 
-      <div className="modal fade" id="documentModal" tabIndex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
+  <div className="modal fade" id="documentModal" tabIndex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
   <div className="modal-dialog">
     <div className="modal-content">
       <div className="modal-header">
