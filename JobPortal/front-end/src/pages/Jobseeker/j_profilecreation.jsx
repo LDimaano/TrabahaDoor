@@ -604,7 +604,19 @@ const handleSubmit = async (e) => {
               <label className="form-label">Experience {index + 1}</label>
               <div className="row">
                 <div className="col-md-6 mb-3">
-                  <label htmlFor={`jobTitle-${index}`} className="form-label">Job Title</label>
+                <label htmlFor={`jobTitle-${index}`} className="form-label">
+                    Job Title
+                    <span
+                      className="bi bi-info-circle text-muted ms-2"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="Enter the job title for the position you're hiring for"
+                    ></span>
+                  </label>
+                  <small className="text-muted">
+                    Provide the official job title for the role.
+                  </small>
+
                   <Select
                     id={`jobTitle-${index}`}
                     options={availableJobTitles}
