@@ -425,10 +425,10 @@ const handleSubmit = async (e) => {
   <label htmlFor="fullName" className="form-label">
     Full Name *{' '}
     <i
-      className="fas fa-question-circle text-muted"
+      className="far fa-question-circle" // Use "far" for a hollow circle
       data-bs-toggle="tooltip"
       data-bs-placement="right"
-      title="Enter your full name as it appears on official documents. Example: Juan Dela Cruz"
+      title="Enter your full name as it appears on official documents. Example: John A. Doe"
       style={{ cursor: 'pointer' }}
     ></i>
   </label>
@@ -441,7 +441,6 @@ const handleSubmit = async (e) => {
     required
   />
 </div>
-
           <div className="row mb-3">
             <div className="col-md-6">
               <label htmlFor="phoneNumber" className="form-label">Phone Number *</label>
