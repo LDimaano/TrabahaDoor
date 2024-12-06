@@ -6,7 +6,7 @@ const PersonalInfo = ({ data }) => (
     <p><strong>Company Name:</strong> {data.company_name}</p>
     <p><strong>Company Address:</strong> {data.company_address}</p>
     <p><strong>Industry:</strong> {data.industry}</p>
-    <p><strong>Company Size:</strong> {data.company_size}</p>
+    <p><strong>Company Size:</strong> {data.company_size[0]}-{data.company_size[1]} employees</p>
     <p><strong>Founded Year:</strong> {data.founded_year}</p><hr/>
     <p><strong>Description:</strong> {data.description}</p>
   </div>
