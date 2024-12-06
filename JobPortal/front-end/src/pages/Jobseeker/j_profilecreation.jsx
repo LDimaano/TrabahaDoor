@@ -6,6 +6,7 @@ import Select from 'react-select';
 import { ProgressBar } from 'react-bootstrap';
 import { Modal, Button } from 'react-bootstrap';
 import TermsAndConditions from '../../components/termsandconditions';
+import Header from '../../components/header_unverified1';
 
 
 function ProfileCreation() {
@@ -367,19 +368,12 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="container mt-4">
-  <div className="d-flex align-items-center justify-content-center">
-    {/* Logo Section */}
-    <img
-      src={`${process.env.PUBLIC_URL}/assets/TrabahaDoor_logo.png`}
-      alt="TrabahaDoor Logo"
-      style={{ maxWidth: '80px', marginRight: '20px' }} // Adjust width and spacing
-    />
+  <Header/>
     {/* Text Section */}
     <div>
       <h1>Create your Profile</h1>
       <h5>Let us know more about you</h5>
     </div>
-  </div>
       {/* Progress Bar Section */}
       <div className="mb-4 mt-5"> {/* Add a top margin using mt-5 for more space */}
   {/* Title or Label for the Progress */}
@@ -397,22 +391,26 @@ const handleSubmit = async (e) => {
 
       <form onSubmit={handleSubmit}>
       <div className="mb-4 border p-4">
-      <h3>Profile Photo</h3>
-      <div className="mb-3">
-        <label htmlFor="photo" className="form-label">Upload your profile photo</label>
-        <input
-          type="file"
-          className="form-control"
-          id="photo"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-        {error && <div className="text-danger mt-2">{error}</div>}
-        <small className="form-text text-muted">
-          Accepted file types: JPEG, JPG, PNG. Maximum file size: 5MB.
-        </small>
-      </div>
-    </div>
+  <h3>Profile Photo</h3>
+  <div className="mb-3">
+    <label htmlFor="photo" className="form-label">Upload your profile photo</label>
+    <input
+      type="file"
+      className="form-control"
+      id="photo"
+      accept="image/*"
+      onChange={handleFileChange}
+    />
+    {error && <div className="text-danger mt-2">{error}</div>}
+    <small className="form-text text-muted">
+      Accepted file types: JPEG, JPG, PNG. Maximum file size: 5MB.
+    </small>
+    <p className="text-info mt-2">
+      A professional profile photo helps make a great first impression on potential employers and can increase your chances of landing the right opportunity!
+    </p>
+  </div>
+</div>
+
         <div className="mb-4 border p-4">
           <h3>Personal Details</h3>
           <div className="mb-3">
