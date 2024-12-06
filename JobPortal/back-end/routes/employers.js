@@ -253,9 +253,25 @@ router.get('/fetchemployer-profile/:userId', async (req, res) => {
       WHERE e.user_id = $1
     `, [userId]);
 
-    console.log('Fetched update employer data:', EmployerData.rows);
+    console.log('Fetched raw employer data:', EmployerData.rows);
 
     const employer = EmployerData.rows[0] || {};
+
+    // Clean and parse the company_size field
+    let companySize = [0, 5000]; // Default value
+    if (employer.company_size) {
+      console.log('Original company_size from DB:', employer.company_size);
+      try {
+        const cleanedSize = employer.company_size.replace(/""/g, '"'); // Fix excessive quotes
+        console.log('Cleaned company_size:', cleanedSize);
+        companySize = JSON.parse(cleanedSize); // Parse to array
+        console.log('Parsed company_size as array:', companySize);
+      } catch (error) {
+        console.error('Failed to parse company_size:', error.message);
+      }
+    }
+
+    console.log('Final company_size being sent:', companySize);
 
     res.json({
       employer: {
@@ -266,11 +282,11 @@ router.get('/fetchemployer-profile/:userId', async (req, res) => {
         website: employer.website || 'Not Provided',
         industry: employer.industry_id || 'Not Provided',
         company_address: employer.company_address || 'Not Provided',
-        company_size: employer.company_size || 'Not Provided',
+        company_size: companySize, // Pass the cleaned and parsed array
         foundedYear: employer.founded_year || 'Not Provided',
         description: employer.description || 'Not Provided',
         profilePicture: employer.profile_picture_url || 'No Image',
-        industryname: employer.industry_name  || 'Not Provided',
+        industryname: employer.industry_name || 'Not Provided',
       },
     });
   } catch (error) {
