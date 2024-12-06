@@ -275,21 +275,25 @@ const JobPosting = () => {
           <div
             className="slider-container"
             style={{
-              display: "flex", // Align items inline
-              alignItems: "center", // Vertical alignment of items
-              gap: "8px", // Spacing between elements
+              display: 'flex', // Align items inline
+              alignItems: 'center', // Vertical alignment of items
+              justifyContent: 'center', // Center the slider horizontally
+              position: 'relative', // Container for absolute positioning
             }}
           >
             {/* Minimum Label */}
             <small
-              style={{
-                fontSize: "0.9rem", // Smaller text for label
-                color: "#6c757d", // Bootstrap muted color
-                marginRight: "8px", // Space after minimum label
-              }}
-            >
-              ₱5,000
-            </small>
+      style={{
+        fontSize: '0.9rem',
+        color: '#6c757d',
+        position: 'absolute',
+        bottom: '-20px', // Move label below the slider
+        left: '0', // Align minimum value to the left
+        marginLeft: '8px', // Space from the left edge
+      }}
+    >
+      ₱5,000
+    </small>
 
             {/* Slider */}
             <Range
@@ -331,9 +335,12 @@ const JobPosting = () => {
             {/* Current Value Label */}
             <small
               style={{
-                fontSize: "0.9rem",
-                color: "#6c757d",
-                margin: "0 8px", // Space on both sides
+                position: 'absolute',
+                top: '-25px', // Move above the slider
+                left: '50%', // Center horizontally
+                transform: 'translateX(-50%)', // Ensure it's perfectly centered
+                fontSize: '0.9rem',
+                color: '#6c757d',
               }}
             >
               {salaryRange
@@ -344,9 +351,12 @@ const JobPosting = () => {
             {/* Maximum Label */}
             <small
               style={{
-                fontSize: "0.9rem",
-                color: "#6c757d",
-                marginLeft: "8px", // Space before maximum label
+                fontSize: '0.9rem',
+                color: '#6c757d',
+                position: 'absolute',
+                bottom: '-20px', // Move label below the slider
+                right: '0', // Align maximum value to the right
+                marginRight: '8px', // Space from the right edge
               }}
             >
               ₱100,000
@@ -381,7 +391,15 @@ const JobPosting = () => {
             </select>
           </div>
           <div className="mb-3">
-          <label htmlFor="jobType" className="form-label">Positions</label>
+          <label htmlFor="jobType" className="form-label">Positions
+              <i
+            className="far fa-question-circle ml-2" // Use "far" for a hollow circle
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Indicate the number of positions open for this job"
+            style={{ cursor: 'pointer', marginLeft: '5px' }} // Small margin before the icon
+          ></i>
+          </label>
           <input
             type="number"
             id="positions"
