@@ -119,6 +119,7 @@ router.post('/joblistings', async (req, res) => {
     JobType,
     Responsibilities,
     JobDescription,
+    JobBenefit,
     Qualifications,
     skills,
     educations,
@@ -138,11 +139,11 @@ router.post('/joblistings', async (req, res) => {
   try {
     const newJobResult = await pool.query(
       `INSERT INTO joblistings (
-        user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, positions
+        user_id, jobtitle_id, industry_id, salaryrange, jobtype, responsibilities, jobdescription, qualifications, positions, benefits
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING job_id`,
-      [user_id, jobtitle_id, industry_id, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications, positions]
+      [user_id, jobtitle_id, industry_id, SalaryRange, JobType, Responsibilities, JobDescription, Qualifications, positions, JobBenefit]
     );
   
     const job_id = newJobResult.rows[0].job_id;

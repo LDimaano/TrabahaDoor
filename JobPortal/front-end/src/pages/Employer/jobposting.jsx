@@ -11,6 +11,7 @@ import { Modal, Button, Alert } from 'react-bootstrap';
 const JobPosting = () => {
   const [responsibilities, setResponsibilities] = useState("");
   const [jobDescription, setJobDescription] = useState(""); 
+  const [jobBenefit, setJobBenefit] = useState(""); 
   const [qualifications, setQualifications] = useState("");
   const [positions, setPositions] = useState(1);
   const [jobTitle, setJobTitle] = useState(null); 
@@ -157,6 +158,7 @@ const JobPosting = () => {
       skills: skills.map(skill => skill?.value || ''),
       Responsibilities: responsibilities,
       JobDescription: jobDescription, 
+      JobBenefit: jobBenefit, 
       Qualifications: qualifications,
       JobType: jobType,
       positions: positions 
@@ -366,7 +368,7 @@ const JobPosting = () => {
         </section>
         <section className="mb-4">
           <h3 className="h5">Job Description</h3>
-          <p>Provide details about the job responsibilities and requirements.</p>
+          <p>Provide details about the job responsibilities, requirements, and benefits.</p>
           <div className="mb-2">
             <label htmlFor="responsibilities" className="form-label">Responsibilities</label>
             <p>List the primary responsibilities for this job.</p>
@@ -399,12 +401,26 @@ const JobPosting = () => {
               <span className="text-muted">{jobDescription.length}/3000</span>
             </div>
           </div>
+          <div className="mb-4">
+            <div className="mb-2">
+              <label htmlFor="jobBenefit" className="form-label">Benefits</label>
+              <p>list the expected benefits of the job.</p>
+            </div>
+            <textarea
+              id="jobBenefit"
+              className="form-control"
+              placeholder="Outline the anticipated benefits associated with the position."
+              rows="4"
+              value={jobBenefit}
+              onChange={(e) => setJobBenefit(e.target.value)}
+            />
+            <div className="d-flex justify-content-end">
+              <span className="text-muted">{jobBenefit.length}/3000</span>
+            </div>
+          </div>
         </section>
-
-
         <section className="mb-4">
   <h3 className="h5">Qualifications</h3>
-
   <p>Select the education levels or courses required for this job.</p>
   {education.map((edu, index) => (
     <div className="mb-3" key={index}>
