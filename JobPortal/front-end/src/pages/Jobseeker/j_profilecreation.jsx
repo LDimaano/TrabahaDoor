@@ -368,17 +368,23 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="container mt-4">
-  <Header/>
+    <Header style={{ fontSize: '3rem', fontWeight: 'bold' }} /> {/* Increased header size */}
+    
     {/* Text Section */}
     <div>
-      <h1>Create your Profile</h1>
+      <h2 className="text-muted">Create your Profile</h2> {/* Reduced font size */}
       <h5>Let us know more about you</h5>
     </div>
-      {/* Progress Bar Section */}
-      <div className="mb-4 mt-5"> {/* Add a top margin using mt-5 for more space */}
-  {/* Title or Label for the Progress */}
-  <h5 className="text-start text-muted">Sign-Up Progress</h5> {/* Left-align the text using text-start */}
-  <p className="text-start text-muted">Fill out the information below to complete your profile.</p> {/* Left-align the description */}
+  
+    {/* Progress Bar Section */}
+    <div 
+      className="mb-4 mt-5 sticky-top bg-white p-2" 
+      style={{ zIndex: '1000', top: '0' }} 
+    > {/* Sticky with padding and background */}
+      {/* Title or Label for the Progress */}
+      <h5 className="text-start text-muted">Sign-Up Progress</h5> {/* Left-align the text */}
+      <p className="text-start text-muted">Fill out the information below to complete your profile.</p> {/* Left-align the description */}
+      
       {/* Progress Bar */}
       <ProgressBar
         now={calculateProgress()} // Dynamically calculate progress
@@ -388,6 +394,7 @@ const handleSubmit = async (e) => {
         style={{ height: '20px', borderRadius: '10px' }} // Custom height and rounded corners
       />
     </div>
+  
 
       <form onSubmit={handleSubmit}>
       <div className="mb-4 border p-4">
@@ -405,7 +412,7 @@ const handleSubmit = async (e) => {
     <small className="form-text text-muted">
       Accepted file types: JPEG, JPG, PNG. Maximum file size: 5MB.
     </small>
-    <p className="text-info mt-2">
+    <p className="text-info text-muted">
       A professional profile photo helps make a great first impression on potential employers and can increase your chances of landing the right opportunity!
     </p>
   </div>
