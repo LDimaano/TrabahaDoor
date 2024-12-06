@@ -309,7 +309,7 @@ router.put('/employer-profile/:userId', async (req, res) => {
     website,
     industry_id,
     companyAddress,
-    companySize,
+    companySizeRange,
     foundedYear,
     description,
   } = req.body;
@@ -341,7 +341,7 @@ router.put('/employer-profile/:userId', async (req, res) => {
         website,
         industry_id,
         companyAddress,
-        companySize,
+        companySizeRange,
         foundedYear,
         description,
         userId

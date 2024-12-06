@@ -71,6 +71,8 @@ function EmployerProfileCreation() {
         description,
     };
 
+    console.log(profileData);
+    
     try {
         // Update request to the API
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/employer-profile/${userId}`, {
