@@ -251,7 +251,7 @@ function EmployerProfileCreation() {
         <div className="mb-3">
           <label htmlFor="companyName" className="form-label">Company Name <span className="text-danger">*</span>
           <i
-            className="far fa-question-circle" // Use "far" for a hollow circle
+            className="far fa-question-circle ml-2" // Use "far" for a hollow circle
             data-bs-toggle="tooltip"
             data-bs-placement="right"
             title="Enter the company name registered for your business"
@@ -270,7 +270,7 @@ function EmployerProfileCreation() {
           <div className="col-md-6">
             <label htmlFor="contactPerson" className="form-label">Contact Person <span className="text-danger">*</span>
             <i
-      className="far fa-question-circle" // Use "far" for a hollow circle
+      className="far fa-question-circle ml-2" // Use "far" for a hollow circle
       data-bs-toggle="tooltip"
       data-bs-placement="right"
       title="Enter the full name of the person in charge of this account. Example: Juan Dela Cruz"
@@ -288,7 +288,7 @@ function EmployerProfileCreation() {
           <div className="col-md-6">
             <label htmlFor="contactNumber" className="form-label">Contact Number <span className="text-danger">*</span>
             <i
-      className="far fa-question-circle" // Use "far" for a hollow circle
+      className="far fa-question-circle ml-2" // Use "far" for a hollow circle
       data-bs-toggle="tooltip"
       data-bs-placement="right"
       title="Enter the company's active contact number, including the country code if applicable. Example: +63 234 567 8900. This will not be shared publicly"
@@ -308,7 +308,7 @@ function EmployerProfileCreation() {
           <div className="col-md-6">
             <label htmlFor="website" className="form-label">Website <span className="text-danger">*</span>
             <i
-        className="far fa-question-circle" // Hollow question mark icon
+        className="far fa-question-circle ml-2" // Hollow question mark icon
         data-bs-toggle="tooltip"
         data-bs-placement="right"
         title="Enter the URL of your company's website to better showcase your company profile to candidates"
@@ -326,7 +326,7 @@ function EmployerProfileCreation() {
           <div className="col-md-6">
             <label htmlFor="industry" className="form-label">Industry <span className="text-danger">*</span>
             <i
-      className="far fa-question-circle" // Hollow question mark icon
+      className="far fa-question-circle ml-2" // Hollow question mark icon
       data-bs-toggle="tooltip"
       data-bs-placement="right"
       title="Select your industry from the available options. This helps us match you with relevant job seekers."
@@ -345,7 +345,7 @@ function EmployerProfileCreation() {
         <div className="mb-3">
           <label htmlFor="companyAddress" className="form-label">Company Address <span className="text-danger">*</span>
           <i
-      className="far fa-question-circle" // Hollow question mark icon
+      className="far fa-question-circle ml-2" // Hollow question mark icon
       data-bs-toggle="tooltip"
       data-bs-placement="right"
       title="This information helps us verify your location."
@@ -365,7 +365,7 @@ function EmployerProfileCreation() {
       <label htmlFor="companySize" className="form-label">
         Company Size <span className="text-danger">*</span>
         <i
-    className="far fa-question-circle" // Hollow question mark icon
+    className="far fa-question-circle ml-2" // Hollow question mark icon
     data-bs-toggle="tooltip"
     data-bs-placement="right"
     title="Please provide the number of employees in your company to help us categorize your business size."
@@ -450,7 +450,7 @@ function EmployerProfileCreation() {
     Founded Year <span className="text-danger">*</span>
   </label>
   <i
-    className="far fa-question-circle" // Hollow question mark icon
+    className="far fa-question-circle ml-2" // Hollow question mark icon
     data-bs-toggle="tooltip"
     data-bs-placement="right"
     title="Please provide the year your company was founded to help us better understand your business's history."
@@ -476,7 +476,7 @@ function EmployerProfileCreation() {
     Company Description <span className="text-danger">*</span>
   </label>
   <i
-    className="far fa-question-circle" // Hollow question mark icon
+    className="far fa-question-circle ml-2" // Hollow question mark icon
     data-bs-toggle="tooltip"
     data-bs-placement="right"
     title="Provide a brief description of your company, including its mission, values, and goals."
