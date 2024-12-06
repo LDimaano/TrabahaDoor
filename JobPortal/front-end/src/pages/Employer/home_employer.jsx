@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '../../components/empheader';
 import SearchForm from '../../components/searchform_emp';
 import CandidateList from '../../components/candidatelist';
@@ -6,21 +6,21 @@ import { Helmet } from 'react-helmet';
 import Footer from '../../components/footer2';
 
 function HomeEmployer() {
-  const [allCandidates, setAllCandidates] = useState([]); 
+  const [allCandidates, setAllCandidates] = useState([]);
   const [searchParams, setSearchParams] = useState({});
-  const [activeTab, setActiveTab] = useState('recommended'); 
+  const [activeTab, setActiveTab] = useState('recommended');
 
   const handleSearch = (params) => {
     setSearchParams(params);
   };
 
   return (
-    <div className="container">
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Helmet>
-        <title>TrabahaDoor - Employer</title> 
+        <title>TrabahaDoor - Employer</title>
       </Helmet>
       <Header />
-      <main className="row mt-4">
+      <main className="row mt-4" style={{ flex: 1 }}>
         <div className="col-md-12 text-center">
           <h1>Explore Job Seekers</h1>
           <p>Find the best candidates for your roles</p>
@@ -45,13 +45,13 @@ function HomeEmployer() {
 
             <CandidateList
               searchParams={searchParams}
-              isRecommended={activeTab === 'recommended'}  
+              isRecommended={activeTab === 'recommended'}
               allCandidates={allCandidates}
             />
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer style={{ marginTop: 'auto' }} />
     </div>
   );
 }
