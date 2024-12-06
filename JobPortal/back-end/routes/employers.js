@@ -6,6 +6,7 @@ const AWS = require('aws-sdk');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { format } = require('date-fns');
 
 const getContentType = (fileName) => {
   const extension = fileName.split('.').pop().toLowerCase();
@@ -201,6 +202,30 @@ router.get('/user-infoemp/:userId', async (req, res) => {
   }
 });
 
+
+router.get('/approval-date/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Query to get the date submitted from the database
+    const query = 'SELECT uploaded_at FROM documents WHERE user_id = $1';
+    const result = await db.query(query, [userId]);
+
+    if (result.rows.length > 0) {
+      const dateSubmitted = result.rows[0].date_submitted;
+      
+      // Format the date to a user-friendly format
+      const formattedDate = format(new Date(dateSubmitted), 'yyyy-MM-dd'); // Example format: "2024-11-22"
+
+      res.json({ dateSubmitted: formattedDate });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 //fetch info for update
 router.get('/fetchemployer-profile/:userId', async (req, res) => {
