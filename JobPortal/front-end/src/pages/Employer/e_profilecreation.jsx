@@ -84,6 +84,8 @@ function EmployerProfileCreation() {
     return Math.round(progress); // Return the percentage as an integer
   };
 
+  
+
   const handleSubmit = async (e) => {
     if (e) e.preventDefault(); 
     const user_id = window.location.pathname.split('/')[2];
@@ -166,6 +168,8 @@ function EmployerProfileCreation() {
     setShowModal(false); 
     handleSubmit();
   };
+
+  
 
   return (
     <main className="container mt-4">
@@ -285,14 +289,18 @@ function EmployerProfileCreation() {
           </div>
           <div className="col-md-6">
             <label htmlFor="foundedYear" className="form-label">Founded Year <span className="text-danger">*</span></label>
-            <input
-              type="text"
+            <select
               id="foundedYear"
               className="form-control"
               value={foundedYear}
               onChange={(e) => setFoundedYear(e.target.value)}
               required
-            />
+            >
+              <option value="">Select Year</option>
+              {Array.from({ length: new Date().getFullYear() - 1899 }, (_, i) => 1900 + i).map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
           </div>
         </div>
         <div className="mb-3">

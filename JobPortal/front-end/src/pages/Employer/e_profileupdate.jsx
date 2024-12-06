@@ -213,17 +213,21 @@ function EmployerProfileCreation() {
             onChange={(e) => setCompanySize(e.target.value)}
           />
         </div>
-        <div className="mb-3">
-          <label htmlFor="foundedYear" className="form-label">Founded Year <span className="text-danger">*</span></label>
-          <input
-            type="text"
-            id="foundedYear"
-            className="form-control"
-            value={foundedYear}
-            onChange={(e) => setFoundedYear(e.target.value)}
-            required
-          />
-        </div>
+        <div className="col-md-6">
+            <label htmlFor="foundedYear" className="form-label">Founded Year <span className="text-danger">*</span></label>
+            <select
+              id="foundedYear"
+              className="form-control"
+              value={foundedYear}
+              onChange={(e) => setFoundedYear(e.target.value)}
+              required
+            >
+              <option value="">Select Year</option>
+              {Array.from({ length: new Date().getFullYear() - 1899 }, (_, i) => 1900 + i).map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
         <div className="mb-3">
           <label htmlFor="description" className="form-label">Description <span className="text-danger">*</span></label>
           <textarea
