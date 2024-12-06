@@ -614,10 +614,6 @@ const handleSubmit = async (e) => {
                     style={{ cursor: 'pointer' }}
                   ></i>
                   </label>
-                  <small className="text-muted">
-                    Provide the official job title for the role.
-                  </small>
-
                   <Select
                     id={`jobTitle-${index}`}
                     options={availableJobTitles}
@@ -628,99 +624,105 @@ const handleSubmit = async (e) => {
                   />
                 </div>
                 <div className="col-md-6 mb-3">
-              <label htmlFor={`salaryRange-0`} className="form-label fw-bold d-block mb-2">
-                Salary Range (in ₱) {' '}
-                <i
-              className="far fa-question-circle" // Hollow question mark icon
-              data-bs-toggle="tooltip"
-              data-bs-placement="right"
-              title="Use the slider to select your expected salary range for this position."
-              style={{ cursor: 'pointer' }}
-            ></i>
-              </label>
-              <div
-                className="slider-container"
-                style={{
-                  display: "flex", // Align items inline
-                  alignItems: "center", // Vertical alignment of items
-                  gap: "8px", // Spacing between elements
-                }}
-              >
-                {/* Minimum Label */}
-                <small
-                  style={{
-                    fontSize: "0.9rem", // Smaller text for label
-                    color: "#6c757d", // Bootstrap muted color
-                    marginRight: "8px", // Space after minimum label
-                  }}
-                >
-                  ₱5,000
-                </small>
+  <label htmlFor={`salaryRange-0`} className="form-label fw-bold d-block mb-2">
+    Salary Range (in ₱) {' '}
+    <i
+      className="far fa-question-circle"
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      title="Use the slider to select your expected salary range for this position."
+      style={{ cursor: 'pointer' }}
+    ></i>
+  </label>
+  <div
+    className="slider-container"
+    style={{
+      display: 'flex', // Align items inline
+      alignItems: 'center', // Vertical alignment of items
+      gap: '8px', // Spacing between elements
+      position: 'relative', // Container for absolute positioning
+    }}
+  >
+    {/* Current Value Label (Positioned at the top, in the center) */}
+    <div
+      style={{
+        position: 'absolute',
+        top: '-25px', // Move above the slider
+        left: '50%', // Center horizontally
+        transform: 'translateX(-50%)', // Ensure it's perfectly centered
+        fontSize: '0.9rem',
+        color: '#6c757d',
+      }}
+    >
+      {experience[index]?.salaryRange
+        ? `₱${experience[index].salaryRange.replace('-', ' to ₱')}`
+        : '₱5,000-₱10,000'}
+    </div>
 
-                {/* Slider */}
-                <Range
-              step={1000}
-              min={5000}
-              max={100000}
-              values={
-                exp.salaryRange
-                  ? exp.salaryRange.split("-").map((val) => parseInt(val))
-                  : [5000, 10000]
-              }
-              onChange={(values) => handleSalaryChange(values, index)}
-              renderTrack={({ props, children }) => (
-                <div
-                  {...props}
-                  style={{
-                    ...props.style,
-                    height: "6px",
-                    width: "100%",
-                    backgroundColor: "#ddd",
-                  }}
-                >
-                  {children}
-                </div>
-              )}
-              renderThumb={({ props }) => (
-                <div
-                  {...props}
-                  style={{
-                    ...props.style,
-                    height: "16px",
-                    width: "16px",
-                    backgroundColor: "#007bff",
-                    borderRadius: "50%",
-                  }}
-                />
-              )}
-            />
+    {/* Slider */}
+    <Range
+      step={1000}
+      min={5000}
+      max={100000}
+      values={
+        exp.salaryRange
+          ? exp.salaryRange.split('-').map((val) => parseInt(val))
+          : [5000, 10000]
+      }
+      onChange={(values) => handleSalaryChange(values, index)}
+      renderTrack={({ props, children }) => (
+        <div
+          {...props}
+          style={{
+            ...props.style,
+            height: '6px',
+            width: '100%',
+            backgroundColor: '#ddd',
+          }}
+        >
+          {children}
+        </div>
+      )}
+      renderThumb={({ props }) => (
+        <div
+          {...props}
+          style={{
+            ...props.style,
+            height: '16px',
+            width: '16px',
+            backgroundColor: '#007bff',
+            borderRadius: '50%',
+          }}
+        />
+      )}
+    />
 
-                {/* Current Value Label */}
-                <small
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#6c757d",
-                    margin: "0 8px", // Space on both sides
-                  }}
-                >
-                  {experience[index]?.salaryRange
-                  ? `₱${experience[index].salaryRange.replace("-", " to ₱")}`
-                  : "₱5,000-₱10,000"}
-                </small>
+    {/* Minimum Label */}
+    <small
+      style={{
+        fontSize: '0.9rem',
+        color: '#6c757d',
+        marginRight: '8px', // Space after minimum label
+      }}
+    >
+      ₱5,000
+    </small>
 
-                {/* Maximum Label */}
-                <small
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#6c757d",
-                    marginLeft: "8px", // Space before maximum label
-                  }}
-                >
-                  ₱100,000
-                </small>
-              </div>
-            </div>
-            </div>
+    {/* Maximum Label (Positioned at the right) */}
+    <small
+      style={{
+        fontSize: '0.9rem',
+        color: '#6c757d',
+        marginLeft: '8px', // Space before maximum label
+        position: 'absolute',
+        right: '0', // Align to the right
+      }}
+    >
+      ₱100,000
+    </small>
+  </div>
+</div>
+</div>
               <div className="mb-3">
                 <label htmlFor={`company-${index}`} className="form-label">Company {' '}
                 <i
