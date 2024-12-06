@@ -259,17 +259,24 @@ router.get('/fetchemployer-profile/:userId', async (req, res) => {
 
     // Clean and parse the company_size field
     let companySize = [0, 5000]; // Default value
-    if (employer.company_size) {
-      console.log('Original company_size from DB:', employer.company_size);
-      try {
-        const cleanedSize = employer.company_size.replace(/""/g, '"'); // Fix excessive quotes
-        console.log('Cleaned company_size:', cleanedSize);
-        companySize = JSON.parse(cleanedSize); // Parse to array
-        console.log('Parsed company_size as array:', companySize);
-      } catch (error) {
-        console.error('Failed to parse company_size:', error.message);
+      if (employer.company_size) {
+        console.log('Original company_size from DB:', employer.company_size);
+        try {
+          // Step 1: Replace excessive quotes and curly braces
+          const cleanedSize = employer.company_size
+            .replace(/""/g, '"')       // Fix excessive quotes
+            .replace(/^{|}$/g, '[')    // Replace opening curly brace with square bracket
+            .replace(/,$/, ']')        // Replace closing curly brace with square bracket
+            .replace(/,/g, ',');       // Ensure commas are properly formatted
+          console.log('Cleaned company_size:', cleanedSize);
+
+          // Step 2: Parse the cleaned string into an array of numbers
+          companySize = JSON.parse(cleanedSize).map(Number);
+          console.log('Parsed company_size as array:', companySize);
+        } catch (error) {
+          console.error('Failed to parse company_size:', error.message);
+        }
       }
-    }
 
     console.log('Final company_size being sent:', companySize);
 
