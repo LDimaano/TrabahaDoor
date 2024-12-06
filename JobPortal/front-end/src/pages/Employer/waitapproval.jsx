@@ -10,6 +10,7 @@ const WaitForApproval = () => {
     const fetchDateSubmitted = async () => {
       try {
         const userId = sessionStorage.getItem('user_id');
+        console.log(userId);
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/employers/approval-date/${userId}`, {
           method: 'GET',
           credentials: 'include',
