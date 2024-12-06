@@ -249,7 +249,7 @@ function EmployerProfileCreation() {
         </div>
      </div>
         <div className="mb-3">
-          <label htmlFor="companyName" className="form-label">Company Name <span className="text-danger">*</span>
+          <label htmlFor="companyName" className="form-label">Company Name <span className="text-danger">*</span>{' '}
           <i
             className="far fa-question-circle" // Use "far" for a hollow circle
             data-bs-toggle="tooltip"
@@ -268,7 +268,7 @@ function EmployerProfileCreation() {
         </div>
         <div className="row mb-3">
           <div className="col-md-6">
-            <label htmlFor="contactPerson" className="form-label">Contact Person <span className="text-danger">*</span>
+            <label htmlFor="contactPerson" className="form-label">Contact Person <span className="text-danger">*</span>{' '}
             <i
       className="far fa-question-circle" // Use "far" for a hollow circle
       data-bs-toggle="tooltip"
@@ -286,7 +286,7 @@ function EmployerProfileCreation() {
             />
           </div>
           <div className="col-md-6">
-            <label htmlFor="contactNumber" className="form-label">Contact Number <span className="text-danger">*</span>
+            <label htmlFor="contactNumber" className="form-label">Contact Number <span className="text-danger">*</span>{' '}
             <i
       className="far fa-question-circle" // Use "far" for a hollow circle
       data-bs-toggle="tooltip"
@@ -306,7 +306,7 @@ function EmployerProfileCreation() {
         </div>
         <div className="row mb-3">
           <div className="col-md-6">
-            <label htmlFor="website" className="form-label">Website <span className="text-danger">*</span>
+            <label htmlFor="website" className="form-label">Website <span className="text-danger">*</span>{' '}
             <i
         className="far fa-question-circle" // Hollow question mark icon
         data-bs-toggle="tooltip"
@@ -324,7 +324,7 @@ function EmployerProfileCreation() {
             />
           </div>
           <div className="col-md-6">
-            <label htmlFor="industry" className="form-label">Industry <span className="text-danger">*</span>
+            <label htmlFor="industry" className="form-label">Industry <span className="text-danger">*</span>{' '}
             <i
       className="far fa-question-circle" // Hollow question mark icon
       data-bs-toggle="tooltip"
@@ -343,7 +343,7 @@ function EmployerProfileCreation() {
           </div>
         </div>
         <div className="mb-3">
-          <label htmlFor="companyAddress" className="form-label">Company Address <span className="text-danger">*</span>
+          <label htmlFor="companyAddress" className="form-label">Company Address <span className="text-danger">*</span>{' '}
           <i
       className="far fa-question-circle" // Hollow question mark icon
       data-bs-toggle="tooltip"
@@ -363,7 +363,7 @@ function EmployerProfileCreation() {
         <div className="row mb-3">
         <div className="col-md-6">
       <label htmlFor="companySize" className="form-label">
-        Company Size <span className="text-danger">*</span>
+        Company Size <span className="text-danger">*</span>{' '}
         <i
     className="far fa-question-circle" // Hollow question mark icon
     data-bs-toggle="tooltip"
@@ -448,7 +448,8 @@ function EmployerProfileCreation() {
           <div className="col-md-6">
           <label htmlFor="foundedYear" className="form-label">
     Founded Year <span className="text-danger">*</span>
-  </label>
+    {' '}
+ 
   <i
     className="far fa-question-circle" // Hollow question mark icon
     data-bs-toggle="tooltip"
@@ -456,6 +457,7 @@ function EmployerProfileCreation() {
     title="Please provide the year your company was founded to help us better understand your business's history."
     style={{ cursor: 'pointer', marginLeft: '5px' }}
   ></i>
+   </label>
             <select
               id="foundedYear"
               className="form-control"
@@ -474,7 +476,7 @@ function EmployerProfileCreation() {
         <div className="d-flex align-items-center">
   <label htmlFor="description" className="form-label">
     Company Description <span className="text-danger">*</span>
-  </label>
+    {' '}
   <i
     className="far fa-question-circle" // Hollow question mark icon
     data-bs-toggle="tooltip"
@@ -482,6 +484,7 @@ function EmployerProfileCreation() {
     title="Provide a brief description of your company, including its mission, values, and goals."
     style={{ cursor: 'pointer', marginLeft: '5px' }}
   ></i>
+  </label>
 </div>
 
           <textarea
@@ -512,47 +515,61 @@ function EmployerProfileCreation() {
 
 
       <div className="modal fade" id="documentModal" tabIndex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
-  <div className="modal-dialog">
+  <div className="modal-dialog modal-lg" style="max-width: 80%;"> 
     <div className="modal-content">
       <div className="modal-header">
         <h5 className="modal-title" id="documentModalLabel">Required Documents</h5>
         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div className="modal-body">
-        <div className="card mb-3">
-          <div className="card-body">
-            <h5 className="card-title">SEC Certificate</h5>
-            <p className="card-text">This document verifies your business as a registered entity with the Securities and Exchange Commission (SEC).</p>
+        <div className="row">
+          <div className="col-md-4 mb-3">
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title">SEC Certificate</h5>
+                <p className="card-text">This document verifies your business as a registered entity with the Securities and Exchange Commission (SEC).</p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="card mb-3">
-          <div className="card-body">
-            <h5 className="card-title">Business Permit</h5>
-            <p className="card-text">This document shows your business is licensed to operate in your city or municipality.</p>
+          <div className="col-md-4 mb-3">
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title">Business Permit</h5>
+                <p className="card-text">This document shows your business is licensed to operate in your city or municipality.</p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="card mb-3">
-          <div className="card-body">
-            <h5 className="card-title">BIR Certificate</h5>
-            <p className="card-text">This document confirms your registration with the Bureau of Internal Revenue (BIR) for tax purposes.</p>
+          <div className="col-md-4 mb-3">
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title">BIR Certificate</h5>
+                <p className="card-text">This document confirms your registration with the Bureau of Internal Revenue (BIR) for tax purposes.</p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="card mb-3">
-          <div className="card-body">
-            <h5 className="card-title">POEA or DOLE License</h5>
-            <p className="card-text">Required for recruitment agencies operating in the Philippines, ensuring compliance with the POEA/DOLE regulations.</p>
+          <div className="col-md-4 mb-3">
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title">POEA or DOLE License</h5>
+                <p className="card-text">Required for recruitment agencies operating in the Philippines, ensuring compliance with the POEA/DOLE regulations.</p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="card mb-3">
-          <div className="card-body">
-            <h5 className="card-title">Private Recruitment Agency License</h5>
-            <p className="card-text">This license is essential for agencies that provide recruitment services to job seekers and employers.</p>
+          <div className="col-md-4 mb-3">
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title">Private Recruitment Agency License</h5>
+                <p className="card-text">This license is essential for agencies that provide recruitment services to job seekers and employers.</p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="card mb-3">
-          <div className="card-body">
-            <h5 className="card-title">Contract Sub Contractor Certificate</h5>
-            <p className="card-text">This certificate verifies the legality of your business in engaging with sub-contractors.</p>
+          <div className="col-md-4 mb-3">
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title">Contract Sub Contractor Certificate</h5>
+                <p className="card-text">This certificate verifies the legality of your business in engaging with sub-contractors.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -562,6 +579,7 @@ function EmployerProfileCreation() {
     </div>
   </div>
 </div>
+
 
       <Modal show={showModal} onHide={handleCloseModal} size="lg">
         <Modal.Header closeButton>
