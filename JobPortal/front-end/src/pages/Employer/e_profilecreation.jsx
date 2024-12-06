@@ -448,7 +448,6 @@ function EmployerProfileCreation() {
           <div className="col-md-6">
           <label htmlFor="foundedYear" className="form-label">
     Founded Year <span className="text-danger">*</span>
-    {' '}
  
   <i
     className="far fa-question-circle" // Hollow question mark icon
@@ -476,7 +475,6 @@ function EmployerProfileCreation() {
         <div className="d-flex align-items-center">
   <label htmlFor="description" className="form-label">
     Company Description <span className="text-danger">*</span>
-    {' '}
   <i
     className="far fa-question-circle" // Hollow question mark icon
     data-bs-toggle="tooltip"
@@ -579,8 +577,6 @@ function EmployerProfileCreation() {
     </div>
   </div>
 </div>
-
-
       <Modal show={showModal} onHide={handleCloseModal} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Terms and Conditions</Modal.Title>
