@@ -605,13 +605,14 @@ const handleSubmit = async (e) => {
               <div className="row">
                 <div className="col-md-6 mb-3">
                 <label htmlFor={`jobTitle-${index}`} className="form-label">
-                    Job Title
-                    <span
-                      className="bi bi-info-circle text-muted ms-2"
-                      data-bs-toggle="tooltip"
-                      data-bs-placement="top"
-                      title="Enter the job title for the position you're hiring for"
-                    ></span>
+                    Job Title {' '}
+                    <i
+                    className="far fa-question-circle" // Hollow question mark icon
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="right"
+                    title="Enter a previous job title or position"
+                    style={{ cursor: 'pointer' }}
+                  ></i>
                   </label>
                   <small className="text-muted">
                     Provide the official job title for the role.
@@ -628,7 +629,7 @@ const handleSubmit = async (e) => {
                 </div>
                 <div className="col-md-6 mb-3">
               <label htmlFor={`salaryRange-0`} className="form-label fw-bold d-block mb-2">
-                Salary Range (in ₱)
+                Salary Range (in ₱) {' '}
                 <i
               className="far fa-question-circle" // Hollow question mark icon
               data-bs-toggle="tooltip"
@@ -721,7 +722,7 @@ const handleSubmit = async (e) => {
             </div>
             </div>
               <div className="mb-3">
-                <label htmlFor={`company-${index}`} className="form-label">Company
+                <label htmlFor={`company-${index}`} className="form-label">Company {' '}
                 <i
                 className="far fa-question-circle" // Hollow question mark icon
                 data-bs-toggle="tooltip"
@@ -742,7 +743,7 @@ const handleSubmit = async (e) => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor={`location-${index}`} className="form-label">Location
+                  <label htmlFor={`location-${index}`} className="form-label">Location {' '}
                   <i
                   className="far fa-question-circle" // Hollow question mark icon
                   data-bs-toggle="tooltip"
@@ -762,7 +763,7 @@ const handleSubmit = async (e) => {
                   />
                 </div>
                 <div className="col-md-3">
-                  <label htmlFor={`startDate-${index}`} className="form-label">Start Date
+                  <label htmlFor={`startDate-${index}`} className="form-label">Start Date {' '}
                   <i
     className="far fa-question-circle" // Hollow question mark icon
     data-bs-toggle="tooltip"
@@ -780,8 +781,8 @@ const handleSubmit = async (e) => {
                     onChange={(event) => handleExperienceChange(index, event)}
                   />
                 </div>
-                <div className="col-md-3">
-                  <label htmlFor={`endDate-${index}`} className="form-label">End Date
+                <div className="col-md-3"> 
+                  <label htmlFor={`endDate-${index}`} className="form-label">End Date {' '}
                   <i
     className="far fa-question-circle" // Hollow question mark icon
     data-bs-toggle="tooltip"
@@ -801,7 +802,7 @@ const handleSubmit = async (e) => {
                 </div>
               </div>
               <div className="mb-3">
-                <label htmlFor={`description-${index}`} className="form-label">Description
+                <label htmlFor={`description-${index}`} className="form-label">Description {' '}
                 <i
     className="far fa-question-circle" // Hollow question mark icon
     data-bs-toggle="tooltip"
@@ -841,7 +842,7 @@ const handleSubmit = async (e) => {
           <h3>Skills</h3>
           {skills.map((skill, index) => (
             <div key={index} className="mb-3">
-              <label className="form-label">Skill {index + 1}
+              <label className="form-label">Skill {index + 1} {' '}
               <i
               className="far fa-question-circle" // Hollow question mark icon
               data-bs-toggle="tooltip"
