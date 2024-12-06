@@ -281,82 +281,82 @@ function EmployerProfileCreation() {
         </div>
         <div className="row mb-3">
         <div className="col-md-6">
-          <label htmlFor="companySize" className="form-label">
-            Company Size <span className="text-danger">*</span>
-          </label>
-          <div
-            className="slider-container"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              marginBottom: "10px",
-            }}
-          >
-            {/* Minimum Label */}
-            <small
+      <label htmlFor="companySize" className="form-label">
+        Company Size <span className="text-danger">*</span>
+      </label>
+      <div
+        className="slider-container"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          marginBottom: "10px",
+        }}
+      >
+        {/* Minimum Label */}
+        <small
+          style={{
+            fontSize: "0.9rem",
+            color: "#6c757d",
+          }}
+        >
+          0
+        </small>
+
+        {/* Slider */}
+        <Range
+          step={100}
+          min={0}
+          max={5000}
+          values={companySizeRange}
+          onChange={handleRangeChange}
+          renderTrack={({ props, children }) => (
+            <div
+              {...props}
               style={{
-                fontSize: "0.9rem",
-                color: "#6c757d",
+                ...props.style,
+                height: "6px",
+                width: "100%",
+                backgroundColor: "#ddd",
               }}
             >
-              0
-            </small>
-
-            {/* Slider */}
-            <Range
-              step={100}
-              min={0}
-              max={5000}
-              values={companySizeRange}
-              onChange={handleRangeChange}
-              renderTrack={({ props, children }) => (
-                <div
-                  {...props}
-                  style={{
-                    ...props.style,
-                    height: "6px",
-                    width: "100%",
-                    backgroundColor: "#ddd",
-                  }}
-                >
-                  {children}
-                </div>
-              )}
-              renderThumb={({ props }) => (
-                <div
-                  {...props}
-                  style={{
-                    ...props.style,
-                    height: "16px",
-                    width: "16px",
-                    backgroundColor: "#007bff",
-                    borderRadius: "50%",
-                  }}
-                />
-              )}
+              {children}
+            </div>
+          )}
+          renderThumb={({ props }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: "16px",
+                width: "16px",
+                backgroundColor: "#007bff",
+                borderRadius: "50%",
+              }}
             />
+          )}
+        />
 
-            {/* Maximum Label */}
-            <small
-              style={{
-                fontSize: "0.9rem",
-                color: "#6c757d",
-              }}
-            >
-              5000
-            </small>
-          </div>
+        {/* Maximum Label */}
+        <small
+          style={{
+            fontSize: "0.9rem",
+            color: "#6c757d",
+          }}
+        >
+          5000
+        </small>
+      </div>
 
-          {/* Current Value Display */}
-          <input
-            type="text"
-            id="companySize"
-            className="form-control"
-            value={`${companySizeRange[0]}-${companySizeRange[1]} employees`}
-            readOnly
-          />
-        </div>
+      {/* Current Value Display */}
+      <input
+        type="text"
+        id="companySize"
+        className="form-control"
+        value={`${companySizeRange[0]}-${companySizeRange[1]} employees`}
+        readOnly
+      />
+    </div>
           <div className="col-md-6">
             <label htmlFor="foundedYear" className="form-label">Founded Year <span className="text-danger">*</span></label>
             <select
