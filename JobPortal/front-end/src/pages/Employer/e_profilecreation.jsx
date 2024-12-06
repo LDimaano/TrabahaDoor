@@ -249,7 +249,7 @@ function EmployerProfileCreation() {
         </div>
      </div>
         <div className="mb-3">
-          <label htmlFor="companyName" className="form-label">Company Name <span className="text-danger">* {' '}</span>
+          <label htmlFor="companyName" className="form-label">Company Name <span className="text-danger">* </span>
           <i
             className="far fa-question-circle" // Use "far" for a hollow circle
             data-bs-toggle="tooltip"
@@ -268,7 +268,7 @@ function EmployerProfileCreation() {
         </div>
         <div className="row mb-3">
           <div className="col-md-6">
-            <label htmlFor="contactPerson" className="form-label">Contact Person <span className="text-danger">* {' '}</span>
+            <label htmlFor="contactPerson" className="form-label">Contact Person <span className="text-danger">* </span>
             <i
       className="far fa-question-circle" // Use "far" for a hollow circle
       data-bs-toggle="tooltip"
@@ -286,7 +286,7 @@ function EmployerProfileCreation() {
             />
           </div>
           <div className="col-md-6">
-            <label htmlFor="contactNumber" className="form-label">Contact Number <span className="text-danger">* {' '}</span>
+            <label htmlFor="contactNumber" className="form-label">Contact Number <span className="text-danger">*</span>
             <i
       className="far fa-question-circle" // Use "far" for a hollow circle
       data-bs-toggle="tooltip"
@@ -306,7 +306,7 @@ function EmployerProfileCreation() {
         </div>
         <div className="row mb-3">
           <div className="col-md-6">
-            <label htmlFor="website" className="form-label">Website <span className="text-danger">*{' '}</span>
+            <label htmlFor="website" className="form-label">Website <span className="text-danger">*</span>
             <i
         className="far fa-question-circle" // Hollow question mark icon
         data-bs-toggle="tooltip"
@@ -324,7 +324,7 @@ function EmployerProfileCreation() {
             />
           </div>
           <div className="col-md-6">
-            <label htmlFor="industry" className="form-label">Industry <span className="text-danger">* {' '}</span>
+            <label htmlFor="industry" className="form-label">Industry <span className="text-danger">* </span>
             <i
       className="far fa-question-circle" // Hollow question mark icon
       data-bs-toggle="tooltip"
@@ -343,7 +343,7 @@ function EmployerProfileCreation() {
           </div>
         </div>
         <div className="mb-3">
-          <label htmlFor="companyAddress" className="form-label">Company Address <span className="text-danger">* {' '}</span>
+          <label htmlFor="companyAddress" className="form-label">Company Address <span className="text-danger">* </span>
           <i
       className="far fa-question-circle" // Hollow question mark icon
       data-bs-toggle="tooltip"
@@ -363,7 +363,7 @@ function EmployerProfileCreation() {
         <div className="row mb-3">
         <div className="col-md-6">
       <label htmlFor="companySize" className="form-label">
-        Company Size <span className="text-danger">*</span>{' '}
+        Company Size <span className="text-danger">*</span>
         <i
     className="far fa-question-circle" // Hollow question mark icon
     data-bs-toggle="tooltip"
