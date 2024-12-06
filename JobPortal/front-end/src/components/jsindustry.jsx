@@ -70,7 +70,7 @@ const BarChartComponent = () => {
       {/* Dropdown Filters */}
       <div style={{ marginBottom: '1rem', textAlign: 'center', fontSize: '0.85em' }}>
         {/* Count Filter */}
-        <label htmlFor="filter" style={{ marginRight: '5px', fontWeight: 'bold' }}>Count:</label>
+        <label htmlFor="filter" style={{ marginRight: '5px', fontWeight: 'bold' }}>Count of Jobseeker:</label>
         <select
           id="filter"
           value={filter}

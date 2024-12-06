@@ -42,9 +42,7 @@ const JobDescription = () => {
           <div>
             <h1>{jobData.job_title}</h1>
             <div className="d-flex flex-column">
-              <span className="text-muted">{jobData.company_name}</span>
-              <span>{jobData.industry}</span>
-              <span>{jobData.job_type}</span>
+              <span className="text-muted">{jobData.company_name} - {jobData.website}</span>
             </div>
           </div>
         </div>

@@ -395,13 +395,13 @@ router.get('/joblistings/:jobId', async (req, res) => {
     console.log(`Fetching job details for Job ID: ${jobId}`);
   
     const jobQuery = `
-      SELECT jl.*, jt.job_title, ep.company_name, i.industry_name, pp.profile_picture_url
+      SELECT jl.*, jt.job_title, ep.company_name, ep.website, i.industry_name, pp.profile_picture_url
       FROM joblistings jl
       JOIN job_titles jt ON jl.Jobtitle_id = jt.jobtitle_id
       JOIN emp_profiles ep ON jl.user_id = ep.user_id
       JOIN industries i ON jl.industry_id = i.industry_id
       LEFT JOIN profilepictures pp ON jl.user_id = pp.user_id
-      WHERE jl.job_id = $1;
+      WHERE jl.job_id = $1
     `;
   
     const skillsQuery = `

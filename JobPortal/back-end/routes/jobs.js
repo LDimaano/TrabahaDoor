@@ -428,7 +428,7 @@ router.get('/joblistings/:jobId', async (req, res) => {
   const { jobId } = req.params;
 
   const jobQuery = `
-    SELECT jl.*, jt.job_title, ep.company_name, i.industry_name, pp.profile_picture_url
+    SELECT jl.*, jt.job_title, ep.company_name, ep.website, i.industry_name, pp.profile_picture_url
     FROM joblistings jl
     JOIN job_titles jt ON jl.jobtitle_id = jt.jobtitle_id
     JOIN emp_profiles ep ON jl.user_id = ep.user_id
@@ -523,7 +523,7 @@ router.put('/:jobId/status', async (req, res) => {
   }
 
   const updateQuery = `
-    UPDATE joblistings
+    UPDATE  
     SET status = $1
     WHERE job_id = $2
     RETURNING status;
