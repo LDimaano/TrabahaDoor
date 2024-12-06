@@ -623,7 +623,7 @@ const handleSubmit = async (e) => {
                     isClearable
                   />
                 </div>
-                <div className="col-md-6 mb-3">
+  <div className="col-md-6 mb-3">
   <label htmlFor={`salaryRange-0`} className="form-label fw-bold d-block mb-2">
     Salary Range (in ₱) {' '}
     <i
@@ -639,7 +639,7 @@ const handleSubmit = async (e) => {
     style={{
       display: 'flex', // Align items inline
       alignItems: 'center', // Vertical alignment of items
-      justifyContent: 'space-between', // Distribute elements across the container
+      justifyContent: 'center', // Center the slider horizontally
       position: 'relative', // Container for absolute positioning
     }}
   >
@@ -697,23 +697,29 @@ const handleSubmit = async (e) => {
       )}
     />
 
-    {/* Minimum Label (Positioned at the left) */}
+    {/* Minimum Label (Positioned at the bottom left) */}
     <small
       style={{
         fontSize: '0.9rem',
         color: '#6c757d',
-        marginRight: '8px', // Space after minimum label
+        position: 'absolute',
+        bottom: '-20px', // Move label below the slider
+        left: '0', // Align minimum value to the left
+        marginLeft: '8px', // Space from the left edge
       }}
     >
       ₱5,000
     </small>
 
-    {/* Maximum Label (Positioned at the right) */}
+    {/* Maximum Label (Positioned at the bottom right) */}
     <small
       style={{
         fontSize: '0.9rem',
         color: '#6c757d',
-        marginLeft: '8px', // Space before maximum label
+        position: 'absolute',
+        bottom: '-20px', // Move label below the slider
+        right: '0', // Align maximum value to the right
+        marginRight: '8px', // Space from the right edge
       }}
     >
       ₱100,000
