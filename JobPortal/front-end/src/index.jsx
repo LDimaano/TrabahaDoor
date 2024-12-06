@@ -6,12 +6,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Tooltip } from 'bootstrap';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  tooltipTriggerList.map((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl));
-});
-
-
 import Login from './pages/Auth/login';
 import Signup from './pages/Auth/signup';
 import LandingPage from './pages/landing';
@@ -122,5 +116,16 @@ root.render(
       </Routes>
     </Router>
   </React.StrictMode>
-  
 );
+
+const TooltipComponent = () => {
+  useEffect(() => {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl));
+  }, []);
+
+  return null; // This component doesn't need to render anything.
+};
+
+// Initialize the tooltip when the app starts
+TooltipComponent();
