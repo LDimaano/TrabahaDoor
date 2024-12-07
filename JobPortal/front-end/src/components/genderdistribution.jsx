@@ -94,18 +94,12 @@ const GenderDistributionChart = () => {
                     label: function (tooltipItem) {
                       const dataIndex = tooltipItem.dataIndex;
                       const count = chartData.datasets[0].data[dataIndex];
-                      const total = chartData.datasets[0].data.reduce((a, b) => a + b, 0);
-                      const percentage = ((count / total) * 100).toFixed(2);
-                      return `${tooltipItem.label}: ${count} (${percentage}%)`;
+                      return `${tooltipItem.label}: ${count}`;
                     },
                   },
                 },
                 datalabels: {
-                  formatter: (value, context) => {
-                    const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                    const percentage = ((value / total) * 100).toFixed(1);
-                    return `${percentage}%`;
-                  },
+                  formatter: (value) => value, // Display the count directly
                   color: 'white',
                   font: {
                     weight: 'bold',
