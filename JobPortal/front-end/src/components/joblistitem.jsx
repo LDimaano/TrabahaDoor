@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Tag from './jstag'; 
 
-function JobListItem({ job }) {
+function JobListItem({ job, isRecommended }) {
   const navigate = useNavigate();
 
   const handleApplyClick = () => {
