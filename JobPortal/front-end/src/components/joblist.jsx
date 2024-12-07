@@ -175,7 +175,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
           ) : (
             <ul className="list-group">
               {currentJobs.map((job) => (
-                <JobListItem key={job.job_id} job={job} recommended={isRecommended} />
+                <JobListItem key={job.job_id} job={job} isRecommended={isRecommended} />
               ))}
             </ul>
           )}
