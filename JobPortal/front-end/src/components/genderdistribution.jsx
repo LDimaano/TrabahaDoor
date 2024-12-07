@@ -16,7 +16,7 @@ const GenderDistributionChart = () => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/gender-distribution`);
         const data = await response.json();
 
-        const labels = data.map(item => item.gender);
+        const labels = data.map(item => `${item.gender}: ${item.count}`);
         const counts = data.map(item => item.count);
 
         setChartData({
@@ -28,11 +28,8 @@ const GenderDistributionChart = () => {
                 '#87CEEB', // Sky Blue
                 '#4169E1', // Royal Blue
                 '#0000CD', // Medium Blue
-              ], 
-              // Optionally, you can also use the same shades of blue for borders
-              hoverBackgroundColor: [
-                '#87CEEB', '#4169E1', '#0000CD',
               ],
+              hoverBackgroundColor: ['#87CEEB', '#4169E1', '#0000CD'],
             },
           ],
         });
@@ -49,8 +46,11 @@ const GenderDistributionChart = () => {
     doc.text('Gender Distribution Report', 14, 10);
 
     // Define table columns and data
-    const tableColumn = ["Gender", "Count"];
-    const tableRows = chartData.labels.map((label, index) => [label, chartData.datasets[0].data[index]]);
+    const tableColumn = ['Gender', 'Count'];
+    const tableRows = chartData.labels.map((label, index) => {
+      const [gender, count] = label.split(':');
+      return [gender.trim(), parseInt(count.trim(), 10)];
+    });
 
     // Add table to PDF
     doc.autoTable({
@@ -78,7 +78,28 @@ const GenderDistributionChart = () => {
               color: '#007bff',  
             }} 
           />
-          <Pie data={chartData} />
+          <Pie 
+            data={chartData} 
+            options={{
+              plugins: {
+                legend: {
+                  display: true,
+                  labels: {
+                    color: 'black', // Label color
+                  },
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (tooltipItem) {
+                      const dataIndex = tooltipItem.dataIndex;
+                      const count = chartData.datasets[0].data[dataIndex];
+                      return `Count: ${count}`;
+                    },
+                  },
+                },
+              },
+            }} 
+          />
         </>
       ) : (
         <p>Loading...</p>
