@@ -23,7 +23,7 @@ def match_skills_and_titles(job, skills_set, job_titles_set, jobseeker_education
     job_skills = set(job.get('required_skills', []))  # Ensure it's a set
     title_match = job['job_title'] in job_titles_set
     skill_match = len(skills_set.intersection(job_skills)) > 0
-    
+
     # Treat education matching as another form of matching
     education_match = False
     if jobseeker_education_set is not None:
@@ -62,6 +62,22 @@ def generate_recommendation(job, match_count, industry_match, title_match, educa
         'salary_match': salary_match,
         'match_type': 'hybrid' if education_match and collaborative_match else 'content'
     }
+
+def calculate_match_percentage(recommendations):
+    """Calculate the percentage of the most matches."""
+    if not recommendations:
+        return recommendations  # Return as-is if no recommendations
+
+    max_match_count = max(rec['match_count'] for rec in recommendations)
+
+    # Avoid division by zero
+    if max_match_count == 0:
+        max_match_count = 1
+
+    for rec in recommendations:
+        rec['match_percentage'] = round((rec['match_count'] / max_match_count) * 100, 2)
+
+    return recommendations
 
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None, jobseeker_education=None):
     """Main recommendation pipeline."""
@@ -111,6 +127,9 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
                     collaborative_match
                 )
             )
+
+    # Calculate percentages based on match count
+    recommendations = calculate_match_percentage(recommendations)
 
     # Sort recommendations based on priority
     recommendations.sort(

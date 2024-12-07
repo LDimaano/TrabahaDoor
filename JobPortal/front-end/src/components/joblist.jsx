@@ -90,6 +90,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
             salaryRange: userProfile.salaryRange || null,
             jobTitles: userProfile.jobTitles || [],
             education: userEducations,
+            
           };
 
           const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recommend`, {
