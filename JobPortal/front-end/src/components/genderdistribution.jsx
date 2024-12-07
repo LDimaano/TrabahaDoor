@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaDownload } from 'react-icons/fa';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 const GenderDistributionChart = () => {
   const [chartData, setChartData] = useState(null);
@@ -16,7 +17,7 @@ const GenderDistributionChart = () => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/gender-distribution`);
         const data = await response.json();
 
-        const labels = data.map(item => `${item.gender}: ${item.count}`);
+        const labels = data.map(item => item.gender);
         const counts = data.map(item => item.count);
 
         setChartData({
@@ -47,10 +48,10 @@ const GenderDistributionChart = () => {
 
     // Define table columns and data
     const tableColumn = ['Gender', 'Count'];
-    const tableRows = chartData.labels.map((label, index) => {
-      const [gender, count] = label.split(':');
-      return [gender.trim(), parseInt(count.trim(), 10)];
-    });
+    const tableRows = chartData.labels.map((label, index) => [
+      label,
+      chartData.datasets[0].data[index],
+    ]);
 
     // Add table to PDF
     doc.autoTable({
@@ -93,8 +94,22 @@ const GenderDistributionChart = () => {
                     label: function (tooltipItem) {
                       const dataIndex = tooltipItem.dataIndex;
                       const count = chartData.datasets[0].data[dataIndex];
-                      return `Count: ${count}`;
+                      const total = chartData.datasets[0].data.reduce((a, b) => a + b, 0);
+                      const percentage = ((count / total) * 100).toFixed(2);
+                      return `${tooltipItem.label}: ${count} (${percentage}%)`;
                     },
+                  },
+                },
+                datalabels: {
+                  formatter: (value, context) => {
+                    const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                    const percentage = ((value / total) * 100).toFixed(1);
+                    return `${percentage}%`;
+                  },
+                  color: 'white',
+                  font: {
+                    weight: 'bold',
+                    size: 12,
                   },
                 },
               },

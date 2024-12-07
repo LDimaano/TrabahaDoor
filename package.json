@@ -11,6 +11,7 @@
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.6",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "cookie-parser": "^1.4.6",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
