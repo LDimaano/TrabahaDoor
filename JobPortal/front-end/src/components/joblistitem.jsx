@@ -29,9 +29,9 @@ function JobListItem({ job }) {
           <p style={itemStyle}>{job.industry_name}</p>
           <p style={itemStyle}>₱{job.salaryrange}</p>
           <Tag>{job.jobtype}</Tag> 
-          <p>Match Percentage: <strong>{job.match_percentage}%</strong>
-</p>
-
+          {job.match_percentage && job.match_percentage > 0 && (
+            <p>Match Percentage: <strong>{job.match_percentage}%</strong></p>
+          )}
         </div>
       </div>
       <button className="btn btn-primary" onClick={handleApplyClick}>
