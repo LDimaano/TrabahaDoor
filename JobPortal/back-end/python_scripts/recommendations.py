@@ -66,6 +66,26 @@ def generate_recommendation(job, overall_match_score, industry_match, collaborat
     }
 
 
+def calculate_weighted_match_score(skill_match, title_match, education_match, salary_match, collaborative_match):
+    """Calculate weighted match score."""
+    weights = {
+        'skills': 3,      # Skills match has the highest weight
+        'title': 2,       # Job title match has moderate weight
+        'education': 1,   # Education match has low weight
+        'salary': 1,      # Salary match has low weight
+        'collaborative': 1,  # Collaborative filtering match has low weight
+    }
+    
+    match_score = 0
+    match_score += weights['skills'] * skill_match
+    match_score += weights['title'] * title_match
+    match_score += weights['education'] * education_match
+    match_score += weights['salary'] * salary_match
+    match_score += weights['collaborative'] * collaborative_match
+
+    return match_score
+
+
 def calculate_match_percentage(recommendations):
     """Calculate the percentage of the most matches based on overall match score."""
     if not recommendations:
@@ -109,13 +129,8 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
         # Check collaborative filtering match
         collaborative_match = check_collaborative_filtering(job, collaborative_filtering_jobs)
 
-        # Calculate the overall match score
-        overall_match_score = 0
-        overall_match_score += len(skills_set.intersection(job.get('required_skills', set())))
-        overall_match_score += 1 if title_match else 0
-        overall_match_score += 1 if education_match else 0
-        overall_match_score += 1 if salary_match else 0
-        overall_match_score += 1 if collaborative_match else 0
+        # Calculate the overall weighted match score
+        overall_match_score = calculate_weighted_match_score(skill_match, title_match, education_match, salary_match, collaborative_match)
 
         # Only add recommendation if there's a match in any criteria
         if overall_match_score > 0:
