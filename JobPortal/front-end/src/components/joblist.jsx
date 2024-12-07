@@ -90,7 +90,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
             salaryRange: userProfile.salaryRange || null,
             jobTitles: userProfile.jobTitles || [],
             education: userEducations,
-            
+
           };
 
           const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recommend`, {
@@ -175,7 +175,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
           ) : (
             <ul className="list-group">
               {currentJobs.map((job) => (
-                <JobListItem key={job.job_id} job={job} />
+                <JobListItem key={job.job_id} job={job} recommended={isRecommended} />
               ))}
             </ul>
           )}
