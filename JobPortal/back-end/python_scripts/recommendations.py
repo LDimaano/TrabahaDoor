@@ -1,6 +1,16 @@
 import json
 import sys
 
+# Define weights for each matching criterion
+MATCH_WEIGHTS = {
+    'skill_match': 0.4,         # 40% weight for skills match
+    'title_match': 0.3,         # 30% weight for job title match
+    'education_match': 0.1,     # 10% weight for education match
+    'salary_match': 0.1,        # 10% weight for salary match
+    'collaborative_match': 0.1  # 10% weight for collaborative match
+}
+TOTAL_WEIGHT = sum(MATCH_WEIGHTS.values())  # Total possible score (1.0)
+
 
 def extract_job_data(job_data):
     """Stage 1: Extract relevant job data."""
@@ -49,23 +59,25 @@ def check_collaborative_filtering(job, collaborative_filtering_jobs):
     return job['job_id'] in collaborative_filtering_jobs
 
 
-def generate_recommendation(job, match_count, industry_match, title_match, education_match, salary_match, collaborative_match):
-    """Generate a job recommendation."""
+def generate_recommendation(job, matches, industry_match):
+    """Generate a job recommendation with overall score."""
+    # Calculate the weighted score
+    score = sum(matches[match] * MATCH_WEIGHTS[match] for match in MATCH_WEIGHTS)
+    match_percentage = round((score / TOTAL_WEIGHT) * 100, 2)
+
     return {
         'job_title': job['job_title'],
         'company_name': job['company_name'],
         'industry_name': job['industry_name'],
-        'match_count': match_count,
         'job_id': job['job_id'],
         'salaryrange': job['salaryrange'],
         'jobtype': job['jobtype'],
         'profile_picture_url': job['profile_picture_url'],
+        'match_percentage': match_percentage,
+        'score': score,
         'industry_match': industry_match,
-        'collaborative_match': collaborative_match,
-        'title_match': title_match,
-        'education_match': education_match,
-        'salary_match': salary_match,
-        'match_type': 'hybrid' if collaborative_match else 'content',
+        **matches,  # Include detailed matches (skill, title, etc.)
+        'match_type': 'hybrid' if matches['collaborative_match'] else 'content',
     }
 
 
@@ -74,17 +86,17 @@ def calculate_match_percentage(recommendations):
     if not recommendations:
         return recommendations  # Return as-is if no recommendations
 
-    max_match_count = max(rec['match_count'] for rec in recommendations)
+    max_match_count = max(rec['score'] for rec in recommendations)
 
     # Avoid division by zero and calculate percentage for all matches
     for rec in recommendations:
-        rec['match_percentage'] = round((rec['match_count'] / max_match_count) * 100, 2) if max_match_count > 0 else 0.0
+        rec['match_percentage'] = round((rec['score'] / max_match_count) * 100, 2) if max_match_count > 0 else 0.0
 
     return recommendations
 
 
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None, jobseeker_education=None):
-    """Main recommendation pipeline."""
+    """Main recommendation pipeline with scoring."""
     recommendations = []
 
     # Extract job data
@@ -94,55 +106,36 @@ def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, s
     jobseeker_education_set = set(jobseeker_education) if jobseeker_education else set()
 
     # Collaborative filtering: collect job IDs applied to by similar jobseekers
-    collaborative_filtering_jobs = set()
-    if similar_jobseekers:
-        for jobseeker in similar_jobseekers:
-            if 'applied_jobs' in jobseeker:
-                for job in jobseeker['applied_jobs']:
-                    if isinstance(job, dict) and 'job_id' in job:
-                        collaborative_filtering_jobs.add(int(job['job_id']))
+    collaborative_filtering_jobs = set(
+        job['job_id'] for jobseeker in similar_jobseekers or [] for job in jobseeker.get('applied_jobs', [])
+    )
 
     # Iterate through job data
     for job in job_info:
         skill_match, title_match, education_match = match_skills_and_titles(job, skills_set, job_titles_set, jobseeker_education_set)
-
-        # Check for salary match
         salary_match = check_salary_match(job, jobseeker_salary)
-
-        # Check collaborative filtering match
         collaborative_match = check_collaborative_filtering(job, collaborative_filtering_jobs)
 
-        # Only add recommendation if there's a match in any criteria
-        if skill_match or title_match or education_match or salary_match or collaborative_match:
-            match_count = len(skills_set.intersection(job.get('required_skills', set()))) \
-                + (1 if education_match else 0) + (1 if title_match else 0)
+        # Collect all matches in a dictionary
+        matches = {
+            'skill_match': skill_match,
+            'title_match': title_match,
+            'education_match': education_match,
+            'salary_match': salary_match,
+            'collaborative_match': collaborative_match
+        }
+
+        # Only add recommendation if there's any match
+        if any(matches.values()):
             industry_match = bool(job['industry_name'] == jobseeker_industry) if jobseeker_industry else False
+            recommendations.append(generate_recommendation(job, matches, industry_match))
 
-            recommendations.append(
-                generate_recommendation(
-                    job,
-                    match_count,
-                    industry_match,
-                    title_match,
-                    education_match,
-                    salary_match,
-                    collaborative_match,
-                )
-            )
-
-    # Calculate percentages based on match count
+    # Calculate percentages based on the overall score
     recommendations = calculate_match_percentage(recommendations)
 
-    # Sort recommendations based on priority
+    # Sort recommendations by match percentage and other criteria
     recommendations.sort(
-        key=lambda x: (
-            x['match_type'] == 'hybrid',  # Hybrid matches
-            x['title_match'],  # Title matches
-            x['education_match'],  # Education matches
-            x['match_count'],  # Overall match count
-            x['salary_match'],  # Salary matches
-            x['collaborative_match'],  # Collaborative match (lowest priority)
-        ),
+        key=lambda x: (x['match_percentage'], x['match_type'] == 'hybrid', x['title_match']),
         reverse=True
     )
 
