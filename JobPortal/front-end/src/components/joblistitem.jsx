@@ -27,7 +27,7 @@ function JobListItem({ job }) {
           <h5 style={itemStyle}>{job.job_title}</h5>
           <h6 style={itemStyle}>{job.company_name}</h6> 
           <p style={itemStyle}>{job.industry_name}</p>
-          <p style={itemStyle}>{job.salaryrange}</p> 
+          <p style={itemStyle}>₱{job.salaryrange}</p>
           <Tag>{job.jobtype}</Tag> 
           <p>Match Percentage: <strong>{job.match_percentage}%</strong>
 </p>
