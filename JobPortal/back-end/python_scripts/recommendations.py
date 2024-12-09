@@ -21,15 +21,31 @@ def extract_job_data(job_data):
 
 
 def match_skills_and_titles(job, skills_set, job_titles_set, jobseeker_education_set=None):
-    """Stage 2: Check for skill, title, and education matches."""
-    job_skills = set(job.get('required_skills', []))
-    title_match = bool(job['job_title'] in job_titles_set)
-    skill_match = bool(len(skills_set.intersection(job_skills)) > 0)
+    """
+    Stage 2: Check for skill, title, and education matches.
+    - Skill match is weighted based on the number of matching skills.
+    """
+    job_skills = set(job['required_skills'])
 
+    # Calculate skill match
+    matching_skills = skills_set & job_skills  # Intersection of job skills and user skills
+    num_matching_skills = len(matching_skills)
+
+    # Skill match logic: 
+    # - 0 if no skills match
+    # - 1 if one skill matches
+    # - 2 if two or more skills match
+    skill_match = 0
+    if num_matching_skills > 0:
+        skill_match = 2 if num_matching_skills >= 2 else 1
+
+    # Title match
+    title_match = job['job_title'] in job_titles_set
+
+    # Education match
     education_match = False
-    if jobseeker_education_set is not None:
-        job_education = set(job.get('education', []))
-        education_match = bool(len(job_education.intersection(jobseeker_education_set)) > 0)
+    if jobseeker_education_set:
+        education_match = bool(jobseeker_education_set & job['education'])
 
     return skill_match, title_match, education_match
 
@@ -75,16 +91,17 @@ def calculate_weighted_match_score(skill_match, title_match, education_match, sa
         'salary': 1,      # Salary match has low weight
         'collaborative': 1,  # Collaborative filtering match has low weight
     }
-    
-    match_score = 0
-    match_score += weights['skills'] * skill_match
-    match_score += weights['title'] * title_match
-    match_score += weights['education'] * education_match
-    match_score += weights['salary'] * salary_match
-    match_score += weights['collaborative'] * collaborative_match
+
+    # Weighted score calculation
+    match_score = (
+        weights['skills'] * skill_match +
+        weights['title'] * int(title_match) +
+        weights['education'] * int(education_match) +
+        weights['salary'] * int(salary_match) +
+        weights['collaborative'] * int(collaborative_match)
+    )
 
     return match_score
-
 
 def calculate_match_percentage(recommendations):
     """Calculate the percentage of the most matches based on overall match score."""
