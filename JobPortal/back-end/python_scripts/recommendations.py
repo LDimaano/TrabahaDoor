@@ -83,12 +83,12 @@ def generate_recommendation(job, overall_match_score, industry_match, collaborat
 
 
 def calculate_weighted_match_score(skill_match, title_match, education_match, salary_match, collaborative_match):
-    """Calculate weighted match score."""
+    """Calculate weighted match score, prioritizing title matches over skill matches."""
     weights = {
-        'skills': 3,      # Skills match has the highest weight
-        'title': 2,       # Job title match has moderate weight
-        'education': 1,   # Education match has low weight
-        'salary': 1,      # Salary match has low weight
+        'skills': 2,       # Skills match has lower weight now
+        'title': 4,        # Job title match has the highest weight
+        'education': 1,    # Education match has low weight
+        'salary': 1,       # Salary match has low weight
         'collaborative': 1,  # Collaborative filtering match has low weight
     }
 
@@ -102,6 +102,7 @@ def calculate_weighted_match_score(skill_match, title_match, education_match, sa
     )
 
     return match_score
+
 
 def calculate_match_percentage(recommendations):
     """Calculate the percentage of the most matches based on overall match score."""
