@@ -91,13 +91,20 @@ def calculate_match_percentage(recommendations):
     if not recommendations:
         return recommendations  # Return as-is if no recommendations
 
+    # Find the maximum match score, ensuring non-zero maximum
     max_match_score = max(rec['overall_match_score'] for rec in recommendations)
 
-    # Avoid division by zero and calculate percentage for all recommendations
-    for rec in recommendations:
-        rec['match_percentage'] = round((rec['overall_match_score'] / max_match_score) * 100, 2) if max_match_score > 0 else 0.0
+    if max_match_score == 0:
+        # Avoid division by zero: set all match percentages to 0 if no scores are valid
+        for rec in recommendations:
+            rec['match_percentage'] = 0.0
+    else:
+        # Calculate percentage relative to the maximum score
+        for rec in recommendations:
+            rec['match_percentage'] = round((rec['overall_match_score'] / max_match_score) * 100, 2)
 
     return recommendations
+
 
 
 def recommend_jobs(job_data, skills, jobseeker_industry=None, job_titles=None, similar_jobseekers=None, jobseeker_salary=None, jobseeker_education=None):
