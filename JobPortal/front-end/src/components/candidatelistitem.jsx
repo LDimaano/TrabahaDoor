@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-function ApplicantListItem({ applicant, isRecommended }) {
+function ApplicantListItem({ applicant }) {
   const navigate = useNavigate();
 
 
@@ -27,9 +27,6 @@ function ApplicantListItem({ applicant, isRecommended }) {
         <div>
           <h5>{applicant.full_name}</h5>
           <p>{applicant.latest_job_title || applicant.job_title || 'Job title not available'}</p> 
-          {isRecommended && applicant.match_percentage && applicant.match_percentage > 0 && (
-            <p>Match Percentage: <strong>{applicant.match_percentage}%</strong></p>
-          )}
         </div>
       </div>
       <button className="btn btn-primary" onClick={handleViewDetailsClick}>
