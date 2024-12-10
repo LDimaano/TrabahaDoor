@@ -740,14 +740,14 @@ app.post('/api/recommend-candidates', async (req, res) => {
 
     pythonProcess.stdout.on('data', (data) => {
       try {
-        const recommendations = JSON.parse(data.toString().trim());
-        res.json({ recommendations });
+        const recommendations = JSON.parse(data.toString().trim()); // Includes `match_percentage` from Python
+        res.json({ recommendations }); // Send back to the client
       } catch (error) {
         console.error('Error parsing recommendations:', error);
         res.status(500).json({ error: 'Error parsing recommendations.' });
       }
     });
-
+    
     pythonProcess.stderr.on('data', (error) => {
       console.error(`Python error: ${error.toString()}`);
       res.status(500).json({ error: 'Internal Server Error', details: error.toString() });

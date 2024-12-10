@@ -1,13 +1,56 @@
 import sys
 import json
 
+def calculate_weighted_match_score(skill_match, title_match, education_match, salary_match, collaborative_match):
+    """Calculate weighted match score, prioritizing title matches over skill matches."""
+    weights = {
+        'skills': 2,       # Skills match has moderate weight
+        'title': 4,        # Job title match has the highest weight
+        'education': 1,    # Education match has low weight
+        'salary': 1,       # Salary match has low weight
+        'collaborative': 1,  # Collaborative filtering match has low weight
+    }
+
+    # Weighted score calculation
+    match_score = (
+        weights['skills'] * skill_match +
+        weights['title'] * int(title_match) +
+        weights['education'] * int(education_match) +
+        weights['salary'] * int(salary_match) +
+        weights['collaborative'] * int(collaborative_match)
+    )
+
+    return match_score
+
+
+def calculate_match_percentage(recommendations):
+    """Calculate the percentage of the most matches based on overall match score."""
+    if not recommendations:
+        return recommendations  # Return as-is if no recommendations
+
+    # Find the maximum match score, ensuring non-zero maximum
+    max_match_score = max(rec['overall_match_score'] for rec in recommendations if 'overall_match_score' in rec)
+
+    if max_match_score == 0:
+        # Avoid division by zero: set all match percentages to 0 if no scores are valid
+        for rec in recommendations:
+            rec['match_percentage'] = 0.0
+    else:
+        # Calculate percentage relative to the maximum score
+        for rec in recommendations:
+            if 'overall_match_score' in rec:
+                rec['match_percentage'] = round((rec['overall_match_score'] / max_match_score) * 100, 2)
+
+    return recommendations
+
+
 def recommend_candidates(job_postings, applicants, contact_history, current_employer_industry, current_employer_job_titles):
-    """Generate a list of recommended candidates based on job postings and collaborative filtering by contact history."""
+    """Generate a list of recommended candidates with weighted match scores and percentages."""
     title_matches = []
     skill_matches = []
     contact_matches = []
-    education_matches = []  # For recommending candidates by education
-    industry_based_matches = []  # For recommending candidates by industry
+    education_matches = []
+    industry_based_matches = []
     seen_user_ids = set()
 
     for job in job_postings:
@@ -19,95 +62,52 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
         for applicant in applicants:
             applicant_titles = applicant.get('job_titles', [])
             applicant_skills = set(applicant.get('skills', []))
-            applicant_education = set(applicant.get('js_education', []))  # Applicant education background
+            applicant_education = set(applicant.get('js_education', []))
             applicant_full_name = applicant.get('full_name', 'No Name Provided')
             user_id = applicant.get('user_id')
             applicant_industry = applicant.get('industry', '')
 
-            # Check if any applicant job title matches the job posting title
+            # Matches
             job_title_match = job_title in applicant_titles
-
-            # If a job title match is found, prioritize this applicant
-            if job_title_match and user_id not in seen_user_ids:
-                recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
-                title_matches.append({
-                    'user_id': user_id,
-                    'full_name': applicant_full_name,
-                    'job_title': recommended_job_title,
-                    'matched_skills': list(job_skills.intersection(applicant_skills)),
-                    'matched_education': list(job_education.intersection(applicant_education)),
-                    'industry_match': job_industry == applicant_industry,
-                    'profile_picture_url': applicant.get('profile_picture_url', ''),
-                    'from_collaborative_filtering': False,
-                    'match_type': 'title',
-                    'influence_tag': 'content',
-                    'recommended_job_title': recommended_job_title,  # Always append job title
-                    'applicant_industry': applicant_industry  # Always append industry ID
-                })
-                seen_user_ids.add(user_id)
-                continue
-
-            # Check for skill, education, and industry matches
             matched_skills = job_skills.intersection(applicant_skills)
             matched_education = job_education.intersection(applicant_education)
             industry_match = job_industry == applicant_industry
+            collaborative_match = False  # Will be checked in contact history
+            salary_match = False  # Placeholder; include logic if salary data is available
 
-            # Ensure at least two skill matches, one industry match, or one education match
-            if len(matched_skills) >= 2 or industry_match or matched_education:
-                if user_id not in seen_user_ids:
-                    recommended_job_title = applicant_titles[0] if applicant_titles else "No Job Title"
-                    
-                    # Add to industry matches if there's an industry match
-                    if industry_match:
-                        industry_based_matches.append({
-                            'user_id': user_id,
-                            'full_name': applicant_full_name,
-                            'job_title': recommended_job_title,
-                            'matched_skills': list(matched_skills),
-                            'matched_education': list(matched_education),
-                            'industry_match': industry_match,
-                            'profile_picture_url': applicant.get('profile_picture_url', ''),
-                            'from_collaborative_filtering': False,
-                            'match_type': 'industry',
-                            'influence_tag': 'content',
-                            'recommended_job_title': recommended_job_title,  # Always append job title
-                            'applicant_industry': applicant_industry  # Always append industry ID
-                        })
-                    
-                    # Add to skill and education matches
-                    skill_matches.append({
-                        'user_id': user_id,
-                        'full_name': applicant_full_name,
-                        'job_title': recommended_job_title,
-                        'matched_skills': list(matched_skills),
-                        'matched_education': list(matched_education),
-                        'industry_match': industry_match,
-                        'profile_picture_url': applicant.get('profile_picture_url', ''),
-                        'from_collaborative_filtering': False,
-                        'match_type': 'education' if matched_education else 'both' if matched_skills and industry_match else 'skills' if matched_skills else 'industry',
-                        'influence_tag': 'content',
-                        'recommended_job_title': recommended_job_title,  # Always append job title
-                        'applicant_industry': applicant_industry  # Always append industry ID
-                    })
-                    seen_user_ids.add(user_id)
+            if user_id not in seen_user_ids:
+                # Calculate weighted match score
+                match_score = calculate_weighted_match_score(
+                    skill_match=len(matched_skills),
+                    title_match=job_title_match,
+                    education_match=bool(matched_education),
+                    salary_match=salary_match,
+                    collaborative_match=collaborative_match
+                )
 
-            # If education match is found, add to education matches
-            if matched_education and user_id not in seen_user_ids:
-                education_matches.append({
+                # Build recommendation record
+                recommendation = {
                     'user_id': user_id,
                     'full_name': applicant_full_name,
-                    'job_title': recommended_job_title,
+                    'job_title': applicant_titles[0] if applicant_titles else "No Job Title",
+                    'matched_skills': list(matched_skills),
                     'matched_education': list(matched_education),
+                    'industry_match': industry_match,
                     'profile_picture_url': applicant.get('profile_picture_url', ''),
-                    'from_collaborative_filtering': False,
-                    'match_type': 'education',
-                    'influence_tag': 'content',
-                    'recommended_job_title': recommended_job_title,  # Always append job title
-                    'applicant_industry': applicant_industry  # Always append industry ID
-                })
+                    'from_collaborative_filtering': collaborative_match,
+                    'match_type': 'title' if job_title_match else 'skills',
+                    'overall_match_score': match_score,
+                }
+
+                # Append to appropriate list
+                if job_title_match:
+                    title_matches.append(recommendation)
+                elif len(matched_skills) >= 2 or matched_education or industry_match:
+                    skill_matches.append(recommendation)
+
                 seen_user_ids.add(user_id)
 
-    # Collaborative filtering logic (remains unchanged)
+    # Collaborative filtering logic
     for contact in contact_history:
         emp_industry = contact.get('industry_name', '')
         emp_job_listings = set(contact.get('empjoblistings', []))
@@ -115,7 +115,6 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
         full_name = contact.get('full_name')
         job_title = contact.get('job_title', "No Job Title")
         profile_picture_url = contact.get('profile_picture_url', '')
-        skills = contact.get('skills', [])
 
         if emp_industry == current_employer_industry and len(emp_job_listings.intersection(current_employer_job_titles)) > 0:
             if js_user_id not in seen_user_ids:
@@ -123,24 +122,19 @@ def recommend_candidates(job_postings, applicants, contact_history, current_empl
                     'user_id': js_user_id,
                     'full_name': full_name,
                     'job_title': job_title,
-                    'matched_skills': skills,
+                    'matched_skills': [],
                     'profile_picture_url': profile_picture_url,
                     'from_collaborative_filtering': True,
                     'match_type': 'collaborative',
-                    'influence_tag': 'collaborative',
-                    'recommended_job_title': job_title,  # Always append job title
-                    'applicant_industry': emp_industry  # Always append industry ID
+                    'overall_match_score': calculate_weighted_match_score(0, 0, 0, 0, True),
                 })
                 seen_user_ids.add(js_user_id)
 
-    # Combine results with priority: title matches > skill matches > education matches > contact matches > industry-based matches
+    # Combine results while preserving all categories
     recommendations = title_matches + skill_matches + education_matches + contact_matches + industry_based_matches
 
-    # Filter out duplicates or irrelevant entries
-    recommendations = [
-        rec for rec in recommendations
-        if rec['matched_skills'] or rec['matched_education'] or rec['industry_match'] or rec['job_title']
-    ]
+    # Calculate match percentages for all recommendations
+    recommendations = calculate_match_percentage(recommendations)
 
     return recommendations
 
@@ -158,7 +152,7 @@ if __name__ == '__main__':
         # Generate recommendations
         recommended_candidates = recommend_candidates(job_postings, applicants, contact_history, current_employer_industry, current_employer_job_titles)
 
-        print(json.dumps(recommended_candidates))
+        print(json.dumps(recommended_candidates, indent=4))
         sys.exit(0)
 
     except Exception as e:
