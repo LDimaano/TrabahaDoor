@@ -115,6 +115,10 @@ function CandidateList({ searchParams = {}, isRecommended }) {
     return (
       <div>
         <h3>{isRecommended ? 'Recommended Candidates' : 'All Candidates'}</h3>
+        <span className="text-muted d-block mb-3" style={{ fontSize: '0.9rem' }}>
+          The match percentages shown represent the degree of similarity between job seekers and job listings based on the provided information. 
+          Higher percentages indicate a closer match between the user’s profile and the job criteria, but these percentages do not guarantee a perfect fit.
+        </span>
         {error ? (
           <div className="alert alert-info mt-3" role="alert">
             <i className="fas fa-exclamation-circle me-2"></i>
@@ -123,7 +127,6 @@ function CandidateList({ searchParams = {}, isRecommended }) {
         ) : currentApplicants.length > 0 ? (
           <>
             <ul className="list-group">
-              {/* Sort applicants by match percentage before rendering */}
               {currentApplicants
                 .sort((a, b) => (b.match_percentage || 0) - (a.match_percentage || 0))
                 .map((applicant) => (
@@ -141,7 +144,8 @@ function CandidateList({ searchParams = {}, isRecommended }) {
           <p>No candidates available</p>
         )}
       </div>
-    );    
+    );
+        
 }
 
 const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage }) => {
