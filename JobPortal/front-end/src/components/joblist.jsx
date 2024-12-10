@@ -170,6 +170,10 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
       {isRecommended ? (
         <>
           <h3>Recommended Jobs</h3>
+          <span className="text-muted d-block mb-3" style={{ fontSize: '0.9rem' }}>
+            The match percentages shown represent the degree of similarity between job seekers and job listings based on the provided information. 
+            Higher percentages indicate a closer match between the user’s profile and the job criteria, but these percentages do not guarantee a perfect fit.
+          </span>
           {currentJobs.length === 0 ? (
             <p>No recommended jobs available</p>
           ) : (
@@ -220,7 +224,7 @@ function JobList({ filters = { employmentTypes: [], salaryRanges: [] }, searchQu
         </ul>
       </nav>
     </div>
-  );
+  );  
 }
 
 export default JobList;
