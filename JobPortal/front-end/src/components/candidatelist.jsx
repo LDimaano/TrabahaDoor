@@ -112,33 +112,36 @@ function CandidateList({ searchParams = {}, isRecommended }) {
     ? filteredRecommendedApplicants.length
     : filteredApplicants.length;
 
-  return (
-    <div>
-      <h3>{isRecommended ? 'Recommended Candidates' : 'All Candidates'}</h3>
-      {error ? (
-        <div className="alert alert-info mt-3" role="alert">
-          <i className="fas fa-exclamation-circle me-2"></i>
-          <strong>{error}</strong>
-        </div>
-      ) : currentApplicants.length > 0 ? (
-        <>
-          <ul className="list-group">
-            {currentApplicants.map((applicant) => (
-              <ApplicantListItem key={applicant.user_id} applicant={applicant} />
-            ))}
-          </ul>
-          <Pagination
-            applicantsPerPage={applicantsPerPage}
-            totalApplicants={totalApplicants}
-            paginate={paginate}
-            currentPage={currentPage}
-          />
-        </>
-      ) : (
-        <p>No candidates available</p>
-      )}
-    </div>
-  );
+    return (
+      <div>
+        <h3>{isRecommended ? 'Recommended Candidates' : 'All Candidates'}</h3>
+        {error ? (
+          <div className="alert alert-info mt-3" role="alert">
+            <i className="fas fa-exclamation-circle me-2"></i>
+            <strong>{error}</strong>
+          </div>
+        ) : currentApplicants.length > 0 ? (
+          <>
+            <ul className="list-group">
+              {/* Sort applicants by match percentage before rendering */}
+              {currentApplicants
+                .sort((a, b) => (b.match_percentage || 0) - (a.match_percentage || 0))
+                .map((applicant) => (
+                  <ApplicantListItem key={applicant.user_id} applicant={applicant} />
+                ))}
+            </ul>
+            <Pagination
+              applicantsPerPage={applicantsPerPage}
+              totalApplicants={totalApplicants}
+              paginate={paginate}
+              currentPage={currentPage}
+            />
+          </>
+        ) : (
+          <p>No candidates available</p>
+        )}
+      </div>
+    );    
 }
 
 const Pagination = ({ applicantsPerPage, totalApplicants, paginate, currentPage }) => {
