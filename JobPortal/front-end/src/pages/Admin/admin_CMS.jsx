@@ -6,7 +6,7 @@ const AdminAnnouncements = () => {
   const [announcements, setAnnouncements] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/getannouncement`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/admin/getannouncement`)
       .then((res) => res.json())
       .then((data) => setAnnouncements(data))
       .catch((err) => console.error(err));
