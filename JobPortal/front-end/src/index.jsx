@@ -34,6 +34,7 @@ import EmpTimeToFill from './pages/Employer/emp_timetofill';
 import EmployerDashboard from './pages/Employer/empdashboard';
 
 import DashboardAnalytics from './pages/Admin/admindashboard';
+import AdminCMS from './pages/Admin/admin_CMS';
 import AdminEmployer from './pages/Admin/admin_employers';
 import AdminApplicants from './pages/Admin/admin_applicants';
 import AdminJobs from './pages/Admin/admin_joblistings';
@@ -87,7 +88,8 @@ root.render(
         <Route path="/emp_profile" element={<EmpProfile />} /> 
         <Route path="/applicant_joblisting" element={<ApplicantJoblisting />} /> 
         <Route path="/applicant_profile/:user_id" element={<ApplicantProfile />} /> 
-        <Route path="/admindashboard" element={<DashboardAnalytics />} /> 
+        <Route path="/admindashboard" element={<DashboardAnalytics />} />
+        <Route path="/admin_CMS" element={<AdminCMS />} /> 
         <Route path="/admin_employers" element={<AdminEmployer />} /> 
         <Route path="/admin_applicants" element={<AdminApplicants />} /> 
         <Route path="/admin_joblistings" element={<AdminJobs />} /> 
@@ -107,6 +109,7 @@ root.render(
         <Route path="/employerfiles/:user_id" element={<UploadDocuments />} />
         <Route path="/resubmitemployerfiles" element={<ResubmitDocuments />} />
         <Route path="/empdashboard" element={<EmployerDashboard />} />
+        
         <Route path="/admin_updateemp/:user_id" element={<Adminupdateemp />} />
         <Route path="/view_documents/:user_id" element={<AdminViewDocuments />} />
         <Route path="/admin_updatejs/:user_id" element={<Adminupdatejs />} />
@@ -124,8 +127,7 @@ const TooltipComponent = () => {
     tooltipTriggerList.map((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl));
   }, []);
 
-  return null; // This component doesn't need to render anything.
+  return null; 
 };
 
-// Initialize the tooltip when the app starts
 TooltipComponent();
