@@ -257,7 +257,7 @@ app.post('/api/update-profile-picture/:userId', upload.single('profilePicture'),
 });
 
 //Add announcement
-router.post("/addannouncement", upload.single("image"), async (req, res) => {
+app.post("/addannouncement", upload.single("image"), async (req, res) => {
   try {
     const { caption } = req.body;
     const file = req.file;
@@ -280,7 +280,7 @@ router.post("/addannouncement", upload.single("image"), async (req, res) => {
 });
 
 // Delete Announcement
-router.delete("/deleteannouncement/:id", async (req, res) => {
+app.delete("/deleteannouncement/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
