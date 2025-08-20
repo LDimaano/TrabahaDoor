@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
+import { Modal, Button } from "react-bootstrap";
 
 const Announcements = () => {
   const [slides, setSlides] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/admin/getannouncement`)
@@ -21,7 +24,7 @@ const Announcements = () => {
         setSlides([]);
       });
   }, []);
-  
+
   const goToNextSlide = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === slides.length - 1 ? 0 : prevIndex + 1
@@ -38,6 +41,11 @@ const Announcements = () => {
     const interval = setInterval(goToNextSlide, 5000);
     return () => clearInterval(interval);
   }, [slides]);
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setShowModal(true);
+  };
 
   if (slides.length === 0) {
     return <p className="text-center">No announcements available</p>;
@@ -61,7 +69,8 @@ const Announcements = () => {
                     src={slide.image_url}
                     className="d-block img-fluid"
                     alt={slide.caption}
-                    style={{ maxHeight: "400px", objectFit: "cover", width: "100%" }}
+                    style={{ maxHeight: "400px", objectFit: "cover", width: "100%", cursor: "pointer" }}
+                    onClick={() => handleImageClick(slide.image_url)}
                   />
                 </div>
                 <div className="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-2 rounded">
@@ -80,6 +89,25 @@ const Announcements = () => {
           </button>
         </div>
       </div>
+
+      {/* Modal for full image view */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
+        <Modal.Body className="text-center">
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Full Announcement"
+              className="img-fluid rounded"
+              style={{ maxHeight: "80vh" }}
+            />
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </section>
   );
 };

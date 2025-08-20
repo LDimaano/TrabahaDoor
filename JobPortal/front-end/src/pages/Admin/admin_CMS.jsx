@@ -200,7 +200,7 @@ const AdminAnnouncements = () => {
                     Cancel
                   </button>
                   <button className="btn btn-success" onClick={handleAddConfirm}>
-                    Yes, Add
+                    Yes
                   </button>
                 </div>
               </div>
@@ -230,7 +230,7 @@ const AdminAnnouncements = () => {
                     Cancel
                   </button>
                   <button className="btn btn-danger" onClick={handleDeleteConfirm}>
-                    Yes, Delete
+                    Yes
                   </button>
                 </div>
               </div>
