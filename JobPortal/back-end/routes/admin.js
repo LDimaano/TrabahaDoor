@@ -724,12 +724,18 @@ router.get('/empindustry-distribution', async (req, res) => {
 // Get all announcements
 router.get("/getannouncement", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM announcements ORDER BY id DESC");
-    res.json(result.rows);
+    const result = await pool.query(
+      "SELECT id, image_url, caption FROM announcements_edit ORDER BY id DESC"
+    );
+
+    // Always return an array (could be empty if no announcements)
+    res.json(result.rows || []);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Error fetching announcements:", err.message);
+    res.status(500).json({ announcements: [] }); // <-- always return array shape
   }
 });
+
 
 // Add new announcement
 router.post("/addannouncement", async (req, res) => {

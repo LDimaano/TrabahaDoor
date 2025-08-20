@@ -5,12 +5,23 @@ const Announcements = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/admin/getannouncement`) 
+    fetch(`${process.env.REACT_APP_API_URL}/api/admin/getannouncement`)
       .then((res) => res.json())
-      .then((data) => setSlides(data))
-      .catch((err) => console.error(err));
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setSlides(data);
+        } else if (Array.isArray(data.announcements)) {
+          setSlides(data.announcements);
+        } else {
+          setSlides([]); // fallback
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setSlides([]);
+      });
   }, []);
-
+  
   const goToNextSlide = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === slides.length - 1 ? 0 : prevIndex + 1
