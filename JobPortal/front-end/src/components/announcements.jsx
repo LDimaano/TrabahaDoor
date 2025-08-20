@@ -66,7 +66,7 @@ const Announcements = () => {
                 key={slide.id}
                 className={`carousel-item ${index === currentIndex ? "active" : ""}`}
               >
-                <div className="d-flex flex-column align-items-center">
+                <div className="d-flex justify-content-center">
                   <img
                     src={slide.image_url}
                     className="d-block img-fluid"
@@ -79,13 +79,6 @@ const Announcements = () => {
                     }}
                     onClick={() => openModal(slide.image_url, slide.caption)}
                   />
-                  <Button
-                    variant="primary"
-                    className="mt-3"
-                    onClick={() => openModal(slide.image_url, slide.caption)}
-                  >
-                    View Full Announcement
-                  </Button>
                 </div>
                 <div className="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-2 rounded">
                   <h5>{slide.caption}</h5>
@@ -134,9 +127,7 @@ const Announcements = () => {
               style={{ maxHeight: "70vh" }}
             />
           )}
-          {selectedCaption && (
-            <h5 className="mt-2">{selectedCaption}</h5>
-          )}
+          {selectedCaption && <h5 className="mt-2">{selectedCaption}</h5>}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
