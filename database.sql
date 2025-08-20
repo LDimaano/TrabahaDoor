@@ -246,3 +246,10 @@ CREATE TABLE archived_emp_profiles (
     archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (industry_id) REFERENCES industries(industry_id) ON DELETE CASCADE
 );
+
+/* new table */
+CREATE TABLE announcements_edit (
+  id SERIAL PRIMARY KEY,
+  image_url VARCHAR(255) NOT NULL,
+  caption VARCHAR(255) NOT NULL
+)

@@ -719,5 +719,41 @@ router.get('/empindustry-distribution', async (req, res) => {
 });
 
 
+/*new*/
+
+// Get all announcements
+router.get("/getannouncement", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM announcements ORDER BY id DESC");
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Add new announcement
+router.post("/addannouncement", async (req, res) => {
+  const { image_url, caption } = req.body;
+  try {
+    const result = await pool.query(
+      "INSERT INTO announcements (image_url, caption) VALUES ($1, $2) RETURNING *",
+      [image_url, caption]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete announcement
+router.delete("/deleteannouncement:id", async (req, res) => {
+  try {
+    await pool.query("DELETE FROM announcements WHERE id = $1", [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 module.exports = router;
