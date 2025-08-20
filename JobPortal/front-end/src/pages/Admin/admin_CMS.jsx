@@ -1,94 +1,91 @@
 import { useState, useEffect } from "react";
 
 const AdminAnnouncements = () => {
-  const [announcements, setAnnouncements] = useState([]);
-  const [imageUrl, setImageUrl] = useState("");
   const [caption, setCaption] = useState("");
+  const [image, setImage] = useState(null);
+  const [announcements, setAnnouncements] = useState([]);
 
   // Fetch announcements
   useEffect(() => {
-    fetch("http://localhost:5000/announcements")
+    fetch(`${process.env.REACT_APP_API_URL}/api/admin/getannouncement`)
       .then((res) => res.json())
       .then((data) => setAnnouncements(data))
       .catch((err) => console.error(err));
   }, []);
 
-  // Add new announcement
-  const handleAdd = async (e) => {
+  // Handle form submit
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!imageUrl || !caption) return alert("Please fill in all fields");
 
-    try {
-      const res = await fetch("http://localhost:5000/announcements", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image_url: imageUrl, caption }),
-      });
-
-      const newAnnouncement = await res.json();
-      setAnnouncements([newAnnouncement, ...announcements]);
-      setImageUrl("");
-      setCaption("");
-    } catch (err) {
-      console.error(err);
+    if (!caption || !image) {
+      alert("Please provide both caption and image");
+      return;
     }
+
+    const formData = new FormData();
+    formData.append("caption", caption);
+    formData.append("image", image);
+
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/addannouncement`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const newAnnouncement = await res.json();
+    setAnnouncements([newAnnouncement, ...announcements]); // prepend
+    setCaption("");
+    setImage(null);
   };
 
   // Delete announcement
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this announcement?")) return;
 
-    try {
-      await fetch(`http://localhost:5000/announcements/${id}`, {
-        method: "DELETE",
-      });
-      setAnnouncements(announcements.filter((a) => a.id !== id));
-    } catch (err) {
-      console.error(err);
-    }
+    await fetch(`${process.env.REACT_APP_API_URL}/api/deleteannouncement/${id}`, {
+      method: "DELETE",
+    });
+
+    setAnnouncements(announcements.filter((a) => a.id !== id));
   };
 
   return (
-    <div className="container py-4">
+    <div className="container py-5">
       <h2 className="mb-4">Manage Announcements</h2>
 
-      {/* Add Form */}
-      <form onSubmit={handleAdd} className="mb-4">
+      {/* Upload Form */}
+      <form onSubmit={handleSubmit} className="mb-4">
         <div className="mb-3">
-          <label className="form-label">Image URL</label>
           <input
             type="text"
             className="form-control"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="Enter image URL"
+            placeholder="Enter caption"
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Caption</label>
           <input
-            type="text"
+            type="file"
             className="form-control"
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-            placeholder="Enter caption"
+            accept="image/*"
+            onChange={(e) => setImage(e.target.files[0])}
           />
         </div>
         <button type="submit" className="btn btn-primary">
-          Add Announcement
+          Upload Announcement
         </button>
       </form>
 
-      {/* List Announcements */}
+      {/* Announcements List */}
       <div className="row">
         {announcements.map((a) => (
           <div key={a.id} className="col-md-4 mb-3">
-            <div className="card">
+            <div className="card h-100">
               <img
                 src={a.image_url}
-                alt={a.caption}
                 className="card-img-top"
-                style={{ height: "200px", objectFit: "cover" }}
+                alt={a.caption}
+                style={{ maxHeight: "200px", objectFit: "cover" }}
               />
               <div className="card-body">
                 <p className="card-text">{a.caption}</p>
