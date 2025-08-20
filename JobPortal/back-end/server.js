@@ -256,51 +256,43 @@ app.post('/api/update-profile-picture/:userId', upload.single('profilePicture'),
   }
 });
 
-//Add announcement
+// Upload announcement (caption + image)
 app.post("/addannouncement", upload.single("image"), async (req, res) => {
   try {
     const { caption } = req.body;
     const file = req.file;
 
-    if (!caption) return res.status(400).json({ error: "Caption is required" });
-    if (!file) return res.status(400).json({ error: "Image is required" });
+    if (!file) {
+      return res.status(400).json({ error: "No image uploaded" });
+    }
 
+    // Upload to S3
     const imageUrl = await uploadFileToS3(file.buffer, file.originalname);
 
+    // Save to DB
     const result = await pool.query(
-      "INSERT INTO announcements_edit (image_url, caption) VALUES ($1, $2) RETURNING *",
-      [imageUrl, caption]
+      "INSERT INTO announcements_edit (caption, image_url) VALUES ($1, $2) RETURNING *",
+      [caption, imageUrl]
     );
 
     res.json(result.rows[0]);
   } catch (err) {
-    console.error("Error uploading announcement:", err);
-    res.status(500).json({ error: "Failed to upload announcement" });
+    console.error("Error adding announcement:", err);
+    res.status(500).json({ error: "Failed to add announcement" });
   }
 });
 
-// Delete Announcement
+// Delete announcement
 app.delete("/deleteannouncement/:id", async (req, res) => {
   try {
     const { id } = req.params;
-
-    const result = await pool.query("SELECT image_url FROM announcements_edit WHERE id = $1", [id]);
-    if (result.rows.length === 0) return res.status(404).json({ error: "Announcement not found" });
-
-    const imageUrl = result.rows[0].image_url;
-    const key = imageUrl.split(".com/")[1];
-
-    await s3.deleteObject({ Bucket: "trabahadoor-bucket", Key: key }).promise();
     await pool.query("DELETE FROM announcements_edit WHERE id = $1", [id]);
-
     res.json({ message: "Announcement deleted successfully" });
   } catch (err) {
     console.error("Error deleting announcement:", err);
     res.status(500).json({ error: "Failed to delete announcement" });
   }
 });
-
-
 
 
 // Real-time notification route

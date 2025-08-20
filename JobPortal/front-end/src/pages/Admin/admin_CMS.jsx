@@ -5,15 +5,14 @@ const AdminAnnouncements = () => {
   const [image, setImage] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
 
-  // Fetch announcements
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/admin/getannouncement`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/getannouncement`)
       .then((res) => res.json())
       .then((data) => setAnnouncements(data))
       .catch((err) => console.error(err));
   }, []);
 
-  // Handle form submit
+  // Upload announcement (caption + image → backend → S3 + DB)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -32,12 +31,11 @@ const AdminAnnouncements = () => {
     });
 
     const newAnnouncement = await res.json();
-    setAnnouncements([newAnnouncement, ...announcements]); // prepend
+    setAnnouncements([newAnnouncement, ...announcements]);
     setCaption("");
     setImage(null);
   };
 
-  // Delete announcement
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this announcement?")) return;
 
@@ -63,17 +61,17 @@ const AdminAnnouncements = () => {
             onChange={(e) => setCaption(e.target.value)}
           />
         </div>
-        <div className="mb-3">
+        <div className="mb-3 d-flex">
           <input
             type="file"
-            className="form-control"
+            className="form-control me-2"
             accept="image/*"
             onChange={(e) => setImage(e.target.files[0])}
           />
+          <button type="submit" className="btn btn-primary">
+            Upload to S3 & Save
+          </button>
         </div>
-        <button type="submit" className="btn btn-primary">
-          Upload Announcement
-        </button>
       </form>
 
       {/* Announcements List */}
