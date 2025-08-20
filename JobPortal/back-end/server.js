@@ -257,7 +257,7 @@ app.post('/api/update-profile-picture/:userId', upload.single('profilePicture'),
 });
 
 // Upload announcement (caption + image)
-app.post("/addannouncement", upload.single("image"), async (req, res) => {
+app.post("/api/addannouncement", upload.single("image"), async (req, res) => {
   try {
     const { caption } = req.body;
     const file = req.file;
@@ -283,7 +283,7 @@ app.post("/addannouncement", upload.single("image"), async (req, res) => {
 });
 
 // Delete announcement
-app.delete("/deleteannouncement/:id", async (req, res) => {
+app.delete("/api/deleteannouncement/:id", async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query("DELETE FROM announcements_edit WHERE id = $1", [id]);
