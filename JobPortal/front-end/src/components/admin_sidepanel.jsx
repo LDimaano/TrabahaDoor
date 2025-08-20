@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding, faArchive, faHourglassHalf, faChartPie } from '@fortawesome/free-solid-svg-icons';
+import { faTachometerAlt, faUsers, faBriefcase, faSignOutAlt, faUser, faBuilding, faArchive, faHourglassHalf, faChartPie, faPenToSquare  } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const SideBar = () => {
@@ -19,6 +19,7 @@ const SideBar = () => {
     { icon: faBriefcase, caption: "Job Listing", link: "/admin_joblistings" },
     { icon: faUser, caption: "Users", link: "/admin_users" },
     { icon: faArchive, caption: "Archived", link: "/admin_archived_users" },
+    { icon: faPenToSquare, caption: "CMS", link: "/admin_CMS" },
   ];
 
   const handleLogout = async () => {
