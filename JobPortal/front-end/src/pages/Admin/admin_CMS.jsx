@@ -8,8 +8,11 @@ const AdminAnnouncements = () => {
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showManageModal, setShowManageModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [editId, setEditId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
   // Fetch announcements
@@ -19,6 +22,18 @@ const AdminAnnouncements = () => {
       .then((data) => setAnnouncements(data))
       .catch((err) => console.error(err));
   }, []);
+
+  // Utility functions
+  const resetForm = () => {
+    setCaption("");
+    setImage(null);
+    setEditId(null);
+  };
+
+  const showToast = (msg) => {
+    setSuccessMessage(msg);
+    setTimeout(() => setSuccessMessage(""), 3000);
+  };
 
   // Add Announcement
   const handleAddAnnouncement = async () => {
@@ -45,6 +60,14 @@ const AdminAnnouncements = () => {
     }
   };
 
+  // Open Edit Modal
+  const openEditModal = (announcement) => {
+    setEditId(announcement.id);
+    setCaption(announcement.caption);
+    setImage(null);
+    setShowEditModal(true);
+  };
+
   // Edit Announcement
   const handleEditAnnouncement = async () => {
     const formData = new FormData();
@@ -65,33 +88,32 @@ const AdminAnnouncements = () => {
     } catch (err) {
       console.error(err);
       alert("Error editing announcement");
+    } finally {
+      setShowEditModal(false);
     }
   };
 
-  // Delete Announcement
-  const handleDeleteAnnouncement = async (id) => {
+  // Open Delete Confirmation Modal
+  const openDeleteModal = (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  // Confirm Delete
+  const handleDeleteAnnouncement = async () => {
     try {
-      await fetch(`${process.env.REACT_APP_API_URL}/api/deleteannouncement/${id}`, {
+      await fetch(`${process.env.REACT_APP_API_URL}/api/deleteannouncement/${deleteId}`, {
         method: "DELETE",
       });
-      setAnnouncements(announcements.filter((a) => a.id !== id));
+      setAnnouncements(announcements.filter((a) => a.id !== deleteId));
       showToast("🗑️ Announcement deleted successfully!");
     } catch (err) {
       console.error(err);
       alert("Error deleting announcement");
+    } finally {
+      setShowDeleteModal(false);
+      setDeleteId(null);
     }
-  };
-
-  // Utility functions
-  const resetForm = () => {
-    setCaption("");
-    setImage(null);
-    setEditId(null);
-  };
-
-  const showToast = (msg) => {
-    setSuccessMessage(msg);
-    setTimeout(() => setSuccessMessage(""), 3000);
   };
 
   return (
@@ -112,7 +134,7 @@ const AdminAnnouncements = () => {
 
         {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
-        {/* Display announcements grid */}
+        {/* Announcements Grid */}
         <div className="row">
           {announcements.length > 0 ? (
             announcements.map((a) => (
@@ -181,17 +203,13 @@ const AdminAnnouncements = () => {
                   <span className="flex-grow-1">{a.caption}</span>
                   <button
                     className="btn btn-warning btn-sm me-2"
-                    onClick={() => {
-                      setEditId(a.id);
-                      setCaption(a.caption);
-                      setImage(null);
-                    }}
+                    onClick={() => openEditModal(a)}
                   >
                     Edit
                   </button>
                   <button
                     className="btn btn-danger btn-sm"
-                    onClick={() => handleDeleteAnnouncement(a.id)}
+                    onClick={() => openDeleteModal(a.id)}
                   >
                     Delete
                   </button>
@@ -202,12 +220,50 @@ const AdminAnnouncements = () => {
             )}
           </Modal>
         )}
+
+        {/* Edit Modal */}
+        {showEditModal && (
+          <Modal
+            title="Edit Announcement"
+            onClose={() => {
+              resetForm();
+              setShowEditModal(false);
+            }}
+            onConfirm={handleEditAnnouncement}
+          >
+            <input
+              type="text"
+              className="form-control mb-3"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+            />
+            <input
+              type="file"
+              className="form-control"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+          </Modal>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <Modal
+            title="Confirm Delete"
+            onClose={() => setShowDeleteModal(false)}
+            onConfirm={handleDeleteAnnouncement}
+          >
+            <p className="text-danger">
+              Are you sure you want to delete this announcement? This action cannot be undone.
+            </p>
+          </Modal>
+        )}
       </div>
     </div>
   );
 };
 
-// Simple reusable Modal
+// Reusable Modal Component
 const Modal = ({ title, children, onClose, onConfirm }) => (
   <>
     <div className="modal fade show d-block" tabIndex="-1">
