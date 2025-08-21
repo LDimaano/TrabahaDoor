@@ -13,22 +13,21 @@ const Hero = () => {
       <div className="container">
         <div className="row align-items-center">
           {/* Text Content */}
-                      <div className="col-lg-6 col-md-12 text-center text-lg-start mb-4 mb-lg-0">
-                      <h1 className="display-4" style={{ fontWeight: '700', marginBottom: '1.5rem' }}>
-              Trabaho para sa Bawat <br />
-              <span style={{ color: '#007bff' }}>San Joseño</span> <br />
-              <span style={{ color: '#6c757d' }}>Abot-Kamay, Abot-Kaya.</span>
+          <div className="col-lg-6 col-md-12 text-center text-lg-start mb-4 mb-lg-0">
+            <h1 className="display-4" style={{ fontWeight: '700', marginBottom: '1.5rem' }}>
+              OPENING <br />
+              <span style={{ color: '#007bff' }}>Opportunities</span> <br />
+              <span style={{ color: '#6c757d' }}>for all</span>
             </h1>
             <p className="lead" style={{ color: '#555', marginBottom: '2rem' }}>
-              Sa tulong ng PESO San Jose, mas pinadali ang paghanap ng oportunidad para sa lahat.
+              Your Gateway to Career Opportunities! Opening doors to a brighter future with the Public Employment Service Office of San Jose, Batangas. Explore, Apply, Succeed!
             </p>
-
             <button 
               className="btn btn-primary btn-lg" 
               onClick={handleButtonClick} 
               style={{ backgroundColor: '#007bff', border: 'none', padding: '0.75rem 2rem' }}
             >
-              Magsimula
+              Get Started
             </button>
           </div>
           
