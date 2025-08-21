@@ -12,6 +12,7 @@ const SideBar = () => {
 
   const menuItems = [
     { icon: faTachometerAlt, caption: "Dashboard", link: "/admindashboard" },
+    { icon: faPenToSquare, caption: "CMS", link: "/admin_CMS" },
     { icon: faChartPie, caption: "Demographics", link: "/admin_demographics" },
     { icon: faHourglassHalf, caption: "Pending Confirmation", link: "/admin_unapprovedemp" },
     { icon: faBuilding, caption: "Approved Employers", link: "/admin_employers" },
@@ -19,7 +20,7 @@ const SideBar = () => {
     { icon: faBriefcase, caption: "Job Listing", link: "/admin_joblistings" },
     { icon: faUser, caption: "Users", link: "/admin_users" },
     { icon: faArchive, caption: "Archived", link: "/admin_archived_users" },
-    { icon: faPenToSquare, caption: "CMS", link: "/admin_CMS" },
+   
   ];
 
   const handleLogout = async () => {
