@@ -8,8 +8,8 @@ const AdminAnnouncements = () => {
   const [showModal, setShowModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-  const [deleteId, setDeleteId] = useState(null); // For delete confirmation
-  const [showAddConfirm, setShowAddConfirm] = useState(false); // For add confirmation
+  const [deleteId, setDeleteId] = useState(null);
+  const [showAddConfirm, setShowAddConfirm] = useState(false);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/admin/getannouncement`)
@@ -18,7 +18,6 @@ const AdminAnnouncements = () => {
       .catch((err) => console.error(err));
   }, []);
 
-  // Final Add announcement
   const handleAddConfirm = async () => {
     const formData = new FormData();
     formData.append("caption", caption);
@@ -35,29 +34,25 @@ const AdminAnnouncements = () => {
       const newAnnouncement = await res.json();
       setAnnouncements([newAnnouncement, ...announcements]);
 
-      // Reset inputs
       setCaption("");
       setImage(null);
-
-      // Show success message
       setSuccessMessage("✅ Announcement uploaded successfully!");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
       console.error(err);
       alert("Error uploading announcement");
     } finally {
-      setShowAddConfirm(false); // Close add confirmation modal
+      setShowAddConfirm(false);
     }
   };
 
-  // Delete handler
   const handleDeleteConfirm = async () => {
     try {
       await fetch(`${process.env.REACT_APP_API_URL}/api/deleteannouncement/${deleteId}`, {
         method: "DELETE",
       });
       setAnnouncements(announcements.filter((a) => a.id !== deleteId));
-      setDeleteId(null); // Close modal after delete
+      setDeleteId(null);
     } catch (err) {
       console.error(err);
       alert("Error deleting announcement");
@@ -70,17 +65,41 @@ const AdminAnnouncements = () => {
       <Sidebar />
 
       <div className="container-fluid p-4">
-        {/* Button to open modal */}
-        <button className="btn btn-primary mb-3" onClick={() => setShowModal(true)}>
-          Manage Announcements
-        </button>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2 className="fw-bold">Announcements</h2>
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+            Manage Announcements
+          </button>
+        </div>
 
-        {/* Main Modal for Manage Announcements */}
+        {/* Announcements displayed as cards */}
+        <div className="row">
+          {announcements.length > 0 ? (
+            announcements.map((a) => (
+              <div key={a.id} className="col-md-4 mb-3">
+                <div className="card h-100 shadow-sm">
+                  <img
+                    src={a.image_url}
+                    className="card-img-top"
+                    alt={a.caption}
+                    style={{ maxHeight: "200px", objectFit: "cover" }}
+                  />
+                  <div className="card-body">
+                    <p className="card-text">{a.caption}</p>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-muted">No announcements available.</p>
+          )}
+        </div>
+
+        {/* === Modal for Manage Announcements === */}
         {showModal && (
           <div className="modal fade show d-block" tabIndex="-1" role="dialog">
             <div className="modal-dialog modal-lg" role="document">
               <div className="modal-content">
-                {/* Header */}
                 <div className="modal-header">
                   <h5 className="modal-title">Manage Announcements</h5>
                   <button
@@ -90,7 +109,6 @@ const AdminAnnouncements = () => {
                   ></button>
                 </div>
 
-                {/* Body */}
                 <div className="modal-body">
                   {successMessage && (
                     <div className="alert alert-success py-2">{successMessage}</div>
@@ -104,7 +122,7 @@ const AdminAnnouncements = () => {
                         alert("Please provide both caption and image");
                         return;
                       }
-                      setShowAddConfirm(true); // show confirmation first
+                      setShowAddConfirm(true);
                     }}
                     className="mb-4"
                   >
@@ -130,7 +148,7 @@ const AdminAnnouncements = () => {
                     </div>
                   </form>
 
-                  {/* Announcement list */}
+                  {/* Announcement list inside modal */}
                   <div className="row">
                     {announcements.length > 0 ? (
                       announcements.map((a) => (
@@ -146,7 +164,7 @@ const AdminAnnouncements = () => {
                               <p className="card-text">{a.caption}</p>
                               <button
                                 className="btn btn-danger btn-sm"
-                                onClick={() => setDeleteId(a.id)} // open delete modal
+                                onClick={() => setDeleteId(a.id)}
                               >
                                 Delete
                               </button>
@@ -160,7 +178,6 @@ const AdminAnnouncements = () => {
                   </div>
                 </div>
 
-                {/* Footer */}
                 <div className="modal-footer">
                   <button
                     type="button"

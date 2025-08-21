@@ -737,6 +737,7 @@ router.get("/getannouncement", async (req, res) => {
 });
 
 
+
 // Add new announcement
 router.post("/addannouncement", async (req, res) => {
   const { image_url, caption } = req.body;
