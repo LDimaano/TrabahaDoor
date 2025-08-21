@@ -751,9 +751,48 @@ router.post("/addannouncement", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// Edit announcement
+router.put("/editannouncement/:id", async (req, res) => {
+  const { caption, image_url } = req.body;
+  const { id } = req.params;
+
+  try {
+    let query;
+    let values;
+
+    // Check if image URL is provided for update
+    if (image_url) {
+      query = `
+        UPDATE announcements
+        SET caption = $1, image_url = $2
+        WHERE id = $3
+        RETURNING *`;
+      values = [caption, image_url, id];
+    } else {
+      query = `
+        UPDATE announcements
+        SET caption = $1
+        WHERE id = $2
+        RETURNING *`;
+      values = [caption, id];
+    }
+
+    const result = await pool.query(query, values);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Announcement not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error updating announcement:", err.message);
+    res.status(500).json({ error: "Failed to update announcement" });
+  }
+});
+
 
 // Delete announcement
-router.delete("/deleteannouncement:id", async (req, res) => {
+router.delete("/deleteannouncement/:id", async (req, res) => {
   try {
     await pool.query("DELETE FROM announcements WHERE id = $1", [req.params.id]);
     res.json({ success: true });

@@ -11,6 +11,10 @@ const AdminAnnouncements = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [showAddConfirm, setShowAddConfirm] = useState(false);
 
+  // States for Editing
+  const [editId, setEditId] = useState(null);
+  const [showEditConfirm, setShowEditConfirm] = useState(false);
+
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/admin/getannouncement`)
       .then((res) => res.json())
@@ -18,10 +22,11 @@ const AdminAnnouncements = () => {
       .catch((err) => console.error(err));
   }, []);
 
+  // Add Announcement
   const handleAddConfirm = async () => {
     const formData = new FormData();
-    formData.append("caption", caption);
     formData.append("image", image);
+    formData.append("caption", caption);
 
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/api/addannouncement`, {
@@ -34,8 +39,7 @@ const AdminAnnouncements = () => {
       const newAnnouncement = await res.json();
       setAnnouncements([newAnnouncement, ...announcements]);
 
-      setCaption("");
-      setImage(null);
+      resetForm();
       setSuccessMessage("✅ Announcement uploaded successfully!");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
@@ -46,6 +50,37 @@ const AdminAnnouncements = () => {
     }
   };
 
+  // Edit Announcement
+  const handleEditConfirm = async () => {
+    const formData = new FormData();
+    formData.append("caption", caption);
+    if (image) formData.append("image", image);
+
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/editannouncement/${editId}`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Failed to edit announcement");
+
+      const updatedAnnouncement = await res.json();
+      setAnnouncements(
+        announcements.map((a) => (a.id === editId ? updatedAnnouncement : a))
+      );
+
+      resetForm();
+      setSuccessMessage("✏️ Announcement updated successfully!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (err) {
+      console.error(err);
+      alert("Error editing announcement");
+    } finally {
+      setShowEditConfirm(false);
+    }
+  };
+
+  // Delete Announcement
   const handleDeleteConfirm = async () => {
     try {
       await fetch(`${process.env.REACT_APP_API_URL}/api/deleteannouncement/${deleteId}`, {
@@ -59,9 +94,15 @@ const AdminAnnouncements = () => {
     }
   };
 
+  // Reset form state
+  const resetForm = () => {
+    setCaption("");
+    setImage(null);
+    setEditId(null);
+  };
+
   return (
     <div className="d-flex">
-      {/* Sidebar */}
       <Sidebar />
 
       <div className="container-fluid p-4">
@@ -72,7 +113,7 @@ const AdminAnnouncements = () => {
           </button>
         </div>
 
-        {/* Announcements displayed as cards */}
+        {/* Display Announcements */}
         <div className="row">
           {announcements.length > 0 ? (
             announcements.map((a) => (
@@ -105,7 +146,10 @@ const AdminAnnouncements = () => {
                   <button
                     type="button"
                     className="btn-close"
-                    onClick={() => setShowModal(false)}
+                    onClick={() => {
+                      setShowModal(false);
+                      resetForm();
+                    }}
                   ></button>
                 </div>
 
@@ -114,15 +158,15 @@ const AdminAnnouncements = () => {
                     <div className="alert alert-success py-2">{successMessage}</div>
                   )}
 
-                  {/* Upload form */}
+                  {/* Upload or Edit form */}
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
-                      if (!caption || !image) {
-                        alert("Please provide both caption and image");
+                      if (!caption) {
+                        alert("Caption is required");
                         return;
                       }
-                      setShowAddConfirm(true);
+                      editId ? setShowEditConfirm(true) : setShowAddConfirm(true);
                     }}
                     className="mb-4"
                   >
@@ -143,7 +187,7 @@ const AdminAnnouncements = () => {
                         onChange={(e) => setImage(e.target.files[0])}
                       />
                       <button type="submit" className="btn btn-success">
-                        Upload
+                        {editId ? "Update" : "Upload"}
                       </button>
                     </div>
                   </form>
@@ -162,6 +206,16 @@ const AdminAnnouncements = () => {
                             />
                             <div className="card-body">
                               <p className="card-text">{a.caption}</p>
+                              <button
+                                className="btn btn-warning btn-sm me-2"
+                                onClick={() => {
+                                  setEditId(a.id);
+                                  setCaption(a.caption);
+                                  setImage(null);
+                                }}
+                              >
+                                Edit
+                              </button>
                               <button
                                 className="btn btn-danger btn-sm"
                                 onClick={() => setDeleteId(a.id)}
@@ -182,7 +236,10 @@ const AdminAnnouncements = () => {
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    onClick={() => setShowModal(false)}
+                    onClick={() => {
+                      setShowModal(false);
+                      resetForm();
+                    }}
                   >
                     Close
                   </button>
@@ -195,69 +252,65 @@ const AdminAnnouncements = () => {
 
         {/* Add Confirmation Modal */}
         {showAddConfirm && (
-          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Confirm Add</h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    onClick={() => setShowAddConfirm(false)}
-                  ></button>
-                </div>
-                <div className="modal-body">
-                  <p>Do you want to add this announcement?</p>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => setShowAddConfirm(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button className="btn btn-success" onClick={handleAddConfirm}>
-                    Yes
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ConfirmModal
+            title="Confirm Add"
+            message="Do you want to add this announcement?"
+            onCancel={() => setShowAddConfirm(false)}
+            onConfirm={handleAddConfirm}
+          />
         )}
-        {showAddConfirm && <div className="modal-backdrop fade show"></div>}
+
+        {/* Edit Confirmation Modal */}
+        {showEditConfirm && (
+          <ConfirmModal
+            title="Confirm Edit"
+            message="Do you want to save the changes to this announcement?"
+            onCancel={() => setShowEditConfirm(false)}
+            onConfirm={handleEditConfirm}
+          />
+        )}
 
         {/* Delete Confirmation Modal */}
         {deleteId && (
-          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title text-danger">Confirm Delete</h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    onClick={() => setDeleteId(null)}
-                  ></button>
-                </div>
-                <div className="modal-body">
-                  <p>Do you want to delete this announcement?</p>
-                </div>
-                <div className="modal-footer">
-                  <button className="btn btn-secondary" onClick={() => setDeleteId(null)}>
-                    Cancel
-                  </button>
-                  <button className="btn btn-danger" onClick={handleDeleteConfirm}>
-                    Yes
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ConfirmModal
+            title="Confirm Delete"
+            message="Do you want to delete this announcement?"
+            onCancel={() => setDeleteId(null)}
+            onConfirm={handleDeleteConfirm}
+            danger
+          />
         )}
-        {deleteId && <div className="modal-backdrop fade show"></div>}
       </div>
     </div>
   );
 };
+
+// Reusable confirmation modal component
+const ConfirmModal = ({ title, message, onCancel, onConfirm, danger }) => (
+  <>
+    <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+      <div className="modal-dialog" role="document">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className={`modal-title ${danger ? "text-danger" : ""}`}>{title}</h5>
+            <button type="button" className="btn-close" onClick={onCancel}></button>
+          </div>
+          <div className="modal-body">
+            <p>{message}</p>
+          </div>
+          <div className="modal-footer">
+            <button className="btn btn-secondary" onClick={onCancel}>
+              Cancel
+            </button>
+            <button className={`btn ${danger ? "btn-danger" : "btn-success"}`} onClick={onConfirm}>
+              Yes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="modal-backdrop fade show"></div>
+  </>
+);
 
 export default AdminAnnouncements;
