@@ -17,7 +17,7 @@ const Announcements = () => {
         } else if (Array.isArray(data.announcements)) {
           setSlides(data.announcements);
         } else {
-          setSlides([]); // fallback
+          setSlides([]);
         }
       })
       .catch((err) => {
@@ -56,32 +56,35 @@ const Announcements = () => {
   return (
     <section className="py-5">
       <div className="container text-center">
-        <h2 className="mb-4" style={{ fontWeight: "700", color: "#333" }}>
-          Public Employment Service Office of San Jose
+        <h2 className="mb-4 fw-bold" style={{ color: "#333" }}>
+          Announcements
         </h2>
-        <div id="carouselExampleControls" className="carousel slide">
-          <div className="carousel-inner">
+
+        {/* Carousel (smaller height) */}
+        <div
+          id="carouselExampleControls"
+          className="carousel slide mb-4"
+          style={{ maxWidth: "600px", margin: "0 auto" }}
+        >
+          <div className="carousel-inner rounded shadow-sm">
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
                 className={`carousel-item ${index === currentIndex ? "active" : ""}`}
               >
-                <div className="d-flex justify-content-center">
-                  <img
-                    src={slide.image_url}
-                    className="d-block img-fluid"
-                    alt={slide.caption}
-                    style={{
-                      maxHeight: "400px",
-                      objectFit: "cover",
-                      width: "100%",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => openModal(slide.image_url, slide.caption)}
-                  />
-                </div>
+                <img
+                  src={slide.image_url}
+                  className="d-block w-100 rounded"
+                  alt={slide.caption}
+                  style={{
+                    height: "250px",
+                    objectFit: "cover",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => openModal(slide.image_url, slide.caption)}
+                />
                 <div className="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-2 rounded">
-                  <h5>{slide.caption}</h5>
+                  <h6 className="mb-0">{slide.caption}</h6>
                 </div>
               </div>
             ))}
@@ -91,10 +94,7 @@ const Announcements = () => {
             type="button"
             onClick={goToPreviousSlide}
           >
-            <span
-              className="carousel-control-prev-icon"
-              aria-hidden="true"
-            ></span>
+            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
             <span className="visually-hidden">Previous</span>
           </button>
           <button
@@ -102,16 +102,41 @@ const Announcements = () => {
             type="button"
             onClick={goToNextSlide}
           >
-            <span
-              className="carousel-control-next-icon"
-              aria-hidden="true"
-            ></span>
+            <span className="carousel-control-next-icon" aria-hidden="true"></span>
             <span className="visually-hidden">Next</span>
           </button>
         </div>
+
+        {/* Thumbnail grid */}
+        <div className="row g-3">
+          {slides.map((slide) => (
+            <div key={slide.id} className="col-6 col-md-3">
+              <div
+                className="card shadow-sm h-100"
+                style={{ cursor: "pointer" }}
+                onClick={() => openModal(slide.image_url, slide.caption)}
+              >
+                <img
+                  src={slide.image_url}
+                  className="card-img-top rounded"
+                  alt={slide.caption}
+                  style={{
+                    height: "120px",
+                    objectFit: "cover",
+                  }}
+                />
+                <div className="card-body p-2">
+                  <small className="text-muted text-truncate d-block">
+                    {slide.caption}
+                  </small>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Modal for full image view */}
+      {/* Modal for full announcement */}
       <Modal
         show={showModal}
         onHide={() => setShowModal(false)}
